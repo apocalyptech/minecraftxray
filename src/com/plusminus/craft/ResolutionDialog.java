@@ -115,7 +115,7 @@ public class ResolutionDialog extends JFrame {
 		new int[] {85, 80, 75, 70, 65, 60};
 	private static final int[] defaultPreferredAntialiasModes =
 		new int[] {0,2,4,8};
-	private static final boolean defaultPreferredFullScreenValue = true;
+	private static final boolean defaultPreferredFullScreenValue = false;
 		
 	public static final int DIALOG_BUTTON_EXIT = 0;
 	public static final int DIALOG_BUTTON_GO = 1;
