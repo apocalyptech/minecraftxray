@@ -38,6 +38,8 @@ public class MineCraftConstants {
 	public static final long MILLISPERSECOND 	= 1000;
 	public static final long NANOSPERMILLIS 	= NANOSPERSECOND / MILLISPERSECOND;
 	
+	// TEXTURE_ORES defines the kinds of blocks that we'll highlight.  Note that it's keyed off of the *texture* that we show, not the block type,
+	// which could potentially have some issues if we're showing the same texture for more than one block type (as with wood).
 	public static final int TEXTURE_COAL = (2*16) + 2;
 	public static final int TEXTURE_IRON = (2*16) + 1;
 	public static final int TEXTURE_GOLD = (2*16) + 0;
