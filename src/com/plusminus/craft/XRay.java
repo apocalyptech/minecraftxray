@@ -783,7 +783,7 @@ public class XRay {
         if (Mouse.isButtonDown(0)) {
         	Mouse.setGrabbed(true);							// Grab the mouse if we're clicked
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {			// Exit if "Q" is pressed
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {			// Exit if "Ctrl-Q" is pressed
         	done = true;
         }
         if(Display.isCloseRequested()) {                     // Exit if window is closed
