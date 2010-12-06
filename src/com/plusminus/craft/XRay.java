@@ -626,9 +626,12 @@ public class XRay {
         mouseY = Mouse.getDY();
         if(worldSelected) {
         	// we are on the main world screen or the level loading screen
-        	// update the camera
-	        camera.incYaw(mouseX * MOUSE_SENSITIVITY);
-	        camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
+        	// update the camera (but only if the mouse is grabbed)
+        	if (Mouse.isGrabbed())
+        	{
+        		camera.incYaw(mouseX * MOUSE_SENSITIVITY);
+        		camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
+        	}
 	       
 	        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 	        	MOVEMENT_SPEED = 20.0f;
@@ -774,8 +777,14 @@ public class XRay {
         }        
         	
         	
-        if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Exit if Escape is pressed
-            done = true;
+        if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Release the mouse on Escape
+            Mouse.setGrabbed(false);
+        }
+        if (Mouse.isButtonDown(0)) {
+        	Mouse.setGrabbed(true);							// Grab the mouse if we're clicked
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {			// Exit if "Q" is pressed
+        	done = true;
         }
         if(Display.isCloseRequested()) {                     // Exit if window is closed
             done = true;
