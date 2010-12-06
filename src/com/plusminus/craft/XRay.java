@@ -54,6 +54,19 @@ public class XRay {
 	private static final int[] CHUNK_RANGES = new int[] {3,4,5,6,7,8};
 	private int currentChunkRange = 2;
 	
+	// highlight distance
+	private static final int[] HIGHLIGHT_RANGES_KEYS = new int[] {
+		Keyboard.KEY_1,
+		Keyboard.KEY_2,
+		Keyboard.KEY_3,
+		Keyboard.KEY_4,
+		Keyboard.KEY_5,
+		Keyboard.KEY_6,
+		Keyboard.KEY_7
+	};
+	private static final int[] HIGHLIGHT_RANGES = new int[] {2, 3, 4, 5, 6, 7, 8};
+	private int currentHighlightDistance = 1;
+	
 	// set to true when the program is finished 
 	private boolean done 				= false; 
 	// are we full screen
@@ -544,7 +557,16 @@ public class XRay {
     	this.mapchange_redraw_range = this.visible_chunk_range-2;
     	this.needToReloadWorld = true;
     }      
-
+    
+    private void setHighlightRange(int n) {
+    	if(n >= HIGHLIGHT_RANGES.length) n = HIGHLIGHT_RANGES.length-1;
+    	if(n <= 0) n = 0;
+    	if(n == currentHighlightDistance) {
+    		return;
+    	}
+    	this.currentHighlightDistance = n;
+     }      
+    
     /***
      * Sets the world number we want to view
      * @param worldNum
@@ -742,7 +764,14 @@ public class XRay {
 	        	setChunkRange(i);                             					// Increase Light Level
 	        }
         }
-        
+
+        // handle highlight distances
+        for(int i = 0; i<HIGHLIGHT_RANGES.length;i++) {
+	        if(Keyboard.isKeyDown(HIGHLIGHT_RANGES_KEYS[i]) && keyPressed != HIGHLIGHT_RANGES_KEYS[i]) {
+	        	keyPressed = HIGHLIGHT_RANGES_KEYS[i];                                     
+	        	setHighlightRange(i);
+	        }
+        }        
         	
         	
         if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Exit if Escape is pressed
@@ -971,6 +1000,11 @@ public class XRay {
 
     	
     	if(highlightOres) {
+    		int chunk_range = visible_chunk_range;
+    		if (HIGHLIGHT_RANGES[currentHighlightDistance] < chunk_range)
+    		{
+    			chunk_range = HIGHLIGHT_RANGES[currentHighlightDistance];
+    		}
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 			long time = System.currentTimeMillis();
 			float alpha = (time % 1000) / 1000.0f;
@@ -979,8 +1013,8 @@ public class XRay {
 			GL11.glColor4f(alpha, alpha, alpha, alpha);
 			setLightLevel(20);
 			GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-			for(int lx=currentLevelX-visible_chunk_range;lx<currentLevelX+visible_chunk_range;lx++) {
-	    		for(int lz=currentLevelZ-visible_chunk_range;lz<currentLevelZ+visible_chunk_range;lz++) {
+			for(int lx=currentLevelX-chunk_range;lx<currentLevelX+chunk_range;lx++) {
+	    		for(int lz=currentLevelZ-chunk_range;lz<currentLevelZ+chunk_range;lz++) {
 	    			Chunk k = level.getChunk(lx, lz);
 	    			if(k != null)
 	    				k.renderSelected(this.mineralToggle);
