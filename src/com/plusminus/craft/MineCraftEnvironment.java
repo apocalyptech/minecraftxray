@@ -1,5 +1,9 @@
 package com.plusminus.craft;
 
+import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.Graphics2D;
+import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -219,7 +223,25 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	public static BufferedImage getMinecraftTexture() {
-		return buildImageFromInput(getMinecraftTextureData());
+		BufferedImage bi = buildImageFromInput(getMinecraftTextureData());
+		Graphics2D g2d = bi.createGraphics();
+		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f);
+		
+		// First greenify grass
+		Rectangle rect = new Rectangle(0, 0, 16, 16); // TODO: Make this work for any size that the app supports
+		g2d.setComposite(ac);
+		g2d.setColor(Color.green);
+		g2d.fill(rect);
+		g2d.drawImage(bi, null, 0, 0);
+		
+		// Now greenify leaves
+		rect = new Rectangle(64, 48, 32, 16); // TODO: Make this work for any size that the app supports
+		g2d.setComposite(ac);
+		g2d.setColor(Color.green);
+		g2d.fill(rect);
+		g2d.drawImage(bi, null, 0, 0);
+		
+		return bi;
 	}
 	
 	/***
