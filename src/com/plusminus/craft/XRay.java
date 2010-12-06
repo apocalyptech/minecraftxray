@@ -1100,7 +1100,8 @@ public class XRay {
 	 * Draw the mineral toggles
 	 */
 	private void drawMineralToggle() {
-		float barWidth = 128+10+32;
+		//float barWidth = 128+10+32;
+		float barWidth = 96+10+32;
 		float mineralTogglebarLength = mineralToggleTextures.length * barWidth;
 		float startX = (screenWidth / 2.0f) - (mineralTogglebarLength/2.0f);
 		
