@@ -131,6 +131,7 @@ public class XRay {
 	
 	// the available world numbers
 	private ArrayList<Integer> availableWorlds;
+	private ArrayList<Integer> availableNetherWorlds;
 	
 	// the world chunks we still need to load
 	private Stack<Block> mapChunksToLoad;
@@ -359,6 +360,16 @@ public class XRay {
 				
 				worldSelectionTextures.add(worldTexture);
 			}
+			for(int i : availableNetherWorlds) {
+				Texture worldTexture = TextureTool.allocateTexture(512,32);
+				Graphics2D g = worldTexture.getImage().createGraphics();
+				g.setFont(ARIALFONT);
+				g.setColor(Color.white);
+				g.drawString("World " + i + " Nether", 10, 16);
+				worldTexture.update();
+				
+				worldSelectionTextures.add(worldTexture);
+			}
 			
 			// mineral textures
 			for(int i=0;i<TEXTURE_ORES.length;i++) {
@@ -491,8 +502,9 @@ public class XRay {
     	}
     	
     	availableWorlds = MineCraftEnvironment.getAvailableWorlds();
+    	availableNetherWorlds = MineCraftEnvironment.getAvailableWorlds(true);
     	
-    	if(availableWorlds.size() == 0) {
+    	if(availableWorlds.size() == 0 && availableNetherWorlds.size() == 0) {
     		JOptionPane.showMessageDialog(null, "Minecraft directory found, but no minecraft levels available.", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
     		System.exit(0);
     	}
@@ -531,17 +543,24 @@ public class XRay {
     	this.visible_chunk_range = CHUNK_RANGES[n];
     	this.mapchange_redraw_range = this.visible_chunk_range-2;
     	this.needToReloadWorld = true;
-    }
-      
- 
-    
+    }      
+
     /***
      * Sets the world number we want to view
      * @param worldNum
      */
     private void setMinecraftWorld(int worldNum) {
+    	this.setMinecraftWorld(worldNum, false);
+    }
+    
+    /***
+     * Sets the world number we want to view
+     * @param worldNum
+     * @param nether
+     */
+    private void setMinecraftWorld(int worldNum, boolean nether) {
     	this.worldNum = worldNum;
-    	this.level =  new MinecraftLevel(worldNum);
+    	this.level =  new MinecraftLevel(worldNum, nether);
     	
     	// determine which chunks are available in this world
 		mapChunksToLoad = new Stack<Block>();
@@ -626,14 +645,16 @@ public class XRay {
 	        }
         } else {
         	// world selection screen
-	        if(Keyboard.isKeyDown(Keyboard.KEY_RETURN)) {
+	        if(Keyboard.isKeyDown(Keyboard.KEY_RETURN) || Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 	        	worldSelected = true;
-	        	this.setMinecraftWorld(availableWorlds.get(worldSelectIndex));
-	        }
-	        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-	        	worldSelected = true;
-	        	worldNum = availableWorlds.get(worldSelectIndex);
-	        	this.setMinecraftWorld(availableWorlds.get(worldSelectIndex));
+	        	if (worldSelectIndex > availableWorlds.size()-1)
+	        	{
+	        		this.setMinecraftWorld(availableNetherWorlds.get(worldSelectIndex - availableWorlds.size()), true);
+	        	}
+	        	else
+	        	{
+	        		this.setMinecraftWorld(availableWorlds.get(worldSelectIndex));
+	        	}
 	        }
 	        if (Keyboard.isKeyDown(Keyboard.KEY_W) && keyPressed != Keyboard.KEY_W)//move forward
 	        {
@@ -654,7 +675,7 @@ public class XRay {
 	        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && keyPressed != Keyboard.KEY_DOWN)//move backwards
 	        {
 	        	keyPressed = Keyboard.KEY_DOWN;
-	        	if(worldSelectIndex < availableWorlds.size()-1) worldSelectIndex++;
+	        	if(worldSelectIndex < availableWorlds.size()+availableNetherWorlds.size()-1) worldSelectIndex++;
 	        }
         }
         if(!loading) {

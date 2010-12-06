@@ -100,9 +100,18 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	public static ArrayList<Integer> getAvailableWorlds() {
+		return getAvailableWorlds(false);
+	}
+	
+	/***
+	 * Returns a list of integers corresponding to available worlds
+	 * @param nether
+	 * @return
+	 */
+	public static ArrayList<Integer> getAvailableWorlds(boolean nether) {
 		ArrayList<Integer> worlds = new ArrayList<Integer>();
 		for(int i=0;i<10;i++) {
-			File worldDir = getWorldDirectory(i);
+			File worldDir = getWorldDirectory(i, nether);
 			if(worldDir.exists() && worldDir.canRead()) {
 				worlds.add(i);
 			}
@@ -118,6 +127,18 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	public static File getChunkFile(int world, int x, int z) {
+		return getChunkFile(world, x, z, false);
+	}
+	
+	/***
+	 * Returns a file handle to a chunk file in a world
+	 * @param world
+	 * @param x
+	 * @param z
+	 * @param nether
+	 * @return
+	 */
+	public static File getChunkFile(int world, int x, int z, boolean nether) {
 		int xx = x % 64;
 		if(xx<0) xx = 64+xx;
 		int zz = z % 64;
@@ -125,7 +146,7 @@ public class MineCraftEnvironment {
 		String firstFolder 		= Integer.toString(xx, 36);
 		String secondFolder 	= Integer.toString(zz, 36);
 		String filename 		= "c." + Integer.toString(x, 36) + "." + Integer.toString(z, 36) + ".dat";
-		return new File(getWorldDirectory(world), firstFolder + "/" + secondFolder + "/" + filename);
+		return new File(getWorldDirectory(world, nether), firstFolder + "/" + secondFolder + "/" + filename);
 	}
 	
 	/***
@@ -134,7 +155,24 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	public static File getWorldDirectory(int world) {
-		return new File(baseDir, "saves/World" + world);
+		return getWorldDirectory(world, false);
+	}
+	
+	/***
+	 * Returns a file handle to a base world directory
+	 * @param world
+	 * @param nether
+	 * @return
+	 */
+	public static File getWorldDirectory(int world, boolean nether) {
+		if (nether)
+		{
+			return new File(baseDir, "saves/World" + world + "/DIM-1");
+		}
+		else
+		{
+			return new File(baseDir, "saves/World" + world);
+		}
 	}
 	
 	/***

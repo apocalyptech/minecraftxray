@@ -269,7 +269,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_MOSSY_COBBLESTONE] = (2*16)+4;
 		blockDataToSpriteSheet[BLOCK_OBSIDIAN] = TEXTURE_OBSIDIAN;
 		blockDataToSpriteSheet[BLOCK_TORCH] = 80;
-		blockDataToSpriteSheet[BLOCK_FIRE] = 30;
+		blockDataToSpriteSheet[BLOCK_FIRE] = 16+15;  // previously 30
 		blockDataToSpriteSheet[BLOCK_MOB_SPAWNER] = TEXTURE_SPAWNER;
 		blockDataToSpriteSheet[BLOCK_WOODEN_STAIRS] = 4;  // previously 55
 		blockDataToSpriteSheet[BLOCK_CHEST] = 26;
@@ -308,7 +308,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_NETHERSTONE] = (6*16)+7;
 		blockDataToSpriteSheet[BLOCK_SLOW_SAND] = (6*16)+8;
 		blockDataToSpriteSheet[BLOCK_LIGHTSTONE] = (6*16)+9;
-		//blockDataToSpriteSheet[BLOCK_PORTAL] = ;
+		blockDataToSpriteSheet[BLOCK_PORTAL] = 16+14;
 		blockDataToSpriteSheet[BLOCK_JACK_O_LANTERN] = (7*16)+8;
 	}
 	

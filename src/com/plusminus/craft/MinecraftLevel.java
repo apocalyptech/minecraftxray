@@ -31,14 +31,24 @@ public class MinecraftLevel {
 	private Block playerPos;
 	private float playerYaw;
 	private float playerPitch;
-	
+	private boolean nether;
+
 	
 	/***
 	 * Create a minecraftLevel from the given world
 	 * @param world
 	 */
 	public MinecraftLevel(int world) {
+		this(world, false);
+	}
+	
+	/***
+	 * Create a minecraftLevel from the given world
+	 * @param world
+	 */
+	public MinecraftLevel(int world, boolean nether) {
 		this.world = world;
+		this.nether = nether;
 		this.levelData = new Chunk[LEVEL_MAX_WIDTH][LEVEL_MAX_HEIGHT];
 		File levelFile = new File(MineCraftEnvironment.getWorldDirectory(world), "level.dat");
 		
@@ -50,24 +60,45 @@ public class MinecraftLevel {
 		CompoundTag levelDataData = (CompoundTag) levelData.getTagWithName("Data");
 		CompoundTag levelPlayerData = (CompoundTag) levelDataData.getTagWithName("Player");
 		if(levelPlayerData != null) {
-			ListTag playerPos = (ListTag) levelPlayerData .getTagWithName("Pos");
-			ListTag playerRotation = (ListTag) levelPlayerData .getTagWithName("Rotation");
+			
+			// Figure out what dimension the player's in.  If it matches, move our camera there.
+			IntTag playerDim = (IntTag) levelPlayerData.getTagWithName("Dimension");
+			if ((playerDim.value == 0 && !nether) || (playerDim.value == -1 && nether))
+			{
+				ListTag playerPos = (ListTag) levelPlayerData .getTagWithName("Pos");
+				ListTag playerRotation = (ListTag) levelPlayerData .getTagWithName("Rotation");
+		
+				DoubleTag posX = (DoubleTag) playerPos.value.get(0);
+				DoubleTag posY = (DoubleTag) playerPos.value.get(1);
+				DoubleTag posZ = (DoubleTag) playerPos.value.get(2);
+				
+				FloatTag rotYaw = (FloatTag) playerRotation.value.get(0);
+				FloatTag rotPitch = (FloatTag) playerRotation.value.get(1);
+
+				this.playerPos = new Block((int) -posX.value, (int) -posY.value, (int) -posZ.value);
+				this.playerYaw = rotYaw.value;
+				this.playerPitch = rotPitch.value;
+
+			}
+			else
+			{
+				this.playerPos = new Block(0,0,0);
+				this.playerYaw =0;
+				this.playerPitch = 0;				
+			}
 	
-			DoubleTag posX = (DoubleTag) playerPos.value.get(0);
-			DoubleTag posY = (DoubleTag) playerPos.value.get(1);
-			DoubleTag posZ = (DoubleTag) playerPos.value.get(2);
-			
-			FloatTag rotYaw = (FloatTag) playerRotation.value.get(0);
-			FloatTag rotPitch = (FloatTag) playerRotation.value.get(1);
-			
-			IntTag spawnX = (IntTag) levelDataData.getTagWithName("SpawnX");
-			IntTag spawnY = (IntTag) levelDataData.getTagWithName("SpawnY");
-			IntTag spawnZ = (IntTag) levelDataData.getTagWithName("SpawnZ");
-			
-			this.spawnPoint = new Block(-spawnX.value, -spawnY.value, -spawnZ.value);
-			this.playerPos = new Block((int) -posX.value, (int) -posY.value, (int) -posZ.value);
-			this.playerYaw = rotYaw.value;
-			this.playerPitch = rotPitch.value;
+			// Set the spawn point if we're not in the Nether
+			if (nether)
+			{
+				this.spawnPoint = new Block(0,0,0);				
+			}
+			else
+			{
+				IntTag spawnX = (IntTag) levelDataData.getTagWithName("SpawnX");
+				IntTag spawnY = (IntTag) levelDataData.getTagWithName("SpawnY");
+				IntTag spawnZ = (IntTag) levelDataData.getTagWithName("SpawnZ");
+				this.spawnPoint = new Block(-spawnX.value, -spawnY.value, -spawnZ.value);
+			}
 		} else {
 			this.spawnPoint = new Block(0,0,0);
 			this.playerPos = new Block(0,0,0);
@@ -194,7 +225,7 @@ public class MinecraftLevel {
 		}
 	}
 	public Tag loadChunk(int x, int z) {
-		File chunkFile = MineCraftEnvironment.getChunkFile(world, x,z);
+		File chunkFile = MineCraftEnvironment.getChunkFile(world, x,z, this.nether);
 		if(!chunkFile.exists()) {
 			return null;
 		}
