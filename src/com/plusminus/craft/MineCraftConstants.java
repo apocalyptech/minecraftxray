@@ -47,10 +47,10 @@ public class MineCraftConstants {
 	public static final int TEXTURE_REDSTONE = (3*16) + 3;
 	public static final int TEXTURE_SPAWNER = (4*16) + 1;
 	public static final int TEXTURE_CLAY = (4*16)+8;
-	public static final int[] TEXTURE_ORES = new int[] {TEXTURE_COAL, TEXTURE_IRON, TEXTURE_GOLD, TEXTURE_DIAMOND, TEXTURE_REDSTONE, TEXTURE_SPAWNER, TEXTURE_CLAY};
-	public static final String[] ORES_DESCRIPTION = new String[] {"Coal", "Iron", "Gold", "Diamond", "Redstone", "Spawner", "Clay"};
-	/*public static final int[] TEXTURE_ORES = new int[] {TEXTURE_COAL, TEXTURE_IRON, TEXTURE_GOLD, TEXTURE_DIAMOND, TEXTURE_CLAY, TEXTURE_SPAWNER};
-	public static final String[] ORES_DESCRIPTION = new String[] {"Coal", "Iron", "Gold", "Diamond", "Clay", "Spawner"};*/
+	public static final int TEXTURE_PUMPKIN = (7*16)+7;
+	public static final int TEXTURE_OBSIDIAN = (2*16)+5;
+	public static final int[] TEXTURE_ORES = new int[] {TEXTURE_CLAY, TEXTURE_PUMPKIN, TEXTURE_OBSIDIAN, TEXTURE_COAL, TEXTURE_IRON, TEXTURE_GOLD, TEXTURE_DIAMOND, TEXTURE_REDSTONE, TEXTURE_SPAWNER};
+	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Diamond", "Redstone", "Spawner"};
 	
 	public static final int TEXTURE_WATER = 207;
 	public static final int TEXTURE_TORCH = 5*16;
@@ -267,7 +267,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_TNT] = 8;
 		blockDataToSpriteSheet[BLOCK_BOOKSHELF] = 35;
 		blockDataToSpriteSheet[BLOCK_MOSSY_COBBLESTONE] = (2*16)+4;
-		blockDataToSpriteSheet[BLOCK_OBSIDIAN] = (2*16)+5;
+		blockDataToSpriteSheet[BLOCK_OBSIDIAN] = TEXTURE_OBSIDIAN;
 		blockDataToSpriteSheet[BLOCK_TORCH] = 80;
 		blockDataToSpriteSheet[BLOCK_FIRE] = 30;
 		blockDataToSpriteSheet[BLOCK_MOB_SPAWNER] = TEXTURE_SPAWNER;
@@ -304,7 +304,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_REED] = 73;
 		blockDataToSpriteSheet[BLOCK_JUKEBOX] = (4*16)+10;
 		blockDataToSpriteSheet[BLOCK_FENCE] = 4;
-		blockDataToSpriteSheet[BLOCK_PUMPKIN] = (7*16)+7;
+		blockDataToSpriteSheet[BLOCK_PUMPKIN] = TEXTURE_PUMPKIN;
 		blockDataToSpriteSheet[BLOCK_NETHERSTONE] = (6*16)+7;
 		blockDataToSpriteSheet[BLOCK_SLOW_SAND] = (6*16)+8;
 		blockDataToSpriteSheet[BLOCK_LIGHTSTONE] = (6*16)+9;

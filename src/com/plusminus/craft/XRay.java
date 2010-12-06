@@ -1100,17 +1100,29 @@ public class XRay {
 	 * Draw the mineral toggles
 	 */
 	private void drawMineralToggle() {
-		//float barWidth = 128+10+32;
-		float barWidth = 96+10+32;
-		float mineralTogglebarLength = mineralToggleTextures.length * barWidth;
-		float startX = (screenWidth / 2.0f) - (mineralTogglebarLength/2.0f);
+		int barWidth = 128+10+32;
+		int barHeight = 42;
+		int maxCols = 5;
+		float mineralTogglebarLength = (mineralToggleTextures.length % maxCols) * barWidth;
+		float curX = (screenWidth / 2.0f) - (mineralTogglebarLength/2.0f);
+		float curY = screenHeight - barHeight;
+		if (mineralToggleTextures.length > maxCols)
+		{
+			curY -= barHeight;
+		}
 		
 		for(int i=0;i<mineralToggleTextures.length;i++) {
+			if (i == mineralToggleTextures.length - maxCols)
+			{
+				mineralTogglebarLength = maxCols * barWidth;
+				curY += barHeight;
+				curX = (screenWidth / 2.0f) - (mineralTogglebarLength/2.0f);
+			}
 			if(mineralToggle[i]) {
 				GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 				SpriteTool.drawCurrentSprite(
-						startX + (barWidth*i) - 2, screenHeight-42 -2, 
+						curX - 2, curY -2, 
 						36, 36, 
 						MineCraftConstants.precalcSpriteSheetToTextureX[TEXTURE_ORES[i]], 
 						MineCraftConstants.precalcSpriteSheetToTextureY[TEXTURE_ORES[i]],
@@ -1123,7 +1135,7 @@ public class XRay {
 			}
 			minecraftTexture.bind();
 			SpriteTool.drawCurrentSprite(
-					startX + (barWidth*i), screenHeight-42, 
+					curX, curY, 
 					32, 32, 
 					MineCraftConstants.precalcSpriteSheetToTextureX[TEXTURE_ORES[i]], 
 					MineCraftConstants.precalcSpriteSheetToTextureY[TEXTURE_ORES[i]],
@@ -1131,7 +1143,8 @@ public class XRay {
 					MineCraftConstants.precalcSpriteSheetToTextureY[TEXTURE_ORES[i]]+TEX16
 			);
 			
-			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i], startX + (barWidth*i) + 32 + 10, screenHeight-35);
+			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i], curX + 32 + 10, curY+7);
+			curX += barWidth;
 		}
 	}
 	/***
