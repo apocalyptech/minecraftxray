@@ -72,7 +72,7 @@ public class XRay {
 	// are we full screen
     private boolean fullscreen 			= false; 
     // window title
-    private final String app_version    = "2.7 Maintenance Branch 1";
+    private final String app_version    = "2.7 Maintenance Branch 2";
     private final String app_name       = "Minecraft X-Ray";
     private final String windowTitle 	= app_name + " " + app_version; 
 
@@ -719,18 +719,18 @@ public class XRay {
 	        }
         }
         
-        if(Keyboard.isKeyDown(Keyboard.KEY_F10) && keyPressed != Keyboard.KEY_F10) {    // Is F1 Being Pressed?
+        if(Keyboard.isKeyDown(Keyboard.KEY_F10) && keyPressed != Keyboard.KEY_F10) {    // Is F10 Being Pressed?
         	keyPressed = Keyboard.KEY_F10;                                     
             switchFullScreenMode();                                   // Toggle Fullscreen / Windowed Mode
         }
         
-        if(Keyboard.isKeyDown(Keyboard.KEY_F9) && keyPressed != Keyboard.KEY_F9) {    // Is F1 Being Pressed?
-        	keyPressed = Keyboard.KEY_F9;                                     
+        if(Keyboard.isKeyDown(Keyboard.KEY_F) && keyPressed != Keyboard.KEY_F) {    // Is F9 Being Pressed?
+        	keyPressed = Keyboard.KEY_F;                                     
           
             setLightMode(!lightMode); // toggle torch
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_F8) && keyPressed != Keyboard.KEY_F8) {    // Is F1 Being Pressed?
-        	keyPressed = Keyboard.KEY_F8;                                     
+        if(Keyboard.isKeyDown(Keyboard.KEY_H) && keyPressed != Keyboard.KEY_H) {    // Is F8 Being Pressed?
+        	keyPressed = Keyboard.KEY_H;                                     
             highlightOres = !highlightOres;                                  					// Toggle torch
         }
         if(Keyboard.isKeyDown(Keyboard.KEY_HOME) && keyPressed != Keyboard.KEY_HOME) {    // Is HOME Being Pressed?
@@ -989,16 +989,24 @@ public class XRay {
         }
         
         // draw the visible world
-    	 
+		int chunk_range = visible_chunk_range;
+		if (HIGHLIGHT_RANGES[currentHighlightDistance] < chunk_range)
+		{
+			chunk_range = HIGHLIGHT_RANGES[currentHighlightDistance];
+		} 
+        
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glColor3f(1.0f,1.0f,1.0f); 
         minecraftTexture.bind();
-    	for(int lx=currentLevelX-visible_chunk_range;lx<currentLevelX+visible_chunk_range;lx++) {
+        for(int lx=currentLevelX-visible_chunk_range;lx<currentLevelX+visible_chunk_range;lx++) {
     		for(int lz=currentLevelZ-visible_chunk_range;lz<currentLevelZ+visible_chunk_range;lz++) {
     			Chunk k = level.getChunk(lx, lz);
     	        
     			if(k != null)
+    			{
     				k.renderSolid();
+    				k.renderSelected(this.mineralToggle);
+    			}
     		}
     	}
     	for(int lx=currentLevelX-visible_chunk_range;lx<currentLevelX+visible_chunk_range;lx++) {
@@ -1011,11 +1019,7 @@ public class XRay {
 
     	
     	if(highlightOres) {
-    		int chunk_range = visible_chunk_range;
-    		if (HIGHLIGHT_RANGES[currentHighlightDistance] < chunk_range)
-    		{
-    			chunk_range = HIGHLIGHT_RANGES[currentHighlightDistance];
-    		}
+
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 			long time = System.currentTimeMillis();
 			float alpha = (time % 1000) / 1000.0f;
