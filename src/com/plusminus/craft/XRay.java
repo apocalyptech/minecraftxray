@@ -72,7 +72,7 @@ public class XRay {
 	// are we full screen
     private boolean fullscreen 			= false; 
     // window title
-    private final String app_version    = "2.7 Maintenance Branch 2";
+    private final String app_version    = "2.7 Maintenance Branch 3";
     private final String app_name       = "Minecraft X-Ray";
     private final String windowTitle 	= app_name + " " + app_version; 
 
@@ -826,55 +826,73 @@ public class XRay {
         }
     }
     
- 
-    
     /***
-     * Load a map chunk and draw the progress to the screen
+     * Load a map chunk and draw the progress to the screen.  Note that we don't actually
+     * run the mainloop while doing this, which is a bit Off, but lets us read in the map
+     * as quickly as possible, rather than having it slaved to the mainloop time.  Specifically,
+     * we want to avoid calling the Display.update() function if we don't have to.
      */
     private void loadMapPart() {
-    	Block b = mapChunksToLoad.pop();
-    	drawMapChunkToMap(b.x, b.z);
-    	float progress= 1.0f - ((float) mapChunksToLoad.size() / (float) totalMapChunks);
     	
-    	float bx = 100;
-    	float ex = screenWidth-100;
-    	float by = (screenHeight/2.0f)-50;
-    	float ey = (screenHeight/2.0f)+50;
+    	long curtime = Sys.getTime();
+    	long interval = Sys.getTimerResolution() / 30; // Update the status bar 30 times a second
     	
-    	float px = ((ex-bx)*progress) + bx;
-    	setOrthoOn();
-
-    	GL11.glDisable(GL11.GL_BLEND);
-    	GL11.glDisable(GL11.GL_TEXTURE_2D);
-    	GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    	GL11.glLineWidth(20);
-    	
-    	// progress bar outer box
-    	GL11.glBegin(GL11.GL_LINE_LOOP);
-    		GL11.glVertex2f(bx, by);
-    		GL11.glVertex2f(ex, by);
-    		GL11.glVertex2f(ex, ey);    
-    		GL11.glVertex2f(bx, ey);
-    	GL11.glEnd();
-    	
-    	// progress bar 'progress'
-    	GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glVertex2f(bx, by);
-			GL11.glVertex2f(px, by);
-			GL11.glVertex2f(bx, ey);
-			GL11.glVertex2f(px, ey);
-    	GL11.glEnd();
-    	
-    	GL11.glEnable(GL11.GL_BLEND);
-    	GL11.glEnable(GL11.GL_TEXTURE_2D);
-    	setOrthoOff();
-    
-    	if(mapChunksToLoad.isEmpty()) {
-    		mapLoaded = true;
-    		drawMapMarkersToMinimap();
-    		minimapTexture.update();
-    		setLightMode(true); // basically enable fog etc
+    	while (!mapChunksToLoad.isEmpty()) {
+	
+	    	Block b = mapChunksToLoad.pop();
+	    	drawMapChunkToMap(b.x, b.z);
+	
+	    	if ((Sys.getTime()-curtime) > interval)
+	    	{
+	    		handleInput(0);
+	    		if (done)
+	    		{
+	    			return;
+	    		}
+	    		curtime = Sys.getTime();
+		    	float progress= 1.0f - ((float) mapChunksToLoad.size() / (float) totalMapChunks);
+		    	
+		    	float bx = 100;
+		    	float ex = screenWidth-100;
+		    	float by = (screenHeight/2.0f)-50;
+		    	float ey = (screenHeight/2.0f)+50;
+		    	
+		    	float px = ((ex-bx)*progress) + bx;
+		    	setOrthoOn();
+		
+		    	GL11.glDisable(GL11.GL_BLEND);
+		    	GL11.glDisable(GL11.GL_TEXTURE_2D);
+		    	GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		    	GL11.glLineWidth(20);
+		    	
+		    	// progress bar outer box
+		    	GL11.glBegin(GL11.GL_LINE_LOOP);
+		    		GL11.glVertex2f(bx, by);
+		    		GL11.glVertex2f(ex, by);
+		    		GL11.glVertex2f(ex, ey);    
+		    		GL11.glVertex2f(bx, ey);
+		    	GL11.glEnd();
+		    	
+		    	// progress bar 'progress'
+		    	GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+					GL11.glVertex2f(bx, by);
+					GL11.glVertex2f(px, by);
+					GL11.glVertex2f(bx, ey);
+					GL11.glVertex2f(px, ey);
+		    	GL11.glEnd();
+		    	
+		    	GL11.glEnable(GL11.GL_BLEND);
+		    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+		    	setOrthoOff();
+		    	
+		    	Display.update();
+	    	}
     	}
+	    	
+   		mapLoaded = true;
+   		drawMapMarkersToMinimap();
+   		minimapTexture.update();
+   		setLightMode(true); // basically enable fog etc
     }
     
     /***
