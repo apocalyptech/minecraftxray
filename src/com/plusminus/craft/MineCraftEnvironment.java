@@ -224,23 +224,31 @@ public class MineCraftEnvironment {
 	 */
 	public static BufferedImage getMinecraftTexture() {
 		BufferedImage bi = buildImageFromInput(getMinecraftTextureData());
-		Graphics2D g2d = bi.createGraphics();
-		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f);
 		
-		// First greenify grass
-		Rectangle rect = new Rectangle(0, 0, 16, 16); // TODO: Make this work for any size that the app supports
-		g2d.setComposite(ac);
-		g2d.setColor(Color.green);
-		g2d.fill(rect);
-		g2d.drawImage(bi, null, 0, 0);
-		
-		// Now greenify leaves
-		rect = new Rectangle(64, 48, 32, 16); // TODO: Make this work for any size that the app supports
-		g2d.setComposite(ac);
-		g2d.setColor(Color.green);
-		g2d.fill(rect);
-		g2d.drawImage(bi, null, 0, 0);
-		
+		// TODO: It doesn't look like Minecraft actually supports biome grass/leaf coloring for higher-res
+		// texture packs, so right now we're not going to greenify anything but 16x16 packs.  When/if
+		// Minecraft supports that, we should update this.  Also it would be nice to get proper Biome
+		// coloring in here, though from the looks of it, it's more trouble than I'm willing to spend.
+		int square_width = bi.getWidth()/16;
+		if (square_width == 16)
+		{	
+			Graphics2D g2d = bi.createGraphics();
+			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f);
+			
+			// First greenify grass
+			Rectangle rect = new Rectangle(0, 0, square_width, square_width);
+			g2d.setComposite(ac);
+			g2d.setColor(Color.green);
+			g2d.fill(rect);
+			g2d.drawImage(bi, null, 0, 0);
+			
+			// Now greenify leaves
+			rect = new Rectangle(4*square_width, 3*square_width, 2*square_width, square_width);
+			g2d.setComposite(ac);
+			g2d.setColor(Color.green);
+			g2d.fill(rect);
+			g2d.drawImage(bi, null, 0, 0);
+		}
 		return bi;
 	}
 	
