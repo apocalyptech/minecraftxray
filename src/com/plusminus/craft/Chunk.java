@@ -215,7 +215,7 @@ public class Chunk {
 		return isSolid(block) == transpararency;
 	}
 	
-	public void renderWorld(boolean transparency, boolean onlySelected, boolean[] selectedMap) {
+	public void renderWorld(boolean transparency, boolean render_bedrock, boolean onlySelected, boolean[] selectedMap) {
 		float worldX = this.x*16;
 		float worldZ = this.z*16;
 		for(int x=0;x<16;x++) {
@@ -255,69 +255,139 @@ public class Chunk {
 					boolean draw = false;
 					
 					if(!onlySelected) {
-						// check above
 						boolean above = true;
-						if(y<127 && checkSolid(blockData.value[blockOffset+1], transparency)) {
-							draw = true;
-							above = false;
-						}
-						
-						// check below
 						boolean below = true;
-						if(y>0 && checkSolid(blockData.value[blockOffset-1], transparency)) {
-							draw = true;
-							below = false;
-						}
-						
-						// check left;
 						boolean left = true;
-						if(x>0 && checkSolid(blockData.value[blockOffset-BLOCKSPERCOLUMN], transparency)) {
-							draw = true;
-							left = false;
-						} else if(x==0 && this.x > -63) {
-							Chunk leftChunk = level.getChunk(this.x-1, this.z);
-							if(leftChunk != null && checkSolid(leftChunk.getBlock(15, y, z), transparency)) {
+						boolean right = true;
+						boolean near = true;
+						boolean far = true;
+
+						if (render_bedrock && textureId == MineCraftConstants.TEXTURE_BEDROCK)
+						{
+							// This block of code was more or less copied/modified directly from the "else" block
+							// below - should see if there's a way we can abstract this instead.  Also, I suspect
+							// that this is where we'd fix water rendering...
+							
+							// check above
+							if(y<127 && blockData.value[blockOffset+1] != MineCraftConstants.BLOCK_BEDROCK) {
+								draw = true;
+								above = false;
+							}
+							
+							// check below
+							if(y>0 && blockData.value[blockOffset-1] != MineCraftConstants.BLOCK_BEDROCK) {
+								draw = true;
+								below = false;
+							}
+							
+							// check left;
+							if(x>0 && blockData.value[blockOffset-BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK_BEDROCK) {
 								draw = true;
 								left = false;
+							} else if(x==0 && this.x > -63) {
+								Chunk leftChunk = level.getChunk(this.x-1, this.z);
+								if(leftChunk != null && leftChunk.getBlock(15, y, z) != MineCraftConstants.BLOCK_BEDROCK) {
+									draw = true;
+									left = false;
+								}
 							}
-						}
-					
-						// check right
-						boolean right = true;
-						if(x<15 && checkSolid(blockData.value[blockOffset+BLOCKSPERCOLUMN], transparency)) {
-							draw = true;
-							right = false;
-						} else if(x==15 && this.x < 63) {
-							Chunk rightChunk = level.getChunk(this.x+1,this.z);
-							if(rightChunk != null && checkSolid(rightChunk.getBlock(0, y, z), transparency)) {
+						
+							// check right
+							if(x<15 && blockData.value[blockOffset+BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK_BEDROCK) {
 								draw = true;
 								right = false;
+							} else if(x==15 && this.x < 63) {
+								Chunk rightChunk = level.getChunk(this.x+1,this.z);
+								if(rightChunk != null && rightChunk.getBlock(0, y, z) != MineCraftConstants.BLOCK_BEDROCK) {
+									draw = true;
+									right = false;
+								}
 							}
-						}
-						
-						// check near
-						boolean near = true;
-						if(z>0 && checkSolid(blockData.value[blockOffset-BLOCKSPERROW], transparency)) {
-							draw = true;
-							near = false;
-						} else if(z==0 && this.z > -63) {
-							Chunk nearChunk = level.getChunk(this.x,this.z-1);
-							if(nearChunk != null && checkSolid(nearChunk.getBlock(x, y, 15), transparency)) {
+							
+							// check near
+							if(z>0 && blockData.value[blockOffset-BLOCKSPERROW] != MineCraftConstants.BLOCK_BEDROCK) {
 								draw = true;
 								near = false;
+							} else if(z==0 && this.z > -63) {
+								Chunk nearChunk = level.getChunk(this.x,this.z-1);
+								if(nearChunk != null && nearChunk.getBlock(x, y, 15) != MineCraftConstants.BLOCK_BEDROCK) {
+									draw = true;
+									near = false;
+								}
 							}
-						}
-						
-						// check far
-						boolean far = true;
-						if(z<15 && checkSolid(blockData.value[blockOffset+BLOCKSPERROW], transparency)) {
-							draw = true;
-							far = false;
-						} else if(z==15 && this.z < 63) {
-							Chunk farChunk = level.getChunk(this.x,this.z+1);
-							if(farChunk != null && checkSolid(farChunk.getBlock(x, y, 0), transparency)) {
+							
+							// check far
+							if(z<15 && blockData.value[blockOffset+BLOCKSPERROW] != MineCraftConstants.BLOCK_BEDROCK) {
 								draw = true;
 								far = false;
+							} else if(z==15 && this.z < 63) {
+								Chunk farChunk = level.getChunk(this.x,this.z+1);
+								if(farChunk != null && farChunk.getBlock(x, y, 0) != MineCraftConstants.BLOCK_BEDROCK) {
+									draw = true;
+									far = false;
+								}
+							}
+						}
+						else
+						{
+							// check above
+							if(y<127 && checkSolid(blockData.value[blockOffset+1], transparency)) {
+								draw = true;
+								above = false;
+							}
+							
+							// check below
+							if(y>0 && checkSolid(blockData.value[blockOffset-1], transparency)) {
+								draw = true;
+								below = false;
+							}
+							
+							// check left;
+							if(x>0 && checkSolid(blockData.value[blockOffset-BLOCKSPERCOLUMN], transparency)) {
+								draw = true;
+								left = false;
+							} else if(x==0 && this.x > -63) {
+								Chunk leftChunk = level.getChunk(this.x-1, this.z);
+								if(leftChunk != null && checkSolid(leftChunk.getBlock(15, y, z), transparency)) {
+									draw = true;
+									left = false;
+								}
+							}
+						
+							// check right
+							if(x<15 && checkSolid(blockData.value[blockOffset+BLOCKSPERCOLUMN], transparency)) {
+								draw = true;
+								right = false;
+							} else if(x==15 && this.x < 63) {
+								Chunk rightChunk = level.getChunk(this.x+1,this.z);
+								if(rightChunk != null && checkSolid(rightChunk.getBlock(0, y, z), transparency)) {
+									draw = true;
+									right = false;
+								}
+							}
+							
+							// check near
+							if(z>0 && checkSolid(blockData.value[blockOffset-BLOCKSPERROW], transparency)) {
+								draw = true;
+								near = false;
+							} else if(z==0 && this.z > -63) {
+								Chunk nearChunk = level.getChunk(this.x,this.z-1);
+								if(nearChunk != null && checkSolid(nearChunk.getBlock(x, y, 15), transparency)) {
+									draw = true;
+									near = false;
+								}
+							}
+							
+							// check far
+							if(z<15 && checkSolid(blockData.value[blockOffset+BLOCKSPERROW], transparency)) {
+								draw = true;
+								far = false;
+							} else if(z==15 && this.z < 63) {
+								Chunk farChunk = level.getChunk(this.x,this.z+1);
+								if(farChunk != null && checkSolid(farChunk.getBlock(x, y, 0), transparency)) {
+									draw = true;
+									far = false;
+								}
 							}
 						}
 						
@@ -361,13 +431,13 @@ public class Chunk {
 		}
 	}
 	
-	public void renderSolid() {
+	public void renderSolid(boolean render_bedrock) {
 		if(isDirty) {
 				GL11.glNewList(this.displayListNum, GL11.GL_COMPILE);
-				renderWorld(false, false, null);
+				renderWorld(false, render_bedrock, false, null);
 				GL11.glEndList();
 				GL11.glNewList(this.transparentListNum, GL11.GL_COMPILE);
-				renderWorld(true, false, null);
+				renderWorld(true, false, false, null);
 				GL11.glEndList();
 				this.isDirty = false;
 		}
@@ -381,7 +451,7 @@ public class Chunk {
 	public void renderSelected(boolean[] selectedMap) {
 		if(isSelectedDirty) {
 			GL11.glNewList(this.selectedDisplayListNum, GL11.GL_COMPILE);
-			renderWorld(false, true, selectedMap);
+			renderWorld(false, false, true, selectedMap);
 			GL11.glEndList();
 			this.isSelectedDirty = false;
 		}

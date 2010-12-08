@@ -49,6 +49,7 @@ public class MineCraftConstants {
 	public static final int TEXTURE_CLAY = (4*16)+8;
 	public static final int TEXTURE_PUMPKIN = (7*16)+7;
 	public static final int TEXTURE_OBSIDIAN = (2*16)+5;
+	public static final int TEXTURE_BEDROCK = 17;
 	public static final int[] TEXTURE_ORES = new int[] {TEXTURE_CLAY, TEXTURE_PUMPKIN, TEXTURE_OBSIDIAN, TEXTURE_COAL, TEXTURE_IRON, TEXTURE_GOLD, TEXTURE_DIAMOND, TEXTURE_REDSTONE, TEXTURE_SPAWNER};
 	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Diamond", "Redstone", "Spawner"};
 	
@@ -240,7 +241,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_COBBLESTONE] = 16;
 		blockDataToSpriteSheet[BLOCK_WOOD] = 4;
 		blockDataToSpriteSheet[BLOCK_SAPLING] = 15;
-		blockDataToSpriteSheet[BLOCK_BEDROCK] = 17;
+		blockDataToSpriteSheet[BLOCK_BEDROCK] = TEXTURE_BEDROCK;
 		blockDataToSpriteSheet[BLOCK_WATER] = 207;
 		blockDataToSpriteSheet[BLOCK_STATIONARY_WATER] = 207;
 		blockDataToSpriteSheet[BLOCK_LAVA] = 239;

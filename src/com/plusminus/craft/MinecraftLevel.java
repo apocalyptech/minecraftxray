@@ -214,12 +214,20 @@ public class MinecraftLevel {
 		}
 	}
 	
-	
+
 	public void invalidateSelected() {
+		this.invalidateSelected(false);
+	}
+
+	public void invalidateSelected(boolean main_dirty) {
 		for(int x=0;x<LEVEL_MAX_WIDTH;x++) {
 			for(int y=0;y<LEVEL_MAX_HEIGHT;y++) {
 				if(this.levelData[x][y] != null) {
 					this.levelData[x][y].isSelectedDirty = true;
+					if (main_dirty)
+					{
+						this.levelData[x][y].isDirty = true;
+					}
 				}
 			}
 		}

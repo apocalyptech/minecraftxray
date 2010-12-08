@@ -96,7 +96,8 @@ public class XRay {
     private Texture minimapTexture;
     private Texture minimapArrowTexture;
     
-   
+    // Whether or not we're showing bedrock
+    private boolean render_bedrock = false;
     
     // the minecraft level we are exploring
     private MinecraftLevel level;
@@ -748,7 +749,7 @@ public class XRay {
         	incLightLevel();                             					// Increase Light Level
         }
         if(Keyboard.isKeyDown(Keyboard.KEY_EQUALS) && keyPressed != Keyboard.KEY_EQUALS) {    // Is PLUS Being Pressed?
-        	keyPressed = Keyboard.KEY_EQUALS;                                     
+         	keyPressed = Keyboard.KEY_EQUALS;                                     
         	incLightLevel();                             					// Increase Light Level
         }
         if(Keyboard.isKeyDown(Keyboard.KEY_MINUS) && keyPressed != Keyboard.KEY_MINUS) {    // Is PLUS Being Pressed?
@@ -762,6 +763,11 @@ public class XRay {
         if(Keyboard.isKeyDown(Keyboard.KEY_GRAVE) && keyPressed != Keyboard.KEY_GRAVE) {    // toggle level info
         	keyPressed = Keyboard.KEY_GRAVE;                                     
         	levelInfoToggle = !levelInfoToggle;                             					// toggle level info
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_B) && keyPressed != Keyboard.KEY_B) { // Toggle bedrock rendering
+        	keyPressed = Keyboard.KEY_B;
+        	render_bedrock = !render_bedrock;
+    		invalidateSelectedChunks(true);
         }
 
         // handle chunk ranges
@@ -799,9 +805,14 @@ public class XRay {
 	        }
         }
 	}
+
 	
 	private void invalidateSelectedChunks() {
-    	level.invalidateSelected();
+    	level.invalidateSelected(false);
+	}
+
+	private void invalidateSelectedChunks(boolean main_dirty) {
+    	level.invalidateSelected(main_dirty);
 	}
 	
 	private void setLightMode(boolean lightMode) {
@@ -1024,7 +1035,7 @@ public class XRay {
     	        
     			if(k != null)
     			{
-    				k.renderSolid();
+    				k.renderSolid(render_bedrock);
     				k.renderSelected(this.mineralToggle);
     			}
     		}
