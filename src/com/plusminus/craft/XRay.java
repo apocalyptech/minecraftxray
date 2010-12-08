@@ -637,6 +637,8 @@ public class XRay {
 	       
 	        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 	        	MOVEMENT_SPEED = 20.0f;
+	        } else if (Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+	        	MOVEMENT_SPEED = 3.0f;
 	        } else {
 	        	MOVEMENT_SPEED = 10.0f;
 	        }
