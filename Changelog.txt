@@ -1,0 +1,32 @@
+
+  * Camera speed is now controlled by the left and right mouse buttons,
+    instead of left and right shift.
+  * "Fast" camera speed has been given another 50% speed boost
+
+Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
+
+  * Initial level loading should be much faster now
+  * "B" key will toggle the bedrock layer on/off
+  * Right-Shift will SLOW the camera motion (contrary to Left-Shift, which
+    still speeds it up)
+  * Texture packs higher than 16x16 texture size should show up correctly
+    again.
+
+Minecraft X-Ray 2.7 Maintenance Branch 2 (2010.12.07)
+
+  * "Fullbright" toggle is now triggered with the "F" key
+  * Ore highlight toggle works again, and is triggered with the "H" key
+
+Minecraft X-Ray 2.7 Maintenance Branch 1 (2010.12.06)
+
+  * Grass and Leaves appear green again (though they don't show biome-
+    specific coloring)
+  * Many previously-broken blocks now show up correctly
+  * Nether worlds are selectable
+  * "Esc" will let go of the mouse instead of exiting; click to re-grab.
+  * Windowed mode by default
+  * Ctrl-Q will quit
+  * The numbers 1 through 7 will control how far out the app will highlight
+    the specified resources.  The default is much closer than it had been
+    previously.
+  * Clay, Obsidian, and Pumpkins are now highlightable

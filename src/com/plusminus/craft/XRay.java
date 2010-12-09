@@ -72,7 +72,7 @@ public class XRay {
 	// are we full screen
     private boolean fullscreen 			= false; 
     // window title
-    private final String app_version    = "2.7 Maintenance Branch 3";
+    private final String app_version    = "2.7 Maintenance Branch 4";
     private final String app_name       = "Minecraft X-Ray";
     private final String windowTitle 	= app_name + " " + app_version; 
 
@@ -636,9 +636,9 @@ public class XRay {
         		camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
         	}
 	       
-	        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-	        	MOVEMENT_SPEED = 20.0f;
-	        } else if (Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        	if (Mouse.isButtonDown(0)) {
+	        	MOVEMENT_SPEED = 30.0f;
+	        } else if (Mouse.isButtonDown(1)) {
 	        	MOVEMENT_SPEED = 3.0f;
 	        } else {
 	        	MOVEMENT_SPEED = 10.0f;
