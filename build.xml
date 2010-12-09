@@ -4,7 +4,7 @@
 	</description>
 
 	<!-- Project attributes -->
-	<property name="maint_branch" value="3"/>
+	<property name="maint_branch" value="4"/>
 	<property name="export_base" value="minecraft_xray_2.7_mb_${maint_branch}"/>
 	
 	<!-- set global properties for this build -->
@@ -61,6 +61,7 @@
 			</fileset>
 			<fileset dir=".">
 				<include name="Changelog.txt" />
+				<include name="BUILDING.txt" />
 			</fileset>
 		</copy>
 		
