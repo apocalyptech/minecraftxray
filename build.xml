@@ -1,0 +1,106 @@
+<project name="XRay" default="dist" basedir=".">
+	<description>
+		Minecraft X-Ray
+	</description>
+
+	<!-- Project attributes -->
+	<property name="maint_branch" value="3"/>
+	<property name="export_base" value="minecraft_xray_2.7_mb_${maint_branch}"/>
+	
+	<!-- set global properties for this build -->
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist_base" location="dist"/>
+	<property name="dist"  location="${dist_base}/${export_base}"/>
+	<property name="dist_src"  location="${dist_base}/${export_base}_src"/>
+	
+	<!-- Yeah, yeah, CVS is lame. -->
+	<property name="cvsroot"  value=":ext:pez@mcp:/usr/local/cvs"/>
+	<property name="cvs_project_name"  value="xray"/>
+	<property name="cvs_version_tag"  value="XRAY_2_7_MB_${maint_branch}"/>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}"/>
+	</target>
+	
+	<target name="compile" depends="init"
+			description="compile the source " >
+		<!-- Compile the java code from ${src} into ${build} -->
+
+		<javac srcdir="${src}" destdir="${build}">
+			<classpath>
+				<fileset dir="lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>		
+	</target>
+	
+	<target name="prepare_distdir" depends="compile"
+	        description="prepares the distribution directories for release" >
+		<!-- Create the distribution directories -->
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist_src}"/>
+		
+		<!-- Put everything in ${build} into xray.jar file -->
+		<jar jarfile="${dist}/xray.jar" basedir="${build}"/>
+		
+		<!-- Dump all our support libraries, launchers, etc in the distdir -->
+		<copy todir="${dist}">
+			<fileset dir="lib">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="lib/native">
+				<include name="*.*" />
+			</fileset>
+			<fileset dir="support">
+				<include name="*.*" />
+			</fileset>
+			<fileset dir=".">
+				<include name="Changelog.txt" />
+			</fileset>
+		</copy>
+		
+		<!-- Mark the UNIXy ones as executable -->
+		<chmod perm="a+x">
+			<fileset dir="${dist}">
+				<include name="minecraft_xray_osx.command" />
+				<include name="minecraft_xray.sh" />
+			</fileset>
+		</chmod>
+		
+		<!-- While we're at it, archive the source dir in there too. -->
+		<cvs cvsRoot="${cvsroot}" command="export -d src" dest="${dist}" tag="${cvs_version_tag}" package="${cvs_project_name}" />
+		
+		<!-- Now copy sources over to the source-only distro -->
+		<copy todir="${dist_src}">
+			<fileset dir="${dist}/src">
+				<include name="**/*" />
+				<exclude name="lib/" />
+			</fileset>
+		</copy>
+		
+	</target>
+	
+	<target name="dist" depends="prepare_distdir"
+	        description="generate the distribution" >
+		
+		<!-- Create our zipfiles, both "binary" and source. -->
+		<zip destfile="${dist_base}/${export_base}.zip" basedir="${dist_base}" includes="${export_base}/"/>
+		<zip destfile="${dist_base}/${export_base}_src.zip" basedir="${dist_base}" includes="${export_base}_src/"/>
+		
+	</target>
+		
+	<target name="clean"
+	        description="clean up" >
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete file="${dist_base}/${export_base}.zip"/>
+		<delete file="${dist_base}/${export_base}_src.zip"/>
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+		<delete dir="${dist_src}"/>
+	</target>
+</project>
