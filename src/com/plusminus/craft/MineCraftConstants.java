@@ -39,9 +39,6 @@ public class MineCraftConstants {
 	public static final long MILLISPERSECOND 	= 1000;
 	public static final long NANOSPERMILLIS 	= NANOSPERSECOND / MILLISPERSECOND;
 	
-	public static final int TEXTURE_WATER = 207;
-	public static final int TEXTURE_TORCH = 5*16;
-	
 	public static final int TYPE_WATER = 8;
 	public static final int TYPE_WATER_STATIONARY = 9;
 	public static final int TYPE_LAVA = 10;
