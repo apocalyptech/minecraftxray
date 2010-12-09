@@ -126,14 +126,14 @@ public class Chunk {
 	}
 	
 	public boolean isSolid(byte i) {
-		if((i == 0) || (i == TYPE_WATER) || (i == TYPE_WATER_STATIONARY) || (i == TYPE_TORCH) || (i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY)) {
+		if((i == 0) || (i == TYPE_WATER) || (i == TYPE_WATER_STATIONARY) || (i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY) || (BLOCK_TYPE_MAP.get(i) == BLOCK_TYPES.TORCH)) {
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public void renderTorch(int xxx, int yyy, int zzz) {
+	public void renderTorch(int xxx, int yyy, int zzz, int block_type) {
 		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
 		 byte data = getData(xxx, yyy, zzz);
 		 switch (data) {
@@ -163,10 +163,26 @@ public class Chunk {
 		 float bx,by;
 		 float ex,ey;
 		 
-		 bx = 0.0f+TEX64;
-		 by = 5.0f / 16.0f;
-		 ex = bx + TEX16-TEX32;
-		 ey = by + TEX16;
+		 switch(block_type)
+		 {
+		 	case MineCraftConstants.BLOCK_REDSTONE_TORCH_ON:		 		
+				bx = (TEX16*3) + 0.0f+TEX64;
+				by = TEX16 + (5.0f / 16.0f);
+				ex = bx + TEX16-TEX32;
+				ey = by + TEX16;
+		 		break;
+		 	case MineCraftConstants.BLOCK_REDSTONE_TORCH_OFF:
+				bx = (TEX16*3) + 0.0f+TEX64;
+				by = (TEX16*2) + (5.0f / 16.0f);
+				ex = bx + TEX16-TEX32;
+				ey = by + TEX16;
+		 		break;
+		 	default:
+		 		bx = 0.0f+TEX64;
+		 		by = 5.0f / 16.0f;
+		 		ex = bx + TEX16-TEX32;
+		 		ey = by + TEX16;
+		 }
 		 
 		 
 		// GL11.glDisable(GL11.GL_CULL_FACE);
@@ -231,9 +247,9 @@ public class Chunk {
 						continue;
 					}
 					
-					if(t == TYPE_TORCH) {
+					/*if(t == TYPE_TORCH) {
 						//System.out.println("Torch: " + getData(x,y,z));
-					}
+					}*/
 					
 					int textureId = blockDataToSpriteSheet[t];
 					
@@ -391,20 +407,23 @@ public class Chunk {
 							}
 						}
 						
-						if(t == TYPE_TORCH) {
-							renderTorch(x,y,z);
-						} else {
-							// if we have to draw this block
-							if(draw) {
-								if(!near) this.renderFarNear(textureId, worldX+x, y, worldZ+z);
-								if(!far) this.renderFarNear(textureId, worldX+x, y, worldZ+z+1);
-								
-								if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
-								if(!above) this.renderTopDown(textureId, worldX+x, y+1, worldZ+z);	
-								
-								if(!left) this.renderLeftRight(textureId, worldX+x, y, worldZ+z);
-								if(!right) this.renderLeftRight(textureId, worldX+x+1, y, worldZ+z);
-							}
+						switch(BLOCK_TYPE_MAP.get(t))
+						{
+							case TORCH:
+								renderTorch(x,y,z,t);
+								break;
+							default:
+								// if we have to draw this block
+								if(draw) {
+									if(!near) this.renderFarNear(textureId, worldX+x, y, worldZ+z);
+									if(!far) this.renderFarNear(textureId, worldX+x, y, worldZ+z+1);
+									
+									if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
+									if(!above) this.renderTopDown(textureId, worldX+x, y+1, worldZ+z);	
+									
+									if(!left) this.renderLeftRight(textureId, worldX+x, y, worldZ+z);
+									if(!right) this.renderLeftRight(textureId, worldX+x+1, y, worldZ+z);
+								}
 						}
 					} else {
 						draw = false;

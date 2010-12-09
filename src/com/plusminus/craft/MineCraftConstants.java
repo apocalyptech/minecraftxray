@@ -2,6 +2,7 @@ package com.plusminus.craft;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.HashMap;
 
 /***
  * Precalcs and the like
@@ -45,7 +46,15 @@ public class MineCraftConstants {
 	public static final int TYPE_WATER_STATIONARY = 9;
 	public static final int TYPE_LAVA = 10;
 	public static final int TYPE_LAVA_STATIONARY = 11;
-	public static final int TYPE_TORCH = 50;
+	
+	// Types of blocks
+	public static enum BLOCK_TYPES {
+		NORMAL,
+		TORCH
+	}
+	
+	// This HashMap determines how we draw various block types
+	public static HashMap<Byte, BLOCK_TYPES> BLOCK_TYPE_MAP = new HashMap<Byte, BLOCK_TYPES>();
 	
 	public static final int BLOCK_STONE = 1;
 	public static final int BLOCK_GRASS = 2;
@@ -146,6 +155,24 @@ public class MineCraftConstants {
 		initBlockColorsTable();
 		initBlockDatatoSpriteSheetIndexTable();
 		initSpriteSheetToTextureTable();
+		initBlockTypes();
+	}
+	
+	/***
+	 * Initializes our BLOCK_TYPE_MAP HashMap, which determines how we render various blocks
+	 */
+	public static void initBlockTypes() {
+		// First seed the array with "normal" so we don't have to catch NullPointerExceptions
+		int i;
+		for (i=Byte.MIN_VALUE; i<=Byte.MAX_VALUE; i++)
+		{
+			BLOCK_TYPE_MAP.put((byte)i, BLOCK_TYPES.NORMAL);
+		}
+		
+		// Now our actual type values
+		BLOCK_TYPE_MAP.put((byte)BLOCK_TORCH, BLOCK_TYPES.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_ON, BLOCK_TYPES.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_OFF, BLOCK_TYPES.TORCH);
 	}
 	
 	   /***

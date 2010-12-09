@@ -4,6 +4,7 @@
   * "Fast" camera speed has been given another 50% speed boost
   * (internal) Add in Ant build.xml to automate releasing
   * (internal) Ore highlights are specified by block type, not texture type
+  * Redstone torches now render like regular torches do
 
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
 
