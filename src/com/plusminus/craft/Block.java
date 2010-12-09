@@ -2,6 +2,8 @@ package com.plusminus.craft;
 
 
 import static com.plusminus.craft.MineCraftConstants.*;
+import java.lang.Thread;
+import java.lang.StackTraceElement;
 /**
  * @author Vincent Vollers
  *
@@ -15,29 +17,12 @@ public class Block implements Comparable<Block> {
 	public int y;
 	public int z;
 	public int t;
-	public boolean isMineral;
-	
+
 	public Block(int x, int y, int z) {
-		this(x,y,z,0);
-	}
-	public Block(int x, int y, int z, int t) {
 		this.x =x;
 		this.y =y;
 		this.z =z;
-		this.t =t;
-		testMineral();
 	}
-	
-	public void testMineral() {
-		this.isMineral = false;
-		for(int i=0;i<TEXTURE_ORES.length; i++) {
-			if(TEXTURE_ORES[i] == t) {
-				this.isMineral = true;
-				break;
-			}
-		}
-	}
-	
 	
 	public int compareTo(Block a) {
 		// TODO Auto-generated method stub
@@ -76,7 +61,7 @@ public class Block implements Comparable<Block> {
 		return this.x == p.x && this.y == p.y && this.z == p.z;
 	}
 	public String toString() {
-		return "Point( x=" + x + ", y=" + y + ", z=" + z + ", t=" +t + ", isMineral=" + isMineral + ")";
+		return "Point( x=" + x + ", y=" + y + ", z=" + z + ")";
 	}
 
 

@@ -2,6 +2,8 @@
   * Camera speed is now controlled by the left and right mouse buttons,
     instead of left and right shift.
   * "Fast" camera speed has been given another 50% speed boost
+  * (internal) Add in Ant build.xml to automate releasing
+  * (internal) Ore highlights are specified by block type, not texture type
 
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
 

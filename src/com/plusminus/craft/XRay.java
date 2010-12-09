@@ -339,8 +339,8 @@ public class XRay {
 	private void initialize() {
 		// init the precalc tables
 
-		mineralToggle = new boolean[TEXTURE_ORES.length];
-		mineralToggleTextures = new Texture[TEXTURE_ORES.length];
+		mineralToggle = new boolean[HIGHLIGHT_ORES.length];
+		mineralToggleTextures = new Texture[HIGHLIGHT_ORES.length];
 				
 		// world display list
 		worldDisplayListNum = GL11.glGenLists(1);
@@ -388,7 +388,7 @@ public class XRay {
 			}
 			
 			// mineral textures
-			for(int i=0;i<TEXTURE_ORES.length;i++) {
+			for(int i=0;i<HIGHLIGHT_ORES.length;i++) {
 				mineralToggleTextures[i] = TextureTool.allocateTexture(128,32);
 				Graphics2D g = mineralToggleTextures[i].getImage().createGraphics();
 				g.setFont(ARIALFONT);
@@ -525,29 +525,6 @@ public class XRay {
     		System.exit(0);
     	}
     }
-    
-    /***
-     * Adds a 'side' to a 'side collection', but it will not overwrite minerals
-     * @param side
-     * @param collection
-     */
-    private void addBlockSide(Block side, TreeSet<Block> collection) {
-    	if(collection.contains(side)) {
-    		if(!side.isMineral) {
-    			return; // no need to overwrite if its not a mineral
-    		}
-    		Block collectionSide = collection.floor(side);
-
-    		if(collectionSide.isMineral) { // no need to overwrite if it already is a mineral
-    			return;
-    		}
-    		
-    		collection.remove(collectionSide);
-    		collection.add(side);
-    	} else {
-    		collection.add(side);
-    	}
-    }     
     
     private void setChunkRange(int n) {
     	if(n >= CHUNK_RANGES.length) n = CHUNK_RANGES.length-1;
@@ -1225,10 +1202,10 @@ public class XRay {
 				SpriteTool.drawCurrentSprite(
 						curX - 2, curY -2, 
 						36, 36, 
-						MineCraftConstants.precalcSpriteSheetToTextureX[TEXTURE_ORES[i]], 
-						MineCraftConstants.precalcSpriteSheetToTextureY[TEXTURE_ORES[i]],
-						MineCraftConstants.precalcSpriteSheetToTextureX[TEXTURE_ORES[i]]+TEX16,
-						MineCraftConstants.precalcSpriteSheetToTextureY[TEXTURE_ORES[i]]+TEX16
+						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]], 
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]],
+						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]]+TEX16,
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]]+TEX16
 				);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 			} else {
@@ -1238,10 +1215,10 @@ public class XRay {
 			SpriteTool.drawCurrentSprite(
 					curX, curY, 
 					32, 32, 
-					MineCraftConstants.precalcSpriteSheetToTextureX[TEXTURE_ORES[i]], 
-					MineCraftConstants.precalcSpriteSheetToTextureY[TEXTURE_ORES[i]],
-					MineCraftConstants.precalcSpriteSheetToTextureX[TEXTURE_ORES[i]]+TEX16,
-					MineCraftConstants.precalcSpriteSheetToTextureY[TEXTURE_ORES[i]]+TEX16
+					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]], 
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]],
+					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]]+TEX16,
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]]+TEX16
 			);
 			
 			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i], curX + 32 + 10, curY+7);

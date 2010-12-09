@@ -38,21 +38,6 @@ public class MineCraftConstants {
 	public static final long MILLISPERSECOND 	= 1000;
 	public static final long NANOSPERMILLIS 	= NANOSPERSECOND / MILLISPERSECOND;
 	
-	// TEXTURE_ORES defines the kinds of blocks that we'll highlight.  Note that it's keyed off of the *texture* that we show, not the block type,
-	// which could potentially have some issues if we're showing the same texture for more than one block type (as with wood).
-	public static final int TEXTURE_COAL = (2*16) + 2;
-	public static final int TEXTURE_IRON = (2*16) + 1;
-	public static final int TEXTURE_GOLD = (2*16) + 0;
-	public static final int TEXTURE_DIAMOND = (3*16) + 2;
-	public static final int TEXTURE_REDSTONE = (3*16) + 3;
-	public static final int TEXTURE_SPAWNER = (4*16) + 1;
-	public static final int TEXTURE_CLAY = (4*16)+8;
-	public static final int TEXTURE_PUMPKIN = (7*16)+7;
-	public static final int TEXTURE_OBSIDIAN = (2*16)+5;
-	public static final int TEXTURE_BEDROCK = 17;
-	public static final int[] TEXTURE_ORES = new int[] {TEXTURE_CLAY, TEXTURE_PUMPKIN, TEXTURE_OBSIDIAN, TEXTURE_COAL, TEXTURE_IRON, TEXTURE_GOLD, TEXTURE_DIAMOND, TEXTURE_REDSTONE, TEXTURE_SPAWNER};
-	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Diamond", "Redstone", "Spawner"};
-	
 	public static final int TEXTURE_WATER = 207;
 	public static final int TEXTURE_TORCH = 5*16;
 	
@@ -138,6 +123,15 @@ public class MineCraftConstants {
 	public static final int BLOCK_LIGHTSTONE = 89;
 	public static final int BLOCK_PORTAL = 90;
 	public static final int BLOCK_JACK_O_LANTERN = 91;
+	
+	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
+	// TODO: Really, redstone should highlight whether it's glowing or not - that's the one situation
+	// where it's a bit nicer to highlight based on texture rather than block type (which is what X-Ray
+	// used to do before the Maintenance Branch changed things around).  Because you'll only get glowing
+	// restone ore when you're actually LOOKING at it in-game, though, I feel okay leaving it the way
+	// it is.
+	public static final int[] HIGHLIGHT_ORES = new int[] {BLOCK_CLAY, BLOCK_PUMPKIN, BLOCK_OBSIDIAN, BLOCK_COAL_ORE, BLOCK_IRON_ORE, BLOCK_GOLD_ORE, BLOCK_DIAMOND_ORE, BLOCK_REDSTONE_ORE, BLOCK_MOB_SPAWNER};
+	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Diamond", "Redstone", "Spawner"};
 	
 	public static final Block[] SURROUNDINGBLOCKS = new Block[] { 
     	new Block(+1,0,0),
@@ -225,6 +219,16 @@ public class MineCraftConstants {
 		blockColors[BLOCK_CLAY] = new Color(151,157,169);
 		blockColors[BLOCK_REED] = new Color(100,67,50);
 	}
+	public static final int TEXTURE_COAL = (2*16) + 2;
+	public static final int TEXTURE_IRON = (2*16) + 1;
+	public static final int TEXTURE_GOLD = (2*16) + 0;
+	public static final int TEXTURE_DIAMOND = (3*16) + 2;
+	public static final int TEXTURE_REDSTONE = (3*16) + 3;
+	public static final int TEXTURE_SPAWNER = (4*16) + 1;
+	public static final int TEXTURE_CLAY = (4*16)+8;
+	public static final int TEXTURE_PUMPKIN = (7*16)+7;
+	public static final int TEXTURE_OBSIDIAN = (2*16)+5;
+	public static final int TEXTURE_BEDROCK = 17;
     
     /***
      * block data to sprite sheet texture index
@@ -241,16 +245,16 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_COBBLESTONE] = 16;
 		blockDataToSpriteSheet[BLOCK_WOOD] = 4;
 		blockDataToSpriteSheet[BLOCK_SAPLING] = 15;
-		blockDataToSpriteSheet[BLOCK_BEDROCK] = TEXTURE_BEDROCK;
+		blockDataToSpriteSheet[BLOCK_BEDROCK] = 17;
 		blockDataToSpriteSheet[BLOCK_WATER] = 207;
 		blockDataToSpriteSheet[BLOCK_STATIONARY_WATER] = 207;
 		blockDataToSpriteSheet[BLOCK_LAVA] = 239;
 		blockDataToSpriteSheet[BLOCK_STATIONARY_LAVA] = 239;
 		blockDataToSpriteSheet[BLOCK_SAND] = 18;
 		blockDataToSpriteSheet[BLOCK_GRAVEL] = 19;
-		blockDataToSpriteSheet[BLOCK_GOLD_ORE] = TEXTURE_GOLD;
-		blockDataToSpriteSheet[BLOCK_IRON_ORE] = TEXTURE_IRON;
-		blockDataToSpriteSheet[BLOCK_COAL_ORE] = TEXTURE_COAL;
+		blockDataToSpriteSheet[BLOCK_GOLD_ORE] = (2*16) + 0;
+		blockDataToSpriteSheet[BLOCK_IRON_ORE] = (2*16) + 1;
+		blockDataToSpriteSheet[BLOCK_COAL_ORE] = (2*16) + 2;
 		blockDataToSpriteSheet[BLOCK_LOG] = 20;
 		blockDataToSpriteSheet[BLOCK_LEAVES] = 53;
 		blockDataToSpriteSheet[BLOCK_SPONGE] = 52;
@@ -268,14 +272,14 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_TNT] = 8;
 		blockDataToSpriteSheet[BLOCK_BOOKSHELF] = 35;
 		blockDataToSpriteSheet[BLOCK_MOSSY_COBBLESTONE] = (2*16)+4;
-		blockDataToSpriteSheet[BLOCK_OBSIDIAN] = TEXTURE_OBSIDIAN;
+		blockDataToSpriteSheet[BLOCK_OBSIDIAN] = (2*16)+5;
 		blockDataToSpriteSheet[BLOCK_TORCH] = 80;
 		blockDataToSpriteSheet[BLOCK_FIRE] = 16+15;  // previously 30
-		blockDataToSpriteSheet[BLOCK_MOB_SPAWNER] = TEXTURE_SPAWNER;
+		blockDataToSpriteSheet[BLOCK_MOB_SPAWNER] = (4*16) + 1;
 		blockDataToSpriteSheet[BLOCK_WOODEN_STAIRS] = 4;  // previously 55
 		blockDataToSpriteSheet[BLOCK_CHEST] = 26;
 		blockDataToSpriteSheet[BLOCK_REDSTONE_WIRE] = 100;
-		blockDataToSpriteSheet[BLOCK_DIAMOND_ORE] = TEXTURE_DIAMOND;
+		blockDataToSpriteSheet[BLOCK_DIAMOND_ORE] = (3*16) + 2;
 		blockDataToSpriteSheet[BLOCK_DIAMOND_BLOCK] = 24;
 		blockDataToSpriteSheet[BLOCK_WORKBENCH] = 25;
 		blockDataToSpriteSheet[BLOCK_CROPS] = (5*16)+15;
@@ -292,7 +296,7 @@ public class MineCraftConstants {
 	    blockDataToSpriteSheet[BLOCK_STONE_PRESSURE_PLATE] = 6;  // perhaps this is best left out actually
 		blockDataToSpriteSheet[BLOCK_IRON_DOOR] = (6*16)+2;
 		blockDataToSpriteSheet[BLOCK_WOODEN_PRESSURE_PLATE] = 4;  // perhaps this is best left out actually
-		blockDataToSpriteSheet[BLOCK_REDSTONE_ORE] = TEXTURE_REDSTONE;
+		blockDataToSpriteSheet[BLOCK_REDSTONE_ORE] = (3*16) + 3;
 		blockDataToSpriteSheet[BLOCK_GLOWING_REDSTONE_ORE] = 51;
 		blockDataToSpriteSheet[BLOCK_REDSTONE_TORCH_OFF] = (7*16)+3;
 		blockDataToSpriteSheet[BLOCK_REDSTONE_TORCH_ON] = (6*16)+3;
@@ -301,11 +305,11 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_ICE] = 67;
 		blockDataToSpriteSheet[BLOCK_SNOW_BLOCK] = 66;
 		blockDataToSpriteSheet[BLOCK_CACTUS] = 70;
-		blockDataToSpriteSheet[BLOCK_CLAY] = TEXTURE_CLAY;
+		blockDataToSpriteSheet[BLOCK_CLAY] = (4*16)+8;
 		blockDataToSpriteSheet[BLOCK_REED] = 73;
 		blockDataToSpriteSheet[BLOCK_JUKEBOX] = (4*16)+10;
 		blockDataToSpriteSheet[BLOCK_FENCE] = 4;
-		blockDataToSpriteSheet[BLOCK_PUMPKIN] = TEXTURE_PUMPKIN;
+		blockDataToSpriteSheet[BLOCK_PUMPKIN] = (7*16)+7;
 		blockDataToSpriteSheet[BLOCK_NETHERSTONE] = (6*16)+7;
 		blockDataToSpriteSheet[BLOCK_SLOW_SAND] = (6*16)+8;
 		blockDataToSpriteSheet[BLOCK_LIGHTSTONE] = (6*16)+9;

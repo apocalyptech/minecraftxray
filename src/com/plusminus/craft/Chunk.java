@@ -262,7 +262,7 @@ public class Chunk {
 						boolean near = true;
 						boolean far = true;
 
-						if (render_bedrock && textureId == MineCraftConstants.TEXTURE_BEDROCK)
+						if (render_bedrock && t == MineCraftConstants.BLOCK_BEDROCK)
 						{
 							// This block of code was more or less copied/modified directly from the "else" block
 							// below - should see if there's a way we can abstract this instead.  Also, I suspect
@@ -409,7 +409,7 @@ public class Chunk {
 					} else {
 						draw = false;
 						for(int i=0;i<selectedMap.length;i++) {
-							if(selectedMap[i] && TEXTURE_ORES[i] == textureId) {
+							if(selectedMap[i] && HIGHLIGHT_ORES[i] == t) {
 								draw = true;
 								break;
 							}
