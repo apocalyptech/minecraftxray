@@ -126,64 +126,18 @@ public class Chunk {
 	}
 	
 	public boolean isSolid(byte i) {
-		if((i == 0) || (i == TYPE_WATER) || (i == TYPE_WATER_STATIONARY) || (i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY) || (BLOCK_TYPE_MAP.get(i) == BLOCK_TYPES.TORCH)) {
+		BLOCK_TYPE block_type = BLOCK_TYPE_MAP.get(i);
+		if((i == 0) || (i == TYPE_WATER) || (i == TYPE_WATER_STATIONARY) ||
+				(i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY) ||
+				(block_type == BLOCK_TYPE.TORCH) || (block_type == BLOCK_TYPE.UPRIGHT) ||
+				(block_type == BLOCK_TYPE.CROPS)) {
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public void renderTorch(int xxx, int yyy, int zzz, int block_type) {
-		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
-		 byte data = getData(xxx, yyy, zzz);
-		 switch (data) {
-		 case 1:
-			 x1 -= 0.125; x2 -= 0.5;
-			 yy = 3/16.0f; break;
-		 case 2:
-			 x1 += 0.125; x2 += 0.5;
-			 yy = 3/16.0f; break;
-		 case 3:
-			 z1 -= 0.125; z2 -= 0.5;
-			 yy = 3/16.0f; break;
-		 case 4:
-			 z1 += 0.125; z2 += 0.5;
-			 yy = 3/16.0f; break;
-		 }
-		 //Light(chunk, x, y, z);
-		 float x = xxx + this.x*16 -0.5f;
-		 float z = zzz + this.z*16 -0.5f;
-		 float y = yyy - 0.5f;
-		 /*
-		  * 
-		  *  RectangleF rect = new RectangleF(x / 16.0f + 0.00004f, y / 16.0f + 0.00004f,
-1 / 16.0f - 0.00008f, 1 / 16.0f - 0.00008f);
-		  */
-		 
-		 float bx,by;
-		 float ex,ey;
-		 
-		 switch(block_type)
-		 {
-		 	case MineCraftConstants.BLOCK_REDSTONE_TORCH_ON:		 		
-				bx = (TEX16*3) + 0.0f+TEX64;
-				by = TEX16 + (5.0f / 16.0f);
-				ex = bx + TEX16-TEX32;
-				ey = by + TEX16;
-		 		break;
-		 	case MineCraftConstants.BLOCK_REDSTONE_TORCH_OFF:
-				bx = (TEX16*3) + 0.0f+TEX64;
-				by = (TEX16*2) + (5.0f / 16.0f);
-				ex = bx + TEX16-TEX32;
-				ey = by + TEX16;
-		 		break;
-		 	default:
-		 		bx = 0.0f+TEX64;
-		 		by = 5.0f / 16.0f;
-		 		ex = bx + TEX16-TEX32;
-		 		ey = by + TEX16;
-		 }
-		 
+	public void renderSpecial(float bx, float by, float ex, float ey, float x, float y, float z, float yy, float x1, float x2, float z1, float z2) {
 		 
 		// GL11.glDisable(GL11.GL_CULL_FACE);
 		 //GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -221,7 +175,147 @@ public class Chunk {
 		 
 		 GL11.glEnd();
 		 //GL11.glEnable(GL11.GL_DEPTH_TEST);
-		 //GL11.glEnable(GL11.GL_CULL_FACE);
+		 //GL11.glEnable(GL11.GL_CULL_FACE);	
+	}
+	
+	public void renderTorch(int xxx, int yyy, int zzz, int block_type) {
+		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
+		 byte data = getData(xxx, yyy, zzz);
+		 switch (data) {
+		 case 1:
+			 x1 -= 0.125; x2 -= 0.5;
+			 yy = 3/16.0f; break;
+		 case 2:
+			 x1 += 0.125; x2 += 0.5;
+			 yy = 3/16.0f; break;
+		 case 3:
+			 z1 -= 0.125; z2 -= 0.5;
+			 yy = 3/16.0f; break;
+		 case 4:
+			 z1 += 0.125; z2 += 0.5;
+			 yy = 3/16.0f; break;
+		 }
+		 //Light(chunk, x, y, z);
+		 float x = xxx + this.x*16 -0.5f;
+		 float z = zzz + this.z*16 -0.5f;
+		 float y = yyy - 0.5f;
+		 /*
+		  * 
+		  *  RectangleF rect = new RectangleF(x / 16.0f + 0.00004f, y / 16.0f + 0.00004f,
+1 / 16.0f - 0.00008f, 1 / 16.0f - 0.00008f);
+		  */
+		 
+		 float bx,by;
+		 float ex,ey;
+		 
+		 switch(block_type)
+		 {
+		 	case MineCraftConstants.BLOCK_REDSTONE_TORCH_ON:		 		
+				bx = (TEX16*3) + TEX64;
+				by = TEX16 + (5.0f / 16.0f);
+		 		break;
+		 	case MineCraftConstants.BLOCK_REDSTONE_TORCH_OFF:
+				bx = (TEX16*3) + TEX64;
+				by = (TEX16*2) + (5.0f / 16.0f);
+		 		break;
+		 	default:
+		 		bx = 0.0f+TEX64;
+		 		by = 5.0f / 16.0f;
+		 }
+		 ex = bx + TEX16-TEX32;
+		 ey = by + TEX16;
+		 
+		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
+	}
+	
+	/***
+	 * Yanked wholesale from renderTorch
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 * @param block_type
+	 */
+	public void renderUpright(int xxx, int yyy, int zzz, int block_type) {
+		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
+		 //Light(chunk, x, y, z);
+		 float x = xxx + this.x*16 -0.5f;
+		 float z = zzz + this.z*16 -0.5f;
+		 float y = yyy - 0.5f;
+		 
+		 float bx,by;
+		 float ex,ey;
+		 
+		 switch(block_type)
+		 {
+		 	case MineCraftConstants.BLOCK_SAPLING:		 		
+				bx = .9375f + TEX64; // 12/16
+				by = 0;
+		 		break;
+		 	case MineCraftConstants.BLOCK_RED_ROSE:		 		
+				bx = .75f + TEX64; // 12/16
+				by = 0;
+		 		break;
+		 	case MineCraftConstants.BLOCK_YELLOW_FLOWER:		 		
+				bx = .8125f + TEX64; // 13/16
+				by = 0;
+		 		break;
+		 	case MineCraftConstants.BLOCK_RED_MUSHROOM:
+				bx = .75f + TEX64; // 12/16
+				by = .0625f; // 1/16
+		 		break;
+		 	case MineCraftConstants.BLOCK_BROWN_MUSHROOM:
+		 	default:
+		 		bx = .8125f + TEX64; // 13/16
+		 		by = .0625f; // 1/16
+		 }		 
+ 		 ex = bx + TEX16-TEX32;
+ 		 ey = by + TEX16;
+
+ 		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
+	}
+
+	public void renderCrops(int xxx, int yyy, int zzz) {
+		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
+		 float x = xxx + this.x*16 -0.5f;
+		 float z = zzz + this.z*16 -0.5f;
+		 float y = yyy - 0.5f;
+		 
+		 float bx,by;
+		 float ex,ey;
+
+		 byte data = getData(xxx, yyy, zzz);
+		 switch(data)
+		 {
+		 	case 7:
+		 		bx = .9375f; // 15/16
+		 		break;
+		 	case 6:
+		 		bx = .875f; // 14/16
+		 		break;
+		 	case 5:
+		 		bx = .8125f; // 13/16
+		 		break;
+		 	case 4:
+		 		bx = .75f; // 12/16
+		 		break;
+		 	case 3:
+		 		bx = .6875f; // 11/16
+		 		break;
+		 	case 2:
+		 		bx = .625f; // 10/16
+		 		break;
+		 	case 1:
+		 		bx = .5625f; // 9/16
+		 		break;
+		 	case 0:
+		 	default:
+		 		bx = 0.5f; // 8/16
+		 }
+		 by = .3125f; // 5/16
+		 ex = bx + TEX16;
+		 ey = by + TEX16;
+		 
+		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
 	}
 	
 	public boolean checkSolid(byte block, boolean transpararency) {
@@ -411,6 +505,12 @@ public class Chunk {
 						{
 							case TORCH:
 								renderTorch(x,y,z,t);
+								break;
+							case UPRIGHT:
+								renderUpright(x,y,z,t);
+								break;
+							case CROPS:
+								renderCrops(x,y,z);
 								break;
 							default:
 								// if we have to draw this block

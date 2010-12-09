@@ -4,8 +4,9 @@
   * "Fast" camera speed has been given another 50% speed boost
   * (internal) Add in Ant build.xml to automate releasing
   * (internal) Ore highlights are specified by block type, not texture type
-  * Redstone torches now render like regular torches do
-
+  * The following render more-correctly: redstone torches, crops, mushrooms,
+    flowers, planted saplings.
+  
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
 
   * Initial level loading should be much faster now

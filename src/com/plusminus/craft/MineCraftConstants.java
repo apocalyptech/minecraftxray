@@ -45,13 +45,15 @@ public class MineCraftConstants {
 	public static final int TYPE_LAVA_STATIONARY = 11;
 	
 	// Types of blocks
-	public static enum BLOCK_TYPES {
+	public static enum BLOCK_TYPE {
 		NORMAL,
-		TORCH
+		TORCH,
+		UPRIGHT,
+		CROPS
 	}
 	
 	// This HashMap determines how we draw various block types
-	public static HashMap<Byte, BLOCK_TYPES> BLOCK_TYPE_MAP = new HashMap<Byte, BLOCK_TYPES>();
+	public static HashMap<Byte, BLOCK_TYPE> BLOCK_TYPE_MAP = new HashMap<Byte, BLOCK_TYPE>();
 	
 	public static final int BLOCK_STONE = 1;
 	public static final int BLOCK_GRASS = 2;
@@ -163,13 +165,19 @@ public class MineCraftConstants {
 		int i;
 		for (i=Byte.MIN_VALUE; i<=Byte.MAX_VALUE; i++)
 		{
-			BLOCK_TYPE_MAP.put((byte)i, BLOCK_TYPES.NORMAL);
+			BLOCK_TYPE_MAP.put((byte)i, BLOCK_TYPE.NORMAL);
 		}
 		
 		// Now our actual type values
-		BLOCK_TYPE_MAP.put((byte)BLOCK_TORCH, BLOCK_TYPES.TORCH);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_ON, BLOCK_TYPES.TORCH);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_OFF, BLOCK_TYPES.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_TORCH, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_ON, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_OFF, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_RED_MUSHROOM, BLOCK_TYPE.UPRIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_BROWN_MUSHROOM, BLOCK_TYPE.UPRIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_RED_ROSE, BLOCK_TYPE.UPRIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_YELLOW_FLOWER, BLOCK_TYPE.UPRIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_SAPLING, BLOCK_TYPE.UPRIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_CROPS, BLOCK_TYPE.CROPS);
 	}
 	
 	   /***
