@@ -1,6 +1,6 @@
 
-  * Camera speed is now controlled by the left and right mouse buttons,
-    instead of left and right shift.
+  * Camera speed can be controlled by the left and right mouse buttons,
+    in addition to left and right shift.
   * "Fast" camera speed has been given another 50% speed boost
   * (internal) Add in Ant build.xml to automate releasing
   * (internal) Ore highlights are specified by block type, not texture type

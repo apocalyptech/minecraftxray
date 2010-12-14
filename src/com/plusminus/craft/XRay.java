@@ -613,9 +613,9 @@ public class XRay {
         		camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
         	}
 	       
-        	if (Mouse.isButtonDown(0)) {
+        	if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 	        	MOVEMENT_SPEED = 30.0f;
-	        } else if (Mouse.isButtonDown(1)) {
+	        } else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
 	        	MOVEMENT_SPEED = 3.0f;
 	        } else {
 	        	MOVEMENT_SPEED = 10.0f;
