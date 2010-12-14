@@ -290,8 +290,9 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_IRON_ORE] = (2*16) + 1;
 		blockDataToSpriteSheet[BLOCK_COAL_ORE] = (2*16) + 2;
 		blockDataToSpriteSheet[BLOCK_LOG] = 20;
-		blockDataToSpriteSheet[BLOCK_LEAVES] = 53;
-		blockDataToSpriteSheet[BLOCK_SPONGE] = 52;
+		blockDataToSpriteSheet[BLOCK_LEAVES] = (3*16)+5; // The "correct" one is actually +4, but with the current transparency
+														 // rendering glitches, the non-transparent texture looks better.
+		blockDataToSpriteSheet[BLOCK_SPONGE] = (3*16);
 		blockDataToSpriteSheet[BLOCK_GLASS] = 49;
 		blockDataToSpriteSheet[BLOCK_GRAY_CLOTH] = 64;		
 		blockDataToSpriteSheet[BLOCK_YELLOW_FLOWER] = 13;
