@@ -136,7 +136,27 @@ public class Chunk {
 		return true;
 	}
 	
-	public void renderSpecial(float bx, float by, float ex, float ey, float x, float y, float z, float yy, float x1, float x2, float z1, float z2) {
+	/**
+	 * Renders a "special" block; AKA something that's not just an ordinary cube.
+	 * Alters the geometry based on its input, which lets us do funky things to
+	 * torches and the like.  Basically it draws four "faces" of the object.
+	 * Note that the torch graphic also draws a little "cap" on the end.
+	 * 
+	 * @param bx Texture Beginning-X coordinate (inside the texture PNG)
+	 * @param by Texture Beginning-Y coordinate
+	 * @param ex Texture Ending-X coordinate
+	 * @param ey Texture Ending-Y coordinate
+	 * @param x Absolute X position of block
+	 * @param y Absolute Y position of block
+	 * @param z Absolute Z position of block
+	 * @param yy
+	 * @param x1
+	 * @param x2
+	 * @param z1
+	 * @param z2
+	 * @param torch Do we draw the "special" torch tips?
+	 */
+	public void renderSpecial(float bx, float by, float ex, float ey, float x, float y, float z, float yy, float x1, float x2, float z1, float z2, boolean torch) {
 		 
 		// GL11.glDisable(GL11.GL_CULL_FACE);
 		 //GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -164,13 +184,16 @@ public class Chunk {
 		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+1.0f, 	y+yy+1.0f, 	z+z1+7/16.0f+TEX64);
 		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+1.0f, 	y+yy, 		z+z2+7/16.0f-TEX64);
 		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2, 		y+yy, 		z+z2+7/16.0f-TEX64);
-		 x1 *= 2.125f; z1 *= 2.125f;
 		
-		 GL11.glNormal3f(0.0f, 1.0f, 0.0f);
-		 GL11.glTexCoord2f(bx+TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
-		 GL11.glTexCoord2f(ex-TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
-		 GL11.glTexCoord2f(ex-TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
-		 GL11.glTexCoord2f(bx+TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
+		 if (torch)
+		 {
+			 x1 *= 2.125f; z1 *= 2.125f;
+			 GL11.glNormal3f(0.0f, 1.0f, 0.0f);
+			 GL11.glTexCoord2f(bx+TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
+			 GL11.glTexCoord2f(ex-TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
+			 GL11.glTexCoord2f(ex-TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
+			 GL11.glTexCoord2f(bx+TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
+		 }
 		 
 		 GL11.glEnd();
 		 //GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -224,7 +247,7 @@ public class Chunk {
 		 ex = bx + TEX16-TEX32;
 		 ey = by + TEX16;
 		 
-		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
+		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, true);
 	}
 	
 	/***
@@ -270,7 +293,7 @@ public class Chunk {
  		 ex = bx + TEX16-TEX32;
  		 ey = by + TEX16;
 
- 		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
+ 		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
 	}
 	
 	public void renderDecorationFull(int xxx, int yyy, int zzz, int block_type) {
@@ -279,6 +302,9 @@ public class Chunk {
 		 float x = xxx + this.x*16 -0.5f;
 		 float z = zzz + this.z*16 -0.5f;
 		 float y = yyy - 0.5f;
+		 System.out.println("xxx, yyy, zzz: " + xxx + ", " + yyy + ", " + zzz);
+		 System.out.println("x, y, z: " + x + ", " + y + ", " + z);
+		 System.out.println("---");
 		 
 		 float bx,by;
 		 float ex,ey;
@@ -294,7 +320,7 @@ public class Chunk {
 		 ex = bx + TEX16;
 		 ey = by + TEX16;
 
-		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
+		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
 	}
 	
 	public void renderCrops(int xxx, int yyy, int zzz) {
@@ -338,7 +364,31 @@ public class Chunk {
 		 ex = bx + TEX16;
 		 ey = by + TEX16;
 		 
-		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
+		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
+	}
+
+	public void renderLadder(int xxx, int yyy, int zzz, int block_type) {
+		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
+		 //Light(chunk, x, y, z);
+		 float x = xxx + this.x*16 -0.5f;
+		 float z = zzz + this.z*16 -0.5f;
+		 float y = yyy - 0.5f;
+		 
+		 float bx,by;
+		 float ex,ey;
+		 
+		 switch(block_type)
+		 {
+		 	case MineCraftConstants.BLOCK_REED:
+	 		default:
+				bx = .5625f; // 9/16
+				by = .25f; // 4/16
+		 		break;
+		 }		 
+		 ex = bx + TEX16;
+		 ey = by + TEX16;
+
+		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
 	}
 	
 	public boolean checkSolid(byte block, boolean transpararency) {
@@ -537,6 +587,9 @@ public class Chunk {
 								break;
 							case CROPS:
 								renderCrops(x,y,z);
+								break;
+							case LADDER:
+								renderLadder(x,y,z,t);
 								break;
 							default:
 								// if we have to draw this block

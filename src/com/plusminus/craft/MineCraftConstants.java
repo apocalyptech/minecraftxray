@@ -50,7 +50,8 @@ public class MineCraftConstants {
 		TORCH,
 		DECORATION_SMALL,
 		DECORATION_FULL,
-		CROPS
+		CROPS,
+		LADDER
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -180,6 +181,7 @@ public class MineCraftConstants {
 		BLOCK_TYPE_MAP.put((byte)BLOCK_SAPLING, BLOCK_TYPE.DECORATION_SMALL);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_REED, BLOCK_TYPE.DECORATION_FULL);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_CROPS, BLOCK_TYPE.CROPS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_LADDER, BLOCK_TYPE.LADDER);
 	}
 	
 	   /***
