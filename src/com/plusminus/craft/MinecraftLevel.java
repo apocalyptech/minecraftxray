@@ -52,16 +52,16 @@ public class MinecraftLevel {
 		this.levelData = new Chunk[LEVEL_MAX_WIDTH][LEVEL_MAX_HEIGHT];
 		File levelFile = new File(MineCraftEnvironment.getWorldDirectory(world), "level.dat");
 		
-		
 		CompoundTag levelData = (CompoundTag) DTFReader.readDTFFile(levelFile);
 		
-	//	System.out.println(levelData.toString());
+		//	System.out.println(levelData.toString());
 		
 		CompoundTag levelDataData = (CompoundTag) levelData.getTagWithName("Data");
 		CompoundTag levelPlayerData = (CompoundTag) levelDataData.getTagWithName("Player");
 		if(levelPlayerData != null) {
 			
 			// Figure out what dimension the player's in.  If it matches, move our camera there.
+			// TODO: if playerDim is null, perhaps we should move the camera to the spawnpoint...
 			IntTag playerDim = (IntTag) levelPlayerData.getTagWithName("Dimension");
 			if (playerDim != null && ((playerDim.value == 0 && !nether) || (playerDim.value == -1 && nether)))
 			{

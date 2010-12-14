@@ -6,6 +6,7 @@
   * (internal) Ore highlights are specified by block type, not texture type
   * The following render more-correctly: redstone torches, crops, mushrooms,
     flowers, planted saplings.
+  * Fixed an issue loading worlds which don't yet include the "Dimension" tag
   
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
 
