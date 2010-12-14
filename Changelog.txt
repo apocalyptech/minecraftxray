@@ -7,6 +7,7 @@
   * The following render more-correctly: redstone torches, crops, mushrooms,
     flowers, planted saplings, reeds.
   * Fixed an issue loading worlds which don't yet include the "Dimension" tag
+  * Sponge squares render correctly (not that sponge really "exists")
   
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
 
