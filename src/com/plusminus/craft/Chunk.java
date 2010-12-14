@@ -129,8 +129,7 @@ public class Chunk {
 		BLOCK_TYPE block_type = BLOCK_TYPE_MAP.get(i);
 		if((i == 0) || (i == TYPE_WATER) || (i == TYPE_WATER_STATIONARY) ||
 				(i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY) ||
-				(block_type == BLOCK_TYPE.TORCH) || (block_type == BLOCK_TYPE.UPRIGHT) ||
-				(block_type == BLOCK_TYPE.CROPS)) {
+				(block_type != BLOCK_TYPE.NORMAL)) {
 			return false;
 		}
 		
@@ -235,7 +234,7 @@ public class Chunk {
 	 * @param zzz
 	 * @param block_type
 	 */
-	public void renderUpright(int xxx, int yyy, int zzz, int block_type) {
+	public void renderDecorationSmall(int xxx, int yyy, int zzz, int block_type) {
 		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
 		 //Light(chunk, x, y, z);
 		 float x = xxx + this.x*16 -0.5f;
@@ -273,7 +272,31 @@ public class Chunk {
 
  		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
 	}
+	
+	public void renderDecorationFull(int xxx, int yyy, int zzz, int block_type) {
+		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
+		 //Light(chunk, x, y, z);
+		 float x = xxx + this.x*16 -0.5f;
+		 float z = zzz + this.z*16 -0.5f;
+		 float y = yyy - 0.5f;
+		 
+		 float bx,by;
+		 float ex,ey;
+		 
+		 switch(block_type)
+		 {
+		 	case MineCraftConstants.BLOCK_REED:
+	 		default:
+				bx = .5625f; // 9/16
+				by = .25f; // 4/16
+		 		break;
+		 }		 
+		 ex = bx + TEX16;
+		 ey = by + TEX16;
 
+		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2);
+	}
+	
 	public void renderCrops(int xxx, int yyy, int zzz) {
 		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
 		 float x = xxx + this.x*16 -0.5f;
@@ -506,8 +529,11 @@ public class Chunk {
 							case TORCH:
 								renderTorch(x,y,z,t);
 								break;
-							case UPRIGHT:
-								renderUpright(x,y,z,t);
+							case DECORATION_SMALL:
+								renderDecorationSmall(x,y,z,t);
+								break;
+							case DECORATION_FULL:
+								renderDecorationFull(x,y,z,t);
 								break;
 							case CROPS:
 								renderCrops(x,y,z);
