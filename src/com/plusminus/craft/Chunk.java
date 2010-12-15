@@ -439,15 +439,35 @@ public class Chunk {
 		{
 			textureId -= 16;
 		}
+		boolean swung = false;
+		if ((data & 0x4) == 0x4)
+		{
+			swung = true;
+		}
+		int dir = (data & 0x3);
+
+		// TODO: need to fix texture orientation
+		if ((dir == 3 && swung) || (dir == 0 && !swung))
+		{
+			// North			
+			this.renderLeftRight(textureId, x, y, z);
+		}
+		else if ((dir == 0 && swung) || (dir == 1 && !swung))
+		{
+			// East
+			this.renderFarNear(textureId, x, y, z);
+		}
+		else if ((dir == 1 && swung) || (dir == 2 && !swung))
+		{
+			// South
+			this.renderLeftRight(textureId, x+1, y, z);
+		}
+		else
+		{
+			// West
+			this.renderFarNear(textureId, x, y, z+1);
+		}
 		
-		this.renderFarNear(textureId, x, y, z);
-		this.renderFarNear(textureId, x, y, z+1);
-		
-		this.renderTopDown(textureId, x, y, z);
-		this.renderTopDown(textureId, x, y+1, z);	
-		
-		this.renderLeftRight(textureId, x, y, z);
-		this.renderLeftRight(textureId, x+1, y, z);
 	}
 	
 	public boolean checkSolid(byte block, boolean transpararency) {
