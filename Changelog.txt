@@ -6,7 +6,7 @@
   * (internal) Ore highlights are specified by block type, not texture type
   * The following render more-correctly: redstone torches, redstone wire,
     crops, mushrooms, flowers, planted saplings, reeds, ladders, sponges,
-    minecart tracks, floor buttons, half-height steps, doors.
+    minecart tracks, floor buttons, half-height steps, doors, stairs.
   * Fixed an issue loading worlds which don't yet include the "Dimension" tag
   
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)

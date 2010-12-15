@@ -61,7 +61,7 @@ public class Chunk {
 	}
 	
 	/**
-	 * Render something which is a North/Sout4h face.
+	 * Render something which is a North/South face.
 	 * 
 	 * @param t Texture to render
 	 * @param x
@@ -143,6 +143,273 @@ public class Chunk {
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
 			GL11.glVertex3f(x+xzScale, y-xzScale, z-xzScale);
+		GL11.glEnd();
+	}
+	
+	/**
+	 * Renders the side of a stair piece that runs East/West.  Verticies are in the following order:
+	 * <pre>
+	 *         6---5
+	 *         |   |
+	 *     2---4   |
+	 *     |       |
+	 *     1-------3
+	 * </pre>
+	 * 
+	 * Note that the function is "WestEast" which corresponds to the stair direction;
+	 * this will actually draw the face on the north or south sides.
+	 * 
+	 * @param t
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void renderStairSideWestEast(int t, float x, float y, float z, boolean swapZ) {
+		
+		float bx = precalcSpriteSheetToTextureX[t];
+		float by = precalcSpriteSheetToTextureY[t];
+		
+		float zoff=0.5f;
+		if (swapZ)
+		{
+			zoff = -0.5f;
+		}
+		
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+		
+			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glVertex3f(x-0.5f, y-0.45f, z+zoff);
+	
+			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glVertex3f(x-0.5f, y, z+zoff);
+			
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x-0.5f, y-0.45f, z-zoff);
+	
+			GL11.glTexCoord2f(bx+TEX32, by+TEX32);
+			GL11.glVertex3f(x-0.5f, y, z);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x-0.5f, y+0.5f, z-zoff);
+			
+			GL11.glTexCoord2f(bx+TEX32, by);
+			GL11.glVertex3f(x-0.5f, y+0.5f, z);
+
+		GL11.glEnd();
+	}	
+
+	/**
+	 * Renders the stair surface, for a stair running West/East
+	 * 
+	 * @param t Texture to draw
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param swapX
+	 */
+	public void renderStairSurfaceWestEast(int t, float x, float y, float z, boolean swapZ) {
+		
+		float bx = precalcSpriteSheetToTextureX[t];
+		float by = precalcSpriteSheetToTextureY[t];
+		
+		float zoff = 0.5f;
+		if (swapZ)
+		{
+			zoff = -0.5f;
+		}
+		
+		// Lower Step surface
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by);
+			GL11.glVertex3f(x+0.45f, y, z+zoff);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x-0.45f, y, z+zoff);
+	
+			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glVertex3f(x+0.45f, y, z);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glVertex3f(x-0.45f, y, z);
+		GL11.glEnd();
+
+		// Lower Step Side
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glVertex3f(x+0.45f, y, z+zoff);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glVertex3f(x-0.45f, y, z+zoff);
+	
+			GL11.glTexCoord2f(bx,by+TEX16);
+			GL11.glVertex3f(x+0.45f, y-0.45f, z+zoff);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x-0.45f, y-0.45f, z+zoff);
+		GL11.glEnd();
+
+		// Higher Step surface
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glVertex3f(x+0.45f, y+0.5f, z);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glVertex3f(x-0.45f, y+0.5f, z);
+	
+			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glVertex3f(x+0.45f, y+0.5f, z-zoff);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x-0.45f, y+0.5f, z-zoff);
+		GL11.glEnd();
+
+		// Higher Step Side
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by);
+			GL11.glVertex3f(x+0.45f, y+0.5f, z);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x-0.45f, y+0.5f, z);
+	
+			GL11.glTexCoord2f(bx,by+TEX32);
+			GL11.glVertex3f(x+0.45f, y, z);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glVertex3f(x-0.45f, y, z);
+		GL11.glEnd();
+	}
+	
+	/**
+	 * Renders the side of a stair piece that runs North/South.  Verticies are in the following order:
+	 * <pre>
+	 *         6---5
+	 *         |   |
+	 *     2---4   |
+	 *     |       |
+	 *     1-------3
+	 * </pre>
+	 * 
+	 * Note that the function is "NorthSouth" which corresponds to the stair direction;
+	 * this will actually draw the face on the east or west sides.
+	 * 
+	 * @param t
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void renderStairSideNorthSouth(int t, float x, float y, float z, boolean swapX) {
+		
+		float bx = precalcSpriteSheetToTextureX[t];
+		float by = precalcSpriteSheetToTextureY[t];
+		
+		float xoff=0.5f;
+		if (swapX)
+		{
+			xoff = -0.5f;
+		}
+		
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+		
+			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glVertex3f(x+xoff, y-0.45f, z-0.5f);
+	
+			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glVertex3f(x+xoff, y, z-0.5f);
+			
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x-xoff, y-0.45f, z-0.5f);
+	
+			GL11.glTexCoord2f(bx+TEX32, by+TEX32);
+			GL11.glVertex3f(x, y, z-0.5f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x-xoff, y+0.5f, z-0.5f);
+			
+			GL11.glTexCoord2f(bx+TEX32, by);
+			GL11.glVertex3f(x, y+0.5f, z-0.5f);
+
+		GL11.glEnd();
+	}	
+
+	/**
+	 * Renders the stair surface, for a stair running North/South
+	 * 
+	 * @param t Texture to draw
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param swapX
+	 */
+	public void renderStairSurfaceNorthSouth(int t, float x, float y, float z, boolean swapX) {
+		
+		float bx = precalcSpriteSheetToTextureX[t];
+		float by = precalcSpriteSheetToTextureY[t];
+		
+		float xoff = 0.5f;
+		if (swapX)
+		{
+			xoff = -0.5f;
+		}
+		
+		// Lower Step surface
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by);
+			GL11.glVertex3f(x+xoff, y, z+0.45f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x+xoff, y, z-0.45f);
+	
+			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glVertex3f(x, y, z+0.45f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glVertex3f(x, y, z-0.45f);
+		GL11.glEnd();
+
+		// Lower Step Side
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glVertex3f(x+xoff, y, z+0.45f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glVertex3f(x+xoff, y, z-0.45f);
+	
+			GL11.glTexCoord2f(bx,by+TEX16);
+			GL11.glVertex3f(x+xoff, y-0.45f, z+0.45f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x+xoff, y-0.45f, z-0.45f);
+		GL11.glEnd();
+
+		// Higher Step surface
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glVertex3f(x, y+0.5f, z+0.45f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glVertex3f(x, y+0.5f, z-0.45f);
+	
+			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glVertex3f(x-xoff, y+0.5f, z+0.45f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x-xoff, y+0.5f, z-0.45f);
+		GL11.glEnd();
+
+
+		// Higher Step Side
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by);
+			GL11.glVertex3f(x, y+0.5f, z+0.45f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x, y+0.5f, z-0.45f);
+	
+			GL11.glTexCoord2f(bx,by+TEX32);
+			GL11.glVertex3f(x, y, z+0.45f);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glVertex3f(x, y, z-0.45f);
 		GL11.glEnd();
 	}
 	
@@ -490,6 +757,77 @@ public class Chunk {
 		
 	}
 	
+	/**
+	 * Renders stair graphics
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderStairs(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		
+		byte data = getData(xxx, yyy, zzz);
+		boolean swap = false;
+		if (data == 0 || data == 2)
+		{
+			swap = true;
+		}
+
+		if (data == 0 || data == 1)
+		{
+			// 0 is ascending-south, 1 is ascending-north
+			
+			// Sides
+			this.renderStairSideNorthSouth(textureId, x, y, z+.05f, swap);
+			this.renderStairSideNorthSouth(textureId, x, y, z+.95f, swap);
+			
+			// Back
+			if (swap)
+			{
+				this.renderNorthSouth(textureId, x+0.90f, y, z, 0.5f, 0.45f);
+			}
+			else
+			{
+				this.renderNorthSouth(textureId, x+0.10f, y, z, 0.5f, 0.45f);
+			}
+			
+			// Bottom
+			this.renderTopDown(textureId, x, y, z, 0.45f);
+			
+			// Stair Surface
+			this.renderStairSurfaceNorthSouth(textureId, x, y, z, swap);
+		}
+		else
+		{
+			// 2 is ascending-west, 3 is ascending-east
+			
+			// Sides
+			this.renderStairSideWestEast(textureId, x+.05f, y, z, swap);
+			this.renderStairSideWestEast(textureId, x+.95f, y, z, swap);
+			
+			// Back
+			if (swap)
+			{
+				this.renderWestEast(textureId, x, y, z+0.90f, 0.5f, 0.45f);
+			}
+			else
+			{
+				this.renderWestEast(textureId, x, y, z+0.10f, 0.5f, 0.45f);
+			}
+			
+			// Bottom
+			this.renderTopDown(textureId, x, y, z, 0.45f);
+			
+			// Stair Surface
+			this.renderStairSurfaceWestEast(textureId, x, y, z, swap);		
+		}
+		
+	}
+		
 	public boolean checkSolid(byte block, boolean transpararency) {
 		if(block == 0) {
 			return true;
@@ -698,6 +1036,9 @@ public class Chunk {
 								break;
 							case DOOR:
 								renderDoor(textureId,x,y,z);
+								break;
+							case STAIRS:
+								renderStairs(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								// TODO: these (and other non-"block" things) seem to disappear behind glass

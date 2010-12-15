@@ -55,7 +55,8 @@ public class MineCraftConstants {
 		FLOOR,
 		FLOOR_BUTTON,
 		HALFHEIGHT,
-		DOOR
+		DOOR,
+		STAIRS
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -174,25 +175,47 @@ public class MineCraftConstants {
 			BLOCK_TYPE_MAP.put((byte)i, BLOCK_TYPE.NORMAL);
 		}
 		
-		// Now our actual type values
+		// Now our actual type values...
+		
+		// Torches
 		BLOCK_TYPE_MAP.put((byte)BLOCK_TORCH, BLOCK_TYPE.TORCH);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_ON, BLOCK_TYPE.TORCH);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_OFF, BLOCK_TYPE.TORCH);
+		
+		// Small decoration blocks
 		BLOCK_TYPE_MAP.put((byte)BLOCK_RED_MUSHROOM, BLOCK_TYPE.DECORATION_SMALL);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_BROWN_MUSHROOM, BLOCK_TYPE.DECORATION_SMALL);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_RED_ROSE, BLOCK_TYPE.DECORATION_SMALL);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_YELLOW_FLOWER, BLOCK_TYPE.DECORATION_SMALL);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_SAPLING, BLOCK_TYPE.DECORATION_SMALL);
+		
+		// "Full" decoration blocks
 		BLOCK_TYPE_MAP.put((byte)BLOCK_REED, BLOCK_TYPE.DECORATION_FULL);
+		
+		// Crops
 		BLOCK_TYPE_MAP.put((byte)BLOCK_CROPS, BLOCK_TYPE.CROPS);
+		
+		// Ladders
 		BLOCK_TYPE_MAP.put((byte)BLOCK_LADDER, BLOCK_TYPE.LADDER);
+		
+		// "floor" decorations
 		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_WIRE, BLOCK_TYPE.FLOOR);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_MINECART_TRACKS, BLOCK_TYPE.FLOOR);
+		
+		// Pressure plates
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STONE_PRESSURE_PLATE, BLOCK_TYPE.FLOOR_BUTTON);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_PRESSURE_PLATE, BLOCK_TYPE.FLOOR_BUTTON);
+		
+		// Half-height blocks
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STEP, BLOCK_TYPE.HALFHEIGHT);
+		
+		// Doors
 		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_DOOR, BLOCK_TYPE.DOOR);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_IRON_DOOR, BLOCK_TYPE.DOOR);
+		
+		// Stairs
+		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_STAIRS, BLOCK_TYPE.STAIRS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_COBBLESTONE_STAIRS, BLOCK_TYPE.STAIRS);
 	}
 	
 	   /***
