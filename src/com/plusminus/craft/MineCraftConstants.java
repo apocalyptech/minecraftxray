@@ -54,7 +54,8 @@ public class MineCraftConstants {
 		LADDER,
 		FLOOR,
 		FLOOR_BUTTON,
-		HALFHEIGHT
+		HALFHEIGHT,
+		DOOR
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -167,7 +168,6 @@ public class MineCraftConstants {
 	 */
 	public static void initBlockTypes() {
 		// First seed the array with "normal" so we don't have to catch NullPointerExceptions
-		// TODO: let's use an unsigned byte, yeah?
 		int i;
 		for (i=Byte.MIN_VALUE; i<=Byte.MAX_VALUE; i++)
 		{
@@ -191,6 +191,8 @@ public class MineCraftConstants {
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STONE_PRESSURE_PLATE, BLOCK_TYPE.FLOOR_BUTTON);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_PRESSURE_PLATE, BLOCK_TYPE.FLOOR_BUTTON);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STEP, BLOCK_TYPE.HALFHEIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_DOOR, BLOCK_TYPE.DOOR);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_IRON_DOOR, BLOCK_TYPE.DOOR);
 	}
 	
 	   /***

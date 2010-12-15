@@ -421,6 +421,35 @@ public class Chunk {
 		this.renderTopDown(textureId, x, y+TEX64, z, 0.4f);
 	}
 	
+	/**
+	 * Renders a door
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderDoor(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		
+		byte data = getData(xxx, yyy, zzz);
+		if ((data & 0x8) == 0x8)
+		{
+			textureId -= 16;
+		}
+		
+		this.renderFarNear(textureId, x, y, z);
+		this.renderFarNear(textureId, x, y, z+1);
+		
+		this.renderTopDown(textureId, x, y, z);
+		this.renderTopDown(textureId, x, y+1, z);	
+		
+		this.renderLeftRight(textureId, x, y, z);
+		this.renderLeftRight(textureId, x+1, y, z);
+	}
+	
 	public boolean checkSolid(byte block, boolean transpararency) {
 		if(block == 0) {
 			return true;
@@ -626,6 +655,9 @@ public class Chunk {
 								break;
 							case FLOOR_BUTTON:
 								renderFloorButton(textureId,x,y,z);
+								break;
+							case DOOR:
+								renderDoor(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								// TODO: these need to be slightly less than full-sized or there's
