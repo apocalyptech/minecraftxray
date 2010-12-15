@@ -73,18 +73,31 @@ public class Chunk {
 	}
 	
 	public void renderTopDown(int t, float x, float y, float z) {
+		this.renderTopDown(t, x, y, z, 0.5f);
+	}
+	
+	/**
+	 * Render the top or bottom of a block, depending on how we're looking at it.
+	 * 
+	 * @param t The texture ID to draw
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param scale ".5" is a full-sized block, ".1" would be tiny.
+	 */
+	public void renderTopDown(int t, float x, float y, float z, float scale) {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z+0.5f);
+			GL11.glVertex3f(x-scale, y-scale, z+scale);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z-0.5f);
+			GL11.glVertex3f(x-scale, y-scale, z-scale);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX16);
-			GL11.glVertex3f(x+0.5f, y-0.5f, z+0.5f);
+			GL11.glVertex3f(x+scale, y-scale, z+scale);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
-			GL11.glVertex3f(x+0.5f, y-0.5f, z-0.5f);
+			GL11.glVertex3f(x+scale, y-scale, z-scale);
 		GL11.glEnd();
 	}
 	
@@ -149,7 +162,8 @@ public class Chunk {
 	 * @param x Absolute X position of block
 	 * @param y Absolute Y position of block
 	 * @param z Absolute Z position of block
-	 * @param yy Additional Y offset for rendering
+	 * @param yy Additional Y offset for rendering (this and the rest of the arguments are really
+	 *           only used for torches; pass in 0 for just about everything else)
 	 * @param x1 X offset for the top of the faces
 	 * @param x2 X offset for the bottom of the faces
 	 * @param z1 Z offset for the top of the faces
@@ -199,8 +213,18 @@ public class Chunk {
 		 //GL11.glEnable(GL11.GL_DEPTH_TEST);
 		 //GL11.glEnable(GL11.GL_CULL_FACE);	
 	}
-	
-	public void renderTorch(int xxx, int yyy, int zzz, int block_type) {
+
+	/**
+	 * Renders a torch, making an attempt to render properly given the wall face it's
+	 * attached to, etc.  We take in textureId because we support redstone torches as
+	 * well.
+	 *
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderTorch(int textureId, int xxx, int yyy, int zzz) {
 		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
 		 byte data = getData(xxx, yyy, zzz);
 		 switch (data) {
@@ -230,20 +254,9 @@ public class Chunk {
 		 float bx,by;
 		 float ex,ey;
 		 
-		 switch(block_type)
-		 {
-		 	case MineCraftConstants.BLOCK_REDSTONE_TORCH_ON:		 		
-				bx = (TEX16*3) + TEX64;
-				by = TEX16 + (5.0f / 16.0f);
-		 		break;
-		 	case MineCraftConstants.BLOCK_REDSTONE_TORCH_OFF:
-				bx = (TEX16*3) + TEX64;
-				by = (TEX16*2) + (5.0f / 16.0f);
-		 		break;
-		 	default:
-		 		bx = 0.0f+TEX64;
-		 		by = 5.0f / 16.0f;
-		 }
+		 bx = precalcSpriteSheetToTextureX[textureId] + TEX64;
+		 by = precalcSpriteSheetToTextureY[textureId];
+
 		 ex = bx + TEX16-TEX32;
 		 ey = by + TEX16;
 		 
@@ -251,15 +264,14 @@ public class Chunk {
 	}
 	
 	/***
-	 * Yanked wholesale from renderTorch
+	 * Render a "small" floor-based decoration, like a flower or a mushroom
+	 * @param textureId
 	 * @param xxx
 	 * @param yyy
 	 * @param zzz
 	 * @param block_type
 	 */
-	public void renderDecorationSmall(int xxx, int yyy, int zzz, int block_type) {
-		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
-		 //Light(chunk, x, y, z);
+	public void renderDecorationSmall(int textureId, int xxx, int yyy, int zzz) {
 		 float x = xxx + this.x*16 -0.5f;
 		 float z = zzz + this.z*16 -0.5f;
 		 float y = yyy - 0.5f;
@@ -267,64 +279,49 @@ public class Chunk {
 		 float bx,by;
 		 float ex,ey;
 		 
-		 switch(block_type)
-		 {
-		 	case MineCraftConstants.BLOCK_SAPLING:		 		
-				bx = .9375f + TEX64; // 12/16
-				by = 0;
-		 		break;
-		 	case MineCraftConstants.BLOCK_RED_ROSE:		 		
-				bx = .75f + TEX64; // 12/16
-				by = 0;
-		 		break;
-		 	case MineCraftConstants.BLOCK_YELLOW_FLOWER:		 		
-				bx = .8125f + TEX64; // 13/16
-				by = 0;
-		 		break;
-		 	case MineCraftConstants.BLOCK_RED_MUSHROOM:
-				bx = .75f + TEX64; // 12/16
-				by = .0625f; // 1/16
-		 		break;
-		 	case MineCraftConstants.BLOCK_BROWN_MUSHROOM:
-		 	default:
-		 		bx = .8125f + TEX64; // 13/16
-		 		by = .0625f; // 1/16
-		 }		 
+		 bx = precalcSpriteSheetToTextureX[textureId] + TEX64;
+		 by = precalcSpriteSheetToTextureY[textureId];
  		 ex = bx + TEX16-TEX32;
  		 ey = by + TEX16;
 
- 		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
+ 		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
 	}
 	
-	public void renderDecorationFull(int xxx, int yyy, int zzz, int block_type) {
-		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
-		 //Light(chunk, x, y, z);
+	/**
+	 * Renders a "full" decoration, like reeds.  Something that takes up the whole square
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 * @param block_type
+	 */
+	public void renderDecorationFull(int textureId, int xxx, int yyy, int zzz) {
 		 float x = xxx + this.x*16 -0.5f;
 		 float z = zzz + this.z*16 -0.5f;
 		 float y = yyy - 0.5f;
-		 System.out.println("xxx, yyy, zzz: " + xxx + ", " + yyy + ", " + zzz);
-		 System.out.println("x, y, z: " + x + ", " + y + ", " + z);
-		 System.out.println("---");
 		 
 		 float bx,by;
 		 float ex,ey;
 		 
-		 switch(block_type)
-		 {
-		 	case MineCraftConstants.BLOCK_REED:
-	 		default:
-				bx = .5625f; // 9/16
-				by = .25f; // 4/16
-		 		break;
-		 }		 
+		 bx = precalcSpriteSheetToTextureX[textureId];
+		 by = precalcSpriteSheetToTextureY[textureId];
 		 ex = bx + TEX16;
 		 ey = by + TEX16;
 
-		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
+		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
 	}
 	
-	public void renderCrops(int xxx, int yyy, int zzz) {
-		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
+	/**
+	 * Renders crops.  We still take the fully-grown textureId in the function so that everything
+	 * remains defined in MineCraftConstants
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderCrops(int textureId, int xxx, int yyy, int zzz) {
 		 float x = xxx + this.x*16 -0.5f;
 		 float z = zzz + this.z*16 -0.5f;
 		 float y = yyy - 0.5f;
@@ -332,42 +329,29 @@ public class Chunk {
 		 float bx,by;
 		 float ex,ey;
 
+		 bx = precalcSpriteSheetToTextureX[textureId];
+		 by = precalcSpriteSheetToTextureY[textureId];
+
+		 // Adjust for crop size; fortunately the textures are all in the same row so it's easy.
 		 byte data = getData(xxx, yyy, zzz);
-		 switch(data)
-		 {
-		 	case 7:
-		 		bx = .9375f; // 15/16
-		 		break;
-		 	case 6:
-		 		bx = .875f; // 14/16
-		 		break;
-		 	case 5:
-		 		bx = .8125f; // 13/16
-		 		break;
-		 	case 4:
-		 		bx = .75f; // 12/16
-		 		break;
-		 	case 3:
-		 		bx = .6875f; // 11/16
-		 		break;
-		 	case 2:
-		 		bx = .625f; // 10/16
-		 		break;
-		 	case 1:
-		 		bx = .5625f; // 9/16
-		 		break;
-		 	case 0:
-		 	default:
-		 		bx = 0.5f; // 8/16
-		 }
-		 by = .3125f; // 5/16
+		 bx -= TEX16 * (7-data);
+		 
 		 ex = bx + TEX16;
 		 ey = by + TEX16;
 		 
-		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
+		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
 	}
-
-	public void renderLadder(int texture, int xxx, int yyy, int zzz) {
+    
+	/**
+	 * Renders a ladder, given its attached-side data.  We still take in textureId just so
+	 * that everything's still defined in MineCraftConstants
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderLadder(int textureId, int xxx, int yyy, int zzz) {
 		 float x = xxx + this.x*16;
 		 float z = zzz + this.z*16;
 		 float y = yyy;
@@ -377,30 +361,55 @@ public class Chunk {
 		 {
 		 	case 2:
 		 		// East
-		 		this.renderFarNear(texture, x, y, z+1.0f-TEX64);
+		 		this.renderFarNear(textureId, x, y, z+1.0f-TEX64);
 		 		break;
 		 	case 3:
 		 		// West
-		 		this.renderFarNear(texture, x, y, z+TEX64);
+		 		this.renderFarNear(textureId, x, y, z+TEX64);
 		 		break;
 		 	case 4:
 		 		// North
-		 		this.renderLeftRight(texture, x+1.0f-TEX64, y, z);
+		 		this.renderLeftRight(textureId, x+1.0f-TEX64, y, z);
 		 		break;
 		 	case 5:
 	 		default:
 	 			// South
-				this.renderLeftRight(texture, x+TEX64, y, z);
+				this.renderLeftRight(textureId, x+TEX64, y, z);
 	 			break;
 		 }
 	}
 
-	public void renderFloor(int texture, int xxx, int yyy, int zzz) {
+	/**
+	 * This is actually used for rendering "decoration" type things which are on
+	 * the floor (eg: minecart tracks, redstone wires, etc)
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderFloor(int textureId, int xxx, int yyy, int zzz) {
 		 float x = xxx + this.x*16;
 		 float z = zzz + this.z*16;
 		 float y = yyy;
 		 
-		this.renderTopDown(texture, x, y+TEX64, z);
+		this.renderTopDown(textureId, x, y+TEX64, z);
+	}
+
+	/**
+	 * Renders a floor button.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderFloorButton(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		 
+		this.renderTopDown(textureId, x, y+TEX64, z, 0.4f);
 	}
 	
 	public boolean checkSolid(byte block, boolean transpararency) {
@@ -589,22 +598,25 @@ public class Chunk {
 						switch(BLOCK_TYPE_MAP.get(t))
 						{
 							case TORCH:
-								renderTorch(x,y,z,t);
+								renderTorch(textureId,x,y,z);
 								break;
 							case DECORATION_SMALL:
-								renderDecorationSmall(x,y,z,t);
+								renderDecorationSmall(textureId,x,y,z);
 								break;
 							case DECORATION_FULL:
-								renderDecorationFull(x,y,z,t);
+								renderDecorationFull(textureId,x,y,z);
 								break;
 							case CROPS:
-								renderCrops(x,y,z);
+								renderCrops(textureId,x,y,z);
 								break;
 							case LADDER:
 								renderLadder(textureId,x,y,z);
 								break;
 							case FLOOR:
 								renderFloor(textureId,x,y,z);
+								break;
+							case FLOOR_BUTTON:
+								renderFloorButton(textureId,x,y,z);
 								break;
 							default:
 								// if we have to draw this block

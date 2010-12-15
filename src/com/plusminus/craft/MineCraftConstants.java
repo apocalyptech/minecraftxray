@@ -52,7 +52,8 @@ public class MineCraftConstants {
 		DECORATION_FULL,
 		CROPS,
 		LADDER,
-		FLOOR
+		FLOOR,
+		FLOOR_BUTTON
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -185,6 +186,8 @@ public class MineCraftConstants {
 		BLOCK_TYPE_MAP.put((byte)BLOCK_LADDER, BLOCK_TYPE.LADDER);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_WIRE, BLOCK_TYPE.FLOOR);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_MINECART_TRACKS, BLOCK_TYPE.FLOOR);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_STONE_PRESSURE_PLATE, BLOCK_TYPE.FLOOR_BUTTON);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_PRESSURE_PLATE, BLOCK_TYPE.FLOOR_BUTTON);
 	}
 	
 	   /***
