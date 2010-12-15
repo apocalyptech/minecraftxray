@@ -197,33 +197,34 @@ public class Chunk {
 	}
 	
 	/**
-	 * Renders a more arbitrary rectangle.
+	 * Renders a somewhat-arbitrary vertical rectangle.  Pass in (x, z) pairs for the endpoints,
+	 * and information about the height.
 	 * 
 	 * @param t Texture to draw
 	 * @param x1
-	 * @param y1
 	 * @param z1
 	 * @param x2
-	 * @param y2
 	 * @param z2
+	 * @param y	The lower part of the rectangle
+	 * @param height Height of the rectangle.
 	 */
-	public void renderArbitrary(int t, float x1, float y1, float z1, float x2, float y2, float z2) {
+	public void renderVertical(int t, float x1, float z1, float x2, float z2, float y, float height) {
 
 		float bx = precalcSpriteSheetToTextureX[t];
 		float by = precalcSpriteSheetToTextureY[t];
 
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x1, y1, z1);
+			GL11.glVertex3f(x1, y+height, z1);
 	
 			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x1, y1, z2);
+			GL11.glVertex3f(x2, y+height, z2);
 	
 			GL11.glTexCoord2f(bx, by+TEX16);
-			GL11.glVertex3f(x2, y2, z1);
+			GL11.glVertex3f(x1, y, z1);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
-			GL11.glVertex3f(x2, y2, z2);
+			GL11.glVertex3f(x2, y, z2);
 		GL11.glEnd();
 	}
 	
@@ -909,12 +910,51 @@ public class Chunk {
 		
 	}
 	
+	/**
+	 * Renders a signpost.
+	 * TODO: show the actual message
+	 * TODO: should be solid instead of just one plane
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
 	public void renderSignpost(int textureId, int xxx, int yyy, int zzz) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
 		
+		float signBottom = 0f;
+		float signHeight = .6f;
+		float postRadius = .05f;
+		
+		// First a signpost
+		this.renderVertical(textureId, x-postRadius, z-postRadius, x+postRadius, z-postRadius, y-0.5f, 0.5f+signBottom);
+		this.renderVertical(textureId, x-postRadius, z+postRadius, x+postRadius, z+postRadius, y-0.5f, 0.5f+signBottom);
+		this.renderVertical(textureId, x+postRadius, z-postRadius, x+postRadius, z+postRadius, y-0.5f, 0.5f+signBottom);
+		this.renderVertical(textureId, x-postRadius, z+postRadius, x-postRadius, z-postRadius, y-0.5f, 0.5f+signBottom);
+		
+		// Now we continue to draw the sign itself.
 		byte data = getData(xxx, yyy, zzz);
+		data &= 0xF;
+		// data: 0 is West, increasing numbers add 22.5 degrees (so 4 is North, 8 south, etc)
+		// Because we're not actually drawing the message (yet), as far as we're concerned
+		// West is the same as East, etc.
+		float angle = (data % 8) * 22.5f;
+		float radius = 0.5f;
+
+		// First x/z
+		float x1 = x + radius * (float)Math.cos(Math.toRadians(angle));
+		float z1 = z + radius * (float)Math.sin(Math.toRadians(angle));
+		
+		// Now the other side
+		angle -= 180;
+		float x2 = x + radius * (float)Math.cos(Math.toRadians(angle));
+		float z2 = z + radius * (float)Math.sin(Math.toRadians(angle));
+		
+		this.renderVertical(textureId, x1, z1, x2, z2, y+signBottom, signHeight);
+		
 	}
 	
 	/**
