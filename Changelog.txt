@@ -7,7 +7,9 @@
   * The following render more-correctly: redstone torches, redstone wire,
     crops, mushrooms, flowers, planted saplings, reeds, ladders, sponges,
     minecart tracks, floor buttons, half-height steps, doors, stairs,
-    signs (though without the message)
+    signs (though without the message), ladders (though we make no effort
+    to try and chain them together; all ladder pieces will be oriented the
+    same).
   * Fixed an issue loading worlds which don't yet include the "Dimension" tag
   
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)

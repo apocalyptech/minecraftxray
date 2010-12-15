@@ -229,6 +229,35 @@ public class Chunk {
 	}
 	
 	/**
+	 * Renders an arbitrary horizontal rectangle.
+	 * @param t
+	 * @param x1
+	 * @param z1
+	 * @param x2
+	 * @param z2
+	 * @param y
+	 */
+	public void renderHorizontal(int t, float x1, float z1, float x2, float z2, float y) {
+
+		float bx = precalcSpriteSheetToTextureX[t];
+		float by = precalcSpriteSheetToTextureY[t];
+
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by);
+			GL11.glVertex3f(x1, y, z1);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x1, y, z2);
+	
+			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glVertex3f(x2, y, z1);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x2, y, z2);
+		GL11.glEnd();
+	}
+	
+	/**
 	 * Renders the side of a stair piece that runs East/West.  Verticies are in the following order:
 	 * <pre>
 	 *         6---5
@@ -493,6 +522,53 @@ public class Chunk {
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x, y, z-0.5f);
 		GL11.glEnd();
+	}
+	
+	/**
+	 * Renders one side of a fence graphic.  Note that for now we're not making any
+	 * attempt to figure out exactly how we should draw these; we're just putting
+	 * the "default" piece in.
+	 * 
+	 * @param t
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param swapX
+	 */
+	public void renderFenceSide(int t, float x, float y, float z) {
+		//float bx = precalcSpriteSheetToTextureX[t];
+		//float by = precalcSpriteSheetToTextureY[t];
+		
+		// First post
+		this.renderVertical(t, x, z-.35f, x, z-.25f, y-0.5f, .7f);
+		
+		// Second post
+		this.renderVertical(t, x, z+.35f, x, z+.25f, y-0.5f, .7f);
+		
+		// First slat
+		this.renderVertical(t, x, z-.25f, x, z+.25f, y-.3f, .2f);
+		
+		// Second slat
+		this.renderVertical(t, x, z-.25f, x, z+.25f, y, .2f);
+	}
+	
+	public void renderFenceBody(int t, float x1, float x2, float y, float z) {
+		
+		// Outside edges
+		this.renderVertical(t, x1, z+.35f, x2, z+.35f, y-0.5f, .7f);
+		this.renderVertical(t, x1, z-.35f, x2, z-.35f, y-0.5f, .7f);
+		
+		// Inside edges
+		this.renderVertical(t, x1, z+.25f, x2, z+.25f, y-0.5f, .7f);
+		this.renderVertical(t, x1, z-.25f, x2, z-.25f, y-0.5f, .7f);
+		
+		// Top edge
+		this.renderHorizontal(t, x1, z+.35f, x2, z-.35f, y+.2f);
+		
+		// Inner edges
+		this.renderHorizontal(t, x1, z+.25f, x2, z-.25f, y);
+		this.renderHorizontal(t, x1, z+.25f, x2, z-.25f, y-.1f);
+		this.renderHorizontal(t, x1, z+.25f, x2, z-.25f, y-.3f);
 	}
 	
 	public boolean isInRange(float x, float y, float maxDistance) {
@@ -995,6 +1071,26 @@ public class Chunk {
 		}
 	}
 	
+	/**
+	 * Renders a fence.  Ideally we should try and figure out at least if
+	 * we can do it in one orientation versus another, but for now this will have to
+	 * do.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderFence(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		
+		this.renderFenceSide(textureId, x+.05f, y, z);
+		this.renderFenceSide(textureId, x-.05f, y, z);
+		this.renderFenceBody(textureId, x+.05f, x-.05f, y, z);
+	}
+	
 	public boolean checkSolid(byte block, boolean transpararency) {
 		if(block == 0) {
 			return true;
@@ -1212,6 +1308,9 @@ public class Chunk {
 								break;
 							case WALLSIGN:
 								renderWallSign(textureId,x,y,z);
+								break;
+							case FENCE:
+								renderFence(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								// TODO: these (and other non-"block" things) seem to disappear behind glass
