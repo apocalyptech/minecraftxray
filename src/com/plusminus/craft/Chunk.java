@@ -57,12 +57,16 @@ public class Chunk {
 	}
 	
 	public void renderLeftRight(int t, float x, float y, float z) {
+		this.renderLeftRight(t, x, y, z, 0.5f);
+	}
+	
+	public void renderLeftRight(int t, float x, float y, float z, float yHeightOffset) {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z+0.5f);
+			GL11.glVertex3f(x-0.5f, y+yHeightOffset, z+0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z-0.5f);
+			GL11.glVertex3f(x-0.5f, y+yHeightOffset, z-0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t],precalcSpriteSheetToTextureY[t]+TEX16);
 			GL11.glVertex3f(x-0.5f, y-0.5f, z+0.5f);
@@ -101,13 +105,18 @@ public class Chunk {
 		GL11.glEnd();
 	}
 	
+
 	public void renderFarNear(int t, float x, float y, float z) {
+		this.renderFarNear(t, x, y, z, 0.5f);
+	}
+	
+	public void renderFarNear(int t, float x, float y, float z, float yHeightOffset) {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z-0.5f);
+			GL11.glVertex3f(x-0.5f, y+yHeightOffset, z-0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x+0.5f, y+0.5f, z-0.5f);
+			GL11.glVertex3f(x+0.5f, y+yHeightOffset, z-0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX16);
 			GL11.glVertex3f(x-0.5f, y-0.5f, z-0.5f);
@@ -617,6 +626,20 @@ public class Chunk {
 								break;
 							case FLOOR_BUTTON:
 								renderFloorButton(textureId,x,y,z);
+								break;
+							case HALFHEIGHT:
+								// TODO: these need to be slightly less than full-sized or there's
+								// multiple-texture issues when moving around.
+								if(draw) {
+									if(!near) this.renderFarNear(textureId, worldX+x, y, worldZ+z, 0f);
+									if(!far) this.renderFarNear(textureId, worldX+x, y, worldZ+z+1, 0f);
+									
+									if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
+									this.renderTopDown(textureId, worldX+x, y+0.5f, worldZ+z);	
+									
+									if(!left) this.renderLeftRight(textureId, worldX+x, y, worldZ+z, 0f);
+									if(!right) this.renderLeftRight(textureId, worldX+x+1, y, worldZ+z, 0f);
+								}
 								break;
 							default:
 								// if we have to draw this block
