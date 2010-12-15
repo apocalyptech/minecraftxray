@@ -4,8 +4,8 @@
   * "Fast" camera speed has been given another 50% speed boost
   * (internal) Add in Ant build.xml to automate releasing
   * (internal) Ore highlights are specified by block type, not texture type
-  * The following render more-correctly: redstone torches, crops, mushrooms,
-    flowers, planted saplings, reeds.
+  * The following render more-correctly: redstone torches, redstone wire,
+    crops, mushrooms, flowers, planted saplings, reeds, ladders, minecart tracks.
   * Fixed an issue loading worlds which don't yet include the "Dimension" tag
   * Sponge squares render correctly (not that sponge really "exists")
   

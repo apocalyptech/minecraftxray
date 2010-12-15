@@ -149,11 +149,11 @@ public class Chunk {
 	 * @param x Absolute X position of block
 	 * @param y Absolute Y position of block
 	 * @param z Absolute Z position of block
-	 * @param yy
-	 * @param x1
-	 * @param x2
-	 * @param z1
-	 * @param z2
+	 * @param yy Additional Y offset for rendering
+	 * @param x1 X offset for the top of the faces
+	 * @param x2 X offset for the bottom of the faces
+	 * @param z1 Z offset for the top of the faces
+	 * @param z2 Z offset for the bottom of the faces
 	 * @param torch Do we draw the "special" torch tips?
 	 */
 	public void renderSpecial(float bx, float by, float ex, float ey, float x, float y, float z, float yy, float x1, float x2, float z1, float z2, boolean torch) {
@@ -367,28 +367,40 @@ public class Chunk {
 		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
 	}
 
-	public void renderLadder(int xxx, int yyy, int zzz, int block_type) {
-		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
-		 //Light(chunk, x, y, z);
-		 float x = xxx + this.x*16 -0.5f;
-		 float z = zzz + this.z*16 -0.5f;
-		 float y = yyy - 0.5f;
+	public void renderLadder(int texture, int xxx, int yyy, int zzz) {
+		 float x = xxx + this.x*16;
+		 float z = zzz + this.z*16;
+		 float y = yyy;
 		 
-		 float bx,by;
-		 float ex,ey;
-		 
-		 switch(block_type)
+		 byte data = getData(xxx, yyy, zzz);
+		 switch(data)
 		 {
-		 	case MineCraftConstants.BLOCK_REED:
-	 		default:
-				bx = .5625f; // 9/16
-				by = .25f; // 4/16
+		 	case 2:
+		 		// East
+		 		this.renderFarNear(texture, x, y, z+1.0f-TEX64);
 		 		break;
-		 }		 
-		 ex = bx + TEX16;
-		 ey = by + TEX16;
+		 	case 3:
+		 		// West
+		 		this.renderFarNear(texture, x, y, z+TEX64);
+		 		break;
+		 	case 4:
+		 		// North
+		 		this.renderLeftRight(texture, x+1.0f-TEX64, y, z);
+		 		break;
+		 	case 5:
+	 		default:
+	 			// South
+				this.renderLeftRight(texture, x+TEX64, y, z);
+	 			break;
+		 }
+	}
 
-		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, false);
+	public void renderFloor(int texture, int xxx, int yyy, int zzz) {
+		 float x = xxx + this.x*16;
+		 float z = zzz + this.z*16;
+		 float y = yyy;
+		 
+		this.renderTopDown(texture, x, y+TEX64, z);
 	}
 	
 	public boolean checkSolid(byte block, boolean transpararency) {
@@ -589,7 +601,10 @@ public class Chunk {
 								renderCrops(x,y,z);
 								break;
 							case LADDER:
-								renderLadder(x,y,z,t);
+								renderLadder(textureId,x,y,z);
+								break;
+							case FLOOR:
+								renderFloor(textureId,x,y,z);
 								break;
 							default:
 								// if we have to draw this block
