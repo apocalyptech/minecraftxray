@@ -178,13 +178,13 @@ public class Chunk {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
 			GL11.glTexCoord2f(bx, by+TEX16);
-			GL11.glVertex3f(x-0.5f, y-0.45f, z+zoff);
+			GL11.glVertex3f(x-0.5f, y-0.5f, z+zoff);
 	
 			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x-0.5f, y, z+zoff);
 			
 			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
-			GL11.glVertex3f(x-0.5f, y-0.45f, z-zoff);
+			GL11.glVertex3f(x-0.5f, y-0.5f, z-zoff);
 	
 			GL11.glTexCoord2f(bx+TEX32, by+TEX32);
 			GL11.glVertex3f(x-0.5f, y, z);
@@ -221,61 +221,61 @@ public class Chunk {
 		// Lower Step surface
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x+0.45f, y, z+zoff);
+			GL11.glVertex3f(x+0.5f, y, z+zoff);
 	
 			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x-0.45f, y, z+zoff);
+			GL11.glVertex3f(x-0.5f, y, z+zoff);
 	
 			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x+0.45f, y, z);
+			GL11.glVertex3f(x+0.5f, y, z);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x-0.45f, y, z);
+			GL11.glVertex3f(x-0.5f, y, z);
 		GL11.glEnd();
 
 		// Lower Step Side
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x+0.45f, y, z+zoff);
+			GL11.glVertex3f(x+0.5f, y, z+zoff);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x-0.45f, y, z+zoff);
+			GL11.glVertex3f(x-0.5f, y, z+zoff);
 	
 			GL11.glTexCoord2f(bx,by+TEX16);
-			GL11.glVertex3f(x+0.45f, y-0.45f, z+zoff);
+			GL11.glVertex3f(x+0.5f, y-0.5f, z+zoff);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
-			GL11.glVertex3f(x-0.45f, y-0.45f, z+zoff);
+			GL11.glVertex3f(x-0.5f, y-0.5f, z+zoff);
 		GL11.glEnd();
 
 		// Higher Step surface
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x+0.45f, y+0.5f, z);
+			GL11.glVertex3f(x+0.5f, y+0.5f, z);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x-0.45f, y+0.5f, z);
+			GL11.glVertex3f(x-0.5f, y+0.5f, z);
 	
 			GL11.glTexCoord2f(bx, by+TEX16);
-			GL11.glVertex3f(x+0.45f, y+0.5f, z-zoff);
+			GL11.glVertex3f(x+0.5f, y+0.5f, z-zoff);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
-			GL11.glVertex3f(x-0.45f, y+0.5f, z-zoff);
+			GL11.glVertex3f(x-0.5f, y+0.5f, z-zoff);
 		GL11.glEnd();
 
 		// Higher Step Side
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x+0.45f, y+0.5f, z);
+			GL11.glVertex3f(x+0.5f, y+0.5f, z);
 	
 			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x-0.45f, y+0.5f, z);
+			GL11.glVertex3f(x-0.5f, y+0.5f, z);
 	
 			GL11.glTexCoord2f(bx,by+TEX32);
-			GL11.glVertex3f(x+0.45f, y, z);
+			GL11.glVertex3f(x+0.5f, y, z);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x-0.45f, y, z);
+			GL11.glVertex3f(x-0.5f, y, z);
 		GL11.glEnd();
 	}
 	
@@ -311,13 +311,13 @@ public class Chunk {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
 			GL11.glTexCoord2f(bx, by+TEX16);
-			GL11.glVertex3f(x+xoff, y-0.45f, z-0.5f);
+			GL11.glVertex3f(x+xoff, y-0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x+xoff, y, z-0.5f);
 			
 			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
-			GL11.glVertex3f(x-xoff, y-0.45f, z-0.5f);
+			GL11.glVertex3f(x-xoff, y-0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX32, by+TEX32);
 			GL11.glVertex3f(x, y, z-0.5f);
@@ -354,62 +354,62 @@ public class Chunk {
 		// Lower Step surface
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x+xoff, y, z+0.45f);
+			GL11.glVertex3f(x+xoff, y, z+0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x+xoff, y, z-0.45f);
+			GL11.glVertex3f(x+xoff, y, z-0.5f);
 	
 			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x, y, z+0.45f);
+			GL11.glVertex3f(x, y, z+0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x, y, z-0.45f);
+			GL11.glVertex3f(x, y, z-0.5f);
 		GL11.glEnd();
 
 		// Lower Step Side
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x+xoff, y, z+0.45f);
+			GL11.glVertex3f(x+xoff, y, z+0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x+xoff, y, z-0.45f);
+			GL11.glVertex3f(x+xoff, y, z-0.5f);
 	
 			GL11.glTexCoord2f(bx,by+TEX16);
-			GL11.glVertex3f(x+xoff, y-0.45f, z+0.45f);
+			GL11.glVertex3f(x+xoff, y-0.5f, z+0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
-			GL11.glVertex3f(x+xoff, y-0.45f, z-0.45f);
+			GL11.glVertex3f(x+xoff, y-0.5f, z-0.5f);
 		GL11.glEnd();
 
 		// Higher Step surface
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x, y+0.5f, z+0.45f);
+			GL11.glVertex3f(x, y+0.5f, z+0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x, y+0.5f, z-0.45f);
+			GL11.glVertex3f(x, y+0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(bx, by+TEX16);
-			GL11.glVertex3f(x-xoff, y+0.5f, z+0.45f);
+			GL11.glVertex3f(x-xoff, y+0.5f, z+0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
-			GL11.glVertex3f(x-xoff, y+0.5f, z-0.45f);
+			GL11.glVertex3f(x-xoff, y+0.5f, z-0.5f);
 		GL11.glEnd();
 
 
 		// Higher Step Side
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x, y+0.5f, z+0.45f);
+			GL11.glVertex3f(x, y+0.5f, z+0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x, y+0.5f, z-0.45f);
+			GL11.glVertex3f(x, y+0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(bx,by+TEX32);
-			GL11.glVertex3f(x, y, z+0.45f);
+			GL11.glVertex3f(x, y, z+0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x, y, z-0.45f);
+			GL11.glVertex3f(x, y, z-0.5f);
 		GL11.glEnd();
 	}
 	
@@ -788,11 +788,11 @@ public class Chunk {
 			// Back
 			if (swap)
 			{
-				this.renderNorthSouth(textureId, x+0.90f, y, z, 0.5f, 0.45f);
+				this.renderNorthSouth(textureId, x+0.94f, y, z, 0.5f, 0.45f);
 			}
 			else
 			{
-				this.renderNorthSouth(textureId, x+0.10f, y, z, 0.5f, 0.45f);
+				this.renderNorthSouth(textureId, x+0.06f, y, z, 0.5f, 0.45f);
 			}
 			
 			// Bottom
@@ -812,11 +812,11 @@ public class Chunk {
 			// Back
 			if (swap)
 			{
-				this.renderWestEast(textureId, x, y, z+0.90f, 0.5f, 0.45f);
+				this.renderWestEast(textureId, x, y, z+0.94f, 0.5f, 0.45f);
 			}
 			else
 			{
-				this.renderWestEast(textureId, x, y, z+0.10f, 0.5f, 0.45f);
+				this.renderWestEast(textureId, x, y, z+0.06f, 0.5f, 0.45f);
 			}
 			
 			// Bottom
