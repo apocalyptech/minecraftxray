@@ -56,7 +56,9 @@ public class MineCraftConstants {
 		FLOOR_BUTTON,
 		HALFHEIGHT,
 		DOOR,
-		STAIRS
+		STAIRS,
+		SIGNPOST,
+		WALLSIGN
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -216,6 +218,10 @@ public class MineCraftConstants {
 		// Stairs
 		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_STAIRS, BLOCK_TYPE.STAIRS);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_COBBLESTONE_STAIRS, BLOCK_TYPE.STAIRS);
+		
+		// Signs
+		BLOCK_TYPE_MAP.put((byte)BLOCK_SIGNPOST, BLOCK_TYPE.SIGNPOST);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_WALL_SIGN, BLOCK_TYPE.WALLSIGN);
 	}
 	
 	   /***

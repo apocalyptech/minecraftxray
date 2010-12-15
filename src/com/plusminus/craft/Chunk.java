@@ -86,6 +86,31 @@ public class Chunk {
 		GL11.glEnd();
 	}
 	
+	
+	/**
+	 * Render something which is a North/South face.
+	 * 
+	 * @param t Texture to render
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void renderSignNorthSouth(int t, float x, float y, float z) {
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
+			GL11.glVertex3f(x, y+0.3f, z+0.4f);
+	
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
+			GL11.glVertex3f(x, y+0.3f, z-0.4f);
+	
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t],precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glVertex3f(x, y-0.2f, z+0.4f);
+	
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glVertex3f(x, y-0.2f, z-0.4f);
+		GL11.glEnd();
+	}
+	
 	public void renderTopDown(int t, float x, float y, float z) {
 		this.renderTopDown(t, x, y, z, 0.5f);
 	}
@@ -143,6 +168,62 @@ public class Chunk {
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
 			GL11.glVertex3f(x+xzScale, y-xzScale, z-xzScale);
+		GL11.glEnd();
+	}
+	
+	/**
+	 * Renders a sign facing West or East
+	 * TODO: Would be nice to just have a function where we can specify arbitrary scales per-axis.
+	 * 
+	 * @param t
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void renderSignWestEast(int t, float x, float y, float z) {
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
+			GL11.glVertex3f(x-0.4f, y+0.3f, z);
+	
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
+			GL11.glVertex3f(x+0.4f, y+0.3f, z);
+	
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glVertex3f(x-0.4f, y-0.2f, z);
+	
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glVertex3f(x+0.4f, y-0.2f, z);
+		GL11.glEnd();
+	}
+	
+	/**
+	 * Renders a more arbitrary rectangle.
+	 * 
+	 * @param t Texture to draw
+	 * @param x1
+	 * @param y1
+	 * @param z1
+	 * @param x2
+	 * @param y2
+	 * @param z2
+	 */
+	public void renderArbitrary(int t, float x1, float y1, float z1, float x2, float y2, float z2) {
+
+		float bx = precalcSpriteSheetToTextureX[t];
+		float by = precalcSpriteSheetToTextureY[t];
+
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by);
+			GL11.glVertex3f(x1, y1, z1);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x1, y1, z2);
+	
+			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glVertex3f(x2, y2, z1);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x2, y2, z2);
 		GL11.glEnd();
 	}
 	
@@ -827,7 +908,53 @@ public class Chunk {
 		}
 		
 	}
+	
+	public void renderSignpost(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
 		
+		byte data = getData(xxx, yyy, zzz);
+	}
+	
+	/**
+	 * Renders a wall sign.  This is virtually identical to renderLadder, except that
+	 * we draw a smaller box, basically.
+	 * TODO: Would be kind of neat to actually draw the message, too.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderWallSign(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		
+		byte data = getData(xxx, yyy, zzz);
+		switch(data)
+		{
+		 	case 2:
+		 		// East
+		 		this.renderSignWestEast(textureId, x, y, z+0.45f);
+		 		break;
+		 	case 3:
+		 		// West
+		 		this.renderSignWestEast(textureId, x, y, z-0.45f);
+		 		break;
+		 	case 4:
+		 		// North
+		 		this.renderSignNorthSouth(textureId, x+0.45f, y, z);
+		 		break;
+		 	case 5:
+	 		default:
+	 			// South
+				this.renderSignNorthSouth(textureId, x-0.45f, y, z);
+	 			break;
+		}
+	}
+	
 	public boolean checkSolid(byte block, boolean transpararency) {
 		if(block == 0) {
 			return true;
@@ -1039,6 +1166,12 @@ public class Chunk {
 								break;
 							case STAIRS:
 								renderStairs(textureId,x,y,z);
+								break;
+							case SIGNPOST:
+								renderSignpost(textureId,x,y,z);
+								break;
+							case WALLSIGN:
+								renderWallSign(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								// TODO: these (and other non-"block" things) seem to disappear behind glass
