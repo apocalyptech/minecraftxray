@@ -669,6 +669,82 @@ public class Chunk {
 	}
 
 	/**
+	 * Modified version of renderSpecial() which accounts for some Lever peculiarities.  A bit lame, but what're
+	 * you gonna do, right?
+	 * 
+	 * @param bx
+	 * @param by
+	 * @param ex
+	 * @param ey
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param yy
+	 * @param x1
+	 * @param x2
+	 * @param z1
+	 * @param z2
+	 * @param torch
+	 * @param thrown
+	 */
+	public void renderSpecialLever(float bx, float by, float ex, float ey, float x, float y, float z, float yy, float x1, float x2, float z1, float z2, boolean torch, boolean thrown) {
+		 
+		float y_up = 1.0f;
+		float y_down = 0f;
+		if (thrown)
+		{
+			y_up = 0f;
+			y_down = 1.0f;
+			yy -= 0.4f;
+		}
+		
+		 //GL11.glDisable(GL11.GL_CULL_FACE);
+		 //GL11.glDisable(GL11.GL_DEPTH_TEST);
+		 GL11.glBegin(GL11.GL_QUADS);
+		 GL11.glNormal3f(1.0f, 0.0f, 0.0f);
+		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+9/16.0f+TEX64, y+yy+y_up, 	z+z1);
+		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+9/16.0f+TEX64, y+yy+y_up, 	z+z1+1.0f);
+		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+9/16.0f-TEX64, y+yy+y_down, 	z+z2+1.0f);
+		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2+9/16.0f-TEX64, y+yy+y_down,	z+z2);
+		
+		 GL11.glNormal3f(-1.0f, 0.0f, 0.0f);
+		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+7/16.0f+TEX64, y+yy+y_up, 	z+z1+1.0f);
+		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+7/16.0f+TEX64, y+yy+y_up, 	z+z1);
+		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+7/16.0f-TEX64, y+yy+y_down, 	z+z2);
+		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2+7/16.0f-TEX64, y+yy+y_down, 	z+z2+1.0f);
+		 
+		 GL11.glNormal3f(0.0f, 0.0f, 1.0f);
+		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+1.0f, 	y+yy+y_up, 	z+z1+9/16.0f+TEX64);
+		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1, 		y+yy+y_up, 	z+z1+9/16.0f+TEX64);
+		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2, 		y+yy+y_down, 	z+z2+9/16.0f-TEX64);
+		 GL11.glTexCoord2f(bx, ey);	 	GL11.glVertex3f(x+x2+1.0f, 	y+yy+y_down, 	z+z2+9/16.0f-TEX64);
+		 
+		 GL11.glNormal3f(0.0f, 0.0f, -1.0f);
+		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1, 		y+yy+y_up, 	z+z1+7/16.0f+TEX64);
+		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+1.0f, 	y+yy+y_up, 	z+z1+7/16.0f+TEX64);
+		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+1.0f, 	y+yy+y_down,	z+z2+7/16.0f-TEX64);
+		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2, 		y+yy+y_down, 	z+z2+7/16.0f-TEX64);
+		
+		 /*
+		  * This doesn't even really work for the torches at the moment, comment it out.
+		 if (torch)
+		 {
+			 x1 *= 2.125f; z1 *= 2.125f;
+			 GL11.glNormal3f(0.0f, 1.0f, 0.0f);
+			 GL11.glTexCoord2f(bx+TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
+			 GL11.glTexCoord2f(ex-TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
+			 GL11.glTexCoord2f(ex-TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
+			 GL11.glTexCoord2f(bx+TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
+		 }
+		 */
+		 
+		 GL11.glEnd();
+		 //GL11.glEnable(GL11.GL_DEPTH_TEST);
+		 //GL11.glEnable(GL11.GL_CULL_FACE);	
+	}
+
+	
+	/**
 	 * Renders a torch, making an attempt to render properly given the wall face it's
 	 * attached to, etc.  We take in textureId because we support redstone torches as
 	 * well.
@@ -715,6 +791,80 @@ public class Chunk {
 		 ey = by + TEX16;
 		 
 		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, true);
+	}
+	
+	/**
+	 * Renders a lever; copied and modified from renderTorch for the most part.
+	 * TODO: Looks no better than the torches; should put the cobble base on at the least.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderLever(int textureId, int xxx, int yyy, int zzz) {
+		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
+		 
+		 byte data = getData(xxx, yyy, zzz);
+		 boolean thrown = false;
+		 if ((data & 0x8) == 0x8)
+		 {
+			 thrown = true;
+		 }
+		 data &= 7;
+		 //System.out.println("Data: " + data);
+		 
+		 switch (data) {
+			 case 1:
+				 x1 -= 0.125; x2 -= 0.5;
+				 yy = 3/16.0f; break;
+			 case 2:
+				 x1 += 0.125; x2 += 0.5;
+				 yy = 3/16.0f; break;
+			 case 3:
+				 z1 -= 0.125; z2 -= 0.5;
+				 yy = 3/16.0f; break;
+			 case 4:
+				 z1 += 0.125; z2 += 0.5;
+				 yy = 3/16.0f; break;
+			 case 5:
+				 if (thrown)
+				 {
+					 z1 -= 0.5;
+				 }
+				 else
+				 {
+					 z1 += 0.5;
+				 }
+				 thrown = false;
+				 break;
+			 case 6:
+				 if (thrown)
+				 {
+					 x1 -= 0.5;
+				 }
+				 else
+				 {
+					 x1 += 0.5;
+				 }
+				 thrown = false;
+				 break;
+		 }
+		 
+		 float x = xxx + this.x*16 -0.5f;
+		 float z = zzz + this.z*16 -0.5f;
+		 float y = yyy - 0.5f;
+		 
+		 float bx,by;
+		 float ex,ey;
+		 
+		 bx = precalcSpriteSheetToTextureX[textureId] + TEX64;
+		 by = precalcSpriteSheetToTextureY[textureId];
+
+		 ex = bx + TEX16-TEX32;
+		 ey = by + TEX16;
+		 
+		 renderSpecialLever(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, true, thrown);
 	}
 	
 	/***
@@ -1311,6 +1461,9 @@ public class Chunk {
 								break;
 							case FENCE:
 								renderFence(textureId,x,y,z);
+								break;
+							case LEVER:
+								renderLever(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								// TODO: these (and other non-"block" things) seem to disappear behind glass

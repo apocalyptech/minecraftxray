@@ -59,7 +59,8 @@ public class MineCraftConstants {
 		STAIRS,
 		SIGNPOST,
 		WALLSIGN,
-		FENCE
+		FENCE,
+		LEVER
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -227,6 +228,8 @@ public class MineCraftConstants {
 		// Fences
 		BLOCK_TYPE_MAP.put((byte)BLOCK_FENCE, BLOCK_TYPE.FENCE);
 		
+		// Lever
+		BLOCK_TYPE_MAP.put((byte)BLOCK_LEVER, BLOCK_TYPE.LEVER);
 	}
 	
 	   /***
@@ -374,7 +377,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_MINECART_TRACKS] = (8*16);
 		blockDataToSpriteSheet[BLOCK_COBBLESTONE_STAIRS] = 16;
 		blockDataToSpriteSheet[BLOCK_WALL_SIGN] = 4;  // perhaps this is best left out actually		
-		//blockDataToSpriteSheet[BLOCK_LEVER] = ;
+		blockDataToSpriteSheet[BLOCK_LEVER] = (6*16);
 	    blockDataToSpriteSheet[BLOCK_STONE_PRESSURE_PLATE] = 6;  // perhaps this is best left out actually
 		blockDataToSpriteSheet[BLOCK_IRON_DOOR] = (6*16)+2;
 		blockDataToSpriteSheet[BLOCK_WOODEN_PRESSURE_PLATE] = 4;  // perhaps this is best left out actually
