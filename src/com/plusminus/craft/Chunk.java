@@ -56,11 +56,21 @@ public class Chunk {
 		return this.blockData;
 	}
 	
-	public void renderLeftRight(int t, float x, float y, float z) {
-		this.renderLeftRight(t, x, y, z, 0.5f, 0.5f);
+	public void renderNorthSouth(int t, float x, float y, float z) {
+		this.renderNorthSouth(t, x, y, z, 0.5f, 0.5f);
 	}
 	
-	public void renderLeftRight(int t, float x, float y, float z, float yHeightOffset, float xzScale) {
+	/**
+	 * Render something which is a North/Sout4h face.
+	 * 
+	 * @param t Texture to render
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param yHeightOffset How tall this block is.  0.5f is the usual, specify 0 for half-height
+	 * @param xzScale How large the rest of the block is.  0.5f is full-size, 0.1 would be tiny.
+	 */
+	public void renderNorthSouth(int t, float x, float y, float z, float yHeightOffset, float xzScale) {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
 			GL11.glVertex3f(x-xzScale, y+yHeightOffset, z+xzScale);
@@ -106,11 +116,21 @@ public class Chunk {
 	}
 	
 
-	public void renderFarNear(int t, float x, float y, float z) {
-		this.renderFarNear(t, x, y, z, 0.5f, 0.5f);
+	public void renderWestEast(int t, float x, float y, float z) {
+		this.renderWestEast(t, x, y, z, 0.5f, 0.5f);
 	}
 	
-	public void renderFarNear(int t, float x, float y, float z, float yHeightOffset, float xzScale) {
+	/**
+	 * Renders something which is a West/East face.
+	 * 
+	 * @param t Texture to draw
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param yHeightOffset How tall this block is.  0.5f is the usual, specify 0 for half-height
+	 * @param xzScale How large the rest of the block is.  0.5f is full-size, 0.1 would be tiny.
+	 */
+	public void renderWestEast(int t, float x, float y, float z, float yHeightOffset, float xzScale) {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
 			GL11.glVertex3f(x-xzScale, y+yHeightOffset, z-xzScale);
@@ -370,20 +390,20 @@ public class Chunk {
 		 {
 		 	case 2:
 		 		// East
-		 		this.renderFarNear(textureId, x, y, z+1.0f-TEX64);
+		 		this.renderWestEast(textureId, x, y, z+1.0f-TEX64);
 		 		break;
 		 	case 3:
 		 		// West
-		 		this.renderFarNear(textureId, x, y, z+TEX64);
+		 		this.renderWestEast(textureId, x, y, z+TEX64);
 		 		break;
 		 	case 4:
 		 		// North
-		 		this.renderLeftRight(textureId, x+1.0f-TEX64, y, z);
+		 		this.renderNorthSouth(textureId, x+1.0f-TEX64, y, z);
 		 		break;
 		 	case 5:
 	 		default:
 	 			// South
-				this.renderLeftRight(textureId, x+TEX64, y, z);
+				this.renderNorthSouth(textureId, x+TEX64, y, z);
 	 			break;
 		 }
 	}
@@ -450,22 +470,22 @@ public class Chunk {
 		if ((dir == 3 && swung) || (dir == 0 && !swung))
 		{
 			// North			
-			this.renderLeftRight(textureId, x, y, z);
+			this.renderNorthSouth(textureId, x, y, z);
 		}
 		else if ((dir == 0 && swung) || (dir == 1 && !swung))
 		{
 			// East
-			this.renderFarNear(textureId, x, y, z);
+			this.renderWestEast(textureId, x, y, z);
 		}
 		else if ((dir == 1 && swung) || (dir == 2 && !swung))
 		{
 			// South
-			this.renderLeftRight(textureId, x+1, y, z);
+			this.renderNorthSouth(textureId, x+1, y, z);
 		}
 		else
 		{
 			// West
-			this.renderFarNear(textureId, x, y, z+1);
+			this.renderWestEast(textureId, x, y, z+1);
 		}
 		
 	}
@@ -682,27 +702,27 @@ public class Chunk {
 							case HALFHEIGHT:
 								// TODO: these (and other non-"block" things) seem to disappear behind glass
 								if(draw) {
-									if(!near) this.renderFarNear(textureId, worldX+x, y, worldZ+z, 0f, .495f);
-									if(!far) this.renderFarNear(textureId, worldX+x, y, worldZ+z+1, 0f, .495f);
+									if(!near) this.renderWestEast(textureId, worldX+x, y, worldZ+z, 0f, .495f);
+									if(!far) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1, 0f, .495f);
 									
 									if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
 									this.renderTopDown(textureId, worldX+x, y+0.5f, worldZ+z);	
 									
-									if(!left) this.renderLeftRight(textureId, worldX+x, y, worldZ+z, 0f, .495f);
-									if(!right) this.renderLeftRight(textureId, worldX+x+1, y, worldZ+z, 0f, .495f);
+									if(!left) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z, 0f, .495f);
+									if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z, 0f, .495f);
 								}
 								break;
 							default:
 								// if we have to draw this block
 								if(draw) {
-									if(!near) this.renderFarNear(textureId, worldX+x, y, worldZ+z);
-									if(!far) this.renderFarNear(textureId, worldX+x, y, worldZ+z+1);
+									if(!near) this.renderWestEast(textureId, worldX+x, y, worldZ+z);
+									if(!far) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1);
 									
 									if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
 									if(!above) this.renderTopDown(textureId, worldX+x, y+1, worldZ+z);	
 									
-									if(!left) this.renderLeftRight(textureId, worldX+x, y, worldZ+z);
-									if(!right) this.renderLeftRight(textureId, worldX+x+1, y, worldZ+z);
+									if(!left) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z);
+									if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z);
 								}
 						}
 					} else {
@@ -714,14 +734,14 @@ public class Chunk {
 							}
 						}
 						if(draw) {
-							this.renderFarNear(textureId, worldX+x, y, worldZ+z);
-							this.renderFarNear(textureId, worldX+x, y, worldZ+z+1);
+							this.renderWestEast(textureId, worldX+x, y, worldZ+z);
+							this.renderWestEast(textureId, worldX+x, y, worldZ+z+1);
 							
 							this.renderTopDown(textureId, worldX+x, y, worldZ+z);
 							this.renderTopDown(textureId, worldX+x, y+1, worldZ+z);	
 							
-							this.renderLeftRight(textureId, worldX+x, y, worldZ+z);
-							this.renderLeftRight(textureId, worldX+x+1, y, worldZ+z);
+							this.renderNorthSouth(textureId, worldX+x, y, worldZ+z);
+							this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z);
 						}
 					}
 					
