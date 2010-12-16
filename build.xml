@@ -74,8 +74,6 @@
 		<copy todir="${dist}/src">
 			<fileset dir=".">
 				<include name="**/*" />
-				<exclude name="**/CVS" />
-				<exclude name="**/.cvsignore" />
 				<exclude name="bin/" />
 				<exclude name="build/" />
 				<exclude name="dist/" />
