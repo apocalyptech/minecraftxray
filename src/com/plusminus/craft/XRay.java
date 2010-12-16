@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.awt.AlphaComposite;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -91,6 +93,7 @@ public class XRay {
 
     // the sprite sheet for all textures
     public Texture minecraftTexture;
+    public Texture portalTexture;
     
     // the textures used by the minimap
     private Texture minimapTexture;
@@ -364,6 +367,17 @@ public class XRay {
 			minecraftTexture 						= TextureTool.allocateTexture(minecraftTextureImage, GL11.GL_NEAREST);
 			minecraftTexture.update();
 			
+			// Nether portal texture to use for drawing those, since there's no actual texture for it
+			portalTexture = TextureTool.allocateTexture(16, 16);
+			BufferedImage bi = portalTexture.getImage();
+			Graphics2D pg = bi.createGraphics();
+			//AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, 0.4f);
+			pg.setColor(new Color(.839f, .203f, .952f, .4f));
+			pg.fill(new Rectangle(0, 0, 16, 16));
+			//pg.setComposite(ac);
+			pg.drawImage(bi, null, 0, 0);
+			portalTexture.update();
+			
 			// world selection screen textures, nothing fancy
 			worldSelectionTextures = new ArrayList<Texture>();
 			for(int i : availableWorlds) {
@@ -562,7 +576,7 @@ public class XRay {
      */
     private void setMinecraftWorld(int worldNum, boolean nether) {
     	this.worldNum = worldNum;
-    	this.level =  new MinecraftLevel(worldNum, nether);
+    	this.level =  new MinecraftLevel(worldNum, nether, minecraftTexture, portalTexture);
     	
     	// determine which chunks are available in this world
 		mapChunksToLoad = new Stack<Block>();

@@ -1355,6 +1355,30 @@ public class Chunk {
 
 	}
 	
+	/**
+	 * Initial Portal square rendering support.  Various issues to take care of still, really.
+	 * TODO: Lots
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderPortal(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		
+		this.level.portalTexture.bind();
+
+		this.renderVertical(0, x-0.5f, z-0.5f, x+0.5f, z-0.5f, y-0.5f, 1.0f);
+		this.renderVertical(0, x-0.5f, z+0.5f, x+0.5f, z+0.5f, y-0.5f, 1.0f);
+		this.renderVertical(0, x-0.5f, z-0.5f, x-0.5f, z+0.5f, y-0.5f, 1.0f);
+		this.renderVertical(0, x+0.5f, z-0.5f, x+0.5f, z+0.5f, y-0.5f, 1.0f);
+		
+		this.level.minecraftTexture.bind();
+	}
+	
 	public boolean checkSolid(byte block, boolean transpararency) {
 		if(block == 0) {
 			return true;
@@ -1582,6 +1606,8 @@ public class Chunk {
 							case BUTTON:
 								renderButton(textureId,x,y,z);
 								break;
+							case PORTAL:
+								renderPortal(textureId,x,y,z);
 							case HALFHEIGHT:
 								// TODO: these (and other non-"block" things) seem to disappear behind glass
 								if(draw) {

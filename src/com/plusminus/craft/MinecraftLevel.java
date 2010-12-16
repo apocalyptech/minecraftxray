@@ -32,23 +32,20 @@ public class MinecraftLevel {
 	private float playerYaw;
 	private float playerPitch;
 	private boolean nether;
+	
+	public Texture minecraftTexture;
+	public Texture portalTexture;
 
-	
+
 	/***
 	 * Create a minecraftLevel from the given world
 	 * @param world
 	 */
-	public MinecraftLevel(int world) {
-		this(world, false);
-	}
-	
-	/***
-	 * Create a minecraftLevel from the given world
-	 * @param world
-	 */
-	public MinecraftLevel(int world, boolean nether) {
+	public MinecraftLevel(int world, boolean nether, Texture minecraftTexture, Texture portalTexture) {
 		this.world = world;
 		this.nether = nether;
+		this.minecraftTexture = minecraftTexture;
+		this.portalTexture = portalTexture;
 		this.levelData = new Chunk[LEVEL_MAX_WIDTH][LEVEL_MAX_HEIGHT];
 		File levelFile = new File(MineCraftEnvironment.getWorldDirectory(world), "level.dat");
 		

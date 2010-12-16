@@ -61,7 +61,8 @@ public class MineCraftConstants {
 		WALLSIGN,
 		FENCE,
 		LEVER,
-		BUTTON
+		BUTTON,
+		PORTAL
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -234,6 +235,9 @@ public class MineCraftConstants {
 		
 		// Button
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STONE_BUTTON, BLOCK_TYPE.BUTTON);
+		
+		// Portal
+		BLOCK_TYPE_MAP.put((byte)BLOCK_PORTAL, BLOCK_TYPE.PORTAL);
 	}
 	
 	   /***
