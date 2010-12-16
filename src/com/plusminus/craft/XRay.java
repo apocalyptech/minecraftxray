@@ -2,12 +2,10 @@ package com.plusminus.craft;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.AlphaComposite;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +13,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -27,12 +24,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
-import com.plusminus.craft.dtf.ByteArrayTag;
-import com.plusminus.craft.dtf.CompoundTag;
-import com.plusminus.craft.dtf.DTFReader;
-import com.plusminus.craft.dtf.IntTag;
-import com.plusminus.craft.dtf.Tag;
 
 import static com.plusminus.craft.MineCraftConstants.*;
 
@@ -371,10 +362,8 @@ public class XRay {
 			portalTexture = TextureTool.allocateTexture(16, 16);
 			BufferedImage bi = portalTexture.getImage();
 			Graphics2D pg = bi.createGraphics();
-			//AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, 0.4f);
 			pg.setColor(new Color(.839f, .203f, .952f, .4f));
 			pg.fill(new Rectangle(0, 0, 16, 16));
-			//pg.setComposite(ac);
 			pg.drawImage(bi, null, 0, 0);
 			portalTexture.update();
 			

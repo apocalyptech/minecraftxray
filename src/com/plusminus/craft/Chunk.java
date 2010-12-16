@@ -1356,25 +1356,77 @@ public class Chunk {
 	}
 	
 	/**
-	 * Initial Portal square rendering support.  Various issues to take care of still, really.
-	 * TODO: Lots
+	 * Portal square rendering.
 	 * 
 	 * @param textureId
 	 * @param xxx
 	 * @param yyy
 	 * @param zzz
+	 * @param blockOffset Should be passed in from our main draw loop so we don't have to recalculate
 	 */
-	public void renderPortal(int textureId, int xxx, int yyy, int zzz) {
+	public void renderPortal(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
 		
 		this.level.portalTexture.bind();
+		
+		// Check to see where adjoining Portal spaces are, so we know which
+		// faces to draw
+		boolean drawWestEast = true;
+		
+		// Doing this in a for loop just so we can break out more
+		// easily once we find something
+		for (int i=0; i<1; i++)
+		{
+			if (xxx>0)
+			{
+				if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK_PORTAL)
+				{
+					break;
+				}
+			}
+			else if (this.x > -63)
+			{
+				// TODO: figure out our chunk bounds here (the -63, and below)
+				Chunk otherChunk = level.getChunk(this.x-1, this.z);
+				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK_PORTAL)
+				{
+					break;
+				}
+			}
+			
+			if (xxx<15)
+			{
+				if (blockData.value[blockOffset+BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK_PORTAL)
+				{
+					break;
+				}
+			}
+			else if (this.x < 63)
+			{
+				Chunk otherChunk = level.getChunk(this.x+1, this.z);
+				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == MineCraftConstants.BLOCK_PORTAL)
+				{
+					break;
+				}
+			}
+			
+			// If we've gotten here without finding a Portal space, we'll just assume that we're going in
+			// the other direction.
+			drawWestEast = false;
+		}
 
-		this.renderVertical(0, x-0.5f, z-0.5f, x+0.5f, z-0.5f, y-0.5f, 1.0f);
-		this.renderVertical(0, x-0.5f, z+0.5f, x+0.5f, z+0.5f, y-0.5f, 1.0f);
-		this.renderVertical(0, x-0.5f, z-0.5f, x-0.5f, z+0.5f, y-0.5f, 1.0f);
-		this.renderVertical(0, x+0.5f, z-0.5f, x+0.5f, z+0.5f, y-0.5f, 1.0f);
+		if (drawWestEast)
+		{
+			this.renderVertical(0, x-0.5f, z-0.3f, x+0.5f, z-0.3f, y-0.5f, 1.0f);
+			this.renderVertical(0, x-0.5f, z+0.3f, x+0.5f, z+0.3f, y-0.5f, 1.0f);
+		}
+		else
+		{
+			this.renderVertical(0, x-0.3f, z-0.5f, x-0.3f, z+0.5f, y-0.5f, 1.0f);
+			this.renderVertical(0, x+0.3f, z-0.5f, x+0.3f, z+0.5f, y-0.5f, 1.0f);
+		}
 		
 		this.level.minecraftTexture.bind();
 	}
@@ -1607,7 +1659,8 @@ public class Chunk {
 								renderButton(textureId,x,y,z);
 								break;
 							case PORTAL:
-								renderPortal(textureId,x,y,z);
+								renderPortal(textureId,x,y,z,blockOffset);
+								break;
 							case HALFHEIGHT:
 								// TODO: these (and other non-"block" things) seem to disappear behind glass
 								if(draw) {
