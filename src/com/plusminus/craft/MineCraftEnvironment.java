@@ -225,15 +225,34 @@ public class MineCraftEnvironment {
 	public static BufferedImage getMinecraftTexture() {
 		BufferedImage bi = buildImageFromInput(getMinecraftTextureData());
 		
-		// TODO: It doesn't look like Minecraft actually supports biome grass/leaf coloring for higher-res
-		// texture packs, so right now we're not going to greenify anything but 16x16 packs.  When/if
-		// Minecraft supports that, we should update this.  Also it would be nice to get proper Biome
-		// coloring in here, though from the looks of it, it's more trouble than I'm willing to spend.
+		// Figure out our square size, and then check to see if the grass tile is
+		// grayscale or not; we do this by examining the middle row of pixels.  If
+		// it *is* grayscale, then colorize it. 
 		int square_width = bi.getWidth()/16;
-		if (square_width == 16)
+		int[] pixels = new int[square_width];
+		int i;
+		int r, g, b;
+		boolean grayscale = true;
+		bi.getRGB(0, square_width/2, square_width, 1, pixels, 0, square_width);
+		for (i=0; i<square_width; i++)
+		{
+			//a = (pixels[i] & 0xFF000000) >> 24;
+			r = (pixels[i] & 0x00FF0000) >> 16;
+			g = (pixels[i] & 0x0000FF00) >> 8;
+			b = (pixels[i] & 0x000000FF);
+			//System.out.println("Pixel " + i + ": " + r + ", " + g + ", " + b + ", " + a);
+			if (g > r || g > b)
+			{
+				grayscale = false;
+				break;
+			}
+		}
+		
+		// Now do the coloring if we have to.
+		if (grayscale)
 		{	
 			Graphics2D g2d = bi.createGraphics();
-			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f);
+			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.3f);
 			
 			// First greenify grass
 			Rectangle rect = new Rectangle(0, 0, square_width, square_width);
