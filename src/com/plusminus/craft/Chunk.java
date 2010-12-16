@@ -1240,6 +1240,71 @@ public class Chunk {
 		this.renderFenceSide(textureId, x-.05f, y, z);
 		this.renderFenceBody(textureId, x+.05f, x-.05f, y, z);
 	}
+
+	public void renderButton(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		
+		float faceX1, faceX2;
+		float faceZ1, faceZ2;
+		float back_dX, back_dZ;
+		float button_radius = .1f;
+		
+		byte data = getData(xxx, yyy, zzz);
+		switch(data)
+		{
+		 	case 1:
+	 			// South
+		 		faceX1 = x-0.5f+button_radius;
+		 		faceX2 = x-0.5f+button_radius;
+		 		faceZ1 = z-button_radius;
+		 		faceZ2 = z+button_radius;
+		 		back_dX = -button_radius;
+		 		back_dZ = 0;
+	 			break;
+		 	case 2:
+		 		// North
+		 		faceX1 = x+0.5f-button_radius;
+		 		faceX2 = x+0.5f-button_radius;
+		 		faceZ1 = z-button_radius;
+		 		faceZ2 = z+button_radius;
+		 		back_dX = button_radius;
+		 		back_dZ = 0;
+		 		break;
+		 	case 3:
+		 		// West
+		 		faceX1 = x-button_radius;
+		 		faceX2 = x+button_radius;
+		 		faceZ1 = z-0.5f+button_radius;
+		 		faceZ2 = z-0.5f+button_radius;
+		 		back_dX = 0;
+		 		back_dZ = -button_radius;
+		 		break;
+		 	case 4:
+	 		default:
+		 		// East
+		 		faceX1 = x-button_radius;
+		 		faceX2 = x+button_radius;
+		 		faceZ1 = z+0.5f-button_radius;
+		 		faceZ2 = z+0.5f-button_radius;
+		 		back_dX = 0;
+		 		back_dZ = button_radius;
+		 		break;
+		}
+		
+		// Button face
+		this.renderVertical(textureId, faceX1, faceZ1, faceX2, faceZ2, y-button_radius, button_radius*2);
+		
+		// Sides
+		this.renderVertical(textureId, faceX1, faceZ1, faceX1+back_dX, faceZ1+back_dZ, y-button_radius, button_radius*2);
+		this.renderVertical(textureId, faceX2, faceZ2, faceX2+back_dX, faceZ2+back_dZ, y-button_radius, button_radius*2);
+		
+		// Top/Bottom
+		this.renderHorizontal(textureId, faceX1, faceZ1, faceX2+back_dX, faceZ2+back_dZ, y-button_radius);
+		this.renderHorizontal(textureId, faceX1, faceZ1, faceX2+back_dX, faceZ2+back_dZ, y+button_radius);
+
+	}
 	
 	public boolean checkSolid(byte block, boolean transpararency) {
 		if(block == 0) {
@@ -1464,6 +1529,9 @@ public class Chunk {
 								break;
 							case LEVER:
 								renderLever(textureId,x,y,z);
+								break;
+							case BUTTON:
+								renderButton(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								// TODO: these (and other non-"block" things) seem to disappear behind glass

@@ -60,7 +60,8 @@ public class MineCraftConstants {
 		SIGNPOST,
 		WALLSIGN,
 		FENCE,
-		LEVER
+		LEVER,
+		BUTTON
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -230,6 +231,9 @@ public class MineCraftConstants {
 		
 		// Lever
 		BLOCK_TYPE_MAP.put((byte)BLOCK_LEVER, BLOCK_TYPE.LEVER);
+		
+		// Button
+		BLOCK_TYPE_MAP.put((byte)BLOCK_STONE_BUTTON, BLOCK_TYPE.BUTTON);
 	}
 	
 	   /***
@@ -371,21 +375,21 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_SOIL] = (5*16)+6;
 		blockDataToSpriteSheet[BLOCK_FURNACE] = 44;
 		blockDataToSpriteSheet[BLOCK_BURNING_FURNACE] = (3*16)+13;
-		blockDataToSpriteSheet[BLOCK_SIGNPOST] = 4;  // perhaps this is best left out actually		
+		blockDataToSpriteSheet[BLOCK_SIGNPOST] = 4;
 		blockDataToSpriteSheet[BLOCK_WOODEN_DOOR] = (6*16)+1;
 		blockDataToSpriteSheet[BLOCK_LADDER] = (5*16)+3;
 		blockDataToSpriteSheet[BLOCK_MINECART_TRACKS] = (8*16);
 		blockDataToSpriteSheet[BLOCK_COBBLESTONE_STAIRS] = 16;
-		blockDataToSpriteSheet[BLOCK_WALL_SIGN] = 4;  // perhaps this is best left out actually		
+		blockDataToSpriteSheet[BLOCK_WALL_SIGN] = 4;
 		blockDataToSpriteSheet[BLOCK_LEVER] = (6*16);
-	    blockDataToSpriteSheet[BLOCK_STONE_PRESSURE_PLATE] = 6;  // perhaps this is best left out actually
+	    blockDataToSpriteSheet[BLOCK_STONE_PRESSURE_PLATE] = 6;
 		blockDataToSpriteSheet[BLOCK_IRON_DOOR] = (6*16)+2;
-		blockDataToSpriteSheet[BLOCK_WOODEN_PRESSURE_PLATE] = 4;  // perhaps this is best left out actually
+		blockDataToSpriteSheet[BLOCK_WOODEN_PRESSURE_PLATE] = 4;
 		blockDataToSpriteSheet[BLOCK_REDSTONE_ORE] = (3*16) + 3;
 		blockDataToSpriteSheet[BLOCK_GLOWING_REDSTONE_ORE] = 51;
 		blockDataToSpriteSheet[BLOCK_REDSTONE_TORCH_OFF] = (7*16)+3;
 		blockDataToSpriteSheet[BLOCK_REDSTONE_TORCH_ON] = (6*16)+3;
-		//blockDataToSpriteSheet[BLOCK_STONE_BUTTON] = ;
+		blockDataToSpriteSheet[BLOCK_STONE_BUTTON] = 6;
 		blockDataToSpriteSheet[BLOCK_SNOW] = 66;
 		blockDataToSpriteSheet[BLOCK_ICE] = 67;
 		blockDataToSpriteSheet[BLOCK_SNOW_BLOCK] = 66;
