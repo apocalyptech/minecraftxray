@@ -15,6 +15,8 @@
   * Should correctly colorize grass if needed, using any texture pack.
   * Uses the same texture pack Minecraft uses, if set in Minecraft's "Mods and
     Texture Packs" menu.
+  * Resolution dialog will show 1280x1024, 1024x768, and 800x600, regardless of
+    whether or not those resolutions were auto-detected
   
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
 

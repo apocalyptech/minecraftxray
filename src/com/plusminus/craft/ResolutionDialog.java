@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.HashMap;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -108,7 +109,11 @@ public class ResolutionDialog extends JFrame {
 	private static final String PANEL_NAME_BASIC ="Basic";
 	private static final String PANEL_NAME_ADVANCED = "Advanced";
 	private static final int[][] defaultPreferredResolutions = 
-		new int[][] {{1920,1080},{1600,900},{1280,720},{1024, 768}, {800, 600}, {1280,1024}};
+		new int[][] {{1920,1080},{1600,900},{1280,720},{1024, 768}, {800, 600}, {666, 666}, {1280,1024}};
+	// fallbackResolutions defines resolutions that we'll offer in the dropdown regardless of whether or not
+	// they show up in the list of detected resolutions
+	private static final int[][] fallbackResolutions =
+		new int[][] {{1280,1024},{1024,768},{800,600}};
 	private static final int[] defaultPreferredBitDepths =
 		new int[] {32, 16, 8};
 	private static final int[] defaultPreferredRefreshRates =
@@ -454,16 +459,50 @@ public class ResolutionDialog extends JFrame {
 		refreshRateList	= new JComboBox();
 		refreshRateList.setModel(refreshRateModel);
 		
+		// Create a map of our fallback resolutions
+		HashMap<Integer, Boolean> fallbackMap = new HashMap<Integer, Boolean>();
+		for (int[] res : fallbackResolutions)
+		{
+			fallbackMap.put(res[0]*10000 + res[1], false);
+		}
+		
 		try {
 			DisplayMode[] modes = Display.getAvailableDisplayModes();
 		
 			for(DisplayMode mode : modes) {
 				IntegerPair modePair = new IntegerPair(mode.getWidth(), mode.getHeight());
-
+				
+				// Mark that we've seen our fallback resolution if it exists
+				int hash = mode.getWidth()*10000 + mode.getHeight();
+				if (fallbackMap.containsKey(hash))
+					fallbackMap.put(hash, true);
+				
+				// Now add the mode into the full list
 				if(!resolutionsMap.containsKey(modePair))
 					resolutionsMap.put(modePair, new ArrayList<DisplayMode>());
 				
 				resolutionsMap.get(modePair).add(mode);	
+			}
+			
+			// Add in our resolutions that we want to display regardless of what was auto-detected
+			DisplayMode curMode = Display.getDisplayMode();
+			for(int[] res: fallbackResolutions)
+			{
+				int hash = res[0]*10000+res[1];
+				if (fallbackMap.containsKey(hash))
+				{
+					//System.out.println(res[0] + "x" + res[1] + ": " + preferredMap.get(hash));
+					if (!fallbackMap.get(hash))
+					{
+						if (res[0] <= curMode.getWidth() && res[1] <= curMode.getHeight())
+						{
+							DisplayMode mode = new DisplayMode(res[0], res[1]);
+							ArrayList<DisplayMode> modelist = new ArrayList<DisplayMode>();
+							modelist.add(mode);
+							resolutionsMap.put(new IntegerPair(res[0], res[1]), modelist);
+						}
+					}
+				}
 			}
 			
 			IntegerPair firstMode = null;
