@@ -179,7 +179,7 @@ public class Chunk {
 	}
 	
 	/**
-	 * Renders an arbitrary horizontal rectangle.
+	 * Renders an arbitrary horizontal rectangle (will be orthogonal)
 	 * @param t
 	 * @param x1
 	 * @param z1
@@ -204,6 +204,41 @@ public class Chunk {
 	
 			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
 			GL11.glVertex3f(x2, y, z2);
+		GL11.glEnd();
+	}
+	
+	/**
+	 * Render a surface on a horizontal plane; pass in all four verticies.  This can result,
+	 * obviously, in non-rectangular and non-orthogonal shapes.
+	 * 
+	 * @param t
+	 * @param x1
+	 * @param z1
+	 * @param x2
+	 * @param z2
+	 * @param x3
+	 * @param z3
+	 * @param x4
+	 * @param z4
+	 * @param y
+	 */
+	public void renderHorizontalAskew(int t, float x1, float z1, float x2, float z2, float x3, float z3, float x4, float z4, float y) {
+
+		float bx = precalcSpriteSheetToTextureX[t];
+		float by = precalcSpriteSheetToTextureY[t];
+
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(bx, by);
+			GL11.glVertex3f(x1, y, z1);
+	
+			GL11.glTexCoord2f(bx+TEX16, by);
+			GL11.glVertex3f(x2, y, z2);
+	
+			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glVertex3f(x3, y, z3);
+	
+			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glVertex3f(x4, y, z4);
 		GL11.glEnd();
 	}
 	
@@ -1112,12 +1147,16 @@ public class Chunk {
 		float signBottom = 0f;
 		float signHeight = .6f;
 		float postRadius = .05f;
+		float face_spacing = 3; // in degrees
 		
 		// First a signpost
 		this.renderVertical(textureId, x-postRadius, z-postRadius, x+postRadius, z-postRadius, y-0.5f, 0.5f+signBottom);
 		this.renderVertical(textureId, x-postRadius, z+postRadius, x+postRadius, z+postRadius, y-0.5f, 0.5f+signBottom);
 		this.renderVertical(textureId, x+postRadius, z-postRadius, x+postRadius, z+postRadius, y-0.5f, 0.5f+signBottom);
 		this.renderVertical(textureId, x-postRadius, z+postRadius, x-postRadius, z-postRadius, y-0.5f, 0.5f+signBottom);
+		
+		// Signpost top
+		this.renderHorizontal(textureId, x-postRadius, z-postRadius, x+postRadius, z+postRadius, y+signBottom);
 		
 		// Now we continue to draw the sign itself.
 		byte data = getData(xxx, yyy, zzz);
@@ -1128,17 +1167,33 @@ public class Chunk {
 		float angle = (data % 8) * 22.5f;
 		float radius = 0.5f;
 
+		angle -= face_spacing;
 		// First x/z
-		float x1 = x + radius * (float)Math.cos(Math.toRadians(angle));
-		float z1 = z + radius * (float)Math.sin(Math.toRadians(angle));
+		float x1a = x + radius * (float)Math.cos(Math.toRadians(angle));
+		float z1a = z + radius * (float)Math.sin(Math.toRadians(angle));
+		angle += face_spacing*2;
+		float x1b = x + radius * (float)Math.cos(Math.toRadians(angle));
+		float z1b = z + radius * (float)Math.sin(Math.toRadians(angle));
 		
 		// Now the other side
-		angle -= 180;
-		float x2 = x + radius * (float)Math.cos(Math.toRadians(angle));
-		float z2 = z + radius * (float)Math.sin(Math.toRadians(angle));
+		angle += 180;
+		float x2a = x + radius * (float)Math.cos(Math.toRadians(angle));
+		float z2a = z + radius * (float)Math.sin(Math.toRadians(angle));
+		angle -= face_spacing*2;
+		float x2b = x + radius * (float)Math.cos(Math.toRadians(angle));
+		float z2b = z + radius * (float)Math.sin(Math.toRadians(angle));
 		
-		this.renderVertical(textureId, x1, z1, x2, z2, y+signBottom, signHeight);
+		// Faces
+		this.renderVertical(textureId, x1a, z1a, x2a, z2a, y+signBottom, signHeight);
+		this.renderVertical(textureId, x1b, z1b, x2b, z2b, y+signBottom, signHeight);
 		
+		// Sides
+		this.renderVertical(textureId, x1a, z1a, x1b, z1b, y+signBottom, signHeight);
+		this.renderVertical(textureId, x2a, z2a, x2b, z2b, y+signBottom, signHeight);
+		
+		// Top/Bottom
+		this.renderHorizontalAskew(textureId, x1a, z1a, x1b, z1b, x2a, z2a, x2b, z2b, y+signBottom);
+		this.renderHorizontalAskew(textureId, x1a, z1a, x1b, z1b, x2a, z2a, x2b, z2b, y+signBottom+signHeight);
 	}
 	
 	/**
