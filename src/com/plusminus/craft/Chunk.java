@@ -86,31 +86,6 @@ public class Chunk {
 		GL11.glEnd();
 	}
 	
-	
-	/**
-	 * Render something which is a North/South face.
-	 * 
-	 * @param t Texture to render
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public void renderSignNorthSouth(int t, float x, float y, float z) {
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x, y+0.3f, z+0.4f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x, y+0.3f, z-0.4f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t],precalcSpriteSheetToTextureY[t]+TEX16);
-			GL11.glVertex3f(x, y-0.2f, z+0.4f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
-			GL11.glVertex3f(x, y-0.2f, z-0.4f);
-		GL11.glEnd();
-	}
-	
 	public void renderTopDown(int t, float x, float y, float z) {
 		this.renderTopDown(t, x, y, z, 0.5f);
 	}
@@ -168,31 +143,6 @@ public class Chunk {
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
 			GL11.glVertex3f(x+xzScale, y-xzScale, z-xzScale);
-		GL11.glEnd();
-	}
-	
-	/**
-	 * Renders a sign facing West or East
-	 * TODO: Would be nice to just have a function where we can specify arbitrary scales per-axis.
-	 * 
-	 * @param t
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public void renderSignWestEast(int t, float x, float y, float z) {
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.4f, y+0.3f, z);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x+0.4f, y+0.3f, z);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX16);
-			GL11.glVertex3f(x-0.4f, y-0.2f, z);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
-			GL11.glVertex3f(x+0.4f, y-0.2f, z);
 		GL11.glEnd();
 	}
 	
@@ -1197,28 +1147,64 @@ public class Chunk {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
+
+		float faceX1, faceX2;
+		float faceZ1, faceZ2;
+ 		float back_dX, back_dZ;
+ 		float sign_length = 0.4f;
 		
 		byte data = getData(xxx, yyy, zzz);
 		switch(data)
 		{
 		 	case 2:
 		 		// East
-		 		this.renderSignWestEast(textureId, x, y, z+0.45f);
+	 			faceX1 = x-sign_length;
+	 			faceX2 = x+sign_length;
+	 			faceZ1 = z+0.45f;
+	 			faceZ2 = z+0.45f;
+	 			back_dX = 0f;
+	 			back_dZ = 0.05f;
 		 		break;
 		 	case 3:
 		 		// West
-		 		this.renderSignWestEast(textureId, x, y, z-0.45f);
+	 			faceX1 = x-sign_length;
+	 			faceX2 = x+sign_length;
+	 			faceZ1 = z-0.45f;
+	 			faceZ2 = z-0.45f;
+	 			back_dX = 0f;
+	 			back_dZ = -0.05f;
 		 		break;
 		 	case 4:
 		 		// North
-		 		this.renderSignNorthSouth(textureId, x+0.45f, y, z);
+	 			faceX1 = x+0.45f;
+	 			faceX2 = x+0.45f;
+	 			faceZ1 = z-sign_length;
+	 			faceZ2 = z+sign_length;
+	 			back_dX = 0.05f;
+	 			back_dZ = 0f;
 		 		break;
 		 	case 5:
 	 		default:
 	 			// South
-				this.renderSignNorthSouth(textureId, x-0.45f, y, z);
+	 			faceX1 = x-0.45f;
+	 			faceX2 = x-0.45f;
+	 			faceZ1 = z-sign_length;
+	 			faceZ2 = z+sign_length;
+	 			back_dX = -0.05f;
+	 			back_dZ = 0f;
 	 			break;
 		}
+		
+		// Face
+		this.renderVertical(textureId, faceX1, faceZ1, faceX2, faceZ2, y-0.2f, 0.5f);
+		
+		// Sides
+		this.renderVertical(textureId, faceX1, faceZ1, faceX1+back_dX, faceZ1+back_dZ, y-0.2f, 0.5f);
+		this.renderVertical(textureId, faceX2, faceZ2, faceX2+back_dX, faceZ2+back_dZ, y-0.2f, 0.5f);
+		
+		// Top/Bottom
+		this.renderHorizontal(textureId, faceX1, faceZ1, faceX2+back_dX, faceZ2+back_dZ, y-0.2f);
+		this.renderHorizontal(textureId, faceX1, faceZ1, faceX2+back_dX, faceZ2+back_dZ, y+0.3f);
 	}
 	
 	/**
