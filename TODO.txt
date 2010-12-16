@@ -1,0 +1,28 @@
+ * Load chunks on-demand (transparently, probably in another Thread) rather
+   than all at once at the beginning.  Internally, this would probably mean
+   storing chunks in a HashMap or something so that we could delete chunks
+   that we don't need anymore, to keep memory usage down and actually support
+   effectively infinitely-sized maps.  I'd have to look into how this would
+   interact with X-Ray's minimap too.
+   
+ * Figure out transparency rendering glitches, and start using the
+   transparent leaf texture for trees once that's been figured out.  Right
+   now they look better with the solid texture.  In particular, all the
+   "decorative" blocks like torches, flowers, reed, etc, look weird, as
+   does water and portals.
+   
+ * Proper rendering support for redstone wire, minecart tracks, fences,
+   and other blocks which change appearance depending on what's around
+   them.  Minecart tracks should actually be quite easy since their
+   orientation is actually stored in the Data values; the other ones
+   will require some introspection.
+ 
+ * Draw messages on signs like you'd expect.
+ 
+ * Custom key bindings
+ 
+ * Ensure "standard" resolutions are available in selection dialog.
+ 
+ * Figure out creating an EXE for Windows folks (looks like probably this
+   would just require getting JSmooth installed in a VM somewhere, or
+   whatever...)
