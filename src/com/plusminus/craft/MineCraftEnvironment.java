@@ -6,13 +6,17 @@ import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileInputStream;
+import java.io.LineNumberReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipException;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -192,6 +196,100 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	public static InputStream getMinecraftTextureData() {
+		// First check the options.txt file to see if we should be using the defined
+		// texture pack.
+		File optionsFile = new File(baseDir, "options.txt");
+		String texturepack = null;
+		if (optionsFile.exists())
+		{
+			LineNumberReader reader = null;
+			try
+			{
+				reader = new LineNumberReader(new FileReader(optionsFile));
+				String line = null;
+				String[] parts;
+				while ((line = reader.readLine()) != null)
+				{
+					parts = line.split(":", 2);
+					if (parts.length == 2)
+					{
+						if (parts[0].equalsIgnoreCase("skin"))
+						{
+							if (parts[1].equalsIgnoreCase("Default"))
+							{
+								// Default skin, just break and 
+								break;
+							}
+							else
+							{
+								// Use the specified texture pack
+								texturepack = parts[1];
+								break;
+							}
+						}
+					}
+				}
+			}
+			catch (FileNotFoundException e)
+			{
+				// Just ignore it and load the default terrain.png
+			}
+			catch (IOException e)
+			{
+				// Ditto, just ignore
+			}
+			if (reader != null)
+			{
+				try
+				{
+					reader.close();
+				}
+				catch (IOException e)
+				{
+					// do nothing
+				}
+			}
+		}
+		
+		// Attempt to load in the texture pack
+		if (texturepack != null)
+		{
+			File packFile = new File(baseDir, "texturepacks/" + texturepack);
+			if (packFile.exists())
+			{
+				ZipFile zf = null;
+				try
+				{
+					zf = new ZipFile(packFile);
+					ZipEntry entry = zf.getEntry("terrain.png");
+					if (entry != null)
+					{
+						return zf.getInputStream(entry);
+					}
+				}
+				catch (ZipException e)
+				{
+					// Do nothing.
+				}
+				catch (IOException e)
+				{
+					// Do nothing
+				}
+				if (zf != null)
+				{
+					try
+					{
+						zf.close();
+					}
+					catch (IOException e)
+					{
+						// do nothing
+					}
+				}
+			}
+		}
+		
+		// If we got here, just do what we've always done.
 		return getMinecraftFile("terrain.png");
 	}
 	

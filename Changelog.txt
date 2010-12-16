@@ -13,6 +13,8 @@
   * Fixed an issue loading worlds which don't yet include the "Dimension" tag
   * Increased default chunk-highlighting range
   * Should correctly colorize grass if needed, using any texture pack.
+  * Uses the same texture pack Minecraft uses, if set in Minecraft's "Mods and
+    Texture Packs" menu.
   
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
 
