@@ -49,7 +49,3 @@ that.
 Once you've gotten that, you should be good to go.  I've included a build.xml
 which you can use to build a distribution file, etc, which I'm assuming should
 work fine outside of Eclipse, too, though I've not tried it yet.
-
-The build.xml file does actually sort of assume that you've got a CVS repo
-set up for the project, though (yeah, yeah, CVS is lame).  You may have to do
-some commenting or changing if that's not the case.

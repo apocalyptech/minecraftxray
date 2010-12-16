@@ -13,11 +13,6 @@
 	<property name="dist_base" location="dist"/>
 	<property name="dist"  location="${dist_base}/${export_base}"/>
 	<property name="dist_src"  location="${dist_base}/${export_base}_src"/>
-	
-	<!-- Yeah, yeah, CVS is lame. -->
-	<property name="cvsroot"  value=":ext:pez@mcp:/usr/local/cvs"/>
-	<property name="cvs_project_name"  value="xray"/>
-	<property name="cvs_version_tag"  value="XRAY_2_7_MB_${maint_branch}"/>
 
 	<target name="init">
 		<!-- Create the time stamp -->
@@ -62,6 +57,7 @@
 			<fileset dir=".">
 				<include name="Changelog.txt" />
 				<include name="BUILDING.txt" />
+				<include name="TODO.txt" />
 			</fileset>
 		</copy>
 		
@@ -74,7 +70,17 @@
 		</chmod>
 		
 		<!-- While we're at it, archive the source dir in there too. -->
-		<cvs cvsRoot="${cvsroot}" command="export -d src" dest="${dist}" tag="${cvs_version_tag}" package="${cvs_project_name}" />
+		<mkdir dir="${dist}/src"/>
+		<copy todir="${dist}/src">
+			<fileset dir=".">
+				<include name="**/*" />
+				<exclude name="**/CVS" />
+				<exclude name="**/.cvsignore" />
+				<exclude name="bin/" />
+				<exclude name="build/" />
+				<exclude name="dist/" />
+			</fileset>
+		</copy>
 		
 		<!-- Now copy sources over to the source-only distro -->
 		<copy todir="${dist_src}">
