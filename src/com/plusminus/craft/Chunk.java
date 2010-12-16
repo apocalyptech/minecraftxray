@@ -951,19 +951,27 @@ public class Chunk {
 	}
 
 	/**
-	 * Renders a floor button.
+	 * Renders a pressure plate.
 	 * 
 	 * @param textureId
 	 * @param xxx
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderFloorButton(int textureId, int xxx, int yyy, int zzz) {
+	public void renderPlate(int textureId, int xxx, int yyy, int zzz) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
-		 
-		this.renderTopDown(textureId, x, y+TEX64, z, 0.4f);
+		float radius = 0.4f;
+		
+		// The plate itself
+		this.renderHorizontal(textureId, x+radius, z+radius, x-radius, z-radius, y-0.45f);
+		
+		// Sides
+		this.renderVertical(textureId, x+radius, z+radius, x+radius, z-radius, y-0.5f, 0.05f);
+		this.renderVertical(textureId, x-radius, z+radius, x-radius, z-radius, y-0.5f, 0.05f);
+		this.renderVertical(textureId, x+radius, z+radius, x-radius, z+radius, y-0.5f, 0.05f);
+		this.renderVertical(textureId, x+radius, z-radius, x-radius, z-radius, y-0.5f, 0.05f);
 	}
 	
 	/**
@@ -1495,8 +1503,8 @@ public class Chunk {
 							case FLOOR:
 								renderFloor(textureId,x,y,z);
 								break;
-							case FLOOR_BUTTON:
-								renderFloorButton(textureId,x,y,z);
+							case PRESSURE_PLATE:
+								renderPlate(textureId,x,y,z);
 								break;
 							case DOOR:
 								renderDoor(textureId,x,y,z);
