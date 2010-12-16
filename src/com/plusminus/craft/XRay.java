@@ -52,7 +52,7 @@ public class XRay {
 		Keyboard.KEY_NUMPAD6
 	};
 	private static final int[] CHUNK_RANGES = new int[] {3,4,5,6,7,8};
-	private int currentChunkRange = 2;
+	private int currentChunkRange = 4;
 	
 	// highlight distance
 	private static final int[] HIGHLIGHT_RANGES_KEYS = new int[] {

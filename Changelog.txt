@@ -11,6 +11,7 @@
     to try and chain them together; all ladder pieces will be oriented the
     same), levers, buttons.
   * Fixed an issue loading worlds which don't yet include the "Dimension" tag
+  * Increased default chunk-highlighting range
   
 Minecraft X-Ray 2.7 Maintenance Branch 3 (2010.12.08)
 
