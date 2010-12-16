@@ -6,10 +6,10 @@
   * (internal) Ore highlights are specified by block type, not texture type
   * The following render more-correctly: redstone torches, redstone wire,
     crops, mushrooms, flowers, planted saplings, reeds, ladders, sponges,
-    minecart tracks, floor buttons, half-height steps, doors, stairs,
+    minecart tracks, pressure plates, half-height steps, doors, stairs,
     signs (though without the message), fences (though we make no effort
     to try and chain them together; all fence pieces will be oriented the
-    same), levers, buttons, portals.
+    same way), levers, buttons, portals.
   * Fixed an issue loading worlds which don't yet include the "Dimension" tag
   * Increased default chunk-highlighting range
   
