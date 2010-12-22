@@ -24,3 +24,7 @@
  * Figure out creating an EXE for Windows folks (looks like probably this
    would just require getting JSmooth installed in a VM somewhere, or
    whatever...)
+ 
+ * Highlighting for Reed
+ 
+ * Highlighting for any arbitrary (user-chosen) block type
