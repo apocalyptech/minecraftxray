@@ -65,7 +65,7 @@ public class XRay {
 	// are we full screen
     private boolean fullscreen 			= false; 
     // window title
-    private final String app_version    = "2.7 Maintenance Branch 4";
+    private final String app_version    = "2.7 Maintenance Branch 5";
     private final String app_name       = "Minecraft X-Ray";
     private final String windowTitle 	= app_name + " " + app_version; 
 

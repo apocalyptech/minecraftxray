@@ -1,3 +1,5 @@
+  * Generate Windows EXE via JSmooth
+
 Minecraft X-Ray 2.7 Maintenance Branch 4 (2010.12.16)
 
   * Camera speed can be controlled by the left and right mouse buttons,

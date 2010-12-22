@@ -4,7 +4,7 @@
 	</description>
 
 	<!-- Project attributes -->
-	<property name="maint_branch" value="4"/>
+	<property name="maint_branch" value="5"/>
 	<property name="export_base" value="minecraft_xray_2.7_mb_${maint_branch}"/>
 	
 	<!-- set global properties for this build -->
@@ -13,6 +13,11 @@
 	<property name="dist_base" location="dist"/>
 	<property name="dist"  location="${dist_base}/${export_base}"/>
 	<property name="dist_src"  location="${dist_base}/${export_base}_src"/>
+	
+	<!-- JSmoothGen, for building the Windows EXE -->
+	<taskdef name="jsmoothgen"
+	     classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
+		 classpath="build-lib/jsmoothgen-ant.jar" />
 
 	<target name="init">
 		<!-- Create the time stamp -->
@@ -90,7 +95,17 @@
 		
 	</target>
 	
-	<target name="dist" depends="prepare_distdir"
+	<target name="jsmooth" depends="prepare_distdir">
+		<jsmoothgen project="support/xray.jsmooth" 
+			skeletonroot="build-lib/jsmoothgen-skeletons" />
+		<move todir="${dist}">
+			<fileset dir="support">
+				<include name="minecraft_xray.exe" />
+			</fileset>
+		</move>
+	</target>
+	
+	<target name="dist" depends="jsmooth"
 	        description="generate the distribution" >
 		
 		<!-- Create our zipfiles, both "binary" and source. -->
