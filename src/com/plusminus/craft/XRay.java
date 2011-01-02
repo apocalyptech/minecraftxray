@@ -77,7 +77,6 @@ public class XRay {
     private final String app_name       = "Minecraft X-Ray";
     private final String windowTitle 	= app_name + " " + app_version; 
 
-    private XRayLoader loaderthread = null;
     private boolean minimap_needs_updating = false;
     
     // current display mode
@@ -213,6 +212,9 @@ public class XRay {
 	private int cur_chunk_z = 0;
 	private boolean initial_load_done = false;
 	
+	// How long are we allowed to spend loading chunks before we update?
+	private long max_chunkload_time = Sys.getTimerResolution() / 10;  // a tenth of a second
+	
 	// lets start with the program
     public static void main(String args[]) {    
         new XRay().run();
@@ -243,6 +245,12 @@ public class XRay {
                 
                 // handle input given the timedelta (for mouse control)
                 handleInput(timeDelta);
+                
+                // Load chunks if needed
+                if (mapChunksToLoad != null)
+                {
+                	loadPendingChunks();
+                }
 
                 // render whatever we need to render
                 render(timeDelta);
@@ -265,6 +273,26 @@ public class XRay {
             e.printStackTrace();
             System.exit(0);
         }
+    }
+    
+    /**
+     * Loads any pending chunks, but won't exceed max_chunkload_time timer ticks.
+     */
+    public void loadPendingChunks()
+    {
+    	Block b;
+    	long time = Sys.getTime();
+		while (!mapChunksToLoad.isEmpty())
+		{
+			b = (Block) mapChunksToLoad.pop();
+			//System.out.println("Loading chunk " + b.x + "," + b.z);
+			drawMapChunkToMap(b.x, b.z);
+			minimap_needs_updating = true;
+			if (Sys.getTime() - time  > max_chunkload_time)
+			{
+				break;
+			}
+		}
     }
     
     public void incLightLevel() {
@@ -684,15 +712,6 @@ public class XRay {
     				}
     			}
     		}
-    		
-    		// Now notify the queue that some stuff might need to happen
-    		if (dx != 0 || dz != 0)
-    		{
-    			synchronized (mapChunksToLoad)
-    			{
-    				mapChunksToLoad.notify();
-    			}
-    		}
     	}
     	else if (worldSelected)
     	{
@@ -937,75 +956,6 @@ public class XRay {
     }
     
     /***
-     * Load a map chunk and draw the progress to the screen.  Note that we don't actually
-     * run the mainloop while doing this, which is a bit Off, but lets us read in the map
-     * as quickly as possible, rather than having it slaved to the mainloop time.  Specifically,
-     * we want to avoid calling the Display.update() function if we don't have to.
-     */
-    private void loadMapPart() {
-    	
-    	long curtime = Sys.getTime();
-    	long interval = Sys.getTimerResolution() / 30; // Update the status bar 30 times a second
-    	
-    	while (!mapChunksToLoad.isEmpty()) {
-	
-	    	Block b = mapChunksToLoad.pop();
-	    	drawMapChunkToMap(b.x, b.z);
-	
-	    	if ((Sys.getTime()-curtime) > interval)
-	    	{
-	    		handleInput(0);
-	    		if (done)
-	    		{
-	    			return;
-	    		}
-	    		curtime = Sys.getTime();
-		    	float progress= 1.0f - ((float) mapChunksToLoad.size() / (float) totalMapChunks);
-		    	
-		    	float bx = 100;
-		    	float ex = screenWidth-100;
-		    	float by = (screenHeight/2.0f)-50;
-		    	float ey = (screenHeight/2.0f)+50;
-		    	
-		    	float px = ((ex-bx)*progress) + bx;
-		    	setOrthoOn();
-		
-		    	GL11.glDisable(GL11.GL_BLEND);
-		    	GL11.glDisable(GL11.GL_TEXTURE_2D);
-		    	GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		    	GL11.glLineWidth(20);
-		    	
-		    	// progress bar outer box
-		    	GL11.glBegin(GL11.GL_LINE_LOOP);
-		    		GL11.glVertex2f(bx, by);
-		    		GL11.glVertex2f(ex, by);
-		    		GL11.glVertex2f(ex, ey);    
-		    		GL11.glVertex2f(bx, ey);
-		    	GL11.glEnd();
-		    	
-		    	// progress bar 'progress'
-		    	GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-					GL11.glVertex2f(bx, by);
-					GL11.glVertex2f(px, by);
-					GL11.glVertex2f(bx, ey);
-					GL11.glVertex2f(px, ey);
-		    	GL11.glEnd();
-		    	
-		    	GL11.glEnable(GL11.GL_BLEND);
-		    	GL11.glEnable(GL11.GL_TEXTURE_2D);
-		    	setOrthoOff();
-		    	
-		    	Display.update();
-	    	}
-    	}
-	    	
-   		mapLoaded = true;
-   		drawMapMarkersToMinimap();
-   		minimapTexture.update();
-   		setLightMode(true); // basically enable fog etc
-    }
-    
-    /***
      * Draw the current and spawn position to the minimap
      */
     private void drawMapMarkersToMinimap() {
@@ -1074,43 +1024,7 @@ public class XRay {
     	GL11.glEnable(GL11.GL_BLEND);
     	GL11.glEnable(GL11.GL_TEXTURE_2D);
     	setOrthoOff();
-    }
-    
-    private class XRayLoader extends Thread
-    {
-    	public void run()
-    	{
-    		Block b;
-    		while (true)
-    		{
-    			synchronized(mapChunksToLoad)
-    			{
-    				// First loop through and process anything in there
-    				while (!mapChunksToLoad.isEmpty())
-    				{
-        				b = (Block) mapChunksToLoad.pop();
-        				//System.out.println("Loading chunk " + b.x + "," + b.z);
-        				drawMapChunkToMap(b.x, b.z);
-        				minimap_needs_updating = true;
-    				}
-    				
-    				// Once we're here it's empty, so wait.
-    				try
-					{
-    					//System.out.println("Loader Waiting");
-						mapChunksToLoad.wait();
-						//System.out.println("Loader done waiting");
-					}
-					catch (InterruptedException e)
-					{
-						// If we're interrupted, we're exiting.
-						//System.out.println("Loader breaking due to InterruptedException");
-						break;
-					}
-    			}
-    		}
-    	}
-    }
+    }    
     
     /***
      * Main render loop
@@ -1129,16 +1043,8 @@ public class XRay {
     	}
     	
     	// are we still loading the map? 
-    	/*
-        if(!mapLoaded) {
-        	loadMapPart();
-        	return true;        	
-        }
-        */
     	if (!map_load_started)
     	{
-    		loaderthread = new XRayLoader();
-    		loaderthread.start();
     		map_load_started = true;
     		mapLoaded = true;
        		drawMapMarkersToMinimap();
@@ -1598,10 +1504,6 @@ public class XRay {
      * cleanup
      */
     private void cleanup() {
-    	if (loaderthread != null)
-    	{
-    		loaderthread.interrupt();
-    	}
         Display.destroy();
     }
     
