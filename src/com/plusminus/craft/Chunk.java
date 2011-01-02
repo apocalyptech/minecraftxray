@@ -25,18 +25,9 @@ public class Chunk {
 
 	private MinecraftLevel level;
 	
-	public Chunk(MinecraftLevel level) {
-		//this.chunkData = (CompoundTag) data;
-		//System.out.println(this.chunkData);
-		//System.exit(0);
-		displayListNum = GL11.glGenLists(1);
-		selectedDisplayListNum = GL11.glGenLists(1);
-		transparentListNum = GL11.glGenLists(1);
+	public Chunk(MinecraftLevel level, Tag data) {
+		
 		this.level = level;
-	}
-	
-	public void setData(Tag data)
-	{
 		this.chunkData = (CompoundTag) data;
 
 		CompoundTag levelTag = (CompoundTag) chunkData.value.get(0); // first tag
@@ -51,6 +42,10 @@ public class Chunk {
 		
 		this.isDirty = true;
 		this.isSelectedDirty = true;
+
+		displayListNum = GL11.glGenLists(1);
+		selectedDisplayListNum = GL11.glGenLists(1);
+		transparentListNum = GL11.glGenLists(1);
 		
 		//System.out.println(data);
 		//System.exit(0);

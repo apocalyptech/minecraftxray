@@ -221,12 +221,6 @@ public class MinecraftLevel {
 		}
 	}
 	
-	public void prepareChunk(int x, int z)
-	{
-		long key = this.getChunkKey(x, z);
-		this.levelData.put(key, new Chunk(this));
-	}
-	
 	public Tag loadChunk(int x, int z) {
 		File chunkFile = MineCraftEnvironment.getChunkFile(world, x,z, this.nether);
 		if(!chunkFile.exists()) {
@@ -235,12 +229,10 @@ public class MinecraftLevel {
 		Tag t = DTFReader.readDTFFile(chunkFile);
 
 		//levelData[x+LEVEL_HALF_WIDTH][z+LEVEL_HALF_HEIGHT] = new Chunk(t, this);
-		Chunk chunk = this.getChunk(x, z);
-		if (chunk != null)
-		{
-			chunk.setData(t);
-			chunk.loaded = true;
-		}
+		long key = this.getChunkKey(x, z);
+		Chunk chunk = new Chunk(this, t);
+		chunk.loaded = true;
+		this.levelData.put(key, chunk);
 		
 		return t;
 	}
