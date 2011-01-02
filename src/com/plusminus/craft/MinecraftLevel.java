@@ -2,6 +2,7 @@ package com.plusminus.craft;
 
 import java.awt.Point;
 import java.io.File;
+import java.util.HashMap;
 
 import com.plusminus.craft.dtf.ByteArrayTag;
 import com.plusminus.craft.dtf.CompoundTag;
@@ -17,14 +18,8 @@ import com.plusminus.craft.dtf.Tag;
  * @author Vincent
  */
 public class MinecraftLevel {
-	public static int LEVEL_MAX_SIZE = 1024;
-	public static int LEVEL_MAX_WIDTH = LEVEL_MAX_SIZE;
-	public static int LEVEL_MAX_HEIGHT = LEVEL_MAX_SIZE;
-	public static int LEVEL_HALF_WIDTH = LEVEL_MAX_WIDTH / 2;
-	public static int LEVEL_HALF_HEIGHT = LEVEL_MAX_HEIGHT / 2;
-	
-	
-	public Chunk[][] levelData;
+		
+	public HashMap<Long, Chunk> levelData;
 	
 	private int world;
 	private Block spawnPoint;
@@ -46,7 +41,8 @@ public class MinecraftLevel {
 		this.nether = nether;
 		this.minecraftTexture = minecraftTexture;
 		this.portalTexture = portalTexture;
-		this.levelData = new Chunk[LEVEL_MAX_WIDTH][LEVEL_MAX_HEIGHT];
+		//this.levelData = new Chunk[LEVEL_MAX_WIDTH][LEVEL_MAX_HEIGHT];
+		this.levelData = new HashMap<Long, Chunk>();
 		File levelFile = new File(MineCraftEnvironment.getWorldDirectory(world), "level.dat");
 		
 		CompoundTag levelData = (CompoundTag) DTFReader.readDTFFile(levelFile);
@@ -177,7 +173,6 @@ public class MinecraftLevel {
 		}
 	}
 	
-	
 	/***
 	 * Returns a single byte representing the block data at the given universal coordinates
 	 * @param x
@@ -185,7 +180,6 @@ public class MinecraftLevel {
 	 * @param y
 	 * @return
 	 */
-	
 	public byte getBlockData(int x, int z, int y) {
 		int chunkX = getChunkX(x);
 		int chunkZ = getChunkZ(z);
@@ -193,7 +187,7 @@ public class MinecraftLevel {
 		int blockX = getBlockX(x);
 		int blockZ = getBlockZ(z);
 		
-		Chunk chunk = this.levelData[chunkX+LEVEL_HALF_WIDTH][chunkZ+LEVEL_HALF_HEIGHT];	
+		Chunk chunk = this.getChunk(chunkX, chunkZ);
 		if(chunk == null) { // no chunk for the given coordinate
 			return 0;
 		}
@@ -217,26 +211,57 @@ public class MinecraftLevel {
 	}
 
 	public void invalidateSelected(boolean main_dirty) {
-		for(int x=0;x<LEVEL_MAX_WIDTH;x++) {
-			for(int y=0;y<LEVEL_MAX_HEIGHT;y++) {
-				if(this.levelData[x][y] != null) {
-					this.levelData[x][y].isSelectedDirty = true;
-					if (main_dirty)
-					{
-						this.levelData[x][y].isDirty = true;
-					}
-				}
+		for (Chunk chunk : this.levelData.values())
+		{
+			chunk.isSelectedDirty = true;
+			if (main_dirty)
+			{
+				chunk.isDirty = true;
 			}
 		}
 	}
+	
+	public void prepareChunk(int x, int z)
+	{
+		long key = this.getChunkKey(x, z);
+		this.levelData.put(key, new Chunk(this));
+	}
+	
 	public Tag loadChunk(int x, int z) {
 		File chunkFile = MineCraftEnvironment.getChunkFile(world, x,z, this.nether);
 		if(!chunkFile.exists()) {
 			return null;
 		}
 		Tag t = DTFReader.readDTFFile(chunkFile);
-		levelData[x+LEVEL_HALF_WIDTH][z+LEVEL_HALF_HEIGHT] = new Chunk(t, this);
+
+		//levelData[x+LEVEL_HALF_WIDTH][z+LEVEL_HALF_HEIGHT] = new Chunk(t, this);
+		Chunk chunk = this.getChunk(x, z);
+		if (chunk != null)
+		{
+			chunk.setData(t);
+			chunk.loaded = true;
+		}
+		
 		return t;
+	}
+	
+	/**
+	 * Returns the internal key that we use to store a given chunk.  Internally
+	 * these are stored as a hashmap.  Note that right now we're only using ints
+	 * for the chunk coordinates, so X-Ray cannot actually load every possible
+	 * Minecraft chunk (in fact it's quite a bit more limited, though I'd guess that
+	 * nobody'll end up actually bumping up against our limit.
+	 * 
+	 * TODO: It may be nice to just use a HashMap of HashMaps, both with long keys,
+	 * so that we can support all possible Minecraft chunks.
+	 * 
+	 * @param chunkX
+	 * @param chunkZ
+	 * @return
+	 */
+	private long getChunkKey(int chunkX, int chunkZ)
+	{
+		return ((long)chunkX<<32)+(long)chunkZ;
 	}
 	
 	public Chunk getChunk(int chunkX, int chunkZ) {
@@ -244,7 +269,15 @@ public class MinecraftLevel {
 		CompoundTag global = (CompoundTag) chunk.getChunkData();
 		CompoundTag level = (CompoundTag) global.value.get(0); // first tag
 		return level;*/
-		return this.levelData[chunkX+LEVEL_HALF_WIDTH][chunkZ+LEVEL_HALF_HEIGHT];
+		long key = this.getChunkKey(chunkX, chunkZ);
+		if (this.levelData.containsKey(key))
+		{
+			return this.levelData.get(key);
+		}
+		else
+		{
+			return null;
+		}
 	}
 	
 	/***
@@ -254,17 +287,25 @@ public class MinecraftLevel {
 	 * @return
 	 */
 	public byte[] getChunkData(int chunkX, int chunkZ) {
-		Chunk c = levelData[chunkX+LEVEL_HALF_WIDTH][chunkZ+LEVEL_HALF_HEIGHT];
+		Chunk c = this.getChunk(chunkX, chunkZ);
 		if(c == null) {
 			return new byte[32768];
 		} else {
-			return c.getMapData().value;
+			ByteArrayTag data = c.getMapData();
+			if (data == null)
+			{
+				return new byte[32768];
+			}
+			else
+			{
+				return data.value;
+			}
 		}
 	}
 		
 	
 	public Tag getFullChunk(int chunkX, int chunkZ) {
-		Chunk c = levelData[chunkX+LEVEL_HALF_WIDTH][chunkZ+LEVEL_HALF_HEIGHT];
+		Chunk c = this.getChunk(chunkX, chunkZ);
 		if(c == null) {
 			return null;
 		}

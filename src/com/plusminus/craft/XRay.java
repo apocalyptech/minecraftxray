@@ -33,7 +33,9 @@ public class XRay {
    
     
 	// number of chunks around the camera which are visible (Square)
-	private int visible_chunk_range = 5;
+	// TODO: revert this
+	//private int visible_chunk_range = 5;
+	private int visible_chunk_range = 8;
 	private int mapchange_redraw_range = 3;
 	
 	private static final int[] CHUNK_RANGES_KEYS = new int[] {
@@ -45,7 +47,9 @@ public class XRay {
 		Keyboard.KEY_NUMPAD6
 	};
 	private static final int[] CHUNK_RANGES = new int[] {3,4,5,6,7,8};
-	private int currentChunkRange = 4;
+	// TODO: revert this
+	//private int currentChunkRange = 4;
+	private int currentChunkRange = 5;
 	
 	// highlight distance
 	private static final int[] HIGHLIGHT_RANGES_KEYS = new int[] {
@@ -60,6 +64,10 @@ public class XRay {
 	private static final int[] HIGHLIGHT_RANGES = new int[] {2, 3, 4, 5, 6, 7, 8};
 	private int currentHighlightDistance = 1;
 	
+	// By default we'll keep 20x20 chunks in our cache, which should hopefully let
+	// us stay ahead of the camera
+	private final int loadChunkRange = 10;
+	
 	// set to true when the program is finished 
 	private boolean done 				= false; 
 	// are we full screen
@@ -69,6 +77,9 @@ public class XRay {
     private final String app_name       = "Minecraft X-Ray";
     private final String windowTitle 	= app_name + " " + app_version; 
 
+    private XRayLoader loaderthread = null;
+    private boolean minimap_needs_updating = false;
+    
     // current display mode
     private DisplayMode displayMode; 	
     
@@ -103,7 +114,6 @@ public class XRay {
 	
 	// the current and previous chunk coordinates where the camera is hovering on
 	private int currentLevelX, currentLevelZ;
-	private int oldLevelX, oldLevelZ;
     
 	// wheter we are loading a level
 	private boolean loading = false;
@@ -135,6 +145,7 @@ public class XRay {
 	
 	// wheter we are done with loading the map data (just for the mini map really)
 	private boolean mapLoaded = false;
+	private boolean map_load_started = false;
 	
 	// wheter we have selected a world number already
 	private boolean worldSelected = false;
@@ -197,6 +208,11 @@ public class XRay {
 	private int[] lightLevelStart = new int[]{0,20,30,40,60};
 	private int currentLightLevel = 2;
 	
+	// vars to keep track of our current chunk coordinates
+	private int cur_chunk_x = 0;
+	private int cur_chunk_z = 0;
+	private boolean initial_load_done = false;
+	
 	// lets start with the program
     public static void main(String args[]) {    
         new XRay().run();
@@ -217,7 +233,7 @@ public class XRay {
 
             // init our program
             initialize();
-
+            
             // main loop
             while (!done)
             {
@@ -230,6 +246,13 @@ public class XRay {
 
                 // render whatever we need to render
                 render(timeDelta);
+                
+                // update our minimap if we need to (new chunks loaded, etc)
+                if (minimap_needs_updating)
+                {
+                	minimapTexture.update();
+                	minimap_needs_updating=false;
+                }
                 
                 // Push to screen
                 Display.update();
@@ -407,8 +430,6 @@ public class XRay {
 		// level data
 		levelBlockX = Integer.MIN_VALUE;
         levelBlockZ = Integer.MIN_VALUE;
-        oldLevelX = 2000; // no meaning to 2000, just 'far away' from 0,0
-        oldLevelZ = 2000;
         
         // set mouse grabbed so we can get x/y coordinates
         Mouse.setGrabbed(true);
@@ -570,18 +591,19 @@ public class XRay {
     	// determine which chunks are available in this world
 		mapChunksToLoad = new Stack<Block>();
 		totalMapChunks = 0;
+		/*
 		for(int x=-63;x<63;x++) {
 			for(int z=-63;z<63;z++) {
 				if(MineCraftEnvironment.getChunkFile(worldNum, x, z).exists()) {
 					mapChunksToLoad.add(new Block(x,0,z));
 					totalMapChunks++;
-				}
-				if(z < -47 && x > 5 && x < 10 && z > -50) {
-					File f = MineCraftEnvironment.getChunkFile(worldNum, x, z);
-					//System.out.println("(" + x + ", " + z + ") " + f.getAbsolutePath() + " : " + f.exists());
+					
+					// Instansiate Chunk objects here, for now...
+					level.prepareChunk(x, z);
 				}
 			}
 		}
+		*/
 		
 		moveCameraToPlayerPos();
     }
@@ -590,12 +612,101 @@ public class XRay {
     	Block spawnPoint = level.getSpawnPoint();
 		this.camera.getPosition().set(spawnPoint.x, spawnPoint.y-1, spawnPoint.z);
 		this.camera.setYawAndPitch(0,0);
+		this.triggerChunkLoads();
     }
     
     private void moveCameraToPlayerPos() {
     	Block playerPos = level.getPlayerPosition();
     	this.camera.getPosition().set(playerPos.x, playerPos.y, playerPos.z);
 		this.camera.setYawAndPitch(180+level.getPlayerYaw(),level.getPlayerPitch());
+		this.triggerChunkLoads();
+    }
+    
+    private void triggerChunkLoads()
+    {
+    	int chunkX = level.getChunkX((int) -camera.getPosition().x);
+    	int chunkZ = level.getChunkZ((int) -camera.getPosition().z);
+ 
+    	if (initial_load_done)
+    	{
+    		// TODO: expire items from the cache
+    		int dx = chunkX - cur_chunk_x;
+    		int dz = chunkZ - cur_chunk_z;
+    		
+    		// X
+    		if (dx < 0)
+    		{
+    			System.out.println("Loading in chunks from the X range " + (cur_chunk_x-1-loadChunkRange) + " to " + (chunkX-loadChunkRange) + " (going down)");
+    			for (int lx=cur_chunk_x-1-loadChunkRange; lx >= chunkX-loadChunkRange; lx--)
+    			{
+    				for (int lz=chunkZ-loadChunkRange; lz<=chunkZ+loadChunkRange; lz++)
+    				{
+    					level.prepareChunk(lx, lz);
+    					mapChunksToLoad.add(new Block(lx, 0, lz));
+    				}
+    			}
+    		}
+    		else if (dx > 0)
+    		{
+    			System.out.println("Loading in chunks from the X range " + (cur_chunk_x+1+loadChunkRange) + " to " + (chunkX+loadChunkRange) + " (going up)");
+    			for (int lx=cur_chunk_x+1+loadChunkRange; lx <= chunkX+loadChunkRange; lx++)
+    			{
+    				for (int lz=chunkZ-loadChunkRange; lz<=chunkZ+loadChunkRange; lz++)
+    				{
+    					level.prepareChunk(lx, lz);
+    					mapChunksToLoad.add(new Block(lx, 0, lz));
+    				}
+    			}
+    		}
+    		
+    		// Z
+    		if (dz < 0)
+    		{
+    			System.out.println("Loading in chunks from the Z range " + (cur_chunk_z-1-loadChunkRange) + " to " + (chunkZ-loadChunkRange) + " (going down)");
+    			for (int lx=chunkX-loadChunkRange; lx<=chunkX+loadChunkRange; lx++)
+    			{
+    				for (int lz=cur_chunk_z-1-loadChunkRange; lz >= chunkZ-loadChunkRange; lz--)
+    				{
+    					level.prepareChunk(lx, lz);
+    					mapChunksToLoad.add(new Block(lx, 0, lz));
+    				}
+    			}
+    		}
+    		else if (dz > 0)
+    		{
+    			System.out.println("Loading in chunks from the Z range " + (cur_chunk_z+1+loadChunkRange) + " to " + (chunkZ+loadChunkRange) + " (going up)");
+    			for (int lx=chunkX-loadChunkRange; lx<=chunkX+loadChunkRange; lx++)
+    			{
+    				for (int lz=cur_chunk_z+1+loadChunkRange; lz <= chunkZ+loadChunkRange; lz++)
+    				{
+    					level.prepareChunk(lx, lz);
+    					mapChunksToLoad.add(new Block(lx, 0, lz));
+    				}
+    			}
+    		}
+    		
+    		// Now notify the queue that some stuff might need to happen
+    		if (dx != 0 || dz != 0)
+    		{
+    			synchronized (mapChunksToLoad)
+    			{
+    				mapChunksToLoad.notify();
+    			}
+    		}
+    	}
+    	else if (worldSelected)
+    	{
+    		System.out.println("Loading world from X: " + (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) + ", Z: " + (chunkZ-loadChunkRange) + " - " + (chunkZ+loadChunkRange));
+            for(int lx=chunkX-loadChunkRange;lx<=chunkX+loadChunkRange;lx++) {
+        		for(int lz=chunkZ-loadChunkRange;lz<=chunkZ+loadChunkRange;lz++) {
+        			level.prepareChunk(lx, lz);
+ 					mapChunksToLoad.add(new Block(lx,0,lz));
+        		}
+        	}
+    		initial_load_done = true;
+    	}
+        cur_chunk_x = chunkX;
+        cur_chunk_z = chunkZ;
     }
     
     /***
@@ -627,26 +738,32 @@ public class XRay {
 	        if (Keyboard.isKeyDown(Keyboard.KEY_W))//move forward
 	        {
 	            camera.walkForward(MOVEMENT_SPEED*timeDelta);
+	            triggerChunkLoads();
 	        }
 	        if (Keyboard.isKeyDown(Keyboard.KEY_S))//move backwards
 	        {
 	            camera.walkBackwards(MOVEMENT_SPEED*timeDelta);
+	            triggerChunkLoads();
 	        }
 	        if (Keyboard.isKeyDown(Keyboard.KEY_A))//strafe left
 	        {
 	            camera.strafeLeft(MOVEMENT_SPEED*timeDelta);
+	            triggerChunkLoads();
 	        }
 	        if (Keyboard.isKeyDown(Keyboard.KEY_D))//strafe right
 	        {
 	            camera.strafeRight(MOVEMENT_SPEED*timeDelta);
+	            triggerChunkLoads();
 	        }
 	        if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))//strafe right
 	        {
 	            camera.moveUp(MOVEMENT_SPEED*timeDelta);
+	            triggerChunkLoads();
 	        }
 	        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))//strafe right
 	        {
 	            camera.moveUp(-MOVEMENT_SPEED*timeDelta);
+	            triggerChunkLoads();
 	        }
 	       
 	        if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && keyPressed != Keyboard.KEY_TAB) {
@@ -959,6 +1076,42 @@ public class XRay {
     	setOrthoOff();
     }
     
+    private class XRayLoader extends Thread
+    {
+    	public void run()
+    	{
+    		Block b;
+    		while (true)
+    		{
+    			synchronized(mapChunksToLoad)
+    			{
+    				// First loop through and process anything in there
+    				while (!mapChunksToLoad.isEmpty())
+    				{
+        				b = (Block) mapChunksToLoad.pop();
+        				//System.out.println("Loading chunk " + b.x + "," + b.z);
+        				drawMapChunkToMap(b.x, b.z);
+        				minimap_needs_updating = true;
+    				}
+    				
+    				// Once we're here it's empty, so wait.
+    				try
+					{
+    					//System.out.println("Loader Waiting");
+						mapChunksToLoad.wait();
+						//System.out.println("Loader done waiting");
+					}
+					catch (InterruptedException e)
+					{
+						// If we're interrupted, we're exiting.
+						//System.out.println("Loader breaking due to InterruptedException");
+						break;
+					}
+    			}
+    		}
+    	}
+    }
+    
     /***
      * Main render loop
      * @param timeDelta
@@ -976,11 +1129,22 @@ public class XRay {
     	}
     	
     	// are we still loading the map? 
+    	/*
         if(!mapLoaded) {
         	loadMapPart();
-        	return true;
-        	
+        	return true;        	
         }
+        */
+    	if (!map_load_started)
+    	{
+    		loaderthread = new XRayLoader();
+    		loaderthread.start();
+    		map_load_started = true;
+    		mapLoaded = true;
+       		drawMapMarkersToMinimap();
+       		//minimapTexture.update();
+       		setLightMode(true); // basically enable fog etc  		
+    	}
         
         // we are viewing a world
     	GL11.glPushMatrix();
@@ -1013,7 +1177,7 @@ public class XRay {
     		for(int lz=currentLevelZ-visible_chunk_range;lz<currentLevelZ+visible_chunk_range;lz++) {
     			Chunk k = level.getChunk(lx, lz);
     	        
-    			if(k != null)
+    			if(k != null && k.loaded)
     			{
     				k.renderSolid(render_bedrock);
     				k.renderSelected(this.mineralToggle);
@@ -1024,7 +1188,7 @@ public class XRay {
     		for(int lz=currentLevelZ-visible_chunk_range;lz<currentLevelZ+visible_chunk_range;lz++) {
     			Chunk k = level.getChunk(lx, lz);
     	        
-    			if(k != null) k.renderTransparency();
+    			if(k != null && k.loaded) k.renderTransparency();
     		}
     	}
 
@@ -1434,6 +1598,10 @@ public class XRay {
      * cleanup
      */
     private void cleanup() {
+    	if (loaderthread != null)
+    	{
+    		loaderthread.interrupt();
+    	}
         Display.destroy();
     }
     

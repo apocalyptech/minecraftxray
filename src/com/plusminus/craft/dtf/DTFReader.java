@@ -63,6 +63,17 @@ public class DTFReader {
 		return null;
 	}
 	
+	/**
+	 * Reads tag data from the given inputstream.  Note that right now we close the stream
+	 * after reading, which I guess may not be a good idea, should probably do that the
+	 * Right Way in the future.
+	 * 
+	 * TODO: figure that out.
+	 * 
+	 * @param stream
+	 * @return
+	 * @throws IOException
+	 */
 	public static Tag readTagData(DataInputStream stream) throws IOException {
 		if(stream.available() > 0) {
 			byte type = stream.readByte();
@@ -70,9 +81,11 @@ public class DTFReader {
 				String name = stream.readUTF();
 				Tag t = readTag(type, name, stream);
 				//System.out.println(t);
+				stream.close();
 				return t;
 			}
 		}
+		stream.close();
 		return null;
 	}
 	
