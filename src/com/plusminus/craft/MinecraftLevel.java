@@ -231,7 +231,6 @@ public class MinecraftLevel {
 		//levelData[x+LEVEL_HALF_WIDTH][z+LEVEL_HALF_HEIGHT] = new Chunk(t, this);
 		long key = this.getChunkKey(x, z);
 		Chunk chunk = new Chunk(this, t);
-		chunk.loaded = true;
 		this.levelData.put(key, chunk);
 		
 		return t;
@@ -256,6 +255,13 @@ public class MinecraftLevel {
 		return ((long)chunkX<<32)+(long)chunkZ;
 	}
 	
+	/**
+	 * Gets the specified Chunk object
+	 *
+	 * @param chunkX
+	 * @param chunkZ
+	 * @return
+	 */
 	public Chunk getChunk(int chunkX, int chunkZ) {
 		/*Chunk chunk =  levelData[chunkX+LEVEL_HALF_WIDTH][chunkZ+LEVEL_HALF_HEIGHT];
 		CompoundTag global = (CompoundTag) chunk.getChunkData();
@@ -283,15 +289,7 @@ public class MinecraftLevel {
 		if(c == null) {
 			return new byte[32768];
 		} else {
-			ByteArrayTag data = c.getMapData();
-			if (data == null)
-			{
-				return new byte[32768];
-			}
-			else
-			{
-				return data.value;
-			}
+			return c.getMapData().value;
 		}
 	}
 		

@@ -1078,7 +1078,7 @@ public class XRay {
     		for(int lz=currentLevelZ-visible_chunk_range;lz<currentLevelZ+visible_chunk_range;lz++) {
     			Chunk k = level.getChunk(lx, lz);
     	        
-    			if(k != null && k.loaded)
+    			if(k != null)
     			{
     				k.renderSolid(render_bedrock);
     				k.renderSelected(this.mineralToggle);
@@ -1089,7 +1089,7 @@ public class XRay {
     		for(int lz=currentLevelZ-visible_chunk_range;lz<currentLevelZ+visible_chunk_range;lz++) {
     			Chunk k = level.getChunk(lx, lz);
     	        
-    			if(k != null && k.loaded) k.renderTransparency();
+    			if(k != null) k.renderTransparency();
     		}
     	}
 

@@ -21,8 +21,6 @@ public class Chunk {
 	private ByteArrayTag blockData;
 	private ByteArrayTag mapData;
 	
-	public boolean loaded = false;
-
 	private MinecraftLevel level;
 	
 	public Chunk(MinecraftLevel level, Tag data) {
@@ -1393,7 +1391,7 @@ public class Chunk {
 			{
 				// TODO: figure out our chunk bounds here (the -63, and below)
 				Chunk otherChunk = level.getChunk(this.x-1, this.z);
-				if (otherChunk != null && otherChunk.loaded && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK_PORTAL)
+				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK_PORTAL)
 				{
 					break;
 				}
@@ -1409,7 +1407,7 @@ public class Chunk {
 			else if (this.x < 63)
 			{
 				Chunk otherChunk = level.getChunk(this.x+1, this.z);
-				if (otherChunk != null && otherChunk.loaded && otherChunk.getBlock(0, yyy, zzz) == MineCraftConstants.BLOCK_PORTAL)
+				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == MineCraftConstants.BLOCK_PORTAL)
 				{
 					break;
 				}
@@ -1574,7 +1572,7 @@ public class Chunk {
 								left = false;
 							} else if(x==0 && this.x > -63) {
 								Chunk leftChunk = level.getChunk(this.x-1, this.z);
-								if(leftChunk != null && leftChunk.loaded && checkSolid(leftChunk.getBlock(15, y, z), transparency)) {
+								if(leftChunk != null && checkSolid(leftChunk.getBlock(15, y, z), transparency)) {
 									draw = true;
 									left = false;
 								}
@@ -1586,7 +1584,7 @@ public class Chunk {
 								right = false;
 							} else if(x==15 && this.x < 63) {
 								Chunk rightChunk = level.getChunk(this.x+1,this.z);
-								if(rightChunk != null && rightChunk.loaded && checkSolid(rightChunk.getBlock(0, y, z), transparency)) {
+								if(rightChunk != null && checkSolid(rightChunk.getBlock(0, y, z), transparency)) {
 									draw = true;
 									right = false;
 								}
@@ -1598,7 +1596,7 @@ public class Chunk {
 								near = false;
 							} else if(z==0 && this.z > -63) {
 								Chunk nearChunk = level.getChunk(this.x,this.z-1);
-								if(nearChunk != null && nearChunk.loaded && checkSolid(nearChunk.getBlock(x, y, 15), transparency)) {
+								if(nearChunk != null && checkSolid(nearChunk.getBlock(x, y, 15), transparency)) {
 									draw = true;
 									near = false;
 								}
@@ -1610,7 +1608,7 @@ public class Chunk {
 								far = false;
 							} else if(z==15 && this.z < 63) {
 								Chunk farChunk = level.getChunk(this.x,this.z+1);
-								if(farChunk != null && farChunk.loaded && checkSolid(farChunk.getBlock(x, y, 0), transparency)) {
+								if(farChunk != null && checkSolid(farChunk.getBlock(x, y, 0), transparency)) {
 									draw = true;
 									far = false;
 								}
