@@ -669,6 +669,7 @@ public class XRay {
     			{
     				for (int lz=chunkZ-loadChunkRange; lz<=chunkZ+loadChunkRange; lz++)
     				{
+    					level.clearChunk(lx, lz);
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
     			}
@@ -680,6 +681,7 @@ public class XRay {
     			{
     				for (int lz=chunkZ-loadChunkRange; lz<=chunkZ+loadChunkRange; lz++)
     				{
+    					level.clearChunk(lx, lz);
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
     			}
@@ -693,6 +695,7 @@ public class XRay {
     			{
     				for (int lz=cur_chunk_z-1-loadChunkRange; lz >= chunkZ-loadChunkRange; lz--)
     				{
+    					level.clearChunk(lx, lz);
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
     			}
@@ -704,6 +707,7 @@ public class XRay {
     			{
     				for (int lz=cur_chunk_z+1+loadChunkRange; lz <= chunkZ+loadChunkRange; lz++)
     				{
+    					level.clearChunk(lx, lz);
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
     			}
@@ -714,6 +718,7 @@ public class XRay {
     		System.out.println("Loading world from X: " + (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) + ", Z: " + (chunkZ-loadChunkRange) + " - " + (chunkZ+loadChunkRange));
             for(int lx=chunkX-loadChunkRange;lx<=chunkX+loadChunkRange;lx++) {
         		for(int lz=chunkZ-loadChunkRange;lz<=chunkZ+loadChunkRange;lz++) {
+					level.clearChunk(lx, lz);
  					mapChunksToLoad.add(new Block(lx,0,lz));
         		}
         	}

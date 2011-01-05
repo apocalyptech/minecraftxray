@@ -19,7 +19,9 @@ import com.plusminus.craft.dtf.Tag;
  */
 public class MinecraftLevel {
 		
-	public HashMap<Long, Chunk> levelData;
+	public static int LEVELDATA_SIZE = 22;
+	public static int LEVELDATA_OFFSET = Integer.MAX_VALUE/2;
+	public Chunk[][] levelData;
 	
 	private int world;
 	private Block spawnPoint;
@@ -41,8 +43,9 @@ public class MinecraftLevel {
 		this.nether = nether;
 		this.minecraftTexture = minecraftTexture;
 		this.portalTexture = portalTexture;
-		//this.levelData = new Chunk[LEVEL_MAX_WIDTH][LEVEL_MAX_HEIGHT];
-		this.levelData = new HashMap<Long, Chunk>();
+		
+		this.levelData = new Chunk[LEVELDATA_SIZE][LEVELDATA_SIZE];
+		
 		File levelFile = new File(MineCraftEnvironment.getWorldDirectory(world), "level.dat");
 		
 		CompoundTag levelData = (CompoundTag) DTFReader.readDTFFile(levelFile);
@@ -211,12 +214,15 @@ public class MinecraftLevel {
 	}
 
 	public void invalidateSelected(boolean main_dirty) {
-		for (Chunk chunk : this.levelData.values())
+		for (Chunk[] chunkrow : this.levelData)
 		{
-			chunk.isSelectedDirty = true;
-			if (main_dirty)
+			for (Chunk chunk : chunkrow)
 			{
-				chunk.isDirty = true;
+				chunk.isSelectedDirty = true;
+				if (main_dirty)
+				{
+					chunk.isDirty = true;
+				}
 			}
 		}
 	}
@@ -228,31 +234,9 @@ public class MinecraftLevel {
 		}
 		Tag t = DTFReader.readDTFFile(chunkFile);
 
-		//levelData[x+LEVEL_HALF_WIDTH][z+LEVEL_HALF_HEIGHT] = new Chunk(t, this);
-		long key = this.getChunkKey(x, z);
-		Chunk chunk = new Chunk(this, t);
-		this.levelData.put(key, chunk);
+		levelData[(x+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(z+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new Chunk(this, t);
 		
 		return t;
-	}
-	
-	/**
-	 * Returns the internal key that we use to store a given chunk.  Internally
-	 * these are stored as a hashmap.  Note that right now we're only using ints
-	 * for the chunk coordinates, so X-Ray cannot actually load every possible
-	 * Minecraft chunk (in fact it's quite a bit more limited, though I'd guess that
-	 * nobody'll end up actually bumping up against our limit.
-	 * 
-	 * TODO: It may be nice to just use a HashMap of HashMaps, both with long keys,
-	 * so that we can support all possible Minecraft chunks.
-	 * 
-	 * @param chunkX
-	 * @param chunkZ
-	 * @return
-	 */
-	private long getChunkKey(int chunkX, int chunkZ)
-	{
-		return ((long)chunkX<<32)+(long)chunkZ;
 	}
 	
 	/**
@@ -263,19 +247,18 @@ public class MinecraftLevel {
 	 * @return
 	 */
 	public Chunk getChunk(int chunkX, int chunkZ) {
-		/*Chunk chunk =  levelData[chunkX+LEVEL_HALF_WIDTH][chunkZ+LEVEL_HALF_HEIGHT];
-		CompoundTag global = (CompoundTag) chunk.getChunkData();
-		CompoundTag level = (CompoundTag) global.value.get(0); // first tag
-		return level;*/
-		long key = this.getChunkKey(chunkX, chunkZ);
-		if (this.levelData.containsKey(key))
-		{
-			return this.levelData.get(key);
-		}
-		else
-		{
-			return null;
-		}
+		return this.levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE];
+	}
+
+	/**
+	 * Sets a chunk to null
+	 * 
+	 * @param chunkX
+	 * @param chunkZ
+	 */
+	public void clearChunk(int chunkX, int chunkZ)
+	{
+		this.levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = null;
 	}
 	
 	/***
