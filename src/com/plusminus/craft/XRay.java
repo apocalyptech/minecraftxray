@@ -671,7 +671,7 @@ public class XRay {
     	int chunkX = level.getChunkX((int) -camera.getPosition().x);
     	int chunkZ = level.getChunkZ((int) -camera.getPosition().z);
  
-    	if (initial_load_done)
+    	if (initial_load_queued)
     	{
     		// TODO: expire items from the cache
     		int dx = chunkX - cur_chunk_x;
