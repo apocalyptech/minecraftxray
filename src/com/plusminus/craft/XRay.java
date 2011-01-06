@@ -212,6 +212,7 @@ public class XRay {
 	private int cur_chunk_x = 0;
 	private int cur_chunk_z = 0;
 	private boolean initial_load_done = false;
+	private boolean initial_load_queued = false;
 	
 	// How long are we allowed to spend loading chunks before we update?
 	private long max_chunkload_time = Sys.getTimerResolution() / 100;  // a tenth of a second
@@ -301,11 +302,12 @@ public class XRay {
 			minimap_needs_updating = true;
 			
 			// If we've taken too long, break out so the GUI can update
-			if (Sys.getTime() - time  > max_chunkload_time)
+			if (initial_load_done && Sys.getTime() - time  > max_chunkload_time)
 			{
 				break;
 			}
 		}
+		initial_load_done = true;
     }
     
     public void incLightLevel() {
@@ -736,7 +738,7 @@ public class XRay {
  					mapChunksToLoad.add(new Block(lx,0,lz));
         		}
         	}
-    		initial_load_done = true;
+    		initial_load_queued = true;
     	}
         cur_chunk_x = chunkX;
         cur_chunk_z = chunkZ;
