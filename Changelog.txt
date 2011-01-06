@@ -3,6 +3,7 @@
   * Load chunks on-demand rather than all at the same time
   * Handle corrupt/invalid chunks more gracefully
   * Changed default starting memory from 128MB to 256MB
+  * World selection merged in with main options dialog
 
 Minecraft X-Ray 2.7 Maintenance Branch 4 (2010.12.16)
 

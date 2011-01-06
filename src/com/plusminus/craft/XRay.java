@@ -147,12 +147,10 @@ public class XRay {
 	private boolean mapLoaded = false;
 	private boolean map_load_started = false;
 	
-	// wheter we have selected a world number already
-	private boolean worldSelected = false;
-	
 	// the available world numbers
 	private ArrayList<Integer> availableWorlds;
 	private ArrayList<Integer> availableNetherWorlds;
+	private int selectedWorld;
 	
 	// the world chunks we still need to load
 	private LinkedList<Block> mapChunksToLoad;
@@ -237,6 +235,17 @@ public class XRay {
 
             // init our program
             initialize();
+            
+            // And now load our world
+            if (this.selectedWorld > availableWorlds.size()-1)
+            {
+            	this.setMinecraftWorld(availableNetherWorlds.get(this.selectedWorld - availableWorlds.size()), true);
+            }
+            else
+            {
+            	this.setMinecraftWorld(availableWorlds.get(this.selectedWorld));
+            }
+            this.triggerChunkLoads();
             
             // main loop
             while (!done)
@@ -537,7 +546,7 @@ public class XRay {
     	}
     	// System.out.println(new File(".").getAbsolutePath());
     	// ask the user for the resolution
-    	if(ResolutionDialog.presentDialog(windowTitle) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
+    	if(ResolutionDialog.presentDialog(windowTitle, availableWorlds, availableNetherWorlds) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
 	 		// want to quit? fine.
     		System.exit(0);
     	}
@@ -558,7 +567,9 @@ public class XRay {
         Display.create();
         screenWidth = displayMode.getWidth();
         screenHeight = displayMode.getHeight();
-        
+
+        // Mark which world to load (which will happen later during initialize()
+        this.selectedWorld = ResolutionDialog.selectedWorld;
     }
 	
     /***
@@ -713,7 +724,7 @@ public class XRay {
     			}
     		}
     	}
-    	else if (worldSelected)
+    	else
     	{
     		System.out.println("Loading world from X: " + (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) + ", Z: " + (chunkZ-loadChunkRange) + " - " + (chunkZ+loadChunkRange));
             for(int lx=chunkX-loadChunkRange;lx<=chunkX+loadChunkRange;lx++) {
@@ -737,93 +748,59 @@ public class XRay {
         mouseX = Mouse.getDX();
         //distance in mouse movement from the last getDY() call.
         mouseY = Mouse.getDY();
-        if(worldSelected) {
-        	// we are on the main world screen or the level loading screen
-        	// update the camera (but only if the mouse is grabbed)
-        	if (Mouse.isGrabbed())
-        	{
-        		camera.incYaw(mouseX * MOUSE_SENSITIVITY);
-        		camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
-        	}
-	       
-        	if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-	        	MOVEMENT_SPEED = 30.0f;
-	        } else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-	        	MOVEMENT_SPEED = 3.0f;
-	        } else {
-	        	MOVEMENT_SPEED = 10.0f;
-	        }
-	        // check for various keys
-	        if (Keyboard.isKeyDown(Keyboard.KEY_W))//move forward
-	        {
-	            camera.walkForward(MOVEMENT_SPEED*timeDelta);
-	            triggerChunkLoads();
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_S))//move backwards
-	        {
-	            camera.walkBackwards(MOVEMENT_SPEED*timeDelta);
-	            triggerChunkLoads();
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_A))//strafe left
-	        {
-	            camera.strafeLeft(MOVEMENT_SPEED*timeDelta);
-	            triggerChunkLoads();
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_D))//strafe right
-	        {
-	            camera.strafeRight(MOVEMENT_SPEED*timeDelta);
-	            triggerChunkLoads();
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))//strafe right
-	        {
-	            camera.moveUp(MOVEMENT_SPEED*timeDelta);
-	            triggerChunkLoads();
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))//strafe right
-	        {
-	            camera.moveUp(-MOVEMENT_SPEED*timeDelta);
-	            triggerChunkLoads();
-	        }
-	       
-	        if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && keyPressed != Keyboard.KEY_TAB) {
-	        	mapBig = !mapBig;
-	        	keyPressed = Keyboard.KEY_TAB;  
-	        }
+        
+    	// we are on the main world screen or the level loading screen
+    	// update the camera (but only if the mouse is grabbed)
+    	if (Mouse.isGrabbed())
+    	{
+    		camera.incYaw(mouseX * MOUSE_SENSITIVITY);
+    		camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
+    	}
+       
+    	if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+        	MOVEMENT_SPEED = 30.0f;
+        } else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        	MOVEMENT_SPEED = 3.0f;
         } else {
-        	// world selection screen
-	        if(Keyboard.isKeyDown(Keyboard.KEY_RETURN) || Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-	        	worldSelected = true;
-	        	if (worldSelectIndex > availableWorlds.size()-1)
-	        	{
-	        		this.setMinecraftWorld(availableNetherWorlds.get(worldSelectIndex - availableWorlds.size()), true);
-	        	}
-	        	else
-	        	{
-	        		this.setMinecraftWorld(availableWorlds.get(worldSelectIndex));
-	        	}
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_W) && keyPressed != Keyboard.KEY_W)//move forward
-	        {
-	        	keyPressed = Keyboard.KEY_W;
-	        	if(worldSelectIndex > 0) worldSelectIndex--;
-	        	
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_S) && keyPressed != Keyboard.KEY_S)//move backwards
-	        {
-	        	keyPressed = Keyboard.KEY_S;
-	        	if(worldSelectIndex < availableWorlds.size()-1) worldSelectIndex++;
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_UP) && keyPressed != Keyboard.KEY_UP)//move forward
-	        {
-	        	keyPressed = Keyboard.KEY_UP;
-	        	if(worldSelectIndex > 0) worldSelectIndex--;
-	        }
-	        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && keyPressed != Keyboard.KEY_DOWN)//move backwards
-	        {
-	        	keyPressed = Keyboard.KEY_DOWN;
-	        	if(worldSelectIndex < availableWorlds.size()+availableNetherWorlds.size()-1) worldSelectIndex++;
-	        }
+        	MOVEMENT_SPEED = 10.0f;
         }
+        // check for various keys
+        if (Keyboard.isKeyDown(Keyboard.KEY_W))//move forward
+        {
+            camera.walkForward(MOVEMENT_SPEED*timeDelta);
+            triggerChunkLoads();
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_S))//move backwards
+        {
+            camera.walkBackwards(MOVEMENT_SPEED*timeDelta);
+            triggerChunkLoads();
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_A))//strafe left
+        {
+            camera.strafeLeft(MOVEMENT_SPEED*timeDelta);
+            triggerChunkLoads();
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_D))//strafe right
+        {
+            camera.strafeRight(MOVEMENT_SPEED*timeDelta);
+            triggerChunkLoads();
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))//strafe right
+        {
+            camera.moveUp(MOVEMENT_SPEED*timeDelta);
+            triggerChunkLoads();
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))//strafe right
+        {
+            camera.moveUp(-MOVEMENT_SPEED*timeDelta);
+            triggerChunkLoads();
+        }
+       
+        if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && keyPressed != Keyboard.KEY_TAB) {
+        	mapBig = !mapBig;
+        	keyPressed = Keyboard.KEY_TAB;  
+        }
+
         if(!loading) {
         	needToReloadWorld = false;
 	        for(int i=0;i<mineralToggle.length;i++) {
@@ -1035,12 +1012,6 @@ public class XRay {
     	//GL11.glLoadIdentity();
         GL11.glLoadIdentity();
     	GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);          // Clear The Screen And The Depth Buffer
-        
-    	// are we at the world selection screen?
-    	if(!worldSelected) {
-    		renderWorldSelection();
-    		return true;
-    	}
     	
     	// are we still loading the map? 
     	if (!map_load_started)

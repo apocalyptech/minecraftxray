@@ -51,6 +51,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.HashMap;
 
+import javax.swing.Box;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -61,7 +62,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.JSeparator;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import org.lwjgl.LWJGLException;
@@ -99,13 +103,14 @@ import org.lwjgl.opengl.DisplayMode;
  * ResolutionDialog.selectedDisplayMode
  * ResolutionDialog.selectedAntiAliasMode
  * ResolutionDialog.selectedFullScreenValue
+ * ResolutionDialog.selectedWorld
  * </code>
  * @author Vincent Vollers
  * @version 1.0
  */
 public class ResolutionDialog extends JFrame {
-	private static final int FRAMEWIDTH = 300;
-	private static final int FRAMEHEIGHT = 230;
+	private static final int FRAMEWIDTH = 400;
+	private static final int FRAMEHEIGHT = 400;
 	private static final int[][] defaultPreferredResolutions = 
 		new int[][] {{1920,1080},{1600,900},{1280,720},{1024, 768}, {800, 600}, {666, 666}, {1280,1024}};
 	// fallbackResolutions defines resolutions that we'll offer in the dropdown regardless of whether or not
@@ -130,10 +135,10 @@ public class ResolutionDialog extends JFrame {
 	private JButton runButton;
 	private JButton exitButton;
 	private GridBagLayout gridBagLayoutManager;
-	private JTabbedPane tabbedPane;
 	private JPanel basicPanel;
-	private Container advancedPanel;
 	private JCheckBox fullScreenCheckBox;
+	private ButtonGroup worldButtonGroup;
+	JRadioButton[] worldButtons;
 	
 	private DefaultComboBoxModel resolutionsModel;
 	private DefaultComboBoxModel bitDepthModel;
@@ -153,6 +158,7 @@ public class ResolutionDialog extends JFrame {
 	public static DisplayMode selectedDisplayMode;
 	public static int selectedAntiAliasMode;
 	public static boolean selectedFullScreenValue;
+	public static int selectedWorld;
 	
 	public static Image iconImage;
 	
@@ -268,7 +274,7 @@ public class ResolutionDialog extends JFrame {
 	/***
 	 * Layouts all the controls and labels on the dialog using a gridbaglayout
 	 */
-	private void layoutControlsOnDialog() {
+	private void layoutControlsOnDialog(ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
 		basicPanel = new JPanel();
 		
 		this.getContentPane().setLayout(gridBagLayoutManager);
@@ -285,85 +291,135 @@ public class ResolutionDialog extends JFrame {
 		float flist = 1.9f;
 		
 		c.insets = new Insets(5,5,5,5);
+		c.weighty = .1f;
 		
+		// Add the resolution label
 		c.weightx = flabel; 
-		c.weighty = 1.0f;
 		c.gridx = 0; c.gridy = 0;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.NONE;
 		addComponent(basicPanel, resolutionsLabel,c);
 		
+		// Add the resolution list
 		c.weightx = flist; 
-		c.weighty = 1.0f; 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1; c.gridy = 0;
 		addComponent(basicPanel, resolutionsList,c);
 		
+		// Add the bit depth label
 		c.weightx = flabel; 
-		c.weighty = 1.0f; 
 		c.gridx = 0; c.gridy = 1;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		addComponent(basicPanel, bitDepthLabel,c);
 		
+		// Add the bit depth list
 		c.weightx = flist;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weighty = 1.0f; 
 		c.gridx = 1; c.gridy = 1;
 		addComponent(basicPanel, bitDepthList,c);
 		
+		// Add the refresh rate label
 		c.weightx = flabel;
-		c.weighty = 1.0f; 
 		c.gridx = 0; c.gridy = 2;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		addComponent(basicPanel, refreshRateLabel,c);
 		
+		// Add the refresh rate list
 		c.weightx = flist;  
-		c.weighty = 1.0f; 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1; c.gridy = 2;
 		addComponent(basicPanel, refreshRateList,c);
 		
+		// Add the antialiasing label
 		c.weightx = flabel; 
-		c.weighty = 1.0f; 
 		c.gridx = 0; c.gridy = 3;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		addComponent(basicPanel, antiAliasLabel,c);
 		
+		// Add the antialiasing list
 		c.weightx = flist;  
-		c.weighty = 1.0f; 
 		c.gridx = 1; c.gridy = 3;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(basicPanel, antiAliasList,c);
 		
-		fullScreenCheckBox = new JCheckBox();
-		
+		// Add the fullscreen label
 		c.weightx = flabel; 
-		c.weighty = 1.0f; 
 		c.gridx = 0; c.gridy = 4;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		addComponent(basicPanel, fullScreenLabel,c);
-		
+
+		// Set up the fullscreen checkbox
+		fullScreenCheckBox = new JCheckBox();
 		c.insets = new Insets(5,0,5,0);
 		fullScreenCheckBox.setSelected(this.preferredFullScreenValue);
 		
+		// Add the fullscreen checkbox
 		c.weightx = flist;  
-		c.weighty = 1.0f; 
 		c.gridx = 1; c.gridy = 4;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(basicPanel, fullScreenCheckBox,c);
 		
+		// Separator
+		c.insets = new Insets(5,5,5,5);
+		c.weightx = 1.0f;
+		c.gridx = 0; c.gridy = 5;
+		c.gridwidth = 2;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		addComponent(basicPanel, Box.createVerticalStrut(5), c);
+		addComponent(basicPanel, new JSeparator(SwingConstants.HORIZONTAL), c);
+		addComponent(basicPanel, Box.createVerticalStrut(5), c);
+		
+		// World Label
+		c.gridx = 0; c.gridy = 7;
+		c.gridwidth = 2;
+		addComponent(basicPanel, new JLabel("Choose a World to Open:"), c);
+		
+		// Create a buttongroup and radio buttons
+		worldButtonGroup = new ButtonGroup();
+		worldButtons = new JRadioButton[availableWorlds.size() + availableNetherWorlds.size()];
+		int curidx = 0;
+		for (int world : availableWorlds)
+		{
+			JRadioButton button = new JRadioButton("World " + world);
+			worldButtonGroup.add(button);
+			worldButtons[curidx] = button;
+			curidx += 1;
+		}
+		for (int world : availableNetherWorlds)
+		{
+			JRadioButton button = new JRadioButton("World " + world + " Nether");
+			worldButtonGroup.add(button);
+			worldButtons[curidx] = button;
+			curidx += 1;
+		}
+		
+		// XRay.java checks to make sure we have at least one world available, so we should theoretically
+		// never get here unless we do.
+		worldButtons[0].setSelected(true);
+		
+		// Now insert the world radio buttons
+		c.insets = new Insets(5, 15, 5, 5);
+		c.gridx = 0; c.gridy = 8;
+		c.gridwidth = 2;
+		for (JRadioButton button : worldButtons)
+		{
+			addComponent(basicPanel, button, c);
+			c.gridy += 1;
+		}
+		
+		// Add our JPanel to the window
 		c.weightx = 1.0f;  
-		c.weighty = 15.0f;
+		c.weighty = .1f;
 		c.gridwidth = 2;
 		c.gridx = 0; c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
 		addComponent(this.getContentPane(), basicPanel,c);
 		
-		
+		// Now add the buttons
 		c.insets = new Insets(5,15,5,15);
 		c.gridwidth = 1;
 		
@@ -678,6 +734,14 @@ public class ResolutionDialog extends JFrame {
 		ResolutionDialog.selectedAntiAliasMode = antiAliasMode;
 		
 		ResolutionDialog.selectedFullScreenValue = this.fullScreenCheckBox.isSelected();
+		
+		for (int i=0; i<worldButtons.length; i++)
+		{
+			if (worldButtons[i].isSelected())
+			{
+				ResolutionDialog.selectedWorld = i;
+			}
+		}
 	}
 	
 	/***
@@ -690,14 +754,16 @@ public class ResolutionDialog extends JFrame {
 	 * @param preferredAntialiasModes a list of antia-alias values, in order of preference, which will be looked for
 	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
 	 */
-	protected ResolutionDialog(String windowName, Container advancedPanel, int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates, int[] preferredAntialiasModes, boolean preferredFullScreenValue) {
+	protected ResolutionDialog(String windowName, Container advancedPanel,
+			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
+			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
+			ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
 		super(windowName);
 		
 		this.preferredResolutions	= preferredResolutions;
 		this.preferredBitDepths 	= preferredBitDepths;
 		this.preferredRefreshRates 	= preferredRefreshRates;
 		this.preferredAntiAliasModes = preferredAntialiasModes;
-		this.advancedPanel			= advancedPanel;
 		this.preferredFullScreenValue = preferredFullScreenValue;
 		
 		if(ResolutionDialog.iconImage != null)
@@ -705,16 +771,26 @@ public class ResolutionDialog extends JFrame {
 		
 		this.setSize(FRAMEWIDTH,FRAMEHEIGHT);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setMinimumSize(new Dimension(FRAMEWIDTH, FRAMEHEIGHT));
 
 		centerDialogOnScreen();
 	
 		buildLists();
 		buildButtons();
-		layoutControlsOnDialog();
+		layoutControlsOnDialog(availableWorlds, availableNetherWorlds);
 		
 		validate();
 		
 		this.setVisible(true);
+		
+		// Adjust to the appropriate height, in case our list of worlds is too long.
+		// This should correctly deal with differences in WM decoration size.
+		Dimension preferred = this.getContentPane().getPreferredSize();
+		int framediff = FRAMEHEIGHT - this.getContentPane().getHeight();
+		if (preferred.height > FRAMEHEIGHT-framediff)
+		{
+			this.setSize(FRAMEWIDTH, preferred.height+framediff);
+		}
 	}
 	
 	/***
@@ -728,7 +804,10 @@ public class ResolutionDialog extends JFrame {
 	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
-	public static int presentDialog(String windowName, Container advancedPanel, int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates, int[] preferredAntialiasModes, boolean preferredFullScreenValue) {
+	public static int presentDialog(String windowName, Container advancedPanel,
+			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
+			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
+			ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
 		ResolutionDialog dialog = new ResolutionDialog(
 				windowName,
 				advancedPanel,
@@ -736,7 +815,9 @@ public class ResolutionDialog extends JFrame {
 				preferredBitDepths,
 				preferredRefreshRates,
 				preferredAntialiasModes,
-				preferredFullScreenValue
+				preferredFullScreenValue,
+				availableWorlds,
+				availableNetherWorlds
 		);
 		try {
 			synchronized(dialog) {
@@ -754,8 +835,8 @@ public class ResolutionDialog extends JFrame {
 	 * Pops up the dialog window using the default preffered values
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
-	public static int presentDialog(String windowName) {
-		return presentDialog(windowName, null);
+	public static int presentDialog(String windowName, ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
+		return presentDialog(windowName, null, availableWorlds, availableNetherWorlds);
 	}
 	
 	/***
@@ -763,13 +844,16 @@ public class ResolutionDialog extends JFrame {
 	 * advanced panel
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
-	public static int presentDialog(String windowName, Container advancedPanel) {
+	public static int presentDialog(String windowName, Container advancedPanel,
+			ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
 		return presentDialog(windowName,advancedPanel,
 				defaultPreferredResolutions,
 				defaultPreferredBitDepths,
 				defaultPreferredRefreshRates,
 				defaultPreferredAntialiasModes,
-				defaultPreferredFullScreenValue
+				defaultPreferredFullScreenValue,
+				availableWorlds,
+				availableNetherWorlds
 		);
 	}
 	
@@ -783,17 +867,13 @@ public class ResolutionDialog extends JFrame {
 	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
-	public static int presentDialog(String windowName, int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates, int[] preferredAntialiasModes, boolean preferredFullScreenValue) {
-		return presentDialog(windowName, null, preferredResolutions, preferredBitDepths, preferredRefreshRates, preferredAntialiasModes, preferredFullScreenValue);
-	}
-	
-	/***
-	 * A little test
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		System.out.println("return code: " + ResolutionDialog.presentDialog("Choose Video Options"));
-		System.out.println("selected resolution: " + ResolutionDialog.selectedDisplayMode);
-		System.out.println("selected anti alias settings: " + ResolutionDialog.selectedAntiAliasMode);
+	public static int presentDialog(String windowName,
+			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
+			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
+			ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
+		return presentDialog(windowName, null,
+				preferredResolutions, preferredBitDepths, preferredRefreshRates,
+				preferredAntialiasModes, preferredFullScreenValue,
+				availableWorlds, availableNetherWorlds);
 	}
 }
