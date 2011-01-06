@@ -215,7 +215,7 @@ public class XRay {
 	private boolean initial_load_queued = false;
 	
 	// How long are we allowed to spend loading chunks before we update?
-	private long max_chunkload_time = Sys.getTimerResolution() / 100;  // a tenth of a second
+	private long max_chunkload_time = Sys.getTimerResolution() / 10;  // a tenth of a second
 	
 	// lets start with the program
     public static void main(String args[]) {    
