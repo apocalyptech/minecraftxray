@@ -537,7 +537,7 @@ public class XRay {
     	}
     	// System.out.println(new File(".").getAbsolutePath());
     	// ask the user for the resolution
-    	if(ResolutionDialog.presentDialog("Mincraft XRAY") == ResolutionDialog.DIALOG_BUTTON_EXIT) {
+    	if(ResolutionDialog.presentDialog(windowTitle) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
 	 		// want to quit? fine.
     		System.exit(0);
     	}
@@ -553,6 +553,7 @@ public class XRay {
         displayMode = ResolutionDialog.selectedDisplayMode;
         Display.setDisplayMode(displayMode);
         Display.setTitle(windowTitle);
+        // TODO: actually do what the user requests here
         Display.setVSyncEnabled(true);
         Display.create();
         screenWidth = displayMode.getWidth();

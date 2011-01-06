@@ -106,8 +106,6 @@ import org.lwjgl.opengl.DisplayMode;
 public class ResolutionDialog extends JFrame {
 	private static final int FRAMEWIDTH = 300;
 	private static final int FRAMEHEIGHT = 230;
-	private static final String PANEL_NAME_BASIC ="Basic";
-	private static final String PANEL_NAME_ADVANCED = "Advanced";
 	private static final int[][] defaultPreferredResolutions = 
 		new int[][] {{1920,1080},{1600,900},{1280,720},{1024, 768}, {800, 600}, {666, 666}, {1280,1024}};
 	// fallbackResolutions defines resolutions that we'll offer in the dropdown regardless of whether or not
@@ -271,17 +269,7 @@ public class ResolutionDialog extends JFrame {
 	 * Layouts all the controls and labels on the dialog using a gridbaglayout
 	 */
 	private void layoutControlsOnDialog() {
-		this.tabbedPane = new JTabbedPane();
 		basicPanel = new JPanel();
-		this.tabbedPane.add(PANEL_NAME_BASIC, basicPanel);
-		
-		if(advancedPanel != null) {
-			this.tabbedPane.add(PANEL_NAME_ADVANCED, advancedPanel);
-			this.tabbedPane.setEnabledAt(1, true);
-		} else {
-			this.tabbedPane.add(PANEL_NAME_ADVANCED, new JPanel());
-			this.tabbedPane.setEnabledAt(1, false);
-		}
 		
 		this.getContentPane().setLayout(gridBagLayoutManager);
 		basicPanel.setLayout(gridBagLayoutManager);
@@ -373,8 +361,7 @@ public class ResolutionDialog extends JFrame {
 		c.gridwidth = 2;
 		c.gridx = 0; c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
-		addComponent(this.getContentPane(), tabbedPane,c);
-		
+		addComponent(this.getContentPane(), basicPanel,c);
 		
 		
 		c.insets = new Insets(5,15,5,15);
