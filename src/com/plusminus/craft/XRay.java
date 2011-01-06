@@ -16,6 +16,8 @@ import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import javax.swing.JWindow;
 
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
@@ -511,11 +513,50 @@ public class XRay {
 	    	
 	    	ResolutionDialog.iconImage = iconTexture128;
     	}
-    	// System.out.println(new File(".").getAbsolutePath());
-    	// ask the user for the resolution
-    	if(ResolutionDialog.presentDialog(windowTitle, availableWorlds) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
-	 		// want to quit? fine.
-    		System.exit(0);
+    	
+    	// We loop on this dialog "forever" because 
+    	while (true)
+    	{
+	    	if(ResolutionDialog.presentDialog(windowTitle, availableWorlds) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
+	    		System.exit(0);
+	    	}
+	
+	        // Mark which world to load (which will happen later during initialize()
+	        this.selectedWorld = ResolutionDialog.selectedWorld;
+	    	
+	    	// The last option will always be "Other..."  If that's been chosen, open a chooser dialog.
+	        if (this.selectedWorld == availableWorlds.size() - 1)
+	        {
+	        	JFileChooser chooser = new JFileChooser();
+	        	chooser.setFileHidingEnabled(false);
+	        	chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	        	chooser.setCurrentDirectory(new File("."));
+	        	chooser.setDialogTitle("Select a Minecraft World Directory");
+	        	if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+	        	{
+	        		WorldInfo customWorld = availableWorlds.get(this.selectedWorld);
+	        		customWorld.setBasePath(chooser.getSelectedFile().getCanonicalPath());
+	        		File leveldat = customWorld.getLevelDatFile();
+	        		if (leveldat.exists() && leveldat.canRead())
+	        		{
+	        			// We appear to have a valid level; break and continue.
+	        			break;
+	        		}
+	        		else
+	        		{
+	        			// Invalid, show an error and then re-open the main dialog.
+	            		JOptionPane.showMessageDialog(null,
+	            				"Couldn't find a valid level.dat file for the specified directory",
+	            				"Minecraft XRAY error",
+	            				JOptionPane.ERROR_MESSAGE);
+	        		}
+	        	}
+	        }
+	        else
+	        {
+	        	// We chose one of the auto-detected worlds, continue.
+	        	break;
+	        }
     	}
     	
        	// set fullscreen from the dialog
@@ -534,9 +575,6 @@ public class XRay {
         Display.create();
         screenWidth = displayMode.getWidth();
         screenHeight = displayMode.getHeight();
-
-        // Mark which world to load (which will happen later during initialize()
-        this.selectedWorld = ResolutionDialog.selectedWorld;
     }
 	
     /***
@@ -557,7 +595,10 @@ public class XRay {
     	}
     	
     	availableWorlds = MineCraftEnvironment.getAvailableWorlds();
+    	// Add in a custom "Other..." world
+    	availableWorlds.add(new WorldInfo(true));
     	
+    	// Since we're adding our custom world, this'll actually never get hit.  Ah well.
     	if(availableWorlds.size() == 0) {
     		JOptionPane.showMessageDialog(null, "Minecraft directory found, but no minecraft levels available.", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
     		System.exit(0);

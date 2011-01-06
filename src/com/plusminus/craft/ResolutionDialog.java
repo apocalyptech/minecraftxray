@@ -385,7 +385,11 @@ public class ResolutionDialog extends JFrame {
 		for (WorldInfo world : availableWorlds)
 		{
 			JRadioButton button;
-			if (world.isNether())
+			if (world.isCustom())
+			{
+				button = new JRadioButton("Other...");				
+			}
+			else if (world.isNether())
 			{
 				button = new JRadioButton("World " + world.getWorldnum() + " Nether");				
 			}
