@@ -25,6 +25,7 @@ import org.lwjgl.util.glu.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.plusminus.craft.WorldInfo;
 import static com.plusminus.craft.MineCraftConstants.*;
 
 public class XRay {
@@ -148,8 +149,7 @@ public class XRay {
 	private boolean map_load_started = false;
 	
 	// the available world numbers
-	private ArrayList<Integer> availableWorlds;
-	private ArrayList<Integer> availableNetherWorlds;
+	private ArrayList<WorldInfo> availableWorlds;
 	private int selectedWorld;
 	
 	// the world chunks we still need to load
@@ -159,16 +159,13 @@ public class XRay {
 	private int totalMapChunks = 0;
 	
 	// the current (selected) world number
-	private int worldNum =1;
+	private WorldInfo world = null;
 	
 	// the currently pressed key
 	private int keyPressed = -1;
 	
 	// the index to the available worlds array
 	private int worldSelectIndex = 0;
-	
-	// simple list of textures containing the text we present the user on the world selection screen
-	private ArrayList<Texture> worldSelectionTextures;
 	
 	// the current fps we are 'doing'
 	private int fps;
@@ -237,14 +234,7 @@ public class XRay {
             initialize();
             
             // And now load our world
-            if (this.selectedWorld > availableWorlds.size()-1)
-            {
-            	this.setMinecraftWorld(availableNetherWorlds.get(this.selectedWorld - availableWorlds.size()), true);
-            }
-            else
-            {
-            	this.setMinecraftWorld(availableWorlds.get(this.selectedWorld));
-            }
+            this.setMinecraftWorld(availableWorlds.get(this.selectedWorld));
             this.triggerChunkLoads();
             
             // main loop
@@ -435,29 +425,6 @@ public class XRay {
 			pg.drawImage(bi, null, 0, 0);
 			portalTexture.update();
 			
-			// world selection screen textures, nothing fancy
-			worldSelectionTextures = new ArrayList<Texture>();
-			for(int i : availableWorlds) {
-				Texture worldTexture = TextureTool.allocateTexture(512,32);
-				Graphics2D g = worldTexture.getImage().createGraphics();
-				g.setFont(ARIALFONT);
-				g.setColor(Color.white);
-				g.drawString("World " + i, 10, 16);
-				worldTexture.update();
-				
-				worldSelectionTextures.add(worldTexture);
-			}
-			for(int i : availableNetherWorlds) {
-				Texture worldTexture = TextureTool.allocateTexture(512,32);
-				Graphics2D g = worldTexture.getImage().createGraphics();
-				g.setFont(ARIALFONT);
-				g.setColor(Color.white);
-				g.drawString("World " + i + " Nether", 10, 16);
-				worldTexture.update();
-				
-				worldSelectionTextures.add(worldTexture);
-			}
-			
 			// mineral textures
 			for(int i=0;i<HIGHLIGHT_ORES.length;i++) {
 				mineralToggleTextures[i] = TextureTool.allocateTexture(128,32);
@@ -546,7 +513,7 @@ public class XRay {
     	}
     	// System.out.println(new File(".").getAbsolutePath());
     	// ask the user for the resolution
-    	if(ResolutionDialog.presentDialog(windowTitle, availableWorlds, availableNetherWorlds) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
+    	if(ResolutionDialog.presentDialog(windowTitle, availableWorlds) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
 	 		// want to quit? fine.
     		System.exit(0);
     	}
@@ -590,9 +557,8 @@ public class XRay {
     	}
     	
     	availableWorlds = MineCraftEnvironment.getAvailableWorlds();
-    	availableNetherWorlds = MineCraftEnvironment.getAvailableWorlds(true);
     	
-    	if(availableWorlds.size() == 0 && availableNetherWorlds.size() == 0) {
+    	if(availableWorlds.size() == 0) {
     		JOptionPane.showMessageDialog(null, "Minecraft directory found, but no minecraft levels available.", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
     		System.exit(0);
     	}
@@ -618,23 +584,14 @@ public class XRay {
     	}
     	this.currentHighlightDistance = n;
      }      
-    
+
     /***
      * Sets the world number we want to view
      * @param worldNum
      */
-    private void setMinecraftWorld(int worldNum) {
-    	this.setMinecraftWorld(worldNum, false);
-    }
-    
-    /***
-     * Sets the world number we want to view
-     * @param worldNum
-     * @param nether
-     */
-    private void setMinecraftWorld(int worldNum, boolean nether) {
-    	this.worldNum = worldNum;
-    	this.level =  new MinecraftLevel(worldNum, nether, minecraftTexture, portalTexture);
+    private void setMinecraftWorld(WorldInfo world) {
+    	this.world = world;
+    	this.level =  new MinecraftLevel(world, minecraftTexture, portalTexture);
     	
     	// determine which chunks are available in this world
     	mapChunksToLoad = new LinkedList<Block>();
@@ -960,48 +917,6 @@ public class XRay {
     	
     	minimapTexture.update();
     }
-    
-    /***
-     * Renders the world selection screen
-     */
-    private void renderWorldSelection() {
-    	setOrthoOn();
-    	float y = 0;
-    	float yy = screenHeight / (worldSelectionTextures.size()+1);
-    	float x = (screenWidth / 2.0f)-256;
-    	GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    	
-    	// draw available worlds
-    	for(Texture t : worldSelectionTextures) {
-    		y += yy;
-    		SpriteTool.drawSpriteAbsoluteXY(t, x, y);
-    	}
-    	
-    	float bx = x;
-    	float by = (worldSelectIndex+1) * yy;
-    	float ex = x+512;
-    	float ey = by+32;
-    	
-    	by -=5;
-    	ey -=5;
-    	
-    	// draw the current selection box (just a red rectangle)
-    	
-    	GL11.glDisable(GL11.GL_BLEND);
-    	GL11.glDisable(GL11.GL_TEXTURE_2D);
-    	GL11.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-    	GL11.glLineWidth(4);
-    	GL11.glBegin(GL11.GL_LINE_LOOP);
-    		GL11.glVertex2f(bx, by);
-    		GL11.glVertex2f(ex, by);
-    		GL11.glVertex2f(ex, ey);    
-    		GL11.glVertex2f(bx, ey);
-    	GL11.glEnd();
-
-    	GL11.glEnable(GL11.GL_BLEND);
-    	GL11.glEnable(GL11.GL_TEXTURE_2D);
-    	setOrthoOff();
-    }    
     
     /***
      * Main render loop

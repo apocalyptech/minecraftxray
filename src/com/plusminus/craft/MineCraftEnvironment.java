@@ -1,5 +1,7 @@
 package com.plusminus.craft;
 
+import com.plusminus.craft.WorldInfo;
+
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Graphics2D;
@@ -104,24 +106,31 @@ public class MineCraftEnvironment {
 	}
 	
 	/***
-	 * Returns a list of integers corresponding to available worlds
+	 * Returns a list of WorldInfo objects, corresponding to available worlds
 	 * @return
 	 */
-	public static ArrayList<Integer> getAvailableWorlds() {
-		return getAvailableWorlds(false);
-	}
-	
-	/***
-	 * Returns a list of integers corresponding to available worlds
-	 * @param nether
-	 * @return
-	 */
-	public static ArrayList<Integer> getAvailableWorlds(boolean nether) {
-		ArrayList<Integer> worlds = new ArrayList<Integer>();
+	public static ArrayList<WorldInfo> getAvailableWorlds() {
+		ArrayList<WorldInfo> worlds = new ArrayList<WorldInfo>();
 		for(int i=0;i<10;i++) {
-			File worldDir = getWorldDirectory(i, nether);
+			File worldDir = getWorldDirectory(i);
 			if(worldDir.exists() && worldDir.canRead()) {
-				worlds.add(i);
+				try
+				{
+					// First snatch up the overworld
+					WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), i);
+					worlds.add(info);
+					
+					// Now see if there's an associated Nether world we can add.
+					WorldInfo netherinfo = info.getNetherInfo();
+					if (netherinfo != null)
+					{
+						worlds.add(netherinfo);
+					}
+				}
+				catch (IOException e)
+				{
+					// Nothing; guess we'll ignore it.
+				}
 			}
 		}
 		return worlds;
@@ -134,19 +143,7 @@ public class MineCraftEnvironment {
 	 * @param z
 	 * @return
 	 */
-	public static File getChunkFile(int world, int x, int z) {
-		return getChunkFile(world, x, z, false);
-	}
-	
-	/***
-	 * Returns a file handle to a chunk file in a world
-	 * @param world
-	 * @param x
-	 * @param z
-	 * @param nether
-	 * @return
-	 */
-	public static File getChunkFile(int world, int x, int z, boolean nether) {
+	public static File getChunkFile(WorldInfo world, int x, int z) {
 		int xx = x % 64;
 		if(xx<0) xx = 64+xx;
 		int zz = z % 64;
@@ -154,33 +151,17 @@ public class MineCraftEnvironment {
 		String firstFolder 		= Integer.toString(xx, 36);
 		String secondFolder 	= Integer.toString(zz, 36);
 		String filename 		= "c." + Integer.toString(x, 36) + "." + Integer.toString(z, 36) + ".dat";
-		return new File(getWorldDirectory(world, nether), firstFolder + "/" + secondFolder + "/" + filename);
+		return new File(world.getBasePath(), firstFolder + "/" + secondFolder + "/" + filename);
 	}
 	
+
 	/***
 	 * Returns a file handle to a base world directory
 	 * @param world
 	 * @return
 	 */
 	public static File getWorldDirectory(int world) {
-		return getWorldDirectory(world, false);
-	}
-	
-	/***
-	 * Returns a file handle to a base world directory
-	 * @param world
-	 * @param nether
-	 * @return
-	 */
-	public static File getWorldDirectory(int world, boolean nether) {
-		if (nether)
-		{
-			return new File(baseDir, "saves/World" + world + "/DIM-1");
-		}
-		else
-		{
-			return new File(baseDir, "saves/World" + world);
-		}
+		return new File(baseDir, "saves/World" + world);
 	}
 	
 	/***

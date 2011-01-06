@@ -274,7 +274,7 @@ public class ResolutionDialog extends JFrame {
 	/***
 	 * Layouts all the controls and labels on the dialog using a gridbaglayout
 	 */
-	private void layoutControlsOnDialog(ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
+	private void layoutControlsOnDialog(ArrayList<WorldInfo> availableWorlds) {
 		basicPanel = new JPanel();
 		
 		this.getContentPane().setLayout(gridBagLayoutManager);
@@ -380,18 +380,19 @@ public class ResolutionDialog extends JFrame {
 		
 		// Create a buttongroup and radio buttons
 		worldButtonGroup = new ButtonGroup();
-		worldButtons = new JRadioButton[availableWorlds.size() + availableNetherWorlds.size()];
+		worldButtons = new JRadioButton[availableWorlds.size()];
 		int curidx = 0;
-		for (int world : availableWorlds)
+		for (WorldInfo world : availableWorlds)
 		{
-			JRadioButton button = new JRadioButton("World " + world);
-			worldButtonGroup.add(button);
-			worldButtons[curidx] = button;
-			curidx += 1;
-		}
-		for (int world : availableNetherWorlds)
-		{
-			JRadioButton button = new JRadioButton("World " + world + " Nether");
+			JRadioButton button;
+			if (world.isNether())
+			{
+				button = new JRadioButton("World " + world.getWorldnum() + " Nether");				
+			}
+			else
+			{
+				button = new JRadioButton("World " + world.getWorldnum());
+			}
 			worldButtonGroup.add(button);
 			worldButtons[curidx] = button;
 			curidx += 1;
@@ -757,7 +758,7 @@ public class ResolutionDialog extends JFrame {
 	protected ResolutionDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
-			ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
+			ArrayList<WorldInfo> availableWorlds) {
 		super(windowName);
 		
 		this.preferredResolutions	= preferredResolutions;
@@ -777,7 +778,7 @@ public class ResolutionDialog extends JFrame {
 	
 		buildLists();
 		buildButtons();
-		layoutControlsOnDialog(availableWorlds, availableNetherWorlds);
+		layoutControlsOnDialog(availableWorlds);
 		
 		validate();
 		
@@ -807,7 +808,7 @@ public class ResolutionDialog extends JFrame {
 	public static int presentDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
-			ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
+			ArrayList<WorldInfo> availableWorlds) {
 		ResolutionDialog dialog = new ResolutionDialog(
 				windowName,
 				advancedPanel,
@@ -816,8 +817,7 @@ public class ResolutionDialog extends JFrame {
 				preferredRefreshRates,
 				preferredAntialiasModes,
 				preferredFullScreenValue,
-				availableWorlds,
-				availableNetherWorlds
+				availableWorlds
 		);
 		try {
 			synchronized(dialog) {
@@ -835,8 +835,8 @@ public class ResolutionDialog extends JFrame {
 	 * Pops up the dialog window using the default preffered values
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
-	public static int presentDialog(String windowName, ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
-		return presentDialog(windowName, null, availableWorlds, availableNetherWorlds);
+	public static int presentDialog(String windowName, ArrayList<WorldInfo> availableWorlds) {
+		return presentDialog(windowName, null, availableWorlds);
 	}
 	
 	/***
@@ -845,15 +845,14 @@ public class ResolutionDialog extends JFrame {
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
 	public static int presentDialog(String windowName, Container advancedPanel,
-			ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
+			ArrayList<WorldInfo> availableWorlds) {
 		return presentDialog(windowName,advancedPanel,
 				defaultPreferredResolutions,
 				defaultPreferredBitDepths,
 				defaultPreferredRefreshRates,
 				defaultPreferredAntialiasModes,
 				defaultPreferredFullScreenValue,
-				availableWorlds,
-				availableNetherWorlds
+				availableWorlds
 		);
 	}
 	
@@ -870,10 +869,10 @@ public class ResolutionDialog extends JFrame {
 	public static int presentDialog(String windowName,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
-			ArrayList<Integer> availableWorlds, ArrayList<Integer> availableNetherWorlds) {
+			ArrayList<WorldInfo> availableWorlds) {
 		return presentDialog(windowName, null,
 				preferredResolutions, preferredBitDepths, preferredRefreshRates,
 				preferredAntialiasModes, preferredFullScreenValue,
-				availableWorlds, availableNetherWorlds);
+				availableWorlds);
 	}
 }

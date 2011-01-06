@@ -23,12 +23,11 @@ public class MinecraftLevel {
 	public static int LEVELDATA_OFFSET = Integer.MAX_VALUE/2;
 	public Chunk[][] levelData;
 	
-	private int world;
+	private WorldInfo world;
 	private Block spawnPoint;
 	private Block playerPos;
 	private float playerYaw;
 	private float playerPitch;
-	private boolean nether;
 	
 	public Texture minecraftTexture;
 	public Texture portalTexture;
@@ -38,15 +37,14 @@ public class MinecraftLevel {
 	 * Create a minecraftLevel from the given world
 	 * @param world
 	 */
-	public MinecraftLevel(int world, boolean nether, Texture minecraftTexture, Texture portalTexture) {
+	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture portalTexture) {
 		this.world = world;
-		this.nether = nether;
 		this.minecraftTexture = minecraftTexture;
 		this.portalTexture = portalTexture;
 		
 		this.levelData = new Chunk[LEVELDATA_SIZE][LEVELDATA_SIZE];
 		
-		File levelFile = new File(MineCraftEnvironment.getWorldDirectory(world), "level.dat");
+		File levelFile = world.getLevelDatFile();
 		
 		CompoundTag levelData = (CompoundTag) DTFReader.readDTFFile(levelFile);
 		
@@ -59,7 +57,7 @@ public class MinecraftLevel {
 			// Figure out what dimension the player's in.  If it matches, move our camera there.
 			// TODO: if playerDim is null, perhaps we should move the camera to the spawnpoint...
 			IntTag playerDim = (IntTag) levelPlayerData.getTagWithName("Dimension");
-			if (playerDim != null && ((playerDim.value == 0 && !nether) || (playerDim.value == -1 && nether)))
+			if (playerDim != null && ((playerDim.value == 0 && !world.isNether()) || (playerDim.value == -1 && world.isNether())))
 			{
 				ListTag playerPos = (ListTag) levelPlayerData .getTagWithName("Pos");
 				ListTag playerRotation = (ListTag) levelPlayerData .getTagWithName("Rotation");
@@ -84,7 +82,7 @@ public class MinecraftLevel {
 			}
 	
 			// Set the spawn point if we're not in the Nether
-			if (nether)
+			if (world.isNether())
 			{
 				this.spawnPoint = new Block(0,0,0);				
 			}
@@ -231,7 +229,7 @@ public class MinecraftLevel {
 	}
 	
 	public Tag loadChunk(int x, int z) {
-		File chunkFile = MineCraftEnvironment.getChunkFile(world, x,z, this.nether);
+		File chunkFile = MineCraftEnvironment.getChunkFile(world, x,z);
 		if(!chunkFile.exists()) {
 			return null;
 		}
