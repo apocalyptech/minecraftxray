@@ -237,7 +237,10 @@ public class MinecraftLevel {
 		}
 		Tag t = DTFReader.readDTFFile(chunkFile);
 
-		levelData[(x+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(z+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new Chunk(this, t);
+		if (t != null)
+		{
+			levelData[(x+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(z+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new Chunk(this, t);
+		}
 		
 		return t;
 	}
