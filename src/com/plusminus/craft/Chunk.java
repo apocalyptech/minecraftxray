@@ -1387,9 +1387,8 @@ public class Chunk {
 					break;
 				}
 			}
-			else if (this.x > -63)
+			else
 			{
-				// TODO: figure out our chunk bounds here (the -63, and below)
 				Chunk otherChunk = level.getChunk(this.x-1, this.z);
 				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK_PORTAL)
 				{
@@ -1404,7 +1403,7 @@ public class Chunk {
 					break;
 				}
 			}
-			else if (this.x < 63)
+			else
 			{
 				Chunk otherChunk = level.getChunk(this.x+1, this.z);
 				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == MineCraftConstants.BLOCK_PORTAL)
@@ -1508,7 +1507,7 @@ public class Chunk {
 							if(x>0 && blockData.value[blockOffset-BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK_BEDROCK) {
 								draw = true;
 								left = false;
-							} else if(x==0 && this.x > -63) {
+							} else if(x==0) {
 								Chunk leftChunk = level.getChunk(this.x-1, this.z);
 								if(leftChunk != null && leftChunk.getBlock(15, y, z) != MineCraftConstants.BLOCK_BEDROCK) {
 									draw = true;
@@ -1520,7 +1519,7 @@ public class Chunk {
 							if(x<15 && blockData.value[blockOffset+BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK_BEDROCK) {
 								draw = true;
 								right = false;
-							} else if(x==15 && this.x < 63) {
+							} else if(x==15) {
 								Chunk rightChunk = level.getChunk(this.x+1,this.z);
 								if(rightChunk != null && rightChunk.getBlock(0, y, z) != MineCraftConstants.BLOCK_BEDROCK) {
 									draw = true;
@@ -1532,7 +1531,7 @@ public class Chunk {
 							if(z>0 && blockData.value[blockOffset-BLOCKSPERROW] != MineCraftConstants.BLOCK_BEDROCK) {
 								draw = true;
 								near = false;
-							} else if(z==0 && this.z > -63) {
+							} else if(z==0) {
 								Chunk nearChunk = level.getChunk(this.x,this.z-1);
 								if(nearChunk != null && nearChunk.getBlock(x, y, 15) != MineCraftConstants.BLOCK_BEDROCK) {
 									draw = true;
@@ -1544,7 +1543,7 @@ public class Chunk {
 							if(z<15 && blockData.value[blockOffset+BLOCKSPERROW] != MineCraftConstants.BLOCK_BEDROCK) {
 								draw = true;
 								far = false;
-							} else if(z==15 && this.z < 63) {
+							} else if(z==15) {
 								Chunk farChunk = level.getChunk(this.x,this.z+1);
 								if(farChunk != null && farChunk.getBlock(x, y, 0) != MineCraftConstants.BLOCK_BEDROCK) {
 									draw = true;
@@ -1570,7 +1569,7 @@ public class Chunk {
 							if(x>0 && checkSolid(blockData.value[blockOffset-BLOCKSPERCOLUMN], transparency)) {
 								draw = true;
 								left = false;
-							} else if(x==0 && this.x > -63) {
+							} else if(x==0) {
 								Chunk leftChunk = level.getChunk(this.x-1, this.z);
 								if(leftChunk != null && checkSolid(leftChunk.getBlock(15, y, z), transparency)) {
 									draw = true;
@@ -1582,7 +1581,7 @@ public class Chunk {
 							if(x<15 && checkSolid(blockData.value[blockOffset+BLOCKSPERCOLUMN], transparency)) {
 								draw = true;
 								right = false;
-							} else if(x==15 && this.x < 63) {
+							} else if(x==15) {
 								Chunk rightChunk = level.getChunk(this.x+1,this.z);
 								if(rightChunk != null && checkSolid(rightChunk.getBlock(0, y, z), transparency)) {
 									draw = true;
@@ -1594,7 +1593,7 @@ public class Chunk {
 							if(z>0 && checkSolid(blockData.value[blockOffset-BLOCKSPERROW], transparency)) {
 								draw = true;
 								near = false;
-							} else if(z==0 && this.z > -63) {
+							} else if(z==0) {
 								Chunk nearChunk = level.getChunk(this.x,this.z-1);
 								if(nearChunk != null && checkSolid(nearChunk.getBlock(x, y, 15), transparency)) {
 									draw = true;
@@ -1606,7 +1605,7 @@ public class Chunk {
 							if(z<15 && checkSolid(blockData.value[blockOffset+BLOCKSPERROW], transparency)) {
 								draw = true;
 								far = false;
-							} else if(z==15 && this.z < 63) {
+							} else if(z==15) {
 								Chunk farChunk = level.getChunk(this.x,this.z+1);
 								if(farChunk != null && checkSolid(farChunk.getBlock(x, y, 0), transparency)) {
 									draw = true;
