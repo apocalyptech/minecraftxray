@@ -5,6 +5,7 @@
   * Changed default starting memory from 128MB to 256MB
   * World selection merged in with main options dialog
   * Ability to select arbitrary directories to open worlds
+  * "N" key will toggle back and forth between Nether and Overworld, if available.
 
 Minecraft X-Ray 2.7 Maintenance Branch 4 (2010.12.16)
 

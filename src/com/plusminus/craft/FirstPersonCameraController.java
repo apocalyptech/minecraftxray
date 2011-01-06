@@ -95,4 +95,16 @@ public class FirstPersonCameraController {
 		this.yaw = yaw;
 		this.pitch = pitch;
 	}
+	
+	/**
+	 * Processes the given Nether warp factor (should generally be 8.0f or
+	 * 1/8.0f, depending on the direction we're headed).
+	 * 
+	 * @param multiplier
+	 */
+	public void processNetherWarp(float multiplier)
+	{
+		this.position.x *= multiplier;
+		this.position.z *= multiplier;
+	}
 }

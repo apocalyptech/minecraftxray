@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.vector.Vector3f;
 
 import com.plusminus.craft.WorldInfo;
 import static com.plusminus.craft.MineCraftConstants.*;
@@ -628,7 +629,7 @@ public class XRay {
 
     /***
      * Sets the world number we want to view
-     * @param worldNum
+     * @param world
      */
     private void setMinecraftWorld(WorldInfo world) {
     	this.world = world;
@@ -639,6 +640,30 @@ public class XRay {
 		totalMapChunks = 0;
 		
 		moveCameraToPlayerPos();
+    }
+    
+    /**
+     * Sets the world number we want, and moves the camera to the specified coordinates.  There's
+     * a bit of code duplication going on here; should fix that.
+     * 
+     * @param world
+     * @param camera_x
+     * @param camera_z
+     */
+    private void setMinecraftWorld(WorldInfo world, FirstPersonCameraController camera)
+    {
+    	this.world = world;
+    	this.level =  new MinecraftLevel(world, minecraftTexture, portalTexture);
+    	
+    	// determine which chunks are available in this world
+    	mapChunksToLoad = new LinkedList<Block>();
+		totalMapChunks = 0;
+
+		this.camera = camera;
+		initial_load_queued = false;
+		initial_load_done = false;
+		this.triggerChunkLoads();
+    	
     }
 
     private void moveCameraToSpawnPoint() {
@@ -860,6 +885,10 @@ public class XRay {
         	render_bedrock = !render_bedrock;
     		invalidateSelectedChunks(true);
         }
+        if (Keyboard.isKeyDown(Keyboard.KEY_N) && keyPressed != Keyboard.KEY_N) { // Switch back+forth between Nether and Overworld
+        	keyPressed = Keyboard.KEY_N;
+        	switchNether();
+        }
 
         // handle chunk ranges
         for(int i = 0; i<CHUNK_RANGES.length;i++) {
@@ -896,7 +925,37 @@ public class XRay {
 	        }
         }
 	}
-
+	
+	/**
+	 * If we can, switches to/from nether.  This will attempt to do an approximate translation
+	 * of your position, though that hasn't been tested much, and won't totally line up with
+	 * what Minecraft does.  Note that height is unaffected by this, so the adjacent portal
+	 * might show up higher or lower, depending on the local terrain.
+	 */
+	private void switchNether()
+	{
+		WorldInfo newworld = null;
+		float camera_mult = 1.0f;
+		if (world.isNether() && world.hasOverworld())
+		{
+			newworld = world.getOverworldInfo();
+			camera_mult = 8.0f;
+		}
+		else if (!world.isNether() && world.hasNether())
+		{
+			newworld = world.getNetherInfo();
+			camera_mult = 1.0f/8.0f;
+		}
+		if (newworld != null)
+		{
+			// A full reinitialization is kind of overkill, but whatever.
+			FirstPersonCameraController cur_camera = this.camera;
+			this.camera.processNetherWarp(camera_mult);
+			initialize();
+			this.setMinecraftWorld(newworld, cur_camera);
+			this.triggerChunkLoads();
+		}
+	}
 	
 	private void invalidateSelectedChunks() {
     	level.invalidateSelected(false);
