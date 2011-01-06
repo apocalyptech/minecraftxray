@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -155,7 +155,7 @@ public class XRay {
 	private ArrayList<Integer> availableNetherWorlds;
 	
 	// the world chunks we still need to load
-	private Stack<Block> mapChunksToLoad;
+	private LinkedList<Block> mapChunksToLoad;
 	
 	// the total chunks in this world
 	private int totalMapChunks = 0;
@@ -630,9 +630,10 @@ public class XRay {
     	this.level =  new MinecraftLevel(worldNum, nether, minecraftTexture, portalTexture);
     	
     	// determine which chunks are available in this world
-		mapChunksToLoad = new Stack<Block>();
+    	mapChunksToLoad = new LinkedList<Block>();
 		totalMapChunks = 0;
 		/*
+		// TODO: Find the other instances of this "63" limit
 		for(int x=-63;x<63;x++) {
 			for(int z=-63;z<63;z++) {
 				if(MineCraftEnvironment.getChunkFile(worldNum, x, z).exists()) {
