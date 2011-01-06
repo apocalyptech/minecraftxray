@@ -66,7 +66,8 @@ public class XRay {
 	
 	// By default we'll keep 20x20 chunks in our cache, which should hopefully let
 	// us stay ahead of the camera
-	private final int loadChunkRange = 10;
+	// TODO: keep this at 8, or back up to 10?
+	private final int loadChunkRange = 8;
 	
 	// set to true when the program is finished 
 	private boolean done 				= false; 
@@ -213,7 +214,7 @@ public class XRay {
 	private boolean initial_load_done = false;
 	
 	// How long are we allowed to spend loading chunks before we update?
-	private long max_chunkload_time = Sys.getTimerResolution() / 10;  // a tenth of a second
+	private long max_chunkload_time = Sys.getTimerResolution() / 100;  // a tenth of a second
 	
 	// lets start with the program
     public static void main(String args[]) {    
@@ -284,10 +285,22 @@ public class XRay {
     	long time = Sys.getTime();
 		while (!mapChunksToLoad.isEmpty())
 		{
+			// Load and draw the chunk
 			b = (Block) mapChunksToLoad.pop();
 			//System.out.println("Loading chunk " + b.x + "," + b.z);
 			drawMapChunkToMap(b.x, b.z);
+			
+			// Because of the way we do things, neighboring chunks should
+			// be marked dirty now
+			markDirty(b.x+1, b.z+1);
+			markDirty(b.x+1, b.z-1);
+			markDirty(b.x-1, b.z+1);
+			markDirty(b.x-1, b.z-1);
+			
+			// Make sure we update the minimap
 			minimap_needs_updating = true;
+			
+			// If we've taken too long, break out so the GUI can update
 			if (Sys.getTime() - time  > max_chunkload_time)
 			{
 				break;
@@ -1441,6 +1454,15 @@ public class XRay {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 			
 			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth-100, 100, camera.getYaw(),0.5f);
+		}
+	}
+	
+	public void markDirty(int x, int z)
+	{
+		Chunk c = level.getChunk(x, z);
+		if (c != null)
+		{
+			c.isDirty = true;
 		}
 	}
 	

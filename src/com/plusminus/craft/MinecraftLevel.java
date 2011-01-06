@@ -218,10 +218,13 @@ public class MinecraftLevel {
 		{
 			for (Chunk chunk : chunkrow)
 			{
-				chunk.isSelectedDirty = true;
-				if (main_dirty)
+				if (chunk != null)
 				{
-					chunk.isDirty = true;
+					chunk.isSelectedDirty = true;
+					if (main_dirty)
+					{
+						chunk.isDirty = true;
+					}
 				}
 			}
 		}
