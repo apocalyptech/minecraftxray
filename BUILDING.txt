@@ -36,7 +36,7 @@ that.
    in Package Explorer, go to Properties -> Run/Debug Settings -> XRay, and
    click on "Edit".  In the Arguments tab, set the VM arguments to:
    
-   	 -Xms128m -Xmx1024m -Djava.library.path=/path/to/workspace/xray/lib/native
+   	 -Xms256m -Xmx1024m -Djava.library.path=/path/to/workspace/xray/lib/native
    
    ... replacing the "/path/to/workspace" with the path to your actual
    Eclipse workspace.  If anyone's got a way around having to do that, let

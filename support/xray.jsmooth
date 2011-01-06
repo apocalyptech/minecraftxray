@@ -19,7 +19,7 @@
 <embeddedJar>false</embeddedJar>
 <executableName>minecraft_xray.exe</executableName>
 <iconLocation>xray_icon.png</iconLocation>
-<initialMemoryHeap>134217728</initialMemoryHeap>
+<initialMemoryHeap>268435456</initialMemoryHeap>
 <mainClassName>com.plusminus.craft.XRay</mainClassName>
 <maximumMemoryHeap>1073741824</maximumMemoryHeap>
 <maximumVersion></maximumVersion>

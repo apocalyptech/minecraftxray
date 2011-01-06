@@ -2,6 +2,7 @@
   * Fixed a bug that was keeping chunk files open after we were done with them
   * Load chunks on-demand rather than all at the same time
   * Handle corrupt/invalid chunks more gracefully
+  * Changed default starting memory from 128MB to 256MB
 
 Minecraft X-Ray 2.7 Maintenance Branch 4 (2010.12.16)
 
