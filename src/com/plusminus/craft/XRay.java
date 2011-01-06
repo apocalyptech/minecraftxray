@@ -656,6 +656,8 @@ public class XRay {
     	Block spawnPoint = level.getSpawnPoint();
 		this.camera.getPosition().set(spawnPoint.x, spawnPoint.y-1, spawnPoint.z);
 		this.camera.setYawAndPitch(0,0);
+		initial_load_queued = false;
+		initial_load_done = false;
 		this.triggerChunkLoads();
     }
     
@@ -663,6 +665,8 @@ public class XRay {
     	Block playerPos = level.getPlayerPosition();
     	this.camera.getPosition().set(playerPos.x, playerPos.y, playerPos.z);
 		this.camera.setYawAndPitch(180+level.getPlayerYaw(),level.getPlayerPitch());
+		initial_load_queued = false;
+		initial_load_done = false;
 		this.triggerChunkLoads();
     }
     
