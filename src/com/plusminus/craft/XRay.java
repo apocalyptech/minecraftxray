@@ -724,6 +724,13 @@ public class XRay {
 		this.triggerChunkLoads();
     }
     
+    /**
+     * Populates mapChunksToLoad with a list of chunks that need adding, based
+     * on how far we've moved since our last known position.  Realistically this
+     * is never going to be more than one line at a time, though if someone's
+     * getting hit with ridiculously low FPS or something, perhaps there could end
+     * up being more.
+     */
     private void triggerChunkLoads()
     {
     	int chunkX = level.getChunkX((int) -camera.getPosition().x);
@@ -731,60 +738,75 @@ public class XRay {
  
     	if (initial_load_queued)
     	{
-    		// TODO: expire items from the cache
+    		Chunk tempchunk;
     		int dx = chunkX - cur_chunk_x;
     		int dz = chunkZ - cur_chunk_z;
+    		
+    		int top_x=0;
+    		int bot_x=0;
+    		int top_z=0;
+    		int bot_z=0;
     		
     		// X
     		if (dx < 0)
     		{
-    			System.out.println("Loading in chunks from the X range " + (cur_chunk_x-1-loadChunkRange) + " to " + (chunkX-loadChunkRange) + " (going down)");
-    			for (int lx=cur_chunk_x-1-loadChunkRange; lx >= chunkX-loadChunkRange; lx--)
-    			{
-    				for (int lz=chunkZ-loadChunkRange; lz<=chunkZ+loadChunkRange; lz++)
-    				{
-    					level.clearChunk(lx, lz);
-    					mapChunksToLoad.add(new Block(lx, 0, lz));
-    				}
-    			}
+    			//System.out.println("Loading in chunks from the X range " + (cur_chunk_x-1-loadChunkRange) + " to " + (chunkX-loadChunkRange) + " (going down)");
+    			top_x = cur_chunk_x-1-loadChunkRange;
+    			bot_x = chunkX-loadChunkRange;
     		}
     		else if (dx > 0)
     		{
-    			System.out.println("Loading in chunks from the X range " + (cur_chunk_x+1+loadChunkRange) + " to " + (chunkX+loadChunkRange) + " (going up)");
-    			for (int lx=cur_chunk_x+1+loadChunkRange; lx <= chunkX+loadChunkRange; lx++)
+    			//System.out.println("Loading in chunks from the X range " + (cur_chunk_x+1+loadChunkRange) + " to " + (chunkX+loadChunkRange) + " (going up)");
+    			top_x = chunkX+loadChunkRange;
+    			bot_x = cur_chunk_x+1+loadChunkRange;
+    		}
+    		if (dx != 0)
+    		{
+    			for (int lx=bot_x; lx <= top_x; lx++)
     			{
     				for (int lz=chunkZ-loadChunkRange; lz<=chunkZ+loadChunkRange; lz++)
     				{
+    					tempchunk = level.getChunk(lx, lz);
+    					if (tempchunk != null && tempchunk.x == lx && tempchunk.z == lz)
+    					{
+    						System.out.println("Found cached chunk at " + lx + ", " + lz);
+    						continue;
+    					}
     					level.clearChunk(lx, lz);
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
-    			}
+    			}    			
     		}
     		
     		// Z
     		if (dz < 0)
     		{
-    			System.out.println("Loading in chunks from the Z range " + (cur_chunk_z-1-loadChunkRange) + " to " + (chunkZ-loadChunkRange) + " (going down)");
-    			for (int lx=chunkX-loadChunkRange; lx<=chunkX+loadChunkRange; lx++)
-    			{
-    				for (int lz=cur_chunk_z-1-loadChunkRange; lz >= chunkZ-loadChunkRange; lz--)
-    				{
-    					level.clearChunk(lx, lz);
-    					mapChunksToLoad.add(new Block(lx, 0, lz));
-    				}
-    			}
+    			//System.out.println("Loading in chunks from the Z range " + (cur_chunk_z-1-loadChunkRange) + " to " + (chunkZ-loadChunkRange) + " (going down)");
+    			top_z = cur_chunk_z-1-loadChunkRange;
+    			bot_z = chunkZ-loadChunkRange;
     		}
     		else if (dz > 0)
     		{
-    			System.out.println("Loading in chunks from the Z range " + (cur_chunk_z+1+loadChunkRange) + " to " + (chunkZ+loadChunkRange) + " (going up)");
+    			//System.out.println("Loading in chunks from the Z range " + (cur_chunk_z+1+loadChunkRange) + " to " + (chunkZ+loadChunkRange) + " (going up)");
+    			top_z = chunkZ+loadChunkRange;
+    			bot_z = cur_chunk_z+1+loadChunkRange;
+    		}
+    		if (dz != 0)
+    		{
     			for (int lx=chunkX-loadChunkRange; lx<=chunkX+loadChunkRange; lx++)
     			{
-    				for (int lz=cur_chunk_z+1+loadChunkRange; lz <= chunkZ+loadChunkRange; lz++)
+    				for (int lz=bot_z; lz <= top_z; lz++)
     				{
+    					tempchunk = level.getChunk(lx, lz);
+    					if (tempchunk != null && tempchunk.x == lx && tempchunk.z == lz)
+    					{
+    						System.out.println("Found cached chunk at " + lx + ", " + lz);
+    						continue;
+    					}
     					level.clearChunk(lx, lz);
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
-    			}
+    			}    		
     		}
     	}
     	else
