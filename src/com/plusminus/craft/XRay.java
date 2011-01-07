@@ -1056,10 +1056,10 @@ public class XRay {
     	Block spawn = level.getSpawnPoint();
     	Block player = level.getPlayerPosition();
     	
-    	int px = 1024-player.x;
-		int py = 1024-player.z;
-		int sx = 1024-spawn.x;
-		int sy = 1024-spawn.z;
+    	int py = 1024-player.x;
+		int px = 1024+player.z;
+		int sy = 1024-spawn.x;
+		int sx = 1024+spawn.z;
     	
     	
     	g.setColor(Color.red.brighter());
@@ -1383,7 +1383,8 @@ public class XRay {
 			
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
 			GL11.glPushMatrix();
-				GL11.glTranslatef((screenWidth/2.0f)-currentCameraPosX, (screenHeight/2.0f)-currentCameraPosZ, 0.0f);
+				// See some notes in drawMapChunkToMap() for why the coordinate math here is slightly weird
+				GL11.glTranslatef((screenWidth/2.0f)+currentCameraPosZ, (screenHeight/2.0f)-currentCameraPosX, 0.0f);
 				GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
 					GL11.glTexCoord2f(0, 0);
@@ -1394,7 +1395,7 @@ public class XRay {
 		
 					GL11.glTexCoord2f(0, 1);
 					GL11.glVertex2f(-halfMapWidth, +halfMapWidth);
-		
+
 					GL11.glTexCoord2f(1, 1);
 					GL11.glVertex2f(+halfMapWidth, +halfMapWidth);
 		
@@ -1402,15 +1403,15 @@ public class XRay {
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 			
-			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth/2.0f, screenHeight/2.0f, camera.getYaw(),0.5f);
+			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth/2.0f, screenHeight/2.0f, camera.getYaw()+90,0.5f);
 		} else {
 			// the minimap
 			// a bit more interesting
 			// I set the minimap to 200 wide and tall
 			float vSizeFactor = 200.0f/2048.0f;
 			
-			float vTexX = 0.5f + (1.0f/2048.0f) * currentCameraPosX;
-			float vTexY = 0.5f + (1.0f/2048.0f) * currentCameraPosZ;
+			float vTexX = 0.5f - (1.0f/2048.0f) * currentCameraPosZ;
+			float vTexY = 0.5f + (1.0f/2048.0f) * currentCameraPosX;
 			float vTexZ = vSizeFactor;
 			
 			minimapTexture.bind();
@@ -1435,7 +1436,7 @@ public class XRay {
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 			
-			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth-100, 100, camera.getYaw(),0.5f);
+			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth-100, 100, camera.getYaw()+90,0.5f);
 		}
 	}
 	
@@ -1463,8 +1464,13 @@ public class XRay {
 							Color blockColor = MineCraftConstants.blockColors[blockData];
 							if(blockColor != null) {
 								g.setColor(blockColor);
-								int px = 1024+(x*16)+xx;
-								int py = 1024+(z*16)+zz;
+								// In Minecraft:
+								//   X increases South, decreases North
+								//   Z increases West, decreases East
+								// ... this means that to translate into the G2D coordinates, we need
+								// some flipping and weirdness.
+								int py = 1024+(x*16)+xx;
+								int px = 1024-(z*16)-zz;
 								g.drawLine(px, py, px, py); // yes, this can be optimized (draw to texture instead of image), but meh...
 							}
 						}

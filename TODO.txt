@@ -30,9 +30,7 @@
  * Highlighting for any arbitrary (user-chosen) block type
  
  * Find a way to eliminate the glitching when new map chunks are loading
- 
- * Rotate the minimap so it draws such that "north" is up
- 
+  
  * Need to figure out the "holes" that are appearing occasionally in the map
  
  * Figure out how many chunks we should realistically cache, from a memory
