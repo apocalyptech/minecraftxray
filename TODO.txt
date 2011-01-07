@@ -28,3 +28,7 @@
  * Highlighting for Reed
  
  * Highlighting for any arbitrary (user-chosen) block type
+ 
+ * Find a way to eliminate the glitching when new map chunks are loading
+ 
+ * Rotate the minimap so it draws such that "north" is up

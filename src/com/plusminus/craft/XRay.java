@@ -118,11 +118,6 @@ public class XRay {
 	
 	// the current and previous chunk coordinates where the camera is hovering on
 	private int currentLevelX, currentLevelZ;
-    
-	// wheter we are loading a level
-	private boolean loading = false;
-	private long loadingStart = 0;
-	private float loadingProgress  = 0;
 	
 	// synchronization object, a bit redundant now ... but potentially the loader could cause a conflict with the drawing operation
 	private Object lock = new Object();
@@ -148,7 +143,6 @@ public class XRay {
 	private boolean mapBig = false;
 	
 	// wheter we are done with loading the map data (just for the mini map really)
-	private boolean mapLoaded = false;
 	private boolean map_load_started = false;
 	
 	// the available world numbers
@@ -158,17 +152,11 @@ public class XRay {
 	// the world chunks we still need to load
 	private LinkedList<Block> mapChunksToLoad;
 	
-	// the total chunks in this world
-	private int totalMapChunks = 0;
-	
 	// the current (selected) world number
 	private WorldInfo world = null;
 	
 	// the currently pressed key
 	private int keyPressed = -1;
-	
-	// the index to the available worlds array
-	private int worldSelectIndex = 0;
 	
 	// the current fps we are 'doing'
 	private int fps;
@@ -280,12 +268,25 @@ public class XRay {
     }
     
     /**
-     * Loads any pending chunks, but won't exceed max_chunkload_time timer ticks.
+     * Loads any pending chunks, but won't exceed max_chunkload_time timer ticks
+     * (unless we're doing the initial load).
      */
     public void loadPendingChunks()
     {
     	Block b;
     	long time = Sys.getTime();
+    	int total = 0;
+    	int counter = 0;
+    	if (!initial_load_done)
+    	{
+    		total = mapChunksToLoad.size();
+    		setOrthoOn();
+
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            GL11.glLineWidth(20);
+    	}
 		while (!mapChunksToLoad.isEmpty())
 		{
 			// Load and draw the chunk
@@ -301,6 +302,47 @@ public class XRay {
 			{
 				break;
 			}
+			
+			// Draw a progress bar if we're doing the initial load
+			if (!initial_load_done)
+			{
+				counter++;
+				if (counter % 5 == 0)
+				{
+	                float progress= ((float) counter / (float) total);
+
+	                float bx = 100;
+	                float ex = screenWidth-100;
+	                float by = (screenHeight/2.0f)-50;
+	                float ey = (screenHeight/2.0f)+50;
+
+	                float px = ((ex-bx)*progress) + bx;
+
+	                // progress bar outer box
+	                GL11.glBegin(GL11.GL_LINE_LOOP);
+	                    GL11.glVertex2f(bx, by);
+	                    GL11.glVertex2f(ex, by);
+	                    GL11.glVertex2f(ex, ey);
+	                    GL11.glVertex2f(bx, ey);
+	                GL11.glEnd();
+	                
+	                // progress bar 'progress'
+	                GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+	                    GL11.glVertex2f(bx, by);
+	                    GL11.glVertex2f(px, by);
+	                    GL11.glVertex2f(bx, ey);
+	                    GL11.glVertex2f(px, ey);
+	                GL11.glEnd();
+	                
+	                Display.update();
+				}
+			}
+		}
+		if (!initial_load_done)
+		{            
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+			setOrthoOff();
 		}
 		initial_load_done = true;
     }
@@ -637,7 +679,6 @@ public class XRay {
     	
     	// determine which chunks are available in this world
     	mapChunksToLoad = new LinkedList<Block>();
-		totalMapChunks = 0;
 		
 		moveCameraToPlayerPos();
     }
@@ -657,7 +698,6 @@ public class XRay {
     	
     	// determine which chunks are available in this world
     	mapChunksToLoad = new LinkedList<Block>();
-		totalMapChunks = 0;
 
 		this.camera = camera;
 		initial_load_queued = false;
@@ -824,18 +864,16 @@ public class XRay {
         	keyPressed = Keyboard.KEY_TAB;  
         }
 
-        if(!loading) {
-        	needToReloadWorld = false;
-	        for(int i=0;i<mineralToggle.length;i++) {
-	        	if(Keyboard.isKeyDown(Keyboard.KEY_F1 + i) && keyPressed != Keyboard.KEY_F1 + i) {
-	        		keyPressed = Keyboard.KEY_F1 + i;
-	        		mineralToggle[i] = !mineralToggle[i];
-	        		needToReloadWorld = true;
-	        	}
-	        }
-	        if(needToReloadWorld) {
-	        	invalidateSelectedChunks();
-	        }
+    	needToReloadWorld = false;
+        for(int i=0;i<mineralToggle.length;i++) {
+        	if(Keyboard.isKeyDown(Keyboard.KEY_F1 + i) && keyPressed != Keyboard.KEY_F1 + i) {
+        		keyPressed = Keyboard.KEY_F1 + i;
+        		mineralToggle[i] = !mineralToggle[i];
+        		needToReloadWorld = true;
+        	}
+        }
+        if(needToReloadWorld) {
+        	invalidateSelectedChunks();
         }
         
         if(Keyboard.isKeyDown(Keyboard.KEY_F10) && keyPressed != Keyboard.KEY_F10) {    // Is F10 Being Pressed?
@@ -1032,7 +1070,6 @@ public class XRay {
     	if (!map_load_started)
     	{
     		map_load_started = true;
-    		mapLoaded = true;
        		drawMapMarkersToMinimap();
        		//minimapTexture.update();
        		setLightMode(true); // basically enable fog etc  		
@@ -1048,7 +1085,7 @@ public class XRay {
         currentCameraPosZ = (int) -camera.getPosition().z;
         
         // determine if we need to load new map chunks
-        if(!loading && (currentCameraPosX != levelBlockX || currentCameraPosZ != levelBlockZ || needToReloadWorld)) {
+        if(currentCameraPosX != levelBlockX || currentCameraPosZ != levelBlockZ || needToReloadWorld) {
         	levelBlockX = currentCameraPosX;
         	levelBlockZ = currentCameraPosZ;
         	currentLevelX = level.getChunkX(levelBlockX);
@@ -1127,7 +1164,6 @@ public class XRay {
 		drawMinimap();
 		drawFPSCounter();
 		drawMineralToggle();
-		drawLoadingBar();
 		drawLevelInfo();
 				
 		setOrthoOff(); // back to 3d mode
@@ -1183,53 +1219,6 @@ public class XRay {
 				0, 
 				48
 			);
-		}
-	}
-	
-	/***
-	 * draw the loading bar 
-	 */
-	private void drawLoadingBar() {
-		if(loading) {
-		/*	long time = System.currentTimeMillis() - loadingStart;
-			float alpha = (time % 1000) / 1000.0f;
-			if(time % 2000 > 1000) alpha = 1.0f - alpha;*/
-			
-	    	float bx = screenWidth/2.0f - 200.0f;
-	    	float ex = bx+400.0f;
-	    	float by = 20;
-	    	float ey = 50;
-	    	
-	    	float px = ((ex-bx)*loadingProgress) + bx;
-	    	
-	    	float alpha = 1.0f;
-	    	if(loadingProgress < 0.1f) {
-	    		alpha = loadingProgress * 10.0f;
-	    	}
-	    	if(loadingProgress > 0.9f) {
-	    		alpha = 1.0f - ((loadingProgress-0.9f) * 10.0f);
-	    	}
-	    	GL11.glDisable(GL11.GL_TEXTURE_2D);
-	    	GL11.glColor4f(1.0f, 1.0f, 1.0f, alpha);
-	    	GL11.glLineWidth(2);
-	    	
-	    	// progress bar outer box
-	    	GL11.glBegin(GL11.GL_LINE_LOOP);
-	    		GL11.glVertex2f(bx, by);
-	    		GL11.glVertex2f(ex, by);
-	    		GL11.glVertex2f(ex, ey);    
-	    		GL11.glVertex2f(bx, ey);
-	    	GL11.glEnd();
-	    	
-	    	// progress bar 'progress'
-	    	GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-				GL11.glVertex2f(bx, by);
-				GL11.glVertex2f(px, by);
-				GL11.glVertex2f(bx, ey);
-				GL11.glVertex2f(px, ey);
-	    	GL11.glEnd();
-	    	
-	    	GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
 	}
 	
