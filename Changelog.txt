@@ -1,6 +1,7 @@
   * Generate Windows EXE via JSmooth
-  * Fixed a bug that was keeping chunk files open after we were done with them
-  * Load chunks on-demand rather than all at the same time
+  * Fixed a bug that was keeping chunk files open
+  * Load chunks on-demand rather than at program start
+  * X-Ray should now handle any map, regardless of size
   * Handle corrupt/invalid chunks more gracefully
   * Changed default starting memory from 128MB to 256MB
   * World selection merged in with main options dialog
