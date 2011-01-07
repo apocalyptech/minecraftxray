@@ -769,7 +769,6 @@ public class XRay {
     					tempchunk = level.getChunk(lx, lz);
     					if (tempchunk != null && tempchunk.x == lx && tempchunk.z == lz)
     					{
-    						System.out.println("Found cached chunk at " + lx + ", " + lz);
     						continue;
     					}
     					level.clearChunk(lx, lz);
@@ -800,7 +799,6 @@ public class XRay {
     					tempchunk = level.getChunk(lx, lz);
     					if (tempchunk != null && tempchunk.x == lx && tempchunk.z == lz)
     					{
-    						System.out.println("Found cached chunk at " + lx + ", " + lz);
     						continue;
     					}
     					level.clearChunk(lx, lz);
@@ -1454,28 +1452,23 @@ public class XRay {
 		 Graphics2D g = minimapTexture.getImage().createGraphics();
 		  for(int zz = 0; zz<16; zz++) {
 			for(int xx =0; xx<16; xx++) {
-				int highestY = 0;
 				// determine the top most visible block
-				for(int yy =1; yy<128; yy++) {
+				for (int yy = 127; yy >= 0; yy--)
+				{
 					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
 					byte blockData = chunkData[blockOffset];
 					
 					if(MineCraftConstants.blockDataToSpriteSheet[blockData] > -1) {
-						if(yy > highestY) {
-							highestY = yy;
+						if (blockData > -1) {
+							Color blockColor = MineCraftConstants.blockColors[blockData];
+							if(blockColor != null) {
+								g.setColor(blockColor);
+								int px = 1024+(x*16)+xx;
+								int py = 1024+(z*16)+zz;
+								g.drawLine(px, py, px, py); // yes, this can be optimized (draw to texture instead of image), but meh...
+							}
 						}
-					}
-				}
-				// draw it if we can do something with it
-				int blockOffset = highestY + (zz * 128) + (xx * 128 * 16);
-				byte blockData = chunkData[blockOffset];
-				if (blockData > -1) {
-					Color blockColor = MineCraftConstants.blockColors[blockData];
-					if(blockColor != null) {
-						g.setColor(blockColor);
-						int px = 1024+(x*16)+xx;
-						int py = 1024+(z*16)+zz;
-						g.drawLine(px, py, px, py); // yes, this can be optimized (draw to texture instead of image), but meh...
+						break;
 					}
 				}
 			}
