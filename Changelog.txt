@@ -8,6 +8,7 @@
   * Ability to select arbitrary directories to open worlds
   * "N" key will toggle back and forth between Nether and Overworld, if available.
   * Minimap rotated so that north points up (previously it had pointed left)
+  * Added Y position to position popup
 
 Minecraft X-Ray 2.7 Maintenance Branch 4 (2010.12.16)
 

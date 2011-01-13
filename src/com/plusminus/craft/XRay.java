@@ -452,7 +452,7 @@ public class XRay {
         	minimapTexture 			= TextureTool.allocateTexture(2048,2048);
 			minimapArrowTexture 	= TextureTool.allocateTexture(32,32);
 			fpsTexture				= TextureTool.allocateTexture(128, 32);
-			levelInfoTexture		= TextureTool.allocateTexture(128,128);
+			levelInfoTexture		= TextureTool.allocateTexture(128,144);
 			
 			drawMinimapArrowImage();
 			
@@ -1206,9 +1206,9 @@ public class XRay {
 	private void updateLevelInfo() {
 		Graphics2D g = levelInfoTexture.getImage().createGraphics();
 		g.setBackground(Color.BLUE);
-		g.clearRect(0, 0, 128, 128);
+		g.clearRect(0, 0, 128, 144);
 		g.setColor(Color.WHITE);
-		g.fillRect(2, 2, 124, 124);
+		g.fillRect(2, 2, 124, 140);
 		g.setFont(ARIALFONT);
 		int chunkX = level.getChunkX(levelBlockX);
 		int chunkZ = level.getChunkZ(levelBlockZ);
@@ -1231,12 +1231,17 @@ public class XRay {
 		g.drawString("World Z:", 5, 22+16+32);
 		g.setColor(Color.RED.darker());
 		g.drawString(Integer.toString(levelBlockZ), 90, 22+16+32);
+
+		g.setColor(Color.BLACK);
+		g.drawString("World Y:", 5, 22+16+32+16);
+		g.setColor(Color.RED.darker());
+		g.drawString(Integer.toString((int)-camera.getPosition().y), 90, 22+16+32+16);
 		
 		long heapSize = Runtime.getRuntime().totalMemory(); 
 		g.setColor(Color.BLACK);
-		g.drawString("Memory Used", 5, 22+16+32+25);
+		g.drawString("Memory Used", 5, 22+16+32+16+25);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString((int) (heapSize/1024/1024)) + " MB", 20, 22+16+32+25+20);
+		g.drawString(Integer.toString((int) (heapSize/1024/1024)) + " MB", 20, 22+16+32+16+25+20);
 		
 		
 		levelInfoTexture.update();
