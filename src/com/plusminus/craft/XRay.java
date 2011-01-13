@@ -947,6 +947,20 @@ public class XRay {
         	keyPressed = Keyboard.KEY_N;
         	switchNether();
         }
+        // Temp routine to write the minimap out to a PNG (for debugging purposes)
+        if (Keyboard.isKeyDown(Keyboard.KEY_P) && keyPressed != Keyboard.KEY_P) {
+        	keyPressed = Keyboard.KEY_P;
+        	BufferedImage bi = minimapTexture.getImage();
+        	try
+        	{
+        		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
+        		System.out.println("Wrote minimap to disk.");
+        	}
+        	catch (IOException e)
+        	{
+        		// whatever
+        	}
+        }
 
         // handle chunk ranges
         for(int i = 0; i<CHUNK_RANGES.length;i++) {
@@ -1384,7 +1398,9 @@ public class XRay {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
 			GL11.glPushMatrix();
 				// See some notes in drawMapChunkToMap() for why the coordinate math here is slightly weird
+				// TODO: Fix this!
 				GL11.glTranslatef((screenWidth/2.0f)+currentCameraPosZ, (screenHeight/2.0f)-currentCameraPosX, 0.0f);
+				//System.out.println("Camera at " + (currentCameraPosZ%1024) + ", " + (currentCameraPosX%1024) + ", Translating to " + ((screenWidth/2.0f)+(currentCameraPosZ%1024)) + ", " + ((screenHeight/2.0f)-(currentCameraPosX%1024)));
 				GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
 					GL11.glTexCoord2f(0, 0);
@@ -1469,8 +1485,26 @@ public class XRay {
 								//   Z increases West, decreases East
 								// ... this means that to translate into the G2D coordinates, we need
 								// some flipping and weirdness.
+								// Also, I imagine there MUST be a better way to get these coordinates
+								// than those awkward if statements I'm making.
 								int py = 1024+(x*16)+xx;
 								int px = 1024-(z*16)-zz;
+								if (py < 0)
+								{
+									py = 2047-(Math.abs(py) % 2048);	
+								}
+								else
+								{
+									py = py % 2048;
+								}
+								if (px < 0)
+								{
+									px = 2047-(Math.abs(px) % 2048);	
+								}
+								else
+								{
+									px = px % 2048;
+								}
 								g.drawLine(px, py, px, py); // yes, this can be optimized (draw to texture instead of image), but meh...
 							}
 						}
