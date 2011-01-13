@@ -62,11 +62,16 @@ public class MineCraftConstants {
 		FENCE,
 		LEVER,
 		BUTTON,
-		PORTAL
+		PORTAL,
+		DATAVAL
 	}
 	
 	// This HashMap determines how we draw various block types
 	public static HashMap<Byte, BLOCK_TYPE> BLOCK_TYPE_MAP = new HashMap<Byte, BLOCK_TYPE>();
+	
+	// This HashMap is used to determine which texture to use for blocks whose data value determines
+	// what texture to use
+	public static HashMap<Byte, HashMap<Byte, Integer>> blockDataSpriteSheetMap = new HashMap<Byte, HashMap<Byte, Integer>>();
 	
 	public static final int BLOCK_STONE = 1;
 	public static final int BLOCK_GRASS = 2;
@@ -88,7 +93,12 @@ public class MineCraftConstants {
 	public static final int BLOCK_LEAVES = 18;
 	public static final int BLOCK_SPONGE = 19;
 	public static final int BLOCK_GLASS = 20;
-	public static final int BLOCK_GRAY_CLOTH = 35;
+	public static final int BLOCK_LAPIS_LAZULI_ORE = 21;
+	public static final int BLOCK_LAPIS_LAZULI_BLOCK = 22;
+	public static final int BLOCK_DISPENSER = 23;
+	public static final int BLOCK_SANDSTONE = 24;
+	public static final int BLOCK_NOTE_BLOCK = 25;
+	public static final int BLOCK_WOOL = 35;
 	public static final int BLOCK_YELLOW_FLOWER = 37;
 	public static final int BLOCK_RED_ROSE = 38;
 	public static final int BLOCK_BROWN_MUSHROOM = 39;
@@ -135,7 +145,7 @@ public class MineCraftConstants {
 	public static final int BLOCK_SNOW_BLOCK = 80;
 	public static final int BLOCK_CACTUS = 81;
 	public static final int BLOCK_CLAY = 82;
-	public static final int BLOCK_REED = 83;
+	public static final int BLOCK_SUGARCANE = 83;
 	public static final int BLOCK_JUKEBOX = 84;
 	public static final int BLOCK_FENCE = 85;
 	public static final int BLOCK_PUMPKIN = 86;
@@ -144,6 +154,7 @@ public class MineCraftConstants {
 	public static final int BLOCK_LIGHTSTONE = 89;
 	public static final int BLOCK_PORTAL = 90;
 	public static final int BLOCK_JACK_O_LANTERN = 91;
+	public static final int BLOCK_CAKE = 92;
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
 	// TODO: Really, redstone should highlight whether it's glowing or not - that's the one situation
@@ -151,8 +162,8 @@ public class MineCraftConstants {
 	// used to do before the Maintenance Branch changed things around).  Because you'll only get glowing
 	// restone ore when you're actually LOOKING at it in-game, though, I feel okay leaving it the way
 	// it is.
-	public static final int[] HIGHLIGHT_ORES = new int[] {BLOCK_CLAY, BLOCK_PUMPKIN, BLOCK_OBSIDIAN, BLOCK_COAL_ORE, BLOCK_IRON_ORE, BLOCK_GOLD_ORE, BLOCK_DIAMOND_ORE, BLOCK_REDSTONE_ORE, BLOCK_MOB_SPAWNER};
-	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Diamond", "Redstone", "Spawner"};
+	public static final int[] HIGHLIGHT_ORES = new int[] {BLOCK_CLAY, BLOCK_PUMPKIN, BLOCK_OBSIDIAN, BLOCK_COAL_ORE, BLOCK_IRON_ORE, BLOCK_GOLD_ORE, BLOCK_LAPIS_LAZULI_ORE, BLOCK_DIAMOND_ORE, BLOCK_REDSTONE_ORE, BLOCK_MOSSY_COBBLESTONE};
+	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Lapis", "Diamond", "Redstone", "Moss"};
 	
 	public static final Block[] SURROUNDINGBLOCKS = new Block[] { 
     	new Block(+1,0,0),
@@ -196,7 +207,7 @@ public class MineCraftConstants {
 		BLOCK_TYPE_MAP.put((byte)BLOCK_SAPLING, BLOCK_TYPE.DECORATION_SMALL);
 		
 		// "Full" decoration blocks
-		BLOCK_TYPE_MAP.put((byte)BLOCK_REED, BLOCK_TYPE.DECORATION_FULL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_SUGARCANE, BLOCK_TYPE.DECORATION_FULL);
 		
 		// Crops
 		BLOCK_TYPE_MAP.put((byte)BLOCK_CROPS, BLOCK_TYPE.CROPS);
@@ -214,6 +225,7 @@ public class MineCraftConstants {
 		
 		// Half-height blocks
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STEP, BLOCK_TYPE.HALFHEIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_CAKE, BLOCK_TYPE.HALFHEIGHT);
 		
 		// Doors
 		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_DOOR, BLOCK_TYPE.DOOR);
@@ -238,6 +250,10 @@ public class MineCraftConstants {
 		
 		// Portal
 		BLOCK_TYPE_MAP.put((byte)BLOCK_PORTAL, BLOCK_TYPE.PORTAL);
+		
+		// Blocks whose texture depends on their data value (in addition to block type)
+		BLOCK_TYPE_MAP.put((byte)BLOCK_LOG, BLOCK_TYPE.DATAVAL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_WOOL, BLOCK_TYPE.DATAVAL);
 	}
 	
 	   /***
@@ -270,8 +286,13 @@ public class MineCraftConstants {
 		blockColors[BLOCK_COAL_ORE] = new Color(115,115,115);
 		blockColors[BLOCK_LOG] = new Color(102,81,51);
 		blockColors[BLOCK_LEAVES] = new Color(60,192,41);
-		blockColors[BLOCK_GLASS] = new Color(255,255,255); //glass
-		blockColors[BLOCK_GRAY_CLOTH] = new Color(222,222,222); //Color(143,143,143,255); 
+		blockColors[BLOCK_GLASS] = new Color(255,255,255);
+		blockColors[BLOCK_LAPIS_LAZULI_ORE] = new Color(27,70,161);
+		blockColors[BLOCK_LAPIS_LAZULI_BLOCK] = blockColors[BLOCK_LAPIS_LAZULI_BLOCK];
+		blockColors[BLOCK_DISPENSER] = new Color(96,96,96);
+		blockColors[BLOCK_NOTE_BLOCK] = new Color(114,88,56);
+		blockColors[BLOCK_SANDSTONE] = blockColors[BLOCK_SAND];
+		blockColors[BLOCK_WOOL] = new Color(222,222,222); //Color(143,143,143,255); 
 		blockColors[BLOCK_RED_ROSE] = new Color(255,0,0);
 		blockColors[BLOCK_YELLOW_FLOWER] = new Color(255,255,0);
 		blockColors[BLOCK_GOLD_BLOCK] = new Color(231,165,45);
@@ -289,7 +310,7 @@ public class MineCraftConstants {
 		//blockColors[BLOCK_REDSTONE_WIRE] = Color(245,220,50,255); unnecessary afaik
 		blockColors[BLOCK_DIAMOND_ORE] = new Color(129,140,143);
 		blockColors[BLOCK_DIAMOND_BLOCK] = new Color(45,166,152);
-		blockColors[BLOCK_WORKBENCH] = new Color(114,88,56);
+		blockColors[BLOCK_WORKBENCH] = blockColors[BLOCK_NOTE_BLOCK];
 		blockColors[BLOCK_CROPS] = new Color(146,192,0);
 		blockColors[BLOCK_SOIL] = new Color(95,58,30);
 		blockColors[BLOCK_FURNACE] = new Color(96,96,96);
@@ -309,7 +330,8 @@ public class MineCraftConstants {
 		blockColors[BLOCK_SNOW_BLOCK] = new Color(250,250,250);
 		blockColors[BLOCK_CACTUS] = new Color(25,120,25);
 		blockColors[BLOCK_CLAY] = new Color(151,157,169);
-		blockColors[BLOCK_REED] = new Color(100,67,50);
+		blockColors[BLOCK_SUGARCANE] = new Color(100,67,50);
+		blockColors[BLOCK_JUKEBOX] = blockColors[BLOCK_NOTE_BLOCK];
 	}
 	public static final int TEXTURE_COAL = (2*16) + 2;
 	public static final int TEXTURE_IRON = (2*16) + 1;
@@ -352,7 +374,12 @@ public class MineCraftConstants {
 														 // rendering glitches, the non-transparent texture looks better.
 		blockDataToSpriteSheet[BLOCK_SPONGE] = (3*16);
 		blockDataToSpriteSheet[BLOCK_GLASS] = 49;
-		blockDataToSpriteSheet[BLOCK_GRAY_CLOTH] = 64;		
+		blockDataToSpriteSheet[BLOCK_LAPIS_LAZULI_ORE] = 10*16;
+		blockDataToSpriteSheet[BLOCK_LAPIS_LAZULI_BLOCK] = 9*16;
+		blockDataToSpriteSheet[BLOCK_DISPENSER] = (2*16) + 14;
+		blockDataToSpriteSheet[BLOCK_SANDSTONE] = 12*16;
+		blockDataToSpriteSheet[BLOCK_NOTE_BLOCK] = (4*16) + 10;
+		blockDataToSpriteSheet[BLOCK_WOOL] = 64;		
 		blockDataToSpriteSheet[BLOCK_YELLOW_FLOWER] = 13;
 		blockDataToSpriteSheet[BLOCK_RED_ROSE] = 12;
 		blockDataToSpriteSheet[BLOCK_BROWN_MUSHROOM] = (1*16) + 13;
@@ -399,7 +426,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_SNOW_BLOCK] = 66;
 		blockDataToSpriteSheet[BLOCK_CACTUS] = 70;
 		blockDataToSpriteSheet[BLOCK_CLAY] = (4*16)+8;
-		blockDataToSpriteSheet[BLOCK_REED] = 73;
+		blockDataToSpriteSheet[BLOCK_SUGARCANE] = 73;
 		blockDataToSpriteSheet[BLOCK_JUKEBOX] = (4*16)+10;
 		blockDataToSpriteSheet[BLOCK_FENCE] = 4;
 		blockDataToSpriteSheet[BLOCK_PUMPKIN] = (7*16)+7;
@@ -408,6 +435,34 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK_LIGHTSTONE] = (6*16)+9;
 		blockDataToSpriteSheet[BLOCK_PORTAL] = 16+14;
 		blockDataToSpriteSheet[BLOCK_JACK_O_LANTERN] = (7*16)+8;
+		blockDataToSpriteSheet[BLOCK_CAKE] = (7*16) + 9;
+		
+		// Textures used by logs
+		HashMap<Byte, Integer> logMap = new HashMap<Byte, Integer>();
+		blockDataSpriteSheetMap.put((byte)BLOCK_LOG, logMap);
+		logMap.put((byte)0, 16+4); // Regular log
+		logMap.put((byte)1, (7*16)+4); // Redwood-or-whatever
+		logMap.put((byte)2, (7*16)+5); // Birch
+
+		// Textures used by wool
+		HashMap<Byte, Integer> woolMap = new HashMap<Byte, Integer>();
+		blockDataSpriteSheetMap.put((byte)BLOCK_WOOL, woolMap);
+		woolMap.put((byte)0, 64); // Regular wool
+		woolMap.put((byte)15, (7*16)+1); // Black
+		woolMap.put((byte)14, (8*16)+1); // Red
+		woolMap.put((byte)13, (9*16)+1); // Dark Green
+		woolMap.put((byte)12, (10*16)+1); // Brown
+		woolMap.put((byte)11, (11*16)+1); // Blue
+		woolMap.put((byte)10, (12*16)+1); // Purple
+		woolMap.put((byte)9, (13*16)+1); // Cyan
+		woolMap.put((byte)8, (14*16)+1); // Grey
+		woolMap.put((byte)7, (7*16)+2); // Dark Grey
+		woolMap.put((byte)6, (8*16)+2); // Pink
+		woolMap.put((byte)5, (9*16)+2); // Light Green
+		woolMap.put((byte)4, (10*16)+2); // Yellow
+		woolMap.put((byte)3, (11*16)+2); // Light Blue
+		woolMap.put((byte)2, (12*16)+2); // Magenta
+		woolMap.put((byte)1, (13*16)+2); // Orange	
 	}
 	
 	/***

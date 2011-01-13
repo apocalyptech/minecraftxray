@@ -1674,6 +1674,11 @@ public class Chunk {
 									if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z, 0f, .495f);
 								}
 								break;
+							case DATAVAL:
+								// Note that we don't break here; we DO want to pass through to the default case,
+								// because we're overriding textureId
+								byte data = getData(x, y, z);
+								textureId = blockDataSpriteSheetMap.get(t).get(data);
 							default:
 								// if we have to draw this block
 								if(draw) {

@@ -1268,7 +1268,15 @@ public class XRay {
 		int barWidth = 128+10+32;
 		int barHeight = 42;
 		int maxCols = 5;
-		float mineralTogglebarLength = (mineralToggleTextures.length % maxCols) * barWidth;
+		float mineralTogglebarLength;
+		if ((mineralToggleTextures.length % maxCols) == 0)
+		{
+			mineralTogglebarLength = maxCols * barWidth;
+		}
+		else
+		{
+			mineralTogglebarLength = (mineralToggleTextures.length % maxCols) * barWidth;
+		}
 		float curX = (screenWidth / 2.0f) - (mineralTogglebarLength/2.0f);
 		float curY = screenHeight - barHeight;
 		if (mineralToggleTextures.length > maxCols)
