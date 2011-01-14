@@ -20,10 +20,6 @@
  * Draw messages on signs like you'd expect.
  
  * Custom key bindings
-  
- * Figure out creating an EXE for Windows folks (looks like probably this
-   would just require getting JSmooth installed in a VM somewhere, or
-   whatever...)
  
  * Highlighting for Reed
  
@@ -36,3 +32,5 @@
  * Figure out how many chunks we should realistically cache, from a memory
    perspective, and make sure that we're not doing weird things on the
    boundary conditions.
+   
+ * Paintings

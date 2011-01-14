@@ -839,7 +839,12 @@ public class XRay {
     		camera.incYaw(mouseX * MOUSE_SENSITIVITY);
     		camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
     	}
+    	
+    	//
+    	// Keyboard commands (well, and mouse presses)
+    	//
        
+    	// Speed shifting
     	if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
         	MOVEMENT_SPEED = 30.0f;
         } else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -847,43 +852,54 @@ public class XRay {
         } else {
         	MOVEMENT_SPEED = 10.0f;
         }
-        // check for various keys
-        if (Keyboard.isKeyDown(Keyboard.KEY_W))//move forward
+    	
+        // Move forward
+        if (Keyboard.isKeyDown(Keyboard.KEY_W))
         {
             camera.walkForward(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_S))//move backwards
+        
+        // Move backwards
+        if (Keyboard.isKeyDown(Keyboard.KEY_S))
         {
             camera.walkBackwards(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_A))//strafe left
+        
+        // Strafe Left
+        if (Keyboard.isKeyDown(Keyboard.KEY_A))
         {
             camera.strafeLeft(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_D))//strafe right
+        
+        // Strafe right
+        if (Keyboard.isKeyDown(Keyboard.KEY_D))
         {
             camera.strafeRight(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))//strafe right
-        {
+        
+        // Fly Up
+        if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
             camera.moveUp(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))//strafe right
-        {
+        
+        // Fly Down
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
             camera.moveUp(-MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
        
+        // Toggle minimap/largemap
         if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && keyPressed != Keyboard.KEY_TAB) {
         	mapBig = !mapBig;
         	keyPressed = Keyboard.KEY_TAB;  
         }
 
+        // Toggle highlightable ores
     	needToReloadWorld = false;
         for(int i=0;i<mineralToggle.length;i++) {
         	if(Keyboard.isKeyDown(Keyboard.KEY_F1 + i) && keyPressed != Keyboard.KEY_F1 + i) {
@@ -896,57 +912,75 @@ public class XRay {
         	invalidateSelectedChunks();
         }
         
-        if(Keyboard.isKeyDown(Keyboard.KEY_F10) && keyPressed != Keyboard.KEY_F10) {    // Is F10 Being Pressed?
+        // Fullscreen
+        if(Keyboard.isKeyDown(Keyboard.KEY_F10) && keyPressed != Keyboard.KEY_F10) {
         	keyPressed = Keyboard.KEY_F10;                                     
-            switchFullScreenMode();                                   // Toggle Fullscreen / Windowed Mode
+            switchFullScreenMode();
         }
         
-        if(Keyboard.isKeyDown(Keyboard.KEY_F) && keyPressed != Keyboard.KEY_F) {    // Is F9 Being Pressed?
+        //  Toggle fullbright
+        if(Keyboard.isKeyDown(Keyboard.KEY_F) && keyPressed != Keyboard.KEY_F) {
         	keyPressed = Keyboard.KEY_F;                                     
-          
-            setLightMode(!lightMode); // toggle torch
+            setLightMode(!lightMode);
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_H) && keyPressed != Keyboard.KEY_H) {    // Is F8 Being Pressed?
+        
+        // Toggle ore highlighting
+        if(Keyboard.isKeyDown(Keyboard.KEY_H) && keyPressed != Keyboard.KEY_H) {
         	keyPressed = Keyboard.KEY_H;                                     
-            highlightOres = !highlightOres;                                  					// Toggle torch
+            highlightOres = !highlightOres;
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_HOME) && keyPressed != Keyboard.KEY_HOME) {    // Is HOME Being Pressed?
+        
+        // Move camera to spawn point
+        if(Keyboard.isKeyDown(Keyboard.KEY_HOME) && keyPressed != Keyboard.KEY_HOME) {
         	keyPressed = Keyboard.KEY_HOME;                                     
-        	moveCameraToSpawnPoint();                              					//Move to spawnpoint
+        	moveCameraToSpawnPoint();
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_END) && keyPressed != Keyboard.KEY_END) {    // Is HOME Being Pressed?
+        
+        // Move camera to player position
+        if(Keyboard.isKeyDown(Keyboard.KEY_END) && keyPressed != Keyboard.KEY_END) {
         	keyPressed = Keyboard.KEY_END;                                     
-        	moveCameraToPlayerPos();                              					//Move to spawnpoint
+        	moveCameraToPlayerPos();
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_ADD) && keyPressed != Keyboard.KEY_ADD) {    // Is PLUS Being Pressed?
+        
+        // Increase light level
+        if(Keyboard.isKeyDown(Keyboard.KEY_ADD) && keyPressed != Keyboard.KEY_ADD) {
         	keyPressed = Keyboard.KEY_ADD;                                     
-        	incLightLevel();                             					// Increase Light Level
+        	incLightLevel();
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_EQUALS) && keyPressed != Keyboard.KEY_EQUALS) {    // Is PLUS Being Pressed?
+        if(Keyboard.isKeyDown(Keyboard.KEY_EQUALS) && keyPressed != Keyboard.KEY_EQUALS) {
          	keyPressed = Keyboard.KEY_EQUALS;                                     
-        	incLightLevel();                             					// Increase Light Level
+        	incLightLevel();
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_MINUS) && keyPressed != Keyboard.KEY_MINUS) {    // Is PLUS Being Pressed?
+        
+        // Decrease light level
+        if(Keyboard.isKeyDown(Keyboard.KEY_MINUS) && keyPressed != Keyboard.KEY_MINUS) {
         	keyPressed = Keyboard.KEY_MINUS;                                     
-        	decLightLevel();                             					// Increase Light Level
+        	decLightLevel();
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_SUBTRACT) && keyPressed != Keyboard.KEY_SUBTRACT) {    // Is PLUS Being Pressed?
+        if(Keyboard.isKeyDown(Keyboard.KEY_SUBTRACT) && keyPressed != Keyboard.KEY_SUBTRACT) {
         	keyPressed = Keyboard.KEY_SUBTRACT;                                     
-        	decLightLevel();                             					// Increase Light Level
+        	decLightLevel();
         }
-        if(Keyboard.isKeyDown(Keyboard.KEY_GRAVE) && keyPressed != Keyboard.KEY_GRAVE) {    // toggle level info
+        
+        // Toggle position info popup
+        if(Keyboard.isKeyDown(Keyboard.KEY_GRAVE) && keyPressed != Keyboard.KEY_GRAVE) {
         	keyPressed = Keyboard.KEY_GRAVE;                                     
-        	levelInfoToggle = !levelInfoToggle;                             					// toggle level info
+        	levelInfoToggle = !levelInfoToggle;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_B) && keyPressed != Keyboard.KEY_B) { // Toggle bedrock rendering
+        
+        // Toggle bedrock rendering
+        if (Keyboard.isKeyDown(Keyboard.KEY_B) && keyPressed != Keyboard.KEY_B) {
         	keyPressed = Keyboard.KEY_B;
         	render_bedrock = !render_bedrock;
     		invalidateSelectedChunks(true);
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_N) && keyPressed != Keyboard.KEY_N) { // Switch back+forth between Nether and Overworld
+        
+        // Toggle between Nether and Overworld
+        if (Keyboard.isKeyDown(Keyboard.KEY_N) && keyPressed != Keyboard.KEY_N) {
         	keyPressed = Keyboard.KEY_N;
         	switchNether();
         }
+        
         // Temp routine to write the minimap out to a PNG (for debugging purposes)
         if (Keyboard.isKeyDown(Keyboard.KEY_P) && keyPressed != Keyboard.KEY_P) {
         	keyPressed = Keyboard.KEY_P;
@@ -962,15 +996,15 @@ public class XRay {
         	}
         }
 
-        // handle chunk ranges
+        // Handle changing chunk ranges (how far out we draw from the camera
         for(int i = 0; i<CHUNK_RANGES.length;i++) {
-	        if(Keyboard.isKeyDown(CHUNK_RANGES_KEYS[i]) && keyPressed != CHUNK_RANGES_KEYS[i]) {    // Is PLUS Being Pressed?
+	        if(Keyboard.isKeyDown(CHUNK_RANGES_KEYS[i]) && keyPressed != CHUNK_RANGES_KEYS[i]) {
 	        	keyPressed = CHUNK_RANGES_KEYS[i];                                     
-	        	setChunkRange(i);                             					// Increase Light Level
+	        	setChunkRange(i);
 	        }
         }
 
-        // handle highlight distances
+        // Handle changing the ore highlight distances
         for(int i = 0; i<HIGHLIGHT_RANGES.length;i++) {
 	        if(Keyboard.isKeyDown(HIGHLIGHT_RANGES_KEYS[i]) && keyPressed != HIGHLIGHT_RANGES_KEYS[i]) {
 	        	keyPressed = HIGHLIGHT_RANGES_KEYS[i];                                     
@@ -978,19 +1012,27 @@ public class XRay {
 	        }
         }        
         	
-        	
-        if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {       // Release the mouse on Escape
+        // Release the mouse
+        if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             Mouse.setGrabbed(false);
         }
+        
+        // Grab the mouse on a click
         if (Mouse.isButtonDown(0)) {
-        	Mouse.setGrabbed(true);							// Grab the mouse if we're clicked
+        	Mouse.setGrabbed(true);
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_Q) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {			// Exit if "Ctrl-Q" is pressed
+        
+        // Quit
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
         	done = true;
         }
-        if(Display.isCloseRequested()) {                     // Exit if window is closed
+        
+        // Handle a requested window close
+        if(Display.isCloseRequested()) {
             done = true;
         }
+        
+        // Clear out our keyPressed var if it's improperly-set
         if(keyPressed != -1) {
 	        if(!Keyboard.isKeyDown(keyPressed)) {
 	        	keyPressed = -1;
