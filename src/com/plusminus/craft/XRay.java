@@ -297,12 +297,6 @@ public class XRay {
 			// Make sure we update the minimap
 			minimap_needs_updating = true;
 			
-			// If we've taken too long, break out so the GUI can update
-			if (initial_load_done && Sys.getTime() - time  > max_chunkload_time)
-			{
-				break;
-			}
-			
 			// Draw a progress bar if we're doing the initial load
 			if (!initial_load_done)
 			{
@@ -337,6 +331,22 @@ public class XRay {
 	                Display.update();
 				}
 			}
+			else
+			{
+				// Otherwise (if our initial load is done), mark any existing adjacent chunks
+				// as dirty so that they re-render.  This is needed so that we don't get gaps
+				// in our terrain because the adjacent chunks weren't ready yet.
+				level.markChunkAsDirty(b.x+1, b.z);
+				level.markChunkAsDirty(b.x-1, b.z);
+				level.markChunkAsDirty(b.x, b.z+1);
+				level.markChunkAsDirty(b.x, b.z-1);
+			}
+			
+			// If we've taken too long, break out so the GUI can update
+			if (initial_load_done && Sys.getTime() - time  > max_chunkload_time)
+			{
+				break;
+			}			
 		}
 		if (!initial_load_done)
 		{            

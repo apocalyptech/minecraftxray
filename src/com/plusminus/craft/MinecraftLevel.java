@@ -228,6 +228,14 @@ public class MinecraftLevel {
 		}
 	}
 	
+	public void markChunkAsDirty(int x, int z) {
+		Chunk c = this.getChunk(x, z);
+		if (c != null)
+		{
+			c.isDirty = true;
+		}
+	}
+	
 	public Tag loadChunk(int x, int z) {
 		File chunkFile = MineCraftEnvironment.getChunkFile(world, x,z);
 		if(!chunkFile.exists()) {

@@ -1,10 +1,3 @@
- * Load chunks on-demand (transparently, probably in another Thread) rather
-   than all at once at the beginning.  Internally, this would probably mean
-   storing chunks in a HashMap or something so that we could delete chunks
-   that we don't need anymore, to keep memory usage down and actually support
-   effectively infinitely-sized maps.  I'd have to look into how this would
-   interact with X-Ray's minimap too.
-   
  * Figure out transparency rendering glitches, and start using the
    transparent leaf texture for trees once that's been figured out.  Right
    now they look better with the solid texture.  In particular, all the
@@ -21,13 +14,11 @@
  
  * Custom key bindings
  
- * Highlighting for Reed
+ * Highlighting for Reed/Sugarcane
  
  * Highlighting for any arbitrary (user-chosen) block type
  
  * Find a way to eliminate the glitching when new map chunks are loading
-  
- * Need to figure out the "holes" that are appearing occasionally in the map
  
  * Figure out how many chunks we should realistically cache, from a memory
    perspective, and make sure that we're not doing weird things on the
