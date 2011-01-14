@@ -1,11 +1,13 @@
 package com.plusminus.craft;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.awt.TexturePaint;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
@@ -82,6 +84,11 @@ public class XRay {
     private final String app_name       = "Minecraft X-Ray";
     private final String windowTitle 	= app_name + " " + app_version; 
 
+    // Minimap size - I did try increasing this but there were some performance issues
+    private final int minimap_dim = 2048;
+    private final float minimap_dim_f = (float)minimap_dim;
+    private final int minimap_dim_h = minimap_dim/2;
+    private final float minimap_dim_h_f = (float)minimap_dim_h;
     private boolean minimap_needs_updating = false;
     
     // current display mode
@@ -472,7 +479,7 @@ public class XRay {
         // textures
         try {
         	// ui textures
-        	minimapTexture 			= TextureTool.allocateTexture(2048,2048);
+        	minimapTexture 			= TextureTool.allocateTexture(minimap_dim,minimap_dim);
 			minimapArrowTexture 	= TextureTool.allocateTexture(32,32);
 			fpsTexture				= TextureTool.allocateTexture(128, 32);
 			levelInfoTexture		= TextureTool.allocateTexture(128,144);
@@ -502,6 +509,7 @@ public class XRay {
 				g.drawString("[F" + (i+1) + "] " + ORES_DESCRIPTION[i], 10, 16);
 				mineralToggleTextures[i].update();
 			}
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -828,11 +836,11 @@ public class XRay {
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
     			}    		
-    		}
+    		}    		
     	}
     	else
     	{
-    		System.out.println("Loading world from X: " + (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) + ", Z: " + (chunkZ-loadChunkRange) + " - " + (chunkZ+loadChunkRange));
+    		//System.out.println("Loading world from X: " + (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) + ", Z: " + (chunkZ-loadChunkRange) + " - " + (chunkZ+loadChunkRange));
             for(int lx=chunkX-loadChunkRange;lx<=chunkX+loadChunkRange;lx++) {
         		for(int lz=chunkZ-loadChunkRange;lz<=chunkZ+loadChunkRange;lz++) {
 					level.clearChunk(lx, lz);
@@ -1010,7 +1018,7 @@ public class XRay {
         	BufferedImage bi = minimapTexture.getImage();
         	try
         	{
-        		ImageIO.write(bi, "PNG", new File("/home/cj/xray.png"));
+        		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
         		System.out.println("Wrote minimap to disk.");
         	}
         	catch (Exception e)
@@ -1135,10 +1143,10 @@ public class XRay {
     	Block spawn = level.getSpawnPoint();
     	Block player = level.getPlayerPosition();
     	
-    	int py = 1024-player.x;
-		int px = 1024+player.z;
-		int sy = 1024-spawn.x;
-		int sx = 1024+spawn.z;
+    	int py = minimap_dim_h-player.x;
+		int px = minimap_dim_h+player.z;
+		int sy = minimap_dim_h-spawn.x;
+		int sx = minimap_dim_h+spawn.z;
     	
     	
     	g.setColor(Color.red.brighter());
@@ -1471,14 +1479,13 @@ public class XRay {
 		if(mapBig) {
 			// the big map
 			// just draws the texture, but move the texture so the middle of the screen is where we currently are
-			float halfMapWidth = 2048/2.0f; // 840
 
 			minimapTexture.bind();
 
 			float vSizeFactor = .5f;
 			
-			float vTexX = 0.5f - (1.0f/2048.0f) * currentCameraPosZ;
-			float vTexY = 0.5f + (1.0f/2048.0f) * currentCameraPosX;
+			float vTexX = 0.5f - (1.0f/minimap_dim_f) * currentCameraPosZ;
+			float vTexY = 0.5f + (1.0f/minimap_dim_f) * currentCameraPosX;
 			float vTexZ = vSizeFactor;
 			
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
@@ -1487,16 +1494,16 @@ public class XRay {
 				GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
 					GL11.glTexCoord2f(vTexX-vTexZ, vTexY-vTexZ);
-					GL11.glVertex2f(-halfMapWidth, -halfMapWidth);
+					GL11.glVertex2f(-minimap_dim_h_f, -minimap_dim_h_f);
 		
 					GL11.glTexCoord2f(vTexX+vTexZ, vTexY-vTexZ);
-					GL11.glVertex2f(+halfMapWidth, -halfMapWidth);
+					GL11.glVertex2f(+minimap_dim_h_f, -minimap_dim_h_f);
 		
 					GL11.glTexCoord2f(vTexX-vTexZ, vTexY+vTexZ);
-					GL11.glVertex2f(-halfMapWidth, +halfMapWidth);
+					GL11.glVertex2f(-minimap_dim_h_f, +minimap_dim_h_f);
 
 					GL11.glTexCoord2f(vTexX+vTexZ, vTexY+vTexZ);
-					GL11.glVertex2f(+halfMapWidth, +halfMapWidth);
+					GL11.glVertex2f(+minimap_dim_h_f, +minimap_dim_h_f);
 					
 				GL11.glEnd();
 			GL11.glPopMatrix();
@@ -1512,10 +1519,10 @@ public class XRay {
 			// textures (via glTexParameter), we don't have to worry about checking
 			// bounds here, etc.  Or in other words, our map will automatically wrap for
 			// us.  Sweet!
-			float vSizeFactor = 200.0f/2048.0f;
+			float vSizeFactor = 200.0f/minimap_dim_f;
 			
-			float vTexX = 0.5f - (1.0f/2048.0f) * currentCameraPosZ;
-			float vTexY = 0.5f + (1.0f/2048.0f) * currentCameraPosX;
+			float vTexX = 0.5f - (1.0f/minimap_dim_f) * currentCameraPosZ;
+			float vTexY = 0.5f + (1.0f/minimap_dim_f) * currentCameraPosX;
 			float vTexZ = vSizeFactor;
 			
 			minimapTexture.bind();
@@ -1553,7 +1560,9 @@ public class XRay {
 		level.loadChunk(x, z);
 		 
 		byte[] chunkData = level.getChunkData(x,z);
-		 
+
+		int px;
+		int py;
 		 Graphics2D g = minimapTexture.getImage().createGraphics();
 		  for(int zz = 0; zz<16; zz++) {
 			for(int xx =0; xx<16; xx++) {
@@ -1575,23 +1584,23 @@ public class XRay {
 								// some flipping and weirdness.
 								// Also, I imagine there MUST be a better way to get these coordinates
 								// than those awkward if statements I'm making.
-								int py = 1024+(x*16)+xx;
-								int px = 1024-(z*16)-zz;
+								py = minimap_dim_h+(x*16)+xx;
+								px = minimap_dim_h-(z*16)-zz;
 								if (py < 0)
 								{
-									py = 2047-(Math.abs(py) % 2048);	
+									py = minimap_dim-1-(Math.abs(py) % minimap_dim);	
 								}
 								else
 								{
-									py = py % 2048;
+									py = py % minimap_dim;
 								}
 								if (px < 0)
 								{
-									px = 2047-(Math.abs(px) % 2048);	
+									px = minimap_dim-1-(Math.abs(px) % minimap_dim);	
 								}
 								else
 								{
-									px = px % 2048;
+									px = px % minimap_dim;
 								}
 								g.drawLine(px, py, px, py); // yes, this can be optimized (draw to texture instead of image), but meh...
 							}
@@ -1600,7 +1609,7 @@ public class XRay {
 					}
 				}
 			}
-		}
+		}		  
 	}
 	
 	/***
@@ -1627,44 +1636,3 @@ public class XRay {
     
  
 }
-/*
-	// top
-GL11.glVertex3f(wx, 	128, 	wz);
-GL11.glVertex3f(wx+16, 	128, 	wz);
-
-GL11.glVertex3f(wx+16, 	128, 	wz);
-GL11.glVertex3f(wx+16, 	128, 	wz+16);
-
-GL11.glVertex3f(wx+16, 	128, 	wz+16);
-GL11.glVertex3f(wx+16, 	128, 	wz+16);
-
-GL11.glVertex3f(wx, 	128, 	wz+16);
-GL11.glVertex3f(wx, 	128, 	wz+16);
-
-
-// sides
-GL11.glVertex3f(wx, 	128, 	wz);
-GL11.glVertex3f(wx, 	0, 		wz);
-
-GL11.glVertex3f(wx+16, 	128, 	wz);
-GL11.glVertex3f(wx+16, 	0, 		wz);
-
-GL11.glVertex3f(wx+16, 	128, 	wz+16);
-GL11.glVertex3f(wx+16, 	0, 		wz+16);
-
-GL11.glVertex3f(wx, 	128, 	wz+16);
-GL11.glVertex3f(wx, 	0, 		wz+16);
-
-// bottom
-GL11.glVertex3f(wx, 	0, 	wz);
-GL11.glVertex3f(wx+16, 	0, 	wz);
-
-GL11.glVertex3f(wx+16, 	0, 	wz);
-GL11.glVertex3f(wx+16, 	0, 	wz+16);
-
-GL11.glVertex3f(wx+16, 	0, 	wz+16);
-GL11.glVertex3f(wx+16, 	0, 	wz+16);
-
-GL11.glVertex3f(wx, 	0, 	wz+16);
-GL11.glVertex3f(wx, 	0, 	wz+16);
-*/

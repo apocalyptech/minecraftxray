@@ -18,7 +18,7 @@ import com.plusminus.craft.dtf.Tag;
  * @author Vincent
  */
 public class MinecraftLevel {
-		
+
 	public static int LEVELDATA_SIZE = 256;
 	public static int LEVELDATA_OFFSET = Integer.MAX_VALUE/2;
 	public Chunk[][] levelData;
