@@ -10,8 +10,7 @@
   * Minimap rotated so that north points up (previously it had pointed left)
   * Added Y position to position popup
   * Added support for new Beta 1.2 Blocks
-  * Added Lapis Lazuli to highlightable ore list, and changed mob spawner to
-    Mossy Cobblestone 
+  * Added Lapis Lazuli to highlightable ore list
 
 Minecraft X-Ray 2.7 Maintenance Branch 4 (2010.12.16)
 

@@ -162,8 +162,8 @@ public class MineCraftConstants {
 	// used to do before the Maintenance Branch changed things around).  Because you'll only get glowing
 	// restone ore when you're actually LOOKING at it in-game, though, I feel okay leaving it the way
 	// it is.
-	public static final int[] HIGHLIGHT_ORES = new int[] {BLOCK_CLAY, BLOCK_PUMPKIN, BLOCK_OBSIDIAN, BLOCK_COAL_ORE, BLOCK_IRON_ORE, BLOCK_GOLD_ORE, BLOCK_LAPIS_LAZULI_ORE, BLOCK_DIAMOND_ORE, BLOCK_REDSTONE_ORE, BLOCK_MOSSY_COBBLESTONE};
-	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Lapis", "Diamond", "Redstone", "Moss"};
+	public static final int[] HIGHLIGHT_ORES = new int[] {BLOCK_CLAY, BLOCK_PUMPKIN, BLOCK_OBSIDIAN, BLOCK_COAL_ORE, BLOCK_IRON_ORE, BLOCK_GOLD_ORE, BLOCK_LAPIS_LAZULI_ORE, BLOCK_DIAMOND_ORE, BLOCK_REDSTONE_ORE, BLOCK_MOB_SPAWNER};
+	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Lapis", "Diamond", "Redstone", "Spawner"};
 	
 	public static final Block[] SURROUNDINGBLOCKS = new Block[] { 
     	new Block(+1,0,0),
