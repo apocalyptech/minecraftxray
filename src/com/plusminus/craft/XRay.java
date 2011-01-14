@@ -1147,18 +1147,28 @@ public class XRay {
 		int px = minimap_dim_h+player.z;
 		int sy = minimap_dim_h-spawn.x;
 		int sx = minimap_dim_h+spawn.z;
+		System.out.println("(" + px + "," + py + ")  (" + sx + "," + sy + ")");
+    	Vector3f camerapos = camera.getPosition();
+		System.out.println("(" + camerapos.x + "," + camerapos.y + ")");
     	
-    	
-    	g.setColor(Color.red.brighter());
     	g.setStroke(new BasicStroke(2));
-    	g.drawOval(sx-6, sy-6, 11, 11);
-    	g.drawLine(sx-8, sy, sx+8, sy);
-    	g.drawLine(sx, sy-8, sx, sy+8);
+
+    	// Not sure if these will ever actually get drawn now...
+    	//if (Math.abs(sx-camerapos.x) < 1024 && Math.abs(sy-camerapos.y) < 1024)
+    	//{
+	    	g.setColor(Color.red.brighter());
+	    	g.drawOval(sx-6, sy-6, 11, 11);
+	    	g.drawLine(sx-8, sy, sx+8, sy);
+	    	g.drawLine(sx, sy-8, sx, sy+8);
+    	//}
     	
-    	g.setColor(Color.yellow.brighter());
-    	g.drawOval(px-6, py-6, 11, 11);
-    	g.drawLine(px-8, py, px+8, py);
-    	g.drawLine(px, py-8, px, py+8);
+    	//if (Math.abs(px-camerapos.x) < 1024 && Math.abs(py-camerapos.y) < 1024)
+    	//{
+	    	g.setColor(Color.yellow.brighter());
+	    	g.drawOval(px-6, py-6, 11, 11);
+	    	g.drawLine(px-8, py, px+8, py);
+	    	g.drawLine(px, py-8, px, py+8);
+    	//}
     	
     	minimapTexture.update();
     }

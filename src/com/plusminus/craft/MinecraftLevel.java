@@ -19,7 +19,34 @@ import com.plusminus.craft.dtf.Tag;
  */
 public class MinecraftLevel {
 
-	public static int LEVELDATA_SIZE = 256;
+	/**
+	 * A word here about sizes.  Our minimap now wraps around, to theoretically support
+	 * arbitrarily-sized maps.  This means that if you keep on heading in one direction,
+	 * you'll eventually run into old minimap data, as if you'd just sailed around the
+	 * world or something.  As you approach the old data, it'll get overwritten with the
+	 * new chunks, but it's hardly ideal.  Thus far I haven't figured out a way around
+	 * that which doesn't have annoying performance issues.
+	 * 
+	 * Anyway, right now X-Ray only updates the minimap when it loads a chunk from disk,
+	 * and then never touches it again if no further chunks are loaded.  This means that
+	 * if our chunk cache is too large, and we wrap around the minimap so that we're
+	 * overwriting old data, but then go back to the area which was originally drawn,
+	 * X-Ray won't overwrite it with the proper data, because the chunk's still in our
+	 * cache, not being read from disk.
+	 * 
+	 * There are ways around this, of course, but for now that's just how it is.  The
+	 * minimap texture is 2048x2048, and there's a noticeable performance hit if we
+	 * push that any higher.  Since each pixel in the minimap is a tile, a 2048-pixel
+	 * row can hold 128 chunks.
+	 * 
+	 * Meaning, basically, that given our current situation, our chunk cache shouldn't
+	 * hold any more than 128x128 chunks.  So that's why this is set the way it is
+	 * at the moment.
+	 * 
+	 * Hopefully I'll take the time to make this Better in the future.
+	 */
+	//public static int LEVELDATA_SIZE = 256;
+	public static int LEVELDATA_SIZE = 128;
 	public static int LEVELDATA_OFFSET = Integer.MAX_VALUE/2;
 	public Chunk[][] levelData;
 	
