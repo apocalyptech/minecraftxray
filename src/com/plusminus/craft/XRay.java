@@ -287,11 +287,24 @@ public class XRay {
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
             GL11.glLineWidth(20);
     	}
-		while (!mapChunksToLoad.isEmpty())
+    	Chunk c;
+    	while (!mapChunksToLoad.isEmpty())
 		{
 			// Load and draw the chunk
 			b = (Block) mapChunksToLoad.pop();
 			//System.out.println("Loading chunk " + b.x + "," + b.z);
+			
+			// There may be some circumstances where a chunk we're going to load is already loaded.
+			// Mostly while moving diagonally, I think.  I'm actually not convinced that it's worth
+			// checking for, as it doesn't happen TOO often.
+			c = level.getChunk(b.x, b.z);
+			if (c != null)
+			{
+				if (c.x == b.x && c.z == b.z)
+				{
+					continue;
+				}
+			}
 			drawMapChunkToMap(b.x, b.z);
 			
 			// Make sure we update the minimap
