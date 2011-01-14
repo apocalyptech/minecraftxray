@@ -987,10 +987,10 @@ public class XRay {
         	BufferedImage bi = minimapTexture.getImage();
         	try
         	{
-        		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
+        		ImageIO.write(bi, "PNG", new File("/home/cj/xray.png"));
         		System.out.println("Wrote minimap to disk.");
         	}
-        	catch (IOException e)
+        	catch (Exception e)
         	{
         		// whatever
         	}
@@ -1246,6 +1246,8 @@ public class XRay {
     }
 	
 	private void updateLevelInfo() {
+		int labelX = 5;
+		int valueX = 70;
 		Graphics2D g = levelInfoTexture.getImage().createGraphics();
 		g.setBackground(Color.BLUE);
 		g.clearRect(0, 0, 128, 144);
@@ -1255,33 +1257,33 @@ public class XRay {
 		int chunkX = level.getChunkX(levelBlockX);
 		int chunkZ = level.getChunkZ(levelBlockZ);
 		g.setColor(Color.BLACK);
-		g.drawString("Chunk X:", 5, 22);
+		g.drawString("Chunk X:", labelX, 22);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString(chunkX), 90, 22);
+		g.drawString(Integer.toString(chunkX), valueX, 22);
 
 		g.setColor(Color.BLACK);
-		g.drawString("Chunk Z:", 5, 22+16);
+		g.drawString("Chunk Z:", labelX, 22+16);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString(chunkZ), 90, 22+16);
+		g.drawString(Integer.toString(chunkZ), valueX, 22+16);
 		
 		g.setColor(Color.BLACK);
-		g.drawString("World X:", 5, 22+32);
+		g.drawString("World X:", labelX, 22+32);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString(levelBlockX), 90, 22+32);
+		g.drawString(Integer.toString(levelBlockX), valueX, 22+32);
 
 		g.setColor(Color.BLACK);
-		g.drawString("World Z:", 5, 22+16+32);
+		g.drawString("World Z:", labelX, 22+16+32);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString(levelBlockZ), 90, 22+16+32);
+		g.drawString(Integer.toString(levelBlockZ), valueX, 22+16+32);
 
 		g.setColor(Color.BLACK);
-		g.drawString("World Y:", 5, 22+16+32+16);
+		g.drawString("World Y:", labelX, 22+16+32+16);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString((int)-camera.getPosition().y), 90, 22+16+32+16);
+		g.drawString(Integer.toString((int)-camera.getPosition().y), valueX, 22+16+32+16);
 		
 		long heapSize = Runtime.getRuntime().totalMemory(); 
 		g.setColor(Color.BLACK);
-		g.drawString("Memory Used", 5, 22+16+32+16+25);
+		g.drawString("Memory Used", labelX, 22+16+32+16+25);
 		g.setColor(Color.RED.darker());
 		g.drawString(Integer.toString((int) (heapSize/1024/1024)) + " MB", 20, 22+16+32+16+25+20);
 		
