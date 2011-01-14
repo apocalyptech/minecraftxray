@@ -1451,27 +1451,30 @@ public class XRay {
 			float halfMapWidth = 2048/2.0f; // 840
 
 			minimapTexture.bind();
+
+			float vSizeFactor = .5f;
+			
+			float vTexX = 0.5f - (1.0f/2048.0f) * currentCameraPosZ;
+			float vTexY = 0.5f + (1.0f/2048.0f) * currentCameraPosX;
+			float vTexZ = vSizeFactor;
 			
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
 			GL11.glPushMatrix();
-				// See some notes in drawMapChunkToMap() for why the coordinate math here is slightly weird
-				// TODO: Fix this!
-				GL11.glTranslatef((screenWidth/2.0f)+currentCameraPosZ, (screenHeight/2.0f)-currentCameraPosX, 0.0f);
-				//System.out.println("Camera at " + (currentCameraPosZ%1024) + ", " + (currentCameraPosX%1024) + ", Translating to " + ((screenWidth/2.0f)+(currentCameraPosZ%1024)) + ", " + ((screenHeight/2.0f)-(currentCameraPosX%1024)));
+			GL11.glTranslatef((screenWidth/2.0f), (screenHeight/2.0f), 0.0f);
 				GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
-					GL11.glTexCoord2f(0, 0);
+					GL11.glTexCoord2f(vTexX-vTexZ, vTexY-vTexZ);
 					GL11.glVertex2f(-halfMapWidth, -halfMapWidth);
 		
-					GL11.glTexCoord2f(1, 0);
+					GL11.glTexCoord2f(vTexX+vTexZ, vTexY-vTexZ);
 					GL11.glVertex2f(+halfMapWidth, -halfMapWidth);
 		
-					GL11.glTexCoord2f(0, 1);
+					GL11.glTexCoord2f(vTexX-vTexZ, vTexY+vTexZ);
 					GL11.glVertex2f(-halfMapWidth, +halfMapWidth);
 
-					GL11.glTexCoord2f(1, 1);
+					GL11.glTexCoord2f(vTexX+vTexZ, vTexY+vTexZ);
 					GL11.glVertex2f(+halfMapWidth, +halfMapWidth);
-		
+					
 				GL11.glEnd();
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
@@ -1481,6 +1484,11 @@ public class XRay {
 			// the minimap
 			// a bit more interesting
 			// I set the minimap to 200 wide and tall
+			
+			// Interestingly, thanks to the fact that we're using GL11.GL_REPEAT on our
+			// textures (via glTexParameter), we don't have to worry about checking
+			// bounds here, etc.  Or in other words, our map will automatically wrap for
+			// us.  Sweet!
 			float vSizeFactor = 200.0f/2048.0f;
 			
 			float vTexX = 0.5f - (1.0f/2048.0f) * currentCameraPosZ;
@@ -1504,7 +1512,7 @@ public class XRay {
 		
 					GL11.glTexCoord2f(vTexX+vTexZ, vTexY+vTexZ);
 					GL11.glVertex2f(+100, +100);
-		
+							
 				GL11.glEnd();
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
