@@ -103,7 +103,7 @@ public class MinecraftLevel {
 			}
 			else
 			{
-				this.playerPos = new Block(0,0,0);
+				this.playerPos = new Block(0,65,0);
 				this.playerYaw =0;
 				this.playerPitch = 0;				
 			}
@@ -111,7 +111,7 @@ public class MinecraftLevel {
 			// Set the spawn point if we're not in the Nether
 			if (world.isNether())
 			{
-				this.spawnPoint = new Block(0,0,0);				
+				this.spawnPoint = new Block(0,65,0);				
 			}
 			else
 			{
@@ -121,8 +121,8 @@ public class MinecraftLevel {
 				this.spawnPoint = new Block(-spawnX.value, -spawnY.value, -spawnZ.value);
 			}
 		} else {
-			this.spawnPoint = new Block(0,0,0);
-			this.playerPos = new Block(0,0,0);
+			this.spawnPoint = new Block(0,65,0);
+			this.playerPos = new Block(0,65,0);
 			this.playerYaw =0;
 			this.playerPitch = 0;
 		}
