@@ -111,6 +111,7 @@ public class XRay {
     // the textures used by the minimap
     private Texture minimapTexture;
     private Texture minimapArrowTexture;
+    private Graphics2D minimapGraphics;
     
     // Whether or not we're showing bedrock
     private boolean render_bedrock = false;
@@ -120,8 +121,6 @@ public class XRay {
     
     // the current block (universal coordinate) where the camera is hovering on
     private int levelBlockX, levelBlockZ;
-
-
 	
 	// the current and previous chunk coordinates where the camera is hovering on
 	private int currentLevelX, currentLevelZ;
@@ -206,6 +205,13 @@ public class XRay {
 	private int cur_chunk_z = 0;
 	private boolean initial_load_done = false;
 	private boolean initial_load_queued = false;
+	
+	// vars to keep track of how much the camera has moved since our last
+	// minimap trim.
+	private int total_dX = 0;
+	private int total_dZ = 0;
+	private int minimap_trim_chunks = 10;
+	private int minimap_trim_width = minimap_trim_chunks*16;
 	
 	// How long are we allowed to spend loading chunks before we update?
 	private long max_chunkload_time = Sys.getTimerResolution() / 10;  // a tenth of a second
@@ -480,6 +486,7 @@ public class XRay {
         try {
         	// ui textures
         	minimapTexture 			= TextureTool.allocateTexture(minimap_dim,minimap_dim);
+        	minimapGraphics			= minimapTexture.getImage().createGraphics();
 			minimapArrowTexture 	= TextureTool.allocateTexture(32,32);
 			fpsTexture				= TextureTool.allocateTexture(128, 32);
 			levelInfoTexture		= TextureTool.allocateTexture(128,144);
@@ -756,6 +763,70 @@ public class XRay {
     }
     
     /**
+     * Returns an arraylist of rectangles that need to be drawn, given the specified
+     * Rectangle and the actual width/height of the image you're going to draw to.
+     * This should wrap properly, etc.  May act oddly if the rectangle's width/height
+     * is greater than the width/height of the image.
+     * 
+     * As always when I come up with solutions like this, I'm pretty sure there's
+     * a much simpler way to accomplish what I'm trying to do.  :)
+     * 
+     * @param rect
+     * @param width
+     * @param height
+     * @return
+     */
+    private ArrayList<Rectangle> wrapRectangleTo(Rectangle rect, int width, int height)
+    {
+    	ArrayList<Rectangle> retvals = new ArrayList<Rectangle>();
+    	ArrayList<int[]> xinfo = new ArrayList<int[]>();
+    	ArrayList<int[]> yinfo = new ArrayList<int[]>();
+    	int[] pair;
+
+    	// First figure out our X range(s)
+    	int real_start_x = rect.x % width;
+    	if (real_start_x + rect.width > width)
+    	{
+    		pair = new int[2]; pair[0] = 0; pair[1] = rect.width - (width - real_start_x);
+    		xinfo.add(pair);
+    		pair = new int[2]; pair[0] = real_start_x; pair[1] = width - real_start_x;
+    		xinfo.add(pair);
+    	}
+    	else
+    	{
+    		pair = new int[2]; pair[0] = real_start_x; pair[1] = rect.width;
+    		xinfo.add(pair);
+    	}
+    	
+    	// Now figure out our Y range(s)
+    	int real_start_y = rect.y % height;
+    	if (real_start_y + rect.height > height)
+    	{
+    		pair = new int[2]; pair[0] = 0; pair[1] = rect.height - (height - real_start_y);
+    		yinfo.add(pair);
+    		pair = new int[2]; pair[0] = real_start_y; pair[1] = height - real_start_y;
+    		yinfo.add(pair);
+    	}
+    	else
+    	{
+    		pair = new int[2]; pair[0] = real_start_y; pair[1] = rect.height;
+    		yinfo.add(pair);
+    	}
+    	
+    	// Now weave them together into (up to) four component rectangles
+    	for (int[] xpair : xinfo)
+    	{
+    		for (int[] ypair : yinfo)
+    		{
+    			retvals.add(new Rectangle(xpair[0], ypair[0], xpair[1], ypair[1]));
+    		}
+    	}
+    	
+    	// ... and return.
+    	return retvals;
+    }
+    
+    /**
      * Populates mapChunksToLoad with a list of chunks that need adding, based
      * on how far we've moved since our last known position.  Realistically this
      * is never going to be more than one line at a time, though if someone's
@@ -836,7 +907,89 @@ public class XRay {
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
     			}    		
-    		}    		
+    		}
+    		
+    		// Figure out if we need to trim our minimap (to prevent wrapping around)
+    		total_dX += dx;
+    		total_dZ += dz;
+    		if (Math.abs(total_dX) >= minimap_trim_chunks || Math.abs(total_dZ) >= minimap_trim_chunks)
+    		{
+	    		int py = minimap_dim_h+(chunkX*16);
+				int px = minimap_dim_h-(chunkZ*16);
+				if (py < 0)
+				{
+					py = minimap_dim-1-(Math.abs(py) % minimap_dim);
+				}
+				else
+				{
+					py = py % minimap_dim;
+				}
+				if (px < 0)
+				{
+					px = minimap_dim-1-(Math.abs(px) % minimap_dim);	
+				}
+				else
+				{
+					px = px % minimap_dim;
+				}
+				
+				ArrayList<Rectangle> fills = new ArrayList<Rectangle>();
+
+				// Handle an X rect
+	    		if (total_dX >= minimap_trim_chunks)
+	    		{
+	    			// to the south
+	    			fills.addAll(
+	    					wrapRectangleTo(
+	    							new Rectangle(px-minimap_dim_h, py+minimap_dim_h-minimap_trim_width, minimap_dim, minimap_trim_width),
+	    							minimap_dim, minimap_dim)
+	    						);
+		    		total_dX = total_dX % minimap_trim_chunks;
+	    		}
+	    		else if (total_dX <= -minimap_trim_chunks)
+	    		{
+	    			// to the north
+	    			fills.addAll(
+	    					wrapRectangleTo(
+	    							new Rectangle(px-minimap_dim_h, py-minimap_dim_h, minimap_dim, minimap_trim_width),
+	    							minimap_dim, minimap_dim)
+	    						);
+	    			total_dX = -(Math.abs(total_dX) % minimap_trim_chunks);
+	    		}
+	    		
+	    		// Handle a Z rect
+	    		if (total_dZ >= minimap_trim_chunks)
+	    		{
+	    			// to the west
+	    			fills.addAll(
+	    					wrapRectangleTo(
+	    							new Rectangle(px-minimap_dim_h, py-minimap_dim_h, minimap_trim_width, minimap_dim),
+	    							minimap_dim, minimap_dim)
+	    						);
+		    		total_dZ = total_dZ % minimap_trim_chunks;
+	    		}
+	    		else if (total_dZ <= -minimap_trim_chunks)
+	    		{
+	    			// to the east
+	    			fills.addAll(
+	    					wrapRectangleTo(
+	    							new Rectangle(px+minimap_dim_h-minimap_trim_width, py-minimap_dim_h, minimap_trim_width, minimap_dim),
+	    							minimap_dim, minimap_dim)
+	    						);
+	    			total_dZ = -(Math.abs(total_dZ) % minimap_trim_chunks);
+	    		}
+
+	    		if (!fills.isEmpty())
+	    		{
+	    			minimapGraphics.setColor(new Color(0f, 0f, 0f, 0f));
+	    			minimapGraphics.setComposite(AlphaComposite.Src);
+	    			for (Rectangle rect : fills)
+	    			{
+	    				minimapGraphics.fill(rect);
+	    			}
+	    			minimapTexture.update();
+	    		}
+    		}
     	}
     	else
     	{
@@ -1138,7 +1291,7 @@ public class XRay {
      * Draw the current and spawn position to the minimap
      */
     private void drawMapMarkersToMinimap() {
-    	Graphics2D g = minimapTexture.getImage().createGraphics();
+    	Graphics2D g = minimapGraphics;
     	
     	Block spawn = level.getSpawnPoint();
     	Block player = level.getPlayerPosition();
@@ -1573,7 +1726,7 @@ public class XRay {
 
 		int px;
 		int py;
-		 Graphics2D g = minimapTexture.getImage().createGraphics();
+		 Graphics2D g = minimapGraphics;
 		  for(int zz = 0; zz<16; zz++) {
 			for(int xx =0; xx<16; xx++) {
 				// determine the top most visible block
