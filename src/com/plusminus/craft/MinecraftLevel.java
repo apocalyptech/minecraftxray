@@ -20,33 +20,32 @@ import com.plusminus.craft.dtf.Tag;
 public class MinecraftLevel {
 
 	/**
-	 * A word here about sizes.  Our minimap now wraps around, to theoretically support
-	 * arbitrarily-sized maps.  This means that if you keep on heading in one direction,
-	 * you'll eventually run into old minimap data, as if you'd just sailed around the
-	 * world or something.  As you approach the old data, it'll get overwritten with the
-	 * new chunks, but it's hardly ideal.  Thus far I haven't figured out a way around
-	 * that which doesn't have annoying performance issues.
+	 * A word here about sizes, related to these two facts:
 	 * 
-	 * Anyway, right now X-Ray only updates the minimap when it loads a chunk from disk,
-	 * and then never touches it again if no further chunks are loaded.  This means that
-	 * if our chunk cache is too large, and we wrap around the minimap so that we're
-	 * overwriting old data, but then go back to the area which was originally drawn,
-	 * X-Ray won't overwrite it with the proper data, because the chunk's still in our
-	 * cache, not being read from disk.
+	 *   1) Right now X-Ray only updates the minimap when it loads a chunk from disk,
+	 *     and then never touches it again if no further chunks are loaded.
+	 *     
+	 *   2) As we "walk" around in X-Ray, the minimap is getting trimmed along the edges so
+	 *      that we don't show portions of the map that we don't want to (because the
+	 *      minimap now "wraps," much as our internal Chunk representation does here).
 	 * 
-	 * There are ways around this, of course, but for now that's just how it is.  The
-	 * minimap texture is 2048x2048, and there's a noticeable performance hit if we
+	 * We could certainly change some of this behavior around, and in fact I'm sure that
+	 * there's a much better way of dealing with the minimap than we are now.  Because I
+	 * haven't gotten around to figuring that out, though, the combination of 1 and 2 means
+	 * that our chunk cache has to be small enough so that chunks are always getting loaded
+	 * wherever the minimap needs to be updated.
+	 * 
+	 * The minimap texture is 2048x2048, and there's a noticeable performance hit if we
 	 * push that any higher.  Since each pixel in the minimap is a tile, a 2048-pixel
-	 * row can hold 128 chunks.
+	 * row can hold 128 chunks.  Our effective size of the minimap is actually only
+	 * 1024x1024, though, because of the way we trim to avoid wrapping issues, so there's
+	 * really only 64 chunks in each direction that we can hold, so that's why we're using
+	 * that size instead of something bigger. 
 	 * 
-	 * Meaning, basically, that given our current situation, our chunk cache shouldn't
-	 * hold any more than 128x128 chunks.  So that's why this is set the way it is
-	 * at the moment.
-	 * 
-	 * Hopefully I'll take the time to make this Better in the future.
+	 * Regardless, hopefully I'll take the time to make this Better in the future.
 	 */
 	//public static int LEVELDATA_SIZE = 256;
-	public static int LEVELDATA_SIZE = 128;
+	public static int LEVELDATA_SIZE = 64;
 	public static int LEVELDATA_OFFSET = Integer.MAX_VALUE/2;
 	public Chunk[][] levelData;
 	

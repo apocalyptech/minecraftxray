@@ -25,3 +25,13 @@
    boundary conditions.
    
  * Paintings
+ 
+ * Home/End will wipe the minimap and load chunks, even if we're already
+   "in range" and might even have those chunks cached.  Should fix that.
+   
+ * Minimap effective size has been halved, would like to increase that,
+   and relatedly we're not caching as many chunks as I'd like to be.
+   See the comments at the top of MinecraftLevel.java for some info on that.
+   
+ * X-Ray should go into a "sleep" mode of sorts when it doesn't have focus,
+   so that it can be run a bit more easily alongside Minecraft itself.
