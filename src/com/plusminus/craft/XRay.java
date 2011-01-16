@@ -5,6 +5,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.TexturePaint;
@@ -211,6 +212,7 @@ public class XRay {
 	private int total_dX = 0;
 	private int total_dZ = 0;
 	private int minimap_trim_chunks = 10;
+	private int minimap_trim_chunk_distance = 64;
 	private int minimap_trim_width = minimap_trim_chunks*16;
 	
 	// How long are we allowed to spend loading chunks before we update?
@@ -318,6 +320,7 @@ public class XRay {
 					continue;
 				}
 			}
+			level.loadChunk(b.x, b.z);
 			drawMapChunkToMap(b.x, b.z);
 			
 			// Make sure we update the minimap
@@ -869,11 +872,19 @@ public class XRay {
     				for (int lz=chunkZ-loadChunkRange; lz<=chunkZ+loadChunkRange; lz++)
     				{
     					tempchunk = level.getChunk(lx, lz);
-    					if (tempchunk != null && tempchunk.x == lx && tempchunk.z == lz)
+    					if (tempchunk != null)
     					{
-    						continue;
+    						if (tempchunk.x == lx && tempchunk.z == lz)
+	    					{
+    							if (!tempchunk.isOnMinimap)
+    							{
+    								drawMapChunkToMap(tempchunk.x, tempchunk.z);
+    								//minimap_changed = true;
+    							}
+	    						continue;
+	    					}
+        					level.clearChunk(lx, lz);
     					}
-    					level.clearChunk(lx, lz);
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
     			}    			
@@ -899,22 +910,88 @@ public class XRay {
     				for (int lz=bot_z; lz <= top_z; lz++)
     				{
     					tempchunk = level.getChunk(lx, lz);
-    					if (tempchunk != null && tempchunk.x == lx && tempchunk.z == lz)
+    					if (tempchunk != null)
     					{
-    						continue;
+    						if (tempchunk.x == lx && tempchunk.z == lz)
+	    					{
+    							if (!tempchunk.isOnMinimap)
+    							{
+    								drawMapChunkToMap(tempchunk.x, tempchunk.z);
+    								//minimap_changed = true;
+    							}
+	    						continue;
+	    					}
+        					level.clearChunk(lx, lz);
     					}
-    					level.clearChunk(lx, lz);
     					mapChunksToLoad.add(new Block(lx, 0, lz));
     				}
-    			}    		
+    			}
     		}
     		
     		// Figure out if we need to trim our minimap (to prevent wrapping around)
     		total_dX += dx;
     		total_dZ += dz;
+    		ArrayList<Chunk> trimList = new ArrayList<Chunk>();
+    		int i;
+    		if (Math.abs(total_dX) >= minimap_trim_chunks)
+    		{
+    			if (total_dX < 0)
+    			{
+    				//System.out.println("Clearing X from " + (chunkX-minimap_trim_chunk_distance+minimap_trim_chunks) + " to " + (chunkX-minimap_trim_chunk_distance));
+    				for (i=chunkX-minimap_trim_chunk_distance+minimap_trim_chunks; i>=chunkX-minimap_trim_chunk_distance; i--)
+    				{
+    					trimList.addAll(level.removeChunkRowXFromMinimap(i));
+    				}
+	    			total_dX = -(Math.abs(total_dX) % minimap_trim_chunks);
+    			}
+    			else
+    			{
+    				//System.out.println("Clearing X from " + (chunkX+minimap_trim_chunk_distance-minimap_trim_chunks) + " to " + (chunkX+minimap_trim_chunk_distance));
+    				for (i=chunkX+minimap_trim_chunk_distance-minimap_trim_chunks; i<=chunkX+minimap_trim_chunk_distance; i++)
+    				{
+    					trimList.addAll(level.removeChunkRowXFromMinimap(i));
+    				}
+		    		total_dX = total_dX % minimap_trim_chunks;
+    			}
+    		}
+    		if (Math.abs(total_dZ) >= minimap_trim_chunks)
+    		{
+    			if (total_dZ < 0)
+    			{
+    				//System.out.println("Clearing Z from " + (chunkZ-minimap_trim_chunk_distance+minimap_trim_chunks) + " to " + (chunkZ-minimap_trim_chunk_distance));
+    				for (i=chunkZ-minimap_trim_chunk_distance+minimap_trim_chunks; i>=chunkZ-minimap_trim_chunk_distance; i--)
+    				{
+    					trimList.addAll(level.removeChunkRowZFromMinimap(i));
+    				}
+	    			total_dZ = -(Math.abs(total_dZ) % minimap_trim_chunks);
+    			}
+    			else
+    			{
+    				//System.out.println("Clearing Z from " + (chunkZ+minimap_trim_chunk_distance-minimap_trim_chunks) + " to " + (chunkZ+minimap_trim_chunk_distance));
+    				for (i=chunkZ+minimap_trim_chunk_distance-minimap_trim_chunks; i<=chunkZ+minimap_trim_chunk_distance; i++)
+    				{
+    					trimList.addAll(level.removeChunkRowZFromMinimap(i));
+    				}
+		    		total_dZ = total_dZ % minimap_trim_chunks;
+    			}
+    		}
+    		
+    		minimapGraphics.setColor(new Color(0f, 0f, 0f, 0f));
+    		minimapGraphics.setComposite(AlphaComposite.Src);
+    		boolean minimap_changed = false;
+    		for (Chunk tempchunk_trim : trimList)
+    		{
+    			removeMapChunkFromMap(tempchunk_trim.x, tempchunk_trim.z);
+    			minimap_changed = true;
+    		}
+    		if (minimap_changed)
+    		{
+    			minimapTexture.update();
+    		}
+    		/*
     		if (Math.abs(total_dX) >= minimap_trim_chunks || Math.abs(total_dZ) >= minimap_trim_chunks)
     		{
-	    		int py = minimap_dim_h+(chunkX*16);
+    			int py = minimap_dim_h+(chunkX*16);
 				int px = minimap_dim_h-(chunkZ*16);
 				if (py < 0)
 				{
@@ -933,8 +1010,10 @@ public class XRay {
 					px = px % minimap_dim;
 				}
 				
+				int i;
 				ArrayList<Rectangle> fills = new ArrayList<Rectangle>();
 
+				// TODO: make some calls to level.clearChunkRowN here to expire chunk rows what need expiring.
 				// Handle an X rect
 	    		if (total_dX >= minimap_trim_chunks)
 	    		{
@@ -981,7 +1060,7 @@ public class XRay {
 
 	    		if (!fills.isEmpty())
 	    		{
-	    			minimapGraphics.setColor(new Color(0f, 0f, 0f, 0f));
+	    			minimapGraphics.setColor(new Color(0f, 0f, 0f, 1f));
 	    			minimapGraphics.setComposite(AlphaComposite.Src);
 	    			for (Rectangle rect : fills)
 	    			{
@@ -990,6 +1069,7 @@ public class XRay {
 	    			minimapTexture.update();
 	    		}
     		}
+    		*/
     	}
     	else
     	{
@@ -1171,7 +1251,7 @@ public class XRay {
         	BufferedImage bi = minimapTexture.getImage();
         	try
         	{
-        		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
+        		ImageIO.write(bi, "PNG", new File("/home/cj/xray.png"));
         		System.out.println("Wrote minimap to disk.");
         	}
         	catch (Exception e)
@@ -1647,8 +1727,8 @@ public class XRay {
 
 			float vSizeFactor = .5f;
 			
-			float vTexX = 0.5f - (1.0f/minimap_dim_f) * currentCameraPosZ;
-			float vTexY = 0.5f + (1.0f/minimap_dim_f) * currentCameraPosX;
+			float vTexX = -(1.0f/minimap_dim_f) * currentCameraPosZ;
+			float vTexY = (1.0f/minimap_dim_f) * currentCameraPosX;
 			float vTexZ = vSizeFactor;
 			
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
@@ -1675,7 +1755,6 @@ public class XRay {
 			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth/2.0f, screenHeight/2.0f, camera.getYaw()+90,0.5f);
 		} else {
 			// the minimap
-			// a bit more interesting
 			// I set the minimap to 200 wide and tall
 			
 			// Interestingly, thanks to the fact that we're using GL11.GL_REPEAT on our
@@ -1684,8 +1763,8 @@ public class XRay {
 			// us.  Sweet!
 			float vSizeFactor = 200.0f/minimap_dim_f;
 			
-			float vTexX = 0.5f - (1.0f/minimap_dim_f) * currentCameraPosZ;
-			float vTexY = 0.5f + (1.0f/minimap_dim_f) * currentCameraPosX;
+			float vTexX = -(1.0f/minimap_dim_f) * currentCameraPosZ;
+			float vTexY = (1.0f/minimap_dim_f) * currentCameraPosX;
 			float vTexZ = vSizeFactor;
 			
 			minimapTexture.bind();
@@ -1714,20 +1793,79 @@ public class XRay {
 		}
 	}
 	
+	/**
+	 * Returns the "base" minimap X coordinate, given chunk coordinate Z.
+	 * The "base" will be the upper right corner.
+	 * 
+	 * In Minecraft, Z increases to the West, and decreases to the East,
+	 * so our minimap X coordinate will go up as chunkZ goes down.
+	 * 
+	 * @param chunkZ
+	 * @return
+	 */
+	private int getMinimapBaseX(int chunkZ)
+	{
+		if (chunkZ < 0)
+		{
+			return ((Math.abs(chunkZ+1)*16) % minimap_dim) + 15;
+		}
+		else
+		{
+			return minimap_dim - (((chunkZ*16)+1) % minimap_dim);
+		}
+	}
+
+	/**
+	 * Returns the "base" minimap Y coordinate, given chunk coordinate X.
+	 * The "base" will be the upper right corner.
+	 * 
+	 * In Minecraft, X increases to the South, and decreases to the North,
+	 * so our minimap Y coordinate will go up as chunkX goes up (since the
+	 * origin of a texture is in the upper-left).
+	 * 
+	 * @param chunkX
+	 * @return
+	 */
+	private int getMinimapBaseY(int chunkX)
+	{
+		if (chunkX < 0)
+		{
+			return (minimap_dim - ((Math.abs(chunkX)*16) % minimap_dim)) % minimap_dim;
+		}
+		else
+		{
+			return (chunkX*16) % minimap_dim;
+		}
+	}
+	
+	
+	/**
+	 * Clears out the area on the minimap belonging to this chunk
+	 * 
+	 * @param x
+	 * @param z
+	 */
+	public void removeMapChunkFromMap(int x, int z) {
+		//minimapGraphics.setColor(new Color(0f, 0f, 0f, 1f));
+		//minimapGraphics.setComposite(AlphaComposite.Src);
+		minimapGraphics.fillRect(getMinimapBaseX(z)-15, getMinimapBaseY(x), 16, 16);
+		level.getChunk(x, z).isOnMinimap = false;
+	}
+
 	/***
 	 * draws a chunk to the (mini) map
 	 * @param x
 	 * @param z
 	 */
 	public void drawMapChunkToMap(int x, int z) {
-		level.loadChunk(x, z);
 		 
 		byte[] chunkData = level.getChunkData(x,z);
-
-		int px;
-		int py;
-		 Graphics2D g = minimapGraphics;
-		  for(int zz = 0; zz<16; zz++) {
+		
+		int base_x = getMinimapBaseX(z);
+		int base_y = getMinimapBaseY(x);
+		
+		Graphics2D g = minimapGraphics;
+		for(int zz = 0; zz<16; zz++) {
 			for(int xx =0; xx<16; xx++) {
 				// determine the top most visible block
 				for (int yy = 127; yy >= 0; yy--)
@@ -1739,40 +1877,20 @@ public class XRay {
 						if (blockData > -1) {
 							Color blockColor = MineCraftConstants.blockColors[blockData];
 							if(blockColor != null) {
+								// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
+								// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
+								// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
+								// is probably a faster operation anyway.  I'm sure there'd have been a way to get drawLine
+								// to behave, but c'est la vie!
 								g.setColor(blockColor);
-								// In Minecraft:
-								//   X increases South, decreases North
-								//   Z increases West, decreases East
-								// ... this means that to translate into the G2D coordinates, we need
-								// some flipping and weirdness.
-								// Also, I imagine there MUST be a better way to get these coordinates
-								// than those awkward if statements I'm making.
-								py = minimap_dim_h+(x*16)+xx;
-								px = minimap_dim_h-(z*16)-zz;
-								if (py < 0)
-								{
-									py = minimap_dim-1-(Math.abs(py) % minimap_dim);	
-								}
-								else
-								{
-									py = py % minimap_dim;
-								}
-								if (px < 0)
-								{
-									px = minimap_dim-1-(Math.abs(px) % minimap_dim);	
-								}
-								else
-								{
-									px = px % minimap_dim;
-								}
-								g.drawLine(px, py, px, py); // yes, this can be optimized (draw to texture instead of image), but meh...
+								g.fillRect(base_x-zz, base_y+xx, 1, 1);
 							}
 						}
 						break;
 					}
 				}
 			}
-		}		  
+		}
 	}
 	
 	/***

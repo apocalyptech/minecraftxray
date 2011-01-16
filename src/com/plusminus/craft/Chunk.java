@@ -17,6 +17,7 @@ public class Chunk {
 	public int z;
 	public boolean isDirty;
 	public boolean isSelectedDirty;
+	public boolean isOnMinimap;
 	private CompoundTag chunkData;
 	private ByteArrayTag blockData;
 	private ByteArrayTag mapData;
@@ -27,6 +28,7 @@ public class Chunk {
 		
 		this.level = level;
 		this.chunkData = (CompoundTag) data;
+		this.isOnMinimap = false;
 
 		CompoundTag levelTag = (CompoundTag) chunkData.value.get(0); // first tag
 		IntTag xPosTag = (IntTag) levelTag.getTagWithName("xPos");

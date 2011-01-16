@@ -1,8 +1,10 @@
 package com.plusminus.craft;
 
 import java.awt.Point;
+import java.awt.Graphics2D;
 import java.io.File;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 import com.plusminus.craft.dtf.ByteArrayTag;
 import com.plusminus.craft.dtf.CompoundTag;
@@ -45,7 +47,7 @@ public class MinecraftLevel {
 	 * Regardless, hopefully I'll take the time to make this Better in the future.
 	 */
 	//public static int LEVELDATA_SIZE = 256;
-	public static int LEVELDATA_SIZE = 64;
+	public static int LEVELDATA_SIZE = 128;
 	public static int LEVELDATA_OFFSET = Integer.MAX_VALUE/2;
 	public Chunk[][] levelData;
 	
@@ -299,6 +301,47 @@ public class MinecraftLevel {
 		this.levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = null;
 	}
 	
+	/**
+	 * Sets all chunks in the given X row to be no longer on the minimap
+	 * 
+	 * @param chunkX
+	 */
+	public ArrayList<Chunk> removeChunkRowXFromMinimap(int chunkX)
+	{
+		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+		int xval = (chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE;
+		for (int i=0; i<LEVELDATA_SIZE; i++)
+		{
+			if (this.levelData[xval][i] != null)
+			{
+				//System.out.println("(" + chunkX + ") Removing from minimap on " + xval + ", " + i);
+				this.levelData[xval][i].isOnMinimap = false;
+				chunks.add(this.levelData[xval][i]);
+			}
+		}
+		return chunks;
+	}
+	
+	/**
+	 * Sets all chunks in the given Z row to be no longer on the minimap
+	 * 
+	 * @param chunkZ
+	 */
+	public ArrayList<Chunk> removeChunkRowZFromMinimap(int chunkZ)
+	{
+		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+		int zval = (chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE;
+		for (int i=0; i<LEVELDATA_SIZE; i++)
+		{
+			if (this.levelData[i][zval] != null)
+			{
+				//System.out.println("Removing from minimap on " + i + ", " + zval);
+				this.levelData[i][zval].isOnMinimap = false;
+				chunks.add(this.levelData[i][zval]);
+			}
+		}
+		return chunks;
+	}	
 	/***
 	 * gets the data for a given chunk (coordinates are CHUNK coordinates, not world coordinates!)
 	 * @param chunkX
