@@ -1029,8 +1029,8 @@ public class XRay {
         }
         
         // Fullscreen
-        if(Keyboard.isKeyDown(Keyboard.KEY_F10) && keyPressed != Keyboard.KEY_F10) {
-        	keyPressed = Keyboard.KEY_F10;                                     
+        if(Keyboard.isKeyDown(Keyboard.KEY_BACK) && keyPressed != Keyboard.KEY_BACK) {
+        	keyPressed = Keyboard.KEY_BACK;                                     
             switchFullScreenMode();
         }
         

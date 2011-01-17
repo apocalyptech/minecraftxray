@@ -11,6 +11,7 @@
   * Added Y position to position popup
   * Added support for new Beta 1.2 Blocks
   * Added Lapis Lazuli to highlightable ore list
+  * Fullscreen toggle changed to Backspace
 
 Minecraft X-Ray 2.7 Maintenance Branch 4 (2010.12.16)
 
