@@ -90,6 +90,7 @@
 			<fileset dir="${dist}/src">
 				<include name="**/*" />
 				<exclude name="lib/" />
+				<exclude name="build-lib/" />
 			</fileset>
 		</copy>
 		
