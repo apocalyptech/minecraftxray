@@ -5,10 +5,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.TexturePaint;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +18,6 @@ import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
-import javax.swing.JWindow;
 
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
@@ -37,13 +34,8 @@ import static com.plusminus.craft.MineCraftConstants.*;
 public class XRay {
 	// for the sprite sheet
     
-   
-    
 	// number of chunks around the camera which are visible (Square)
-	// TODO: revert this
-	//private int visible_chunk_range = 5;
-	private int visible_chunk_range = 8;
-	private int mapchange_redraw_range = 3;
+	private int visible_chunk_range = 5;
 	
 	private static final int[] CHUNK_RANGES_KEYS = new int[] {
 		Keyboard.KEY_NUMPAD1,
@@ -54,9 +46,7 @@ public class XRay {
 		Keyboard.KEY_NUMPAD6
 	};
 	private static final int[] CHUNK_RANGES = new int[] {3,4,5,6,7,8};
-	// TODO: revert this
-	//private int currentChunkRange = 4;
-	private int currentChunkRange = 5;
+	private int currentChunkRange = 4;
 	
 	// highlight distance
 	private static final int[] HIGHLIGHT_RANGES_KEYS = new int[] {
@@ -126,16 +116,10 @@ public class XRay {
 	// the current and previous chunk coordinates where the camera is hovering on
 	private int currentLevelX, currentLevelZ;
 	
-	// synchronization object, a bit redundant now ... but potentially the loader could cause a conflict with the drawing operation
-	private Object lock = new Object();
-	
 	// we render to a display list and use that later for quick drawing, this is the index
 	private int worldDisplayListNum;
 	private int visibleOresListNum;
-	
-	// wheter we need to recreate the display list using the updated level data
-	private boolean needToRedrawWorld = false;
-	
+
 	// wheter we need to reload the world
 	private boolean needToReloadWorld = false;
 	
@@ -213,7 +197,6 @@ public class XRay {
 	private int total_dZ = 0;
 	private int minimap_trim_chunks = 10;
 	private int minimap_trim_chunk_distance = 64;
-	private int minimap_trim_width = minimap_trim_chunks*16;
 	
 	// How long are we allowed to spend loading chunks before we update?
 	private long max_chunkload_time = Sys.getTimerResolution() / 10;  // a tenth of a second
@@ -697,7 +680,6 @@ public class XRay {
     	}
     	this.currentChunkRange = n;
     	this.visible_chunk_range = CHUNK_RANGES[n];
-    	this.mapchange_redraw_range = this.visible_chunk_range-2;
     	this.needToReloadWorld = true;
     }      
     
