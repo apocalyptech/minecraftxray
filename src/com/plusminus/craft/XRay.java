@@ -285,8 +285,16 @@ public class XRay {
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
             GL11.glLineWidth(20);
     	}
-    	Chunk c;
-    	while (!mapChunksToLoad.isEmpty())
+    	
+    	// There's various cases where parts of our crosshairs may be covered over by
+    	// other blocks, or bits of the crosshairs left on the map when wrapping, etc.
+    	// Whatever.
+    	boolean got_spawn_chunk = false;
+    	boolean got_playerpos_chunk = false;
+   		Block spawn = level.getSpawnPoint();
+   		Block playerpos = level.getPlayerPosition();
+   		Chunk c;
+   		while (!mapChunksToLoad.isEmpty())
 		{
 			// Load and draw the chunk
 			b = (Block) mapChunksToLoad.pop();
@@ -304,7 +312,15 @@ public class XRay {
 				}
 			}
 			level.loadChunk(b.x, b.z);
-			drawMapChunkToMap(b.x, b.z);
+			drawChunkToMap(b.x, b.z);
+			if (spawn.cx == b.x && spawn.cz == b.z)
+			{
+				got_spawn_chunk = true;
+			}
+			if (playerpos.cx == b.x && playerpos.cz == b.z)
+			{
+				got_playerpos_chunk = true;
+			}
 			
 			// Make sure we update the minimap
 			minimap_needs_updating = true;
@@ -360,7 +376,15 @@ public class XRay {
 				break;
 			}			
 		}
-		if (!initial_load_done)
+		if (got_spawn_chunk)
+		{
+			drawSpawnMarkerToMinimap();
+		}
+		if (got_playerpos_chunk)
+		{
+			drawPlayerposMarkerToMinimap();
+		}
+   		if (!initial_load_done)
 		{            
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -477,7 +501,7 @@ public class XRay {
 			fpsTexture				= TextureTool.allocateTexture(128, 32);
 			levelInfoTexture		= TextureTool.allocateTexture(128,144);
 			
-			drawMinimapArrowImage();
+			createMinimapSprites();
 			
 			// minecraft textures
 			BufferedImage minecraftTextureImage 	= MineCraftEnvironment.getMinecraftTexture();
@@ -799,7 +823,7 @@ public class XRay {
 	    					{
     							if (!tempchunk.isOnMinimap)
     							{
-    								drawMapChunkToMap(tempchunk.x, tempchunk.z);
+    								drawChunkToMap(tempchunk.x, tempchunk.z);
     								//minimap_changed = true;
     							}
 	    						continue;
@@ -837,7 +861,7 @@ public class XRay {
 	    					{
     							if (!tempchunk.isOnMinimap)
     							{
-    								drawMapChunkToMap(tempchunk.x, tempchunk.z);
+    								drawChunkToMap(tempchunk.x, tempchunk.z);
     								//minimap_changed = true;
     							}
 	    						continue;
@@ -1079,7 +1103,7 @@ public class XRay {
         	BufferedImage bi = minimapTexture.getImage();
         	try
         	{
-        		ImageIO.write(bi, "PNG", new File("/home/cj/xray.png"));
+        		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
         		System.out.println("Wrote minimap to disk.");
         	}
         	catch (Exception e)
@@ -1196,41 +1220,38 @@ public class XRay {
     }
     
     /***
-     * Draw the current and spawn position to the minimap
+     * Draw the spawn position to the minimap
      */
-    private void drawMapMarkersToMinimap() {
+    private void drawSpawnMarkerToMinimap() {
     	Graphics2D g = minimapGraphics;
     	
     	Block spawn = level.getSpawnPoint();
-    	Block player = level.getPlayerPosition();
-    	
-    	int py = minimap_dim_h-player.x;
-		int px = minimap_dim_h+player.z;
-		int sy = minimap_dim_h-spawn.x;
-		int sx = minimap_dim_h+spawn.z;
-		System.out.println("(" + px + "," + py + ")  (" + sx + "," + sy + ")");
-    	Vector3f camerapos = camera.getPosition();
-		System.out.println("(" + camerapos.x + "," + camerapos.y + ")");
+		int sy = getMinimapBaseY(spawn.cx)-(spawn.x%16);
+		int sx = (getMinimapBaseX(spawn.cz)+(spawn.z%16))%minimap_dim;
     	
     	g.setStroke(new BasicStroke(2));
-
-    	// Not sure if these will ever actually get drawn now...
-    	//if (Math.abs(sx-camerapos.x) < 1024 && Math.abs(sy-camerapos.y) < 1024)
-    	//{
-	    	g.setColor(Color.red.brighter());
-	    	g.drawOval(sx-6, sy-6, 11, 11);
-	    	g.drawLine(sx-8, sy, sx+8, sy);
-	    	g.drawLine(sx, sy-8, sx, sy+8);
-    	//}
+    	g.setColor(Color.red.brighter());
+    	g.drawOval(sx-6, sy-6, 11, 11);
+    	g.drawLine(sx-8, sy, sx+8, sy);
+    	g.drawLine(sx, sy-8, sx, sy+8);
+    	minimapTexture.update();
+    }
+    
+    /***
+     * Draw the current position to the minimap
+     */
+    private void drawPlayerposMarkerToMinimap() {
+    	Graphics2D g = minimapGraphics;
     	
-    	//if (Math.abs(px-camerapos.x) < 1024 && Math.abs(py-camerapos.y) < 1024)
-    	//{
-	    	g.setColor(Color.yellow.brighter());
-	    	g.drawOval(px-6, py-6, 11, 11);
-	    	g.drawLine(px-8, py, px+8, py);
-	    	g.drawLine(px, py-8, px, py+8);
-    	//}
+    	Block player = level.getPlayerPosition();
+    	int py = getMinimapBaseY(player.cx)-(player.x%16);
+		int px = getMinimapBaseX(player.cz)+(player.z%16);	
     	
+    	g.setStroke(new BasicStroke(2));
+	    g.setColor(Color.yellow.brighter());
+	    g.drawOval(px-6, py-6, 11, 11);
+	    g.drawLine(px-8, py, px+8, py);
+	    g.drawLine(px, py-8, px, py+8);
     	minimapTexture.update();
     }
     
@@ -1248,7 +1269,7 @@ public class XRay {
     	if (!map_load_started)
     	{
     		map_load_started = true;
-       		drawMapMarkersToMinimap();
+       		//drawMapMarkersToMinimap();
        		//minimapTexture.update();
        		setLightMode(true); // basically enable fog etc  		
     	}
@@ -1706,7 +1727,7 @@ public class XRay {
 	 * @param x
 	 * @param z
 	 */
-	public void drawMapChunkToMap(int x, int z) {
+	public void drawChunkToMap(int x, int z) {
 		
 		Chunk c = level.getChunk(x,z);
 		if (c != null)
@@ -1748,17 +1769,17 @@ public class XRay {
 	}
 	
 	/***
-	 * Draws the minimap arrow image (to the texture)
+	 * Draws the minimap sprites (currently just the arrow image) to their textures
 	 */
-    private void drawMinimapArrowImage() {
+    private void createMinimapSprites() {
+    	
+    	// First the arrow
     	Graphics2D g = minimapArrowTexture.getImage().createGraphics();
-    	//g.clearRect(0, 0, 32, 32);
     	g.setColor(Color.red);
     	g.setStroke(new BasicStroke(5));
     	g.drawLine(3,16, 30,24);
     	g.drawLine(30,24,30,8);
     	g.drawLine(30,8, 3,16);
-    	
     	minimapArrowTexture.update();
     }
     

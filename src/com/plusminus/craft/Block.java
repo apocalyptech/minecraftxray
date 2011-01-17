@@ -17,11 +17,15 @@ public class Block implements Comparable<Block> {
 	public int y;
 	public int z;
 	public int t;
+	public int cx;
+	public int cz;
 
 	public Block(int x, int y, int z) {
 		this.x =x;
 		this.y =y;
 		this.z =z;
+		this.cx = -x/16;
+		this.cz = -z/16;
 	}
 	
 	public int compareTo(Block a) {

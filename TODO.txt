@@ -14,7 +14,7 @@
  
  * Custom key bindings
  
- * Highlighting for Reed/Sugarcane
+ * Highlighting for Reed/Sugarcane and other "special" block types
  
  * Highlighting for any arbitrary (user-chosen) block type
  
@@ -25,11 +25,17 @@
  * Home/End will wipe the minimap and load chunks, even if we're already
    "in range" and might even have those chunks cached.  Should fix that.
    
- * Minimap effective size has been halved, would like to increase that
+ * Minimap effective size has been cut quite a bit, would like to increase that
    
  * X-Ray should go into a "sleep" mode of sorts when it doesn't have focus,
    so that it can be run a bit more easily alongside Minecraft itself.
    
  * Figure out some kind of useful minimap when in the Nether
  
- * Would be nice to not warp into nothing when switch between Nether states
+ * Would be nice to have a check when warping between Nether and Overworld
+   to make sure you don't end up off-map
+   
+ * There are various conditions where the player position and spawn position
+   markers won't show up properly on the minimap; should fix those.
+   
+ * "Explored Caverns" toggle, based on torch placement

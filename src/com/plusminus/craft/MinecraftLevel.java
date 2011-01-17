@@ -338,7 +338,6 @@ public class MinecraftLevel {
 				}
 			}
 		}
-		System.out.println("Going to clear off: " + chunks.size());
 		return chunks;
 	}
 	
