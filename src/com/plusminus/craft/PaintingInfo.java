@@ -8,6 +8,8 @@ public class PaintingInfo
 	public float sizey_tex;
 	public float offsetx;
 	public float offsety;
+	public float centerx;
+	public float centery;
 	
 	/**
 	 * A new PaintingInfo.  Passed-in units are abstracted from pixels, so
@@ -26,5 +28,12 @@ public class PaintingInfo
 		this.sizey_tex = (float)sizey/16.0f;
 		this.offsetx = (float)offsetx/16.0f;
 		this.offsety = (float)offsety/16.0f;
+
+		this.centerx = (float)((int)(this.sizex/2)-1);
+		if (this.centerx < 0)
+		{
+			this.centerx = 0f;
+		}
+		this.centery = (float)((int)(this.sizey/2));
 	}
 }

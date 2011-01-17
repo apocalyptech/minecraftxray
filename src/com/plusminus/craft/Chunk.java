@@ -1755,15 +1755,16 @@ public class Chunk {
 			info = MineCraftConstants.paintings.get(painting.name.toLowerCase());
 			if (info == null)
 			{
+				System.out.println("Unknown painting name: " + painting.name);
 				continue;
 			}
 			
-			start_y = painting.tile_y + 0.5f;
+			start_y = painting.tile_y + 0.5f + info.centery;
 			switch (painting.dir)
 			{
 				case 0x0:
 					// East
-					start_x = painting.tile_x + 0.5f;
+					start_x = painting.tile_x + 0.5f + info.centerx;
 					start_z = painting.tile_z - 0.5f - TEX64;
 					dX = -1;
 					dZ = 0;
@@ -1771,13 +1772,13 @@ public class Chunk {
 				case 0x1:
 					// North
 					start_x = painting.tile_x - 0.5f - TEX64;
-					start_z = painting.tile_z - 0.5f;
+					start_z = painting.tile_z - 0.5f - info.centerx;
 					dX = 0;
 					dZ = 1;
 					break;
 				case 0x2:
 					// West
-					start_x = painting.tile_x - 0.5f;
+					start_x = painting.tile_x - 0.5f - info.centerx;
 					start_z = painting.tile_z + 0.5f + TEX64;
 					dX = 1;
 					dZ = 0;
@@ -1786,7 +1787,7 @@ public class Chunk {
 				default:
 					// South
 					start_x = painting.tile_x + 0.5f + TEX64;
-					start_z = painting.tile_z + 0.5f;
+					start_z = painting.tile_z + 0.5f + info.centerx;
 					dX = 0;
 					dZ = -1;
 					break;
@@ -1798,13 +1799,13 @@ public class Chunk {
 				GL11.glVertex3f(start_x, start_y, start_z);
 				
 				GL11.glTexCoord2f(info.offsetx + info.sizex_tex, info.offsety);
-				GL11.glVertex3f(start_x + (dX*info.sizex), start_y, start_z + (dZ*info.sizey));
+				GL11.glVertex3f(start_x + (dX*info.sizex), start_y, start_z + (dZ*info.sizex));
 				
 				GL11.glTexCoord2f(info.offsetx, info.offsety + info.sizey_tex);
 				GL11.glVertex3f(start_x, start_y-info.sizey, start_z);
 				
 				GL11.glTexCoord2f(info.offsetx + info.sizex_tex, info.offsety + info.sizey_tex);
-				GL11.glVertex3f(start_x + (dX*info.sizex), start_y-info.sizey, start_z + (dZ*info.sizey));
+				GL11.glVertex3f(start_x + (dX*info.sizex), start_y-info.sizey, start_z + (dZ*info.sizex));
 			GL11.glEnd();
 		}
 	}
