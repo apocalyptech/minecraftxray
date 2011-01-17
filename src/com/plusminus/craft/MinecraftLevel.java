@@ -1,12 +1,8 @@
 package com.plusminus.craft;
 
-import java.awt.Point;
-import java.awt.Graphics2D;
 import java.io.File;
-import java.util.HashMap;
 import java.util.ArrayList;
 
-import com.plusminus.craft.dtf.ByteArrayTag;
 import com.plusminus.craft.dtf.CompoundTag;
 import com.plusminus.craft.dtf.DTFReader;
 import com.plusminus.craft.dtf.DoubleTag;
@@ -95,6 +91,11 @@ public class MinecraftLevel {
 				IntTag spawnY = (IntTag) levelDataData.getTagWithName("SpawnY");
 				IntTag spawnZ = (IntTag) levelDataData.getTagWithName("SpawnZ");
 				this.spawnPoint = new Block(-spawnX.value, -spawnY.value, -spawnZ.value);
+				if (playerPos == null)
+				{
+					this.playerPos = new Block((int) -spawnX.value, (int) -spawnY.value, (int) -spawnZ.value);
+				}
+
 			}
 		} else {
 			this.spawnPoint = new Block(0,-65,0);
