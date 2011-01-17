@@ -174,11 +174,16 @@ public class MineCraftConstants {
     	new Block(0,0,-1),
 	};
 	
+	// Vars for painting information
+	public static HashMap<String, PaintingInfo> paintings;
+	public static PaintingInfo paintingback;
+	
 	static {
 		initBlockColorsTable();
 		initBlockDatatoSpriteSheetIndexTable();
 		initSpriteSheetToTextureTable();
 		initBlockTypes();
+		initPaintings();
 	}
 	
 	/***
@@ -477,5 +482,42 @@ public class MineCraftConstants {
 		    precalcSpriteSheetToTextureX[i] = texXx;
 		    precalcSpriteSheetToTextureY[i] = texYy;
 		}
-	}	
+	}
+	
+	/**
+	 * Initialize our paintings.  Note that our hashmap exepects to be
+	 * in lowercase.
+	 */
+	public static void initPaintings() {
+		// I put these in here in the same order that they appeared at
+		// http://www.minecraftwiki.net/wiki/Painting
+		paintings = new HashMap<String, PaintingInfo>();
+		
+		paintings.put("kebab", new PaintingInfo(1, 1, 0, 0));
+		paintings.put("aztec", new PaintingInfo(1, 1, 1, 0));
+		paintings.put("alban", new PaintingInfo(1, 1, 2, 0));
+		paintings.put("aztec2", new PaintingInfo(1, 1, 3, 0));
+		paintings.put("bomb", new PaintingInfo(1, 1, 4, 0));
+		paintings.put("plant", new PaintingInfo(1, 1, 5, 0));
+		paintings.put("wasteland", new PaintingInfo(1, 1, 6, 0));
+		paintings.put("wanderer", new PaintingInfo(1, 2, 0, 4));
+		paintings.put("graham", new PaintingInfo(1, 2, 1, 4));
+		paintings.put("pool", new PaintingInfo(2, 1, 0, 2));
+		paintings.put("courbet", new PaintingInfo(2, 1, 2, 2));
+		paintings.put("sunset", new PaintingInfo(2, 1, 6, 2));
+		paintings.put("sea", new PaintingInfo(2, 1, 4, 2));
+		paintings.put("creebet", new PaintingInfo(2, 1, 8, 2));
+		paintings.put("match", new PaintingInfo(2, 2, 0, 8));
+		paintings.put("bust", new PaintingInfo(2, 2, 2, 8));
+		paintings.put("stage", new PaintingInfo(2, 2, 4, 8));
+		paintings.put("void", new PaintingInfo(2, 2, 6, 8));
+		paintings.put("skullandroses", new PaintingInfo(2, 2, 8, 8));
+		paintings.put("fighters", new PaintingInfo(4, 2, 0, 6));
+		paintings.put("skeleton", new PaintingInfo(4, 3, 12, 4));
+		paintings.put("donkeyKong", new PaintingInfo(4, 3, 12, 7));
+		paintings.put("pointer", new PaintingInfo(4, 4, 0, 12));
+		paintings.put("pigscene", new PaintingInfo(4, 4, 4, 12));
+
+		paintingback = new PaintingInfo(4, 4, 12, 0);
+	}
 }

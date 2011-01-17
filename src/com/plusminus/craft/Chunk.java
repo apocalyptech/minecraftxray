@@ -1,9 +1,13 @@
 package com.plusminus.craft;
 
+import java.util.ArrayList;
+
 import org.lwjgl.opengl.GL11;
 
 import com.plusminus.craft.dtf.ByteArrayTag;
 import com.plusminus.craft.dtf.CompoundTag;
+import com.plusminus.craft.dtf.StringTag;
+import com.plusminus.craft.dtf.ListTag;
 import com.plusminus.craft.dtf.IntTag;
 import com.plusminus.craft.dtf.Tag;
 
@@ -21,6 +25,7 @@ public class Chunk {
 	private CompoundTag chunkData;
 	private ByteArrayTag blockData;
 	private ByteArrayTag mapData;
+	private ArrayList<PaintingEntity> paintings;
 	
 	private MinecraftLevel level;
 	
@@ -33,6 +38,20 @@ public class Chunk {
 		CompoundTag levelTag = (CompoundTag) chunkData.value.get(0); // first tag
 		IntTag xPosTag = (IntTag) levelTag.getTagWithName("xPos");
 		IntTag zPosTag = (IntTag) levelTag.getTagWithName("zPos");
+		
+		paintings = new ArrayList<PaintingEntity>();
+		ListTag entities = (ListTag)levelTag.getTagWithName("Entities");
+		StringTag entity_id;
+		CompoundTag ct;
+		for (Tag t : entities.value)
+		{
+			ct = (CompoundTag)t;
+			entity_id = (StringTag) ct.getTagWithName("id");
+			if (entity_id.value.equalsIgnoreCase("painting"))
+			{
+				paintings.add(new PaintingEntity(ct));
+			}
+		}
 		
 		this.x = xPosTag.value;
 		this.z = zPosTag.value;
@@ -1716,6 +1735,77 @@ public class Chunk {
 					
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Renders paintings into our world.  Paintings are stored as Entities, not
+	 * block-level data, so they have to be handled differently than everything else.
+	 */
+	public void renderPaintings()
+	{
+		PaintingInfo info;
+		float start_x;
+		float start_y;
+		float start_z;
+		float dX;
+		float dZ;
+		for (PaintingEntity painting : this.paintings)
+		{
+			info = MineCraftConstants.paintings.get(painting.name.toLowerCase());
+			if (info == null)
+			{
+				continue;
+			}
+			
+			start_y = painting.tile_y + 0.5f;
+			switch (painting.dir)
+			{
+				case 0x0:
+					// East
+					start_x = painting.tile_x + 0.5f;
+					start_z = painting.tile_z - 0.5f - TEX64;
+					dX = -1;
+					dZ = 0;
+					break;
+				case 0x1:
+					// North
+					start_x = painting.tile_x - 0.5f - TEX64;
+					start_z = painting.tile_z - 0.5f;
+					dX = 0;
+					dZ = 1;
+					break;
+				case 0x2:
+					// West
+					start_x = painting.tile_x - 0.5f;
+					start_z = painting.tile_z + 0.5f + TEX64;
+					dX = 1;
+					dZ = 0;
+					break;
+				case 0x3:
+				default:
+					// South
+					start_x = painting.tile_x + 0.5f + TEX64;
+					start_z = painting.tile_z + 0.5f;
+					dX = 0;
+					dZ = -1;
+					break;
+			}
+			
+			// Now actually draw it
+			GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+				GL11.glTexCoord2f(info.offsetx, info.offsety);
+				GL11.glVertex3f(start_x, start_y, start_z);
+				
+				GL11.glTexCoord2f(info.offsetx + info.sizex_tex, info.offsety);
+				GL11.glVertex3f(start_x + (dX*info.sizex), start_y, start_z + (dZ*info.sizey));
+				
+				GL11.glTexCoord2f(info.offsetx, info.offsety + info.sizey_tex);
+				GL11.glVertex3f(start_x, start_y-info.sizey, start_z);
+				
+				GL11.glTexCoord2f(info.offsetx + info.sizex_tex, info.offsety + info.sizey_tex);
+				GL11.glVertex3f(start_x + (dX*info.sizex), start_y-info.sizey, start_z + (dZ*info.sizey));
+			GL11.glEnd();
 		}
 	}
 	

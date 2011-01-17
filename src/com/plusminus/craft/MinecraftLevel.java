@@ -29,16 +29,17 @@ public class MinecraftLevel {
 	private float playerPitch;
 	
 	public Texture minecraftTexture;
+	public Texture paintingTexture;
 	public Texture portalTexture;
-
 
 	/***
 	 * Create a minecraftLevel from the given world
 	 * @param world
 	 */
-	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture portalTexture) {
+	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture paintingTexture, Texture portalTexture) {
 		this.world = world;
 		this.minecraftTexture = minecraftTexture;
+		this.paintingTexture = paintingTexture;
 		this.portalTexture = portalTexture;
 		
 		this.levelData = new Chunk[LEVELDATA_SIZE][LEVELDATA_SIZE];

@@ -173,10 +173,12 @@ public class MineCraftEnvironment {
 	}
 	
 	/***
-	 * Returns a stream to the texture data (overrides in the directory are handled)
+	 * Returns a stream to an arbitrary file either from the main jar, or from the user-specified
+	 * texture pack.
+	 * 
 	 * @return
 	 */
-	public static InputStream getMinecraftTextureData() {
+	public static InputStream getMinecraftTexturepackData(String filename) {
 		// First check the options.txt file to see if we should be using the defined
 		// texture pack.
 		File optionsFile = new File(baseDir, "options.txt");
@@ -242,7 +244,7 @@ public class MineCraftEnvironment {
 				try
 				{
 					zf = new ZipFile(packFile);
-					ZipEntry entry = zf.getEntry("terrain.png");
+					ZipEntry entry = zf.getEntry(filename);
 					if (entry != null)
 					{
 						return zf.getInputStream(entry);
@@ -271,7 +273,23 @@ public class MineCraftEnvironment {
 		}
 		
 		// If we got here, just do what we've always done.
-		return getMinecraftFile("terrain.png");
+		return getMinecraftFile(filename);
+	}
+	
+	/***
+	 * Returns a stream to the texture data (overrides in the directory are handled)
+	 * @return
+	 */
+	public static InputStream getMinecraftTextureData() {
+		return getMinecraftTexturepackData("terrain.png");
+	}
+	
+	/**
+	 * Returns a stream to the painting data
+	 * @return
+	 */
+	public static InputStream getMinecraftPaintingData() {
+		return getMinecraftTexturepackData("art/kz.png");
 	}
 	
 	/***
@@ -295,6 +313,14 @@ public class MineCraftEnvironment {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	/**
+	 * Attempts to create a bufferedImage containing our painting sheet
+	 * @return
+	 */
+	public static BufferedImage getMinecraftPaintings() {
+		return buildImageFromInput(getMinecraftPaintingData());
 	}
 	
 	/***

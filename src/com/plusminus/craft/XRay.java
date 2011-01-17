@@ -97,6 +97,7 @@ public class XRay {
 
     // the sprite sheet for all textures
     public Texture minecraftTexture;
+    public Texture paintingTexture;
     public Texture portalTexture;
     
     // the textures used by the minimap
@@ -508,6 +509,11 @@ public class XRay {
 			minecraftTexture 						= TextureTool.allocateTexture(minecraftTextureImage, GL11.GL_NEAREST);
 			minecraftTexture.update();
 			
+			// painting textures
+			BufferedImage minecraftPaintingImage	= MineCraftEnvironment.getMinecraftPaintings();
+			paintingTexture							= TextureTool.allocateTexture(minecraftPaintingImage, GL11.GL_NEAREST);
+			paintingTexture.update();
+			
 			// Nether portal texture to use for drawing those, since there's no actual texture for it
 			portalTexture = TextureTool.allocateTexture(16, 16);
 			BufferedImage bi = portalTexture.getImage();
@@ -722,7 +728,7 @@ public class XRay {
      */
     private void setMinecraftWorld(WorldInfo world) {
     	this.world = world;
-    	this.level =  new MinecraftLevel(world, minecraftTexture, portalTexture);
+    	this.level =  new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture);
     	
     	// determine which chunks are available in this world
     	mapChunksToLoad = new LinkedList<Block>();
@@ -741,7 +747,7 @@ public class XRay {
     private void setMinecraftWorld(WorldInfo world, FirstPersonCameraController camera)
     {
     	this.world = world;
-    	this.level =  new MinecraftLevel(world, minecraftTexture, portalTexture);
+    	this.level =  new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture);
     	
     	// determine which chunks are available in this world
     	mapChunksToLoad = new LinkedList<Block>();
@@ -1309,6 +1315,9 @@ public class XRay {
     			{
     				k.renderSolid(render_bedrock);
     				k.renderSelected(this.mineralToggle);
+    				paintingTexture.bind();
+    				k.renderPaintings();
+    				minecraftTexture.bind();
     			}
     		}
     	}
