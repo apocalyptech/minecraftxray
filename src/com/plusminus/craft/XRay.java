@@ -725,6 +725,7 @@ public class XRay {
 		this.camera = camera;
 		initial_load_queued = false;
 		initial_load_done = false;
+		this.removeChunklistFromMap(level.removeAllChunksFromMinimap());
 		this.triggerChunkLoads();
     	
     }
@@ -735,6 +736,7 @@ public class XRay {
 		this.camera.setYawAndPitch(0,0);
 		initial_load_queued = false;
 		initial_load_done = false;
+		this.removeChunklistFromMap(level.removeAllChunksFromMinimap());
 		this.triggerChunkLoads();
     }
     
@@ -744,6 +746,7 @@ public class XRay {
 		this.camera.setYawAndPitch(180+level.getPlayerYaw(),level.getPlayerPitch());
 		initial_load_queued = false;
 		initial_load_done = false;
+		this.removeChunklistFromMap(level.removeAllChunksFromMinimap());
 		this.triggerChunkLoads();
     }
     
@@ -894,18 +897,7 @@ public class XRay {
     			}
     		}
     		
-    		minimapGraphics.setColor(new Color(0f, 0f, 0f, 0f));
-    		minimapGraphics.setComposite(AlphaComposite.Src);
-    		boolean minimap_changed = false;
-    		for (Chunk tempchunk_trim : trimList)
-    		{
-    			removeMapChunkFromMap(tempchunk_trim.x, tempchunk_trim.z);
-    			minimap_changed = true;
-    		}
-    		if (minimap_changed)
-    		{
-    			minimapTexture.update();
-    		}
+    		removeChunklistFromMap(trimList);
     	}
     	else
     	{
@@ -1687,6 +1679,27 @@ public class XRay {
 		minimapGraphics.fillRect(getMinimapBaseX(z)-15, getMinimapBaseY(x), 16, 16);
 		level.getChunk(x, z).isOnMinimap = false;
 	}
+    
+    /**
+     * Loops through a list of chunks and removes them from the minimap
+     * 
+     * @param trimList
+     */
+    private void removeChunklistFromMap(ArrayList<Chunk> trimList)
+    {
+		minimapGraphics.setColor(new Color(0f, 0f, 0f, 0f));
+		minimapGraphics.setComposite(AlphaComposite.Src);
+		boolean minimap_changed = false;
+		for (Chunk tempchunk_trim : trimList)
+		{
+			removeMapChunkFromMap(tempchunk_trim.x, tempchunk_trim.z);
+			minimap_changed = true;
+		}
+		if (minimap_changed)
+		{
+			minimapTexture.update();
+		}
+    }
 
 	/***
 	 * draws a chunk to the (mini) map
@@ -1694,7 +1707,12 @@ public class XRay {
 	 * @param z
 	 */
 	public void drawMapChunkToMap(int x, int z) {
-		 
+		
+		Chunk c = level.getChunk(x,z);
+		if (c != null)
+		{
+			c.isOnMinimap = true;
+		}
 		byte[] chunkData = level.getChunkData(x,z);
 		
 		int base_x = getMinimapBaseX(z);

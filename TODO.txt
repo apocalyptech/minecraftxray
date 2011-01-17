@@ -35,3 +35,7 @@
    
  * X-Ray should go into a "sleep" mode of sorts when it doesn't have focus,
    so that it can be run a bit more easily alongside Minecraft itself.
+   
+ * Figure out some kind of useful minimap when in the Nether
+ 
+ * Would be nice to not warp into nothing when switch between Nether states

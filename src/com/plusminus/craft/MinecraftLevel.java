@@ -288,7 +288,7 @@ public class MinecraftLevel {
 		int xval = (chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE;
 		for (int i=0; i<LEVELDATA_SIZE; i++)
 		{
-			if (this.levelData[xval][i] != null)
+			if (this.levelData[xval][i] != null && this.levelData[xval][i].isOnMinimap)
 			{
 				//System.out.println("(" + chunkX + ") Removing from minimap on " + xval + ", " + i);
 				this.levelData[xval][i].isOnMinimap = false;
@@ -309,7 +309,7 @@ public class MinecraftLevel {
 		int zval = (chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE;
 		for (int i=0; i<LEVELDATA_SIZE; i++)
 		{
-			if (this.levelData[i][zval] != null)
+			if (this.levelData[i][zval] != null && this.levelData[i][zval].isOnMinimap)
 			{
 				//System.out.println("Removing from minimap on " + i + ", " + zval);
 				this.levelData[i][zval].isOnMinimap = false;
@@ -317,7 +317,31 @@ public class MinecraftLevel {
 			}
 		}
 		return chunks;
-	}	
+	}
+	
+	/**
+	 * Sets all chunks to be no longer on the minimap
+	 * @return
+	 */
+	public ArrayList<Chunk> removeAllChunksFromMinimap()
+	{
+		ArrayList<Chunk> chunks = new ArrayList<Chunk>();	
+		for (int z=0; z<LEVELDATA_SIZE; z++)
+		{
+			for (int x=0; x<LEVELDATA_SIZE; x++)
+			{
+				if (this.levelData[x][z] != null && this.levelData[x][z].isOnMinimap)
+				{
+					//System.out.println("(" + chunkX + ") Removing from minimap on " + xval + ", " + i);
+					this.levelData[x][z].isOnMinimap = false;
+					chunks.add(this.levelData[x][z]);
+				}
+			}
+		}
+		System.out.println("Going to clear off: " + chunks.size());
+		return chunks;
+	}
+	
 	/***
 	 * gets the data for a given chunk (coordinates are CHUNK coordinates, not world coordinates!)
 	 * @param chunkX
