@@ -201,6 +201,41 @@ public class Chunk {
 	}
 	
 	/**
+	 * Renders a nonstandard vertical rectangle (nonstandard referring primarily to
+	 * the texture size (ie: when we're not pulling a single element out of a 16x16
+	 * grid).  This differs from renderVertical also in that we specify two full
+	 * (x, y, z) coordinates for the bounds, instead of passing in y and a height.
+	 * Texture coordinates are passed in as the usual float from 0 to 1.
+	 * 
+	 * @param tx X index within the texture
+	 * @param ty Y index within the texture
+	 * @param tdx Width of texture
+	 * @param tdy Height of texture
+	 * @param x1
+	 * @param y1
+	 * @param z1
+	 * @param x2
+	 * @param y2
+	 * @param z2
+	 */
+	public void renderNonstandardVertical(float tx, float ty, float tdx, float tdy, float x1, float y1, float z1, float x2, float y2, float z2)
+	{
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(tx, ty);
+			GL11.glVertex3f(x1, y1, z1);
+			
+			GL11.glTexCoord2f(tx+tdx, ty);
+			GL11.glVertex3f(x2, y1, z2);
+			
+			GL11.glTexCoord2f(tx, ty+tdy);
+			GL11.glVertex3f(x1, y2, z1);
+			
+			GL11.glTexCoord2f(tx+tdx, ty+tdy);
+			GL11.glVertex3f(x2, y2, z2);
+		GL11.glEnd();
+	}
+	
+	/**
 	 * Renders an arbitrary horizontal rectangle (will be orthogonal)
 	 * @param t
 	 * @param x1
@@ -263,6 +298,38 @@ public class Chunk {
 			GL11.glVertex3f(x4, y, z4);
 		GL11.glEnd();
 	}
+	
+	/**
+	 * Renders a nonstandard horizontal rectangle (nonstandard referring primarily to
+	 * the texture size (ie: when we're not pulling a single element out of a 16x16
+	 * grid).
+	 * 
+	 * @param tx X index within the texture
+	 * @param ty Y index within the texture
+	 * @param tdx Width of texture
+	 * @param tdy Height of texture
+	 * @param x1
+	 * @param z1
+	 * @param x2
+	 * @param z2
+	 * @param y
+	 */
+	public void renderNonstandardHorizontal(float tx, float ty, float tdx, float tdy, float x1, float z1, float x2, float z2, float y) {
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(tx, ty);
+			GL11.glVertex3f(x1, y, z1);
+	
+			GL11.glTexCoord2f(tx+tdx, ty);
+			GL11.glVertex3f(x1, y, z2);
+	
+			GL11.glTexCoord2f(tx, ty+tdy);
+			GL11.glVertex3f(x2, y, z1);
+	
+			GL11.glTexCoord2f(tx+tdx, ty+tdy);
+			GL11.glVertex3f(x2, y, z2);
+		GL11.glEnd();
+	}
+	
 	
 	/**
 	 * Renders the side of a stair piece that runs East/West.  Verticies are in the following order:
@@ -1748,6 +1815,8 @@ public class Chunk {
 		float start_x;
 		float start_y;
 		float start_z;
+		float back_x;
+		float back_z;
 		float dX;
 		float dZ;
 		for (PaintingEntity painting : this.paintings)
@@ -1765,48 +1834,73 @@ public class Chunk {
 				case 0x0:
 					// East
 					start_x = painting.tile_x + 0.5f + info.centerx;
-					start_z = painting.tile_z - 0.5f - TEX64;
+					start_z = painting.tile_z - 0.5f - TEX16;
+					back_x = start_x;
+					back_z = start_z + TEX32;
 					dX = -1;
 					dZ = 0;
 					break;
 				case 0x1:
 					// North
-					start_x = painting.tile_x - 0.5f - TEX64;
+					start_x = painting.tile_x - 0.5f - TEX16;
 					start_z = painting.tile_z - 0.5f - info.centerx;
+					back_x = start_x + TEX32;
+					back_z = start_z;
 					dX = 0;
 					dZ = 1;
 					break;
 				case 0x2:
 					// West
 					start_x = painting.tile_x - 0.5f - info.centerx;
-					start_z = painting.tile_z + 0.5f + TEX64;
+					start_z = painting.tile_z + 0.5f + TEX16;
+					back_x = start_x;
+					back_z = start_z - TEX32;
 					dX = 1;
 					dZ = 0;
 					break;
 				case 0x3:
 				default:
 					// South
-					start_x = painting.tile_x + 0.5f + TEX64;
+					start_x = painting.tile_x + 0.5f + TEX16;
 					start_z = painting.tile_z + 0.5f + info.centerx;
+					back_x = start_x - TEX32;
+					back_z = start_z;
 					dX = 0;
 					dZ = -1;
 					break;
 			}
 			
-			// Now actually draw it
-			GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-				GL11.glTexCoord2f(info.offsetx, info.offsety);
-				GL11.glVertex3f(start_x, start_y, start_z);
-				
-				GL11.glTexCoord2f(info.offsetx + info.sizex_tex, info.offsety);
-				GL11.glVertex3f(start_x + (dX*info.sizex), start_y, start_z + (dZ*info.sizex));
-				
-				GL11.glTexCoord2f(info.offsetx, info.offsety + info.sizey_tex);
-				GL11.glVertex3f(start_x, start_y-info.sizey, start_z);
-				
-				GL11.glTexCoord2f(info.offsetx + info.sizex_tex, info.offsety + info.sizey_tex);
-				GL11.glVertex3f(start_x + (dX*info.sizex), start_y-info.sizey, start_z + (dZ*info.sizex));
-			GL11.glEnd();
+			// Draw the painting face
+			renderNonstandardVertical(info.offsetx, info.offsety, info.sizex_tex, info.sizey_tex,
+					start_x, start_y, start_z,
+					start_x + (dX*info.sizex), start_y-info.sizey, start_z + (dZ*info.sizex));
+			
+			PaintingInfo backinfo = MineCraftConstants.paintingback;
+
+			// Back
+			renderNonstandardVertical(backinfo.offsetx, backinfo.offsety, info.sizex_tex, info.sizey_tex,
+					back_x, start_y, back_z,
+					back_x + (dX*info.sizex), start_y-info.sizey, back_z + (dZ*info.sizex));
+ 
+			// Sides
+			renderNonstandardVertical(backinfo.offsetx, backinfo.offsety, info.sizex_tex, info.sizey_tex,
+					start_x, start_y, start_z,
+					back_x, start_y-info.sizey, back_z);
+			renderNonstandardVertical(backinfo.offsetx, backinfo.offsety, info.sizex_tex, info.sizey_tex,
+					start_x + (dX*info.sizex), start_y, start_z + (dZ*info.sizex),
+					back_x + (dX*info.sizex), start_y-info.sizey, back_z + (dZ*info.sizex));
+			
+			// Top/Bottom
+			renderNonstandardHorizontal(backinfo.offsetx, backinfo.offsety, info.sizex_tex, info.sizey_tex,
+					start_x, start_z,
+					back_x + (dX*info.sizex), back_z + (dZ*info.sizex),
+					start_y-info.sizey
+					);
+			renderNonstandardHorizontal(backinfo.offsetx, backinfo.offsety, info.sizex_tex, info.sizey_tex,
+					start_x, start_z,
+					back_x + (dX*info.sizex), back_z + (dZ*info.sizex),
+					start_y
+					);
 		}
 	}
 	
