@@ -52,6 +52,8 @@ public class MinecraftLevel {
 		
 		CompoundTag levelDataData = (CompoundTag) levelData.getTagWithName("Data");
 		CompoundTag levelPlayerData = (CompoundTag) levelDataData.getTagWithName("Player");
+		this.playerYaw = 0;
+		this.playerPitch = 0;
 		if(levelPlayerData != null) {
 			
 			// Figure out what dimension the player's in.  If it matches, move our camera there.
@@ -74,38 +76,26 @@ public class MinecraftLevel {
 				this.playerPitch = rotPitch.value;
 
 			}
-			else
-			{
-				this.playerPos = new Block(0,-65,0);
-				this.playerYaw =0;
-				this.playerPitch = 0;				
-			}
-	
-			// Set the spawn point if we're not in the Nether
-			if (world.isNether())
-			{
-				this.spawnPoint = new Block(0,-65,0);				
-			}
-			else
-			{
-				IntTag spawnX = (IntTag) levelDataData.getTagWithName("SpawnX");
-				IntTag spawnY = (IntTag) levelDataData.getTagWithName("SpawnY");
-				IntTag spawnZ = (IntTag) levelDataData.getTagWithName("SpawnZ");
-				this.spawnPoint = new Block(-spawnX.value, -spawnY.value, -spawnZ.value);
-				if (playerPos == null)
-				{
-					this.playerPos = new Block((int) -spawnX.value, (int) -spawnY.value, (int) -spawnZ.value);
-				}
-
-			}
-		} else {
-			this.spawnPoint = new Block(0,-65,0);
-			this.playerPos = new Block(0,-65,0);
-			this.playerYaw =0;
-			this.playerPitch = 0;
 		}
-			
 		
+		// Set the spawn point if we're not in the Nether
+		if (world.isNether())
+		{
+			this.spawnPoint = new Block(0,-65,0);
+		}
+		else
+		{
+			IntTag spawnX = (IntTag) levelDataData.getTagWithName("SpawnX");
+			IntTag spawnY = (IntTag) levelDataData.getTagWithName("SpawnY");
+			IntTag spawnZ = (IntTag) levelDataData.getTagWithName("SpawnZ");
+			this.spawnPoint = new Block(-spawnX.value, -spawnY.value, -spawnZ.value);
+		}
+
+		// If we don't have a player position set already, do so now.
+		if (playerPos == null)
+		{
+			this.playerPos = new Block(this.spawnPoint.x, this.spawnPoint.y, this.spawnPoint.z);
+		}
 	}
 	
 	/***
