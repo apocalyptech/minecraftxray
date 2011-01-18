@@ -603,7 +603,7 @@ public class Chunk {
 		BLOCK_TYPE block_type = BLOCK_TYPE_MAP.get(i);
 		if((i == 0) || (i == TYPE_WATER) || (i == TYPE_WATER_STATIONARY) ||
 				(i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY) ||
-				(block_type != BLOCK_TYPE.NORMAL)) {
+				(block_type != BLOCK_TYPE.NORMAL && block_type != BLOCK_TYPE.DATAVAL)) {
 			return false;
 		}
 		

@@ -1,4 +1,5 @@
   * Paintings now render as they should
+  * Fixed a bug where wool and wood wouldn't be considered solid blocks
 
 Minecraft X-Ray 2.7 Maintenance Branch 5 (2011.01.17)
 
