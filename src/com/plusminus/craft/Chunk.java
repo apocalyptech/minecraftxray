@@ -2003,7 +2003,8 @@ public class Chunk {
 								}
 								catch (NullPointerException e)
 								{
-									// whatever.
+									// Just report and continue
+									System.out.println("Unknown data value for block type " + t + ": " + data);
 								}
 							default:
 								// if we have to draw this block
