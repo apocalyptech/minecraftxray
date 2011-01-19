@@ -1,5 +1,7 @@
   * Paintings now render as they should
   * Fixed a bug where wool and wood wouldn't be considered solid blocks
+  * Ability to warp to any player's position with INS/DEL when loading
+    multiplayer worlds
 
 Minecraft X-Ray 2.7 Maintenance Branch 5 (2011.01.17)
 

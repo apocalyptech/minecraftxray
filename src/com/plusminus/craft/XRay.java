@@ -8,6 +8,10 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.Rectangle;
+import java.awt.Font;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import java.awt.RenderingHints;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -99,6 +103,7 @@ public class XRay {
     public Texture minecraftTexture;
     public Texture paintingTexture;
     public Texture portalTexture;
+    public Texture loadingTextTexture;
     
     // the textures used by the minimap
     private Texture minimapTexture;
@@ -202,6 +207,10 @@ public class XRay {
 	// How long are we allowed to spend loading chunks before we update?
 	private long max_chunkload_time = Sys.getTimerResolution() / 10;  // a tenth of a second
 	
+	// The current camera position that we're at
+	private CameraPreset currentPosition;
+	private String cameraTextOverride = null;
+	
 	// lets start with the program
     public static void main(String args[]) {    
         new XRay().run();
@@ -285,6 +294,28 @@ public class XRay {
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
             GL11.glLineWidth(20);
+            
+            BufferedImage i = loadingTextTexture.getImage();
+            Graphics2D g = i.createGraphics();
+            g.setColor(new Color(0f, 0f, 0f, 0f));
+            g.setComposite(AlphaComposite.Src);
+            g.fillRect(0, 0, i.getWidth(), i.getHeight());
+            String statusmessage;
+            if (this.cameraTextOverride == null)
+            {
+            	statusmessage = "Moving camera to " + this.currentPosition.name;
+            }
+            else
+            {
+            	statusmessage = "Moving camera to " + this.cameraTextOverride;
+            	this.cameraTextOverride = null;
+            }
+            Rectangle2D bounds = HEADERFONT.getStringBounds(statusmessage, g.getFontRenderContext());
+            g.setFont(HEADERFONT);
+            g.setColor(Color.white);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g.drawString(statusmessage, (screenWidth/2)-((float)bounds.getWidth()/2), 40f);
+            loadingTextTexture.update();
     	}
     	
     	// There's various cases where parts of our crosshairs may be covered over by
@@ -292,8 +323,8 @@ public class XRay {
     	// Whatever.
     	boolean got_spawn_chunk = false;
     	boolean got_playerpos_chunk = false;
-   		Block spawn = level.getSpawnPoint();
-   		Block playerpos = level.getPlayerPosition();
+   		CameraPreset spawn = level.getSpawnPoint();
+   		CameraPreset playerpos = level.getPlayerPosition();
    		Chunk c;
    		while (!mapChunksToLoad.isEmpty())
 		{
@@ -314,11 +345,11 @@ public class XRay {
 			}
 			level.loadChunk(b.x, b.z);
 			drawChunkToMap(b.x, b.z);
-			if (spawn.cx == b.x && spawn.cz == b.z)
+			if (spawn.block.cx == b.x && spawn.block.cz == b.z)
 			{
 				got_spawn_chunk = true;
 			}
-			if (playerpos.cx == b.x && playerpos.cz == b.z)
+			if (playerpos.block.cx == b.x && playerpos.block.cz == b.z)
 			{
 				got_playerpos_chunk = true;
 			}
@@ -357,6 +388,12 @@ public class XRay {
 	                    GL11.glVertex2f(px, ey);
 	                GL11.glEnd();
 	                
+	                // Draw our message
+	                GL11.glEnable(GL11.GL_BLEND);
+	                GL11.glEnable(GL11.GL_TEXTURE_2D);
+	                SpriteTool.drawSpriteAbsoluteXY(loadingTextTexture, 0f, by - 100);
+	                GL11.glDisable(GL11.GL_BLEND);
+	                GL11.glDisable(GL11.GL_TEXTURE_2D);
 	                Display.update();
 				}
 			}
@@ -501,6 +538,7 @@ public class XRay {
 			minimapArrowTexture 	= TextureTool.allocateTexture(32,32);
 			fpsTexture				= TextureTool.allocateTexture(128, 32);
 			levelInfoTexture		= TextureTool.allocateTexture(128,144);
+			loadingTextTexture		= TextureTool.allocateTexture(screenWidth, 50);
 			
 			createMinimapSprites();
 			
@@ -759,25 +797,32 @@ public class XRay {
 		this.triggerChunkLoads();
     	
     }
-
-    private void moveCameraToSpawnPoint() {
-    	Block spawnPoint = level.getSpawnPoint();
-		this.camera.getPosition().set(spawnPoint.x, spawnPoint.y-1, spawnPoint.z);
-		this.camera.setYawAndPitch(0,0);
+    
+    private void moveCameraToPosition(CameraPreset playerPos)
+    {
+    	this.camera.getPosition().set(playerPos.block.x, playerPos.block.y, playerPos.block.z);
+		this.camera.setYawAndPitch(180+playerPos.yaw, playerPos.pitch);
 		initial_load_queued = false;
 		initial_load_done = false;
 		this.removeChunklistFromMap(level.removeAllChunksFromMinimap());
 		this.triggerChunkLoads();
+		this.currentPosition = playerPos;
+    }
+
+    private void moveCameraToSpawnPoint() {
+    	this.moveCameraToPosition(level.getSpawnPoint());
     }
     
     private void moveCameraToPlayerPos() {
-    	Block playerPos = level.getPlayerPosition();
-    	this.camera.getPosition().set(playerPos.x, playerPos.y, playerPos.z);
-		this.camera.setYawAndPitch(180+level.getPlayerYaw(),level.getPlayerPitch());
-		initial_load_queued = false;
-		initial_load_done = false;
-		this.removeChunklistFromMap(level.removeAllChunksFromMinimap());
-		this.triggerChunkLoads();
+    	this.moveCameraToPosition(level.getPlayerPosition());
+    }
+    
+    private void moveCameraToNextPlayer() {
+    	this.moveCameraToPosition(level.getNextPlayerPosition(this.currentPosition));
+    }
+    
+    private void moveCameraToPreviousPlayer() {
+    	this.moveCameraToPosition(level.getPrevPlayerPosition(this.currentPosition));
     }
     
     /**
@@ -1064,6 +1109,18 @@ public class XRay {
         	moveCameraToPlayerPos();
         }
         
+        // Switch to the next available camera preset
+        if (Keyboard.isKeyDown(Keyboard.KEY_INSERT) && keyPressed != Keyboard.KEY_INSERT) {
+        	keyPressed = Keyboard.KEY_INSERT;
+        	moveCameraToNextPlayer();
+        }
+        
+        // Switch to the previous camera preset
+        if (Keyboard.isKeyDown(Keyboard.KEY_DELETE) && keyPressed != Keyboard.KEY_DELETE) {
+        	keyPressed = Keyboard.KEY_DELETE;
+        	moveCameraToPreviousPlayer();
+        }
+        
         // Increase light level
         if(Keyboard.isKeyDown(Keyboard.KEY_ADD) && keyPressed != Keyboard.KEY_ADD) {
         	keyPressed = Keyboard.KEY_ADD;                                     
@@ -1174,11 +1231,13 @@ public class XRay {
 		float camera_mult = 1.0f;
 		if (world.isNether() && world.hasOverworld())
 		{
+			this.cameraTextOverride = "equivalent Overworld location (approx.)";
 			newworld = world.getOverworldInfo();
 			camera_mult = 8.0f;
 		}
 		else if (!world.isNether() && world.hasNether())
 		{
+			this.cameraTextOverride = "equivalent Nether location (approx.)";
 			newworld = world.getNetherInfo();
 			camera_mult = 1.0f/8.0f;
 		}
@@ -1231,9 +1290,9 @@ public class XRay {
     private void drawSpawnMarkerToMinimap() {
     	Graphics2D g = minimapGraphics;
     	
-    	Block spawn = level.getSpawnPoint();
-		int sy = getMinimapBaseY(spawn.cx)-(spawn.x%16);
-		int sx = (getMinimapBaseX(spawn.cz)+(spawn.z%16))%minimap_dim;
+    	CameraPreset spawn = level.getSpawnPoint();
+		int sy = getMinimapBaseY(spawn.block.cx)-(spawn.block.x%16);
+		int sx = (getMinimapBaseX(spawn.block.cz)+(spawn.block.z%16))%minimap_dim;
     	
     	g.setStroke(new BasicStroke(2));
     	g.setColor(Color.red.brighter());
@@ -1249,9 +1308,9 @@ public class XRay {
     private void drawPlayerposMarkerToMinimap() {
     	Graphics2D g = minimapGraphics;
     	
-    	Block player = level.getPlayerPosition();
-    	int py = getMinimapBaseY(player.cx)-(player.x%16);
-		int px = getMinimapBaseX(player.cz)+(player.z%16);	
+    	CameraPreset player = level.getPlayerPosition();
+    	int py = getMinimapBaseY(player.block.cx)-(player.block.x%16);
+		int px = getMinimapBaseX(player.block.cz)+(player.block.z%16);	
     	
     	g.setStroke(new BasicStroke(2));
 	    g.setColor(Color.yellow.brighter());

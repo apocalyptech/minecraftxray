@@ -16,17 +16,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipException;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-
-import sun.security.action.GetBooleanAction;
 
 /***
  * Utility class which has convenience methods to access the

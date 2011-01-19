@@ -23,10 +23,11 @@ public class MinecraftLevel {
 	public Chunk[][] levelData;
 	
 	private WorldInfo world;
-	private Block spawnPoint;
-	private Block playerPos;
-	private float playerYaw;
-	private float playerPitch;
+	
+	// This var holds the index of the player position we've most recently picked
+	private ArrayList<CameraPreset> playerPositions;
+	private int playerPos_idx;
+	private int spawnPoint_idx;
 	
 	public Texture minecraftTexture;
 	public Texture paintingTexture;
@@ -50,10 +51,12 @@ public class MinecraftLevel {
 		
 		//	System.out.println(levelData.toString());
 		
+		this.playerPositions = new ArrayList<CameraPreset>();
+		this.playerPos_idx = -1;
+		this.spawnPoint_idx = -1;
+		
 		CompoundTag levelDataData = (CompoundTag) levelData.getTagWithName("Data");
 		CompoundTag levelPlayerData = (CompoundTag) levelDataData.getTagWithName("Player");
-		this.playerYaw = 0;
-		this.playerPitch = 0;
 		if(levelPlayerData != null) {
 			
 			// Figure out what dimension the player's in.  If it matches, move our camera there.
@@ -71,50 +74,106 @@ public class MinecraftLevel {
 				FloatTag rotYaw = (FloatTag) playerRotation.value.get(0);
 				FloatTag rotPitch = (FloatTag) playerRotation.value.get(1);
 
-				this.playerPos = new Block((int) -posX.value, (int) -posY.value, (int) -posZ.value);
-				this.playerYaw = rotYaw.value;
-				this.playerPitch = rotPitch.value;
-
+				this.playerPositions.add(new CameraPreset(0, "Singleplayer User", new Block((int) -posX.value, (int) -posY.value, (int) -posZ.value),
+						rotYaw.value, rotPitch.value));
+				this.playerPos_idx = 0;
+			}
+		}
+		
+		// Get a list of MP users that can provide valid camera positions for us
+		CompoundTag mpuserData;
+		for (String mpusername : world.mp_players.keySet())
+		{
+			try
+			{
+				mpuserData = (CompoundTag) DTFReader.readDTFFile(world.mp_players.get(mpusername));
+				
+				// Skip players who aren't currently in the dimension that we're using
+				// (which would be weird, since SMP doesn't support Nether properly yet)
+				IntTag playerDim = (IntTag) mpuserData.getTagWithName("Dimension");
+				if (playerDim == null)
+				{
+					if (world.isNether())
+					{
+						continue;
+					}
+				}
+				else
+				{
+					if ((playerDim.value == 0 && world.isNether()) || (playerDim.value == -1 && !world.isNether()))
+					{
+						continue;
+					}
+				}
+				
+				// Pull out the data
+				ListTag playerPos = (ListTag) mpuserData.getTagWithName("Pos");
+				ListTag playerRotation = (ListTag) mpuserData.getTagWithName("Rotation");	
+				DoubleTag posX = (DoubleTag) playerPos.value.get(0);
+				DoubleTag posY = (DoubleTag) playerPos.value.get(1);
+				DoubleTag posZ = (DoubleTag) playerPos.value.get(2);
+				FloatTag rotYaw = (FloatTag) playerRotation.value.get(0);
+				FloatTag rotPitch = (FloatTag) playerRotation.value.get(1);
+				this.playerPositions.add(new CameraPreset(this.playerPositions.size(),
+						mpusername, new Block((int) -posX.value, (int) -posY.value-1, (int) -posZ.value),
+						rotYaw.value, rotPitch.value));
+			}
+			catch (Exception e)
+			{
+				// Just report to console and continue.
+				System.out.println("Error loading position information for user " + mpusername + ": " + e.toString());
 			}
 		}
 		
 		// Set the spawn point if we're not in the Nether
+		this.spawnPoint_idx = this.playerPositions.size();
 		if (world.isNether())
 		{
-			this.spawnPoint = new Block(0,-65,0);
+			this.playerPositions.add(new CameraPreset(this.spawnPoint_idx, "Map Center", new Block(0,-66,0), 0, 0));
 		}
 		else
 		{
 			IntTag spawnX = (IntTag) levelDataData.getTagWithName("SpawnX");
 			IntTag spawnY = (IntTag) levelDataData.getTagWithName("SpawnY");
 			IntTag spawnZ = (IntTag) levelDataData.getTagWithName("SpawnZ");
-			this.spawnPoint = new Block(-spawnX.value, -spawnY.value, -spawnZ.value);
+			this.playerPositions.add(new CameraPreset(this.spawnPoint_idx, "Spawnpoint", new Block(-spawnX.value, -spawnY.value-1, -spawnZ.value), 0, 0));
 		}
 
-		// If we don't have a player position set already, do so now.
-		if (playerPos == null)
+		// Figure out where to set the "player" position, if we have no singleplayer user
+		if (this.playerPos_idx == -1)
 		{
-			this.playerPos = new Block(this.spawnPoint.x, this.spawnPoint.y, this.spawnPoint.z);
+			this.playerPos_idx = this.spawnPoint_idx;
 		}
 	}
 	
 	/***
 	 * returns the spawning point for this level
 	 */
-	public Block getSpawnPoint() {
-		return this.spawnPoint;
+	public CameraPreset getPlayerPositionIdx(int idx)
+	{
+		return this.playerPositions.get(idx);
 	}
 	
-	public Block getPlayerPosition() {
-		return this.playerPos;
+	public CameraPreset getSpawnPoint() {
+		return this.getPlayerPositionIdx(this.spawnPoint_idx);
 	}
 	
-	public float getPlayerPitch() {
-		return this.playerPitch;
+	public CameraPreset getPlayerPosition() {
+		return this.getPlayerPositionIdx(this.playerPos_idx);
 	}
 	
-	public float getPlayerYaw() {
-		return this.playerYaw;
+	public CameraPreset getNextPlayerPosition(CameraPreset current) {
+		int next_idx = (current.idx+1) % this.playerPositions.size();
+		return this.getPlayerPositionIdx(next_idx);
+	}
+
+	public CameraPreset getPrevPlayerPosition(CameraPreset current) {
+		int prev_idx = current.idx - 1;
+		if (prev_idx < 0)
+		{
+			prev_idx = this.playerPositions.size()-1;
+		}
+		return this.getPlayerPositionIdx(prev_idx);
 	}
 	
 	/***

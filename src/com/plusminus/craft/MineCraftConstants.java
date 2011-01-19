@@ -33,6 +33,7 @@ public class MineCraftConstants {
     
     // the font to draw information to the screen
     public static final Font ARIALFONT = new Font("Arial", Font.BOLD, 14);
+    public static final Font HEADERFONT = new Font("Arial", Font.BOLD, 26);
 	
     // some convenience statics regarding time calculation
 	public static final long NANOSPERSECOND 	= 1000000000;

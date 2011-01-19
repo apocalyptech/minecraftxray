@@ -2,6 +2,8 @@ package com.plusminus.craft;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FilenameFilter;
+import java.util.HashMap;
 
 /**
  * Class to aid in maintaining a list of possible worlds for us to use.
@@ -12,6 +14,18 @@ public class WorldInfo
 	private int worldnum;
 	private boolean nether;
 	private boolean custom;
+	public HashMap<String, File> mp_players;
+	
+	private class PlayerDatFilter implements FilenameFilter
+	{
+		public PlayerDatFilter() {
+			// Nothing, really
+		}
+		
+		public boolean accept(File directory, String filename) {
+			return (filename.endsWith(".dat"));
+		}
+	}
 	
 	/**
 	 * Instansiate a new object.  "custom" refers to when the user has specified
@@ -28,6 +42,7 @@ public class WorldInfo
 		this.nether = isNether;
 		this.custom = custom;
 		this.worldnum = worldnum;
+		this.populateMPPlayerList();
 	}
 	
 	/**
@@ -61,6 +76,25 @@ public class WorldInfo
 	{
 		this(null, -1, false, true);
 	}
+	
+	public void populateMPPlayerList()
+	{
+		this.mp_players = new HashMap<String, File>();
+		if (this.basepath != null)
+		{
+			File playerdir = this.getPlayerListDir();
+			if (playerdir != null && playerdir.exists() && playerdir.isDirectory())
+			{
+				String basename;
+				File[] players = playerdir.listFiles(new PlayerDatFilter());
+				for (File player : players)
+				{
+					basename = player.getName();
+					this.mp_players.put(basename.substring(0, basename.lastIndexOf('.')), player);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Sets the base path.  Has no effect on non-custom worlds.
@@ -81,6 +115,7 @@ public class WorldInfo
 				this.nether = false;
 			}
 		}
+		this.populateMPPlayerList();
 	}
 	
 	/**
@@ -102,6 +137,18 @@ public class WorldInfo
 		else
 		{
 			return new File(this.getBasePath(), "level.dat");
+		}
+	}
+	
+	public File getPlayerListDir()
+	{
+		if (this.isNether())
+		{
+			return new File(this.getBasePath(), "../players");
+		}
+		else
+		{
+			return new File(this.getBasePath(), "players");
 		}
 	}
 	
