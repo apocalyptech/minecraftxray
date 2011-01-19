@@ -4,11 +4,7 @@
    "decorative" blocks like torches, flowers, reed, etc, look weird, as
    does water and portals.
    
- * Proper rendering support for redstone wire, minecart tracks, fences,
-   and other blocks which change appearance depending on what's around
-   them.  Minecart tracks should actually be quite easy since their
-   orientation is actually stored in the Data values; the other ones
-   will require some introspection.
+ * Proper rendering support for redstone wire
  
  * Draw messages on signs like you'd expect.
  
@@ -18,9 +14,7 @@
  
  * Highlighting for any arbitrary (user-chosen) block type
  
- * Find a way to eliminate the glitching when new map chunks are loading
-   
- * Paintings
+ * Find a way to eliminate the stuttering when new map chunks are loading
  
  * Home/End will wipe the minimap and load chunks, even if we're already
    "in range" and might even have those chunks cached.  Should fix that.

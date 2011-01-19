@@ -1,8 +1,10 @@
-  * Paintings now render as they should
+Minecraft X-Ray 2.7 Maintenance Branch 6 (2011.01.19)
+
   * Fixed a bug where wool and wood wouldn't be considered solid blocks
   * Ability to warp to any player's position with INS/DEL when loading
     multiplayer worlds
-  * Minecart tracks and fences render properly now
+  * Minecart tracks, paintings and fences render properly now
+  * Fixed a NullPointerException related to dyed wool
 
 Minecraft X-Ray 2.7 Maintenance Branch 5 (2011.01.17)
 

@@ -1996,7 +1996,15 @@ public class Chunk {
 								// Note that we don't break here; we DO want to pass through to the default case,
 								// because we're overriding textureId
 								byte data = getData(x, y, z);
-								textureId = blockDataSpriteSheetMap.get(t).get(data);
+								data &= 0xF;
+								try
+								{
+									textureId = blockDataSpriteSheetMap.get(t).get(data);
+								}
+								catch (NullPointerException e)
+								{
+									// whatever.
+								}
 							default:
 								// if we have to draw this block
 								if(draw) {
