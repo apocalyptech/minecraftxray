@@ -108,6 +108,70 @@ public class Chunk {
 		GL11.glEnd();
 	}
 	
+	/**
+	 * Renders a floor tile which is also rotated
+	 * 
+	 * @param t
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param turns The number of clockwise 90-degree turns to rotate the texture
+	 */
+	public void renderTopDownRotate(int t, float x, float y, float z, int turns)
+	{
+		float scale = 0.5f;
+		float tx = precalcSpriteSheetToTextureX[t];
+		float ty = precalcSpriteSheetToTextureY[t];
+		float x1, y1;
+		float x2, y2;
+		float x3, y3;
+		float x4, y4;
+		
+		switch (turns)
+		{
+			case 0:
+				x1 = tx;       y1 = ty;
+				x2 = tx+TEX16; y2 = ty;
+				x3 = tx;       y3 = ty+TEX16;
+				x4 = tx+TEX16; y4 = ty+TEX16;
+				break;
+			case 1:
+				x1 = tx+TEX16; y1 = ty;
+				x2 = tx+TEX16; y2 = ty+TEX16;
+				x3 = tx;       y3 = ty;
+				x4 = tx;       y4 = ty+TEX16;
+				break;
+			case 2:
+				x1 = tx+TEX16; y1 = ty+TEX16;
+				x2 = tx;       y2 = ty+TEX16;
+				x3 = tx+TEX16; y3 = ty;
+				x4 = tx;       y4 = ty;
+				break;
+			case 3:
+			default:
+				x1 = tx;       y1 = ty+TEX16;
+				x2 = tx;       y2 = ty;
+				x3 = tx+TEX16; y3 = ty+TEX16;
+				x4 = tx+TEX16; y4 = ty;
+				break;
+		}
+		
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(x1, y1);
+			GL11.glVertex3f(x-scale, y-scale, z+scale);
+	
+			GL11.glTexCoord2f(x2, y2);
+			GL11.glVertex3f(x-scale, y-scale, z-scale);
+	
+			GL11.glTexCoord2f(x3, y3);
+			GL11.glVertex3f(x+scale, y-scale, z+scale);
+	
+			GL11.glTexCoord2f(x4, y4);
+			GL11.glVertex3f(x+scale, y-scale, z-scale);
+		GL11.glEnd();
+		
+	}
+	
 	public void renderTopDown(int t, float x, float y, float z) {
 		this.renderTopDown(t, x, y, z, 0.5f);
 	}
@@ -329,7 +393,48 @@ public class Chunk {
 			GL11.glVertex3f(x2, y, z2);
 		GL11.glEnd();
 	}
+
+	/**
+	 * Given a whole mess of coordinates, draws an arbitrary rectangle
+	 * 
+	 * @param t
+	 * @param x1
+	 * @param y1
+	 * @param z1
+	 * @param x2
+	 * @param y2
+	 * @param z2
+	 * @param x3
+	 * @param y3
+	 * @param z3
+	 * @param x4
+	 * @param y4
+	 * @param z4
+	 */
+	public void renderArbitraryRect(int t,
+			float x1, float y1, float z1,
+			float x2, float y2, float z2,
+			float x3, float y3, float z3,
+			float x4, float y4, float z4)
+	{
+		float tx = precalcSpriteSheetToTextureX[t];
+		float ty = precalcSpriteSheetToTextureY[t];
+
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(tx, ty);
+			GL11.glVertex3f(x1, y1, z1);
 	
+			GL11.glTexCoord2f(tx+TEX16, ty);
+			GL11.glVertex3f(x2, y2, z2);
+	
+			GL11.glTexCoord2f(tx, ty+TEX16);
+			GL11.glVertex3f(x3, y3, z3);
+	
+			GL11.glTexCoord2f(tx+TEX16, ty+TEX16);
+			GL11.glVertex3f(x4, y4, z4);
+		GL11.glEnd();
+		
+	}
 	
 	/**
 	 * Renders the side of a stair piece that runs East/West.  Verticies are in the following order:
@@ -1075,6 +1180,84 @@ public class Chunk {
 	}
 
 	/**
+	 * Minecart tracks
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderMinecartTracks(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		 
+		byte data = getData(xxx, yyy, zzz);
+		if (data > 0x5)
+		{
+			textureId -= 16;
+		}
+ 
+		switch (data)
+		{
+			case 0x0:
+				this.renderTopDownRotate(textureId, x, y+TEX64, z, 1);
+				break;
+			case 0x1:
+				this.renderTopDown(textureId, x, y+TEX64, z);
+				break;
+			case 0x2:
+				this.renderArbitraryRect(textureId,
+						x-0.5f, y-0.5f, z+0.5f,
+						x-0.5f, y-0.5f, z-0.5f,
+						x+0.5f, y+0.5f, z+0.5f,
+						x+0.5f, y+0.5f, z-0.5f
+						);
+				break;
+			case 0x3:
+				this.renderArbitraryRect(textureId,
+						x-0.5f, y+0.5f, z+0.5f,
+						x-0.5f, y+0.5f, z-0.5f,
+						x+0.5f, y-0.5f, z+0.5f,
+						x+0.5f, y-0.5f, z-0.5f
+						);
+				break;
+			case 0x4:
+				this.renderArbitraryRect(textureId,
+						x-0.5f, y+0.5f, z-0.5f,
+						x+0.5f, y+0.5f, z-0.5f,
+						x-0.5f, y-0.5f, z+0.5f,
+						x+0.5f, y-0.5f, z+0.5f
+						);
+				break;
+			case 0x5:
+				this.renderArbitraryRect(textureId,
+						x-0.5f, y-0.5f, z-0.5f,
+						x+0.5f, y-0.5f, z-0.5f,
+						x-0.5f, y+0.5f, z+0.5f,
+						x+0.5f, y+0.5f, z+0.5f
+						);
+				break;
+			case 0x6:
+				this.renderTopDownRotate(textureId, x, y+TEX64, z, 3);
+				break;
+			case 0x7:
+				this.renderTopDownRotate(textureId, x, y+TEX64, z, 2);
+				break;
+			case 0x8:
+				this.renderTopDownRotate(textureId, x, y+TEX64, z, 1);
+				break;
+			case 0x9:
+				this.renderTopDownRotate(textureId, x, y+TEX64, z, 0);
+				break;
+			default:
+				// Just do the usual for now
+				this.renderTopDown(textureId, x, y+TEX64, z);
+				break;
+		}
+	}
+	
+	/**
 	 * Renders a pressure plate.
 	 * 
 	 * @param textureId
@@ -1721,6 +1904,9 @@ public class Chunk {
 								break;
 							case FLOOR:
 								renderFloor(textureId,x,y,z);
+								break;
+							case MINECART_TRACKS:
+								renderMinecartTracks(textureId,x,y,z);
 								break;
 							case PRESSURE_PLATE:
 								renderPlate(textureId,x,y,z);

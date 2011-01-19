@@ -64,7 +64,8 @@ public class MineCraftConstants {
 		LEVER,
 		BUTTON,
 		PORTAL,
-		DATAVAL
+		DATAVAL,
+		MINECART_TRACKS
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -223,7 +224,9 @@ public class MineCraftConstants {
 		
 		// "floor" decorations
 		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_WIRE, BLOCK_TYPE.FLOOR);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_MINECART_TRACKS, BLOCK_TYPE.FLOOR);
+		
+		// Minecart tracks
+		BLOCK_TYPE_MAP.put((byte)BLOCK_MINECART_TRACKS, BLOCK_TYPE.MINECART_TRACKS);
 		
 		// Pressure plates
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STONE_PRESSURE_PLATE, BLOCK_TYPE.PRESSURE_PLATE);
