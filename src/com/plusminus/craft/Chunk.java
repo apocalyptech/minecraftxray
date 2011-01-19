@@ -703,34 +703,6 @@ public class Chunk {
 		GL11.glEnd();
 	}
 	
-	/**
-	 * Renders one side of a fence graphic.  Note that for now we're not making any
-	 * attempt to figure out exactly how we should draw these; we're just putting
-	 * the "default" piece in.
-	 * 
-	 * @param t
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param swapX
-	 */
-	public void renderFenceSide(int t, float x, float y, float z) {
-		//float bx = precalcSpriteSheetToTextureX[t];
-		//float by = precalcSpriteSheetToTextureY[t];
-		
-		// First post
-		this.renderVertical(t, x, z-.35f, x, z-.25f, y-0.5f, .7f);
-		
-		// Second post
-		this.renderVertical(t, x, z+.35f, x, z+.25f, y-0.5f, .7f);
-		
-		// First slat
-		this.renderVertical(t, x, z-.25f, x, z+.25f, y-.3f, .2f);
-		
-		// Second slat
-		this.renderVertical(t, x, z-.25f, x, z+.25f, y, .2f);
-	}
-	
 	public void renderFenceBody(int t, float x1, float x2, float y, float z) {
 		
 		// Outside edges
@@ -1551,15 +1523,87 @@ public class Chunk {
 	 * @param xxx
 	 * @param yyy
 	 * @param zzz
+	 * @param blockOffset Should be passed in from our main draw loop so we don't have to recalculate
 	 */
-	public void renderFence(int textureId, int xxx, int yyy, int zzz) {
+	public void renderFence(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
+		float postsize = .1f;
+		float postsize_h = postsize/2f;
+		float slat_height = .2f;
+		float top_slat_offset = .3f;
+		float slat_start = y-.1f;
 		
-		this.renderFenceSide(textureId, x+.05f, y, z);
-		this.renderFenceSide(textureId, x-.05f, y, z);
-		this.renderFenceBody(textureId, x+.05f, x-.05f, y, z);
+		// First the fencepost
+		this.renderVertical(textureId, x+postsize, z+postsize, x+postsize, z-postsize, y-0.5f, 1f);
+		this.renderVertical(textureId, x+postsize, z-postsize, x-postsize, z-postsize, y-0.5f, 1f);
+		this.renderVertical(textureId, x-postsize, z-postsize, x-postsize, z+postsize, y-0.5f, 1f);
+		this.renderVertical(textureId, x-postsize, z+postsize, x+postsize, z+postsize, y-0.5f, 1f);
+		this.renderHorizontal(textureId, x+postsize, z+postsize, x-postsize, z-postsize, y+0.5f);
+
+		// Check for adjacent fences in the -x direction
+		boolean have_adj = false;
+		if (xxx>0)
+		{
+			if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK_FENCE)
+			{
+				have_adj = true;
+			}
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x-1, this.z);
+			if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK_FENCE)
+			{
+				have_adj  = true;
+			}
+		}
+		if (have_adj)
+		{
+			// Bottom slat
+			this.renderVertical(textureId, x-postsize, z+postsize_h, x-1f+postsize, z+postsize_h, slat_start, slat_height);
+			this.renderVertical(textureId, x-postsize, z-postsize_h, x-1f+postsize, z-postsize_h, slat_start, slat_height);
+			this.renderHorizontal(textureId, x-postsize, z+postsize_h, x-1f+postsize, z-postsize_h, slat_start);
+			this.renderHorizontal(textureId, x-postsize, z+postsize_h, x-1f+postsize, z-postsize_h, slat_start+slat_height);
+
+			// Top slat
+			this.renderVertical(textureId, x-postsize, z+postsize_h, x-1f+postsize, z+postsize_h, slat_start+top_slat_offset, slat_height);
+			this.renderVertical(textureId, x-postsize, z-postsize_h, x-1f+postsize, z-postsize_h, slat_start+top_slat_offset, slat_height);
+			this.renderHorizontal(textureId, x-postsize, z+postsize_h, x-1f+postsize, z-postsize_h, slat_start+top_slat_offset);
+			this.renderHorizontal(textureId, x-postsize, z+postsize_h, x-1f+postsize, z-postsize_h, slat_start+top_slat_offset+slat_height);
+		}
+		
+		// Check for adjacent fences in the -z direction
+		have_adj = false;
+		if(zzz>0)
+		{
+			if (blockData.value[blockOffset-BLOCKSPERROW] == MineCraftConstants.BLOCK_FENCE)
+			{
+				have_adj = true;
+			}
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x,this.z-1);
+			if(otherChunk != null && otherChunk.getBlock(xxx, yyy, 15) == MineCraftConstants.BLOCK_FENCE) {
+				have_adj = true;
+			}
+		}
+		if (have_adj)
+		{
+			// Bottom slat
+			this.renderVertical(textureId, x+postsize_h, z-postsize, x+postsize_h, z-1f+postsize, slat_start, slat_height);
+			this.renderVertical(textureId, x-postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start, slat_height);
+			this.renderHorizontal(textureId, x+postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start);
+			this.renderHorizontal(textureId, x+postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start+slat_height);
+
+			// Top slat
+			this.renderVertical(textureId, x+postsize_h, z-postsize, x+postsize_h, z-1f+postsize, slat_start+top_slat_offset, slat_height);
+			this.renderVertical(textureId, x-postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start+top_slat_offset, slat_height);
+			this.renderHorizontal(textureId, x+postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start+top_slat_offset);
+			this.renderHorizontal(textureId, x+postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start+top_slat_offset+slat_height);
+		}
 	}
 
 	public void renderButton(int textureId, int xxx, int yyy, int zzz) {
@@ -1924,7 +1968,7 @@ public class Chunk {
 								renderWallSign(textureId,x,y,z);
 								break;
 							case FENCE:
-								renderFence(textureId,x,y,z);
+								renderFence(textureId,x,y,z,blockOffset);
 								break;
 							case LEVER:
 								renderLever(textureId,x,y,z);
