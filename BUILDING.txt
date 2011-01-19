@@ -19,8 +19,14 @@ that.
    in.  Inside lib/native, make sure that you've got the "native" LWJGL
    files, as well.  These will be .dll if you're on Windows, and .so on
    Linux.
+
+2) If you want to build a Windows EXE, you'll also need some JSmoothGen files
+   inside the "build-lib" directory.  Specifically, you should put
+   jsmoothgen-ant.jar inside there, and the directory
+   "jsmoothgen-skeletons/autodownload-wrapper" underneath that (with the
+   three files from the JSmoothGen package inside there.
    
-2) In Eclipse, go to Window -> Preferences -> Java -> Build Path -> Classpath
+3) In Eclipse, go to Window -> Preferences -> Java -> Build Path -> Classpath
    Variables, then click the "New" button and create a variable called
    "XRAY_CLASSPATH".  Point that directory at the "lib" dir underneath the
    X-Ray project.  This should let you compile the app.
@@ -32,7 +38,7 @@ that.
    nice to know why, and equally nice to be able to get rid of having to
    set up that variable.)
    
-3) To actually RUN the app through Eclipse, right-click on the top project
+4) To actually RUN the app through Eclipse, right-click on the top project
    in Package Explorer, go to Properties -> Run/Debug Settings -> XRay, and
    click on "Edit".  In the Arguments tab, set the VM arguments to:
    
