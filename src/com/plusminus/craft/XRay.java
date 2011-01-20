@@ -431,7 +431,7 @@ public class XRay {
 		File prefs = MineCraftEnvironment.getXrayConfigFile();
 		try
 		{
-			xray_properties.store(new FileOutputStream(prefs), "Feel free to edit, though take care with the formatting.");
+			xray_properties.store(new FileOutputStream(prefs), "Feel free to edit - keys taken from http://www.lwjgl.org/javadoc/constant-values.html#org.lwjgl.input.Keyboard.KEY_1");
 		}
 		catch (IOException e)
 		{
