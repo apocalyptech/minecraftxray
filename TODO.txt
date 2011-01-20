@@ -8,7 +8,7 @@
  
  * Draw messages on signs like you'd expect.
  
- * Custom key bindings
+ * GUI to set custom key bindings
  
  * Highlighting for Reed/Sugarcane and other "special" block types
  

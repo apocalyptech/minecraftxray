@@ -12,12 +12,17 @@ import java.awt.geom.Rectangle2D;
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -35,7 +40,30 @@ import com.plusminus.craft.WorldInfo;
 import static com.plusminus.craft.MineCraftConstants.*;
 
 public class XRay {
-	// for the sprite sheet
+
+	/**
+	 * Private class to provide a sorted properties list in our config file.
+	 * Taken from http://www.rgagnon.com/javadetails/java-0614.html
+	 */
+	private class SortedProperties extends Properties {
+
+		// Added at the behest of Eclipse (or, well, presumably Java itself)
+		private static final long serialVersionUID = 2578311914423692774L;
+
+		/**
+		 * Overrides, called by the store method.
+		 */
+		@SuppressWarnings({"unchecked","rawtypes"})
+		public synchronized Enumeration keys() {
+			Enumeration keysEnum = super.keys();
+			Vector keyList = new Vector();
+			while(keysEnum.hasMoreElements()){
+				keyList.add(keysEnum.nextElement());
+			}
+			Collections.sort(keyList);
+			return keyList.elements();
+		}
+	}
     
 	// number of chunks around the camera which are visible (Square)
 	private int visible_chunk_range = 5;
@@ -62,7 +90,7 @@ public class XRay {
 	// are we full screen
     private boolean fullscreen 			= false; 
     // window title
-    private final String app_version    = "2.7 Maintenance Branch 6";
+    private final String app_version    = "2.7 Maintenance Branch 7";
     private final String app_name       = "Minecraft X-Ray";
     private final String windowTitle 	= app_name + " " + app_version; 
 
@@ -248,9 +276,8 @@ public class XRay {
 		QUIT,
 	}
 	
-	private TreeMap<KEY_ACTIONS, Integer> default_keys;
-	private TreeMap<KEY_ACTIONS, Integer> current_keys;
-	private Properties xray_properties;
+	private TreeMap<KEY_ACTIONS, Integer> key_mapping;
+	private SortedProperties xray_properties;
 	
 	// lets start with the program
     public static void main(String args[]) {    
@@ -270,7 +297,10 @@ public class XRay {
         	
         	// prompt for the resolution and initialize the window
         	createWindow();
-
+        	
+        	// Save any prefs which may have changed
+        	savePreferences();
+        	
         	// basic opengl initialization
             initGL();
 
@@ -324,86 +354,144 @@ public class XRay {
      * Loads our preferences.  This also sets our default keybindings if they're not
      * overridden somewhere.
      */
-	@SuppressWarnings("unchecked")
 	public void loadPreferences()
     {
-		int i;
-		
-    	xray_properties = new Properties();
-    	this.current_keys = (TreeMap<KEY_ACTIONS, Integer>)default_keys.clone();
+    	xray_properties = new SortedProperties();
+    	
+    	// First load our defaults into the prefs object
+    	for(KEY_ACTIONS action : KEY_ACTIONS.values())
+    	{
+    		xray_properties.setProperty("KEY_" + action.toString(), Keyboard.getKeyName(this.key_mapping.get(action)));
+    	}
     	
     	// Here's where we would load from our prefs file
-    	//for(KEY_ACTIONS action : KEY_ACTIONS.values())
-    	//{
-    	//}
+    	File prefs = MineCraftEnvironment.getXrayConfigFile();
+    	if (prefs.exists() && prefs.canRead())
+    	{
+    		try
+    		{
+    			xray_properties.load(new FileInputStream(prefs));
+    		}
+    		catch (IOException e)
+    		{
+    			// Just report and continue
+    			System.out.println("Could not load configuration file: " + e.toString());
+    		}
+    	}
     	
+    	// Loop through the key mappings that we just loaded
+    	int newkey;
+    	String prefskey;
+    	for (KEY_ACTIONS action : KEY_ACTIONS.values())
+    	{
+    		prefskey = xray_properties.getProperty("KEY_" + action.toString());
+    		if (prefskey.equalsIgnoreCase("none"))
+    		{
+    			// If the user actually specified "NONE" in the config file, unbind the key
+    			newkey = Keyboard.KEY_NONE;
+    		}
+    		else
+    		{
+    			newkey = Keyboard.getKeyIndex(prefskey);
+    			if (newkey == Keyboard.KEY_NONE)
+    			{
+    				// TODO: Should output something more visible to the user
+    				System.out.println("Warning: key '" + prefskey + "' for action " + action + " in the config file is unknown.  Default key assigned.");
+    				continue;
+    			}
+    		}
+    		this.key_mapping.put(action, newkey);
+    	}
+
     	// Populate our key ranges
+		int i;		
     	for (i=0; i<CHUNK_RANGES.length; i++)
     	{
-    		CHUNK_RANGES_KEYS[i] = this.current_keys.get(KEY_ACTIONS.valueOf("CHUNK_RANGE_" + (i+1)));
+    		CHUNK_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("CHUNK_RANGE_" + (i+1)));
     	}
     	for (i=0; i<HIGHLIGHT_RANGES.length; i++)
     	{
-    		HIGHLIGHT_RANGES_KEYS[i] = this.current_keys.get(KEY_ACTIONS.valueOf("HIGHLIGHT_RANGE_" + (i+1)));
+    		HIGHLIGHT_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("HIGHLIGHT_RANGE_" + (i+1)));
     	}
     	for (i=0; i<HIGHLIGHT_ORES.length; i++)
     	{
-    		HIGHLIGHT_ORE_KEYS[i] = this.current_keys.get(KEY_ACTIONS.valueOf("TOGGLE_ORE_" + (i+1)));
+    		HIGHLIGHT_ORE_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("TOGGLE_ORE_" + (i+1)));
     	}
+    	
+    	// Save the file immediately, in case we picked up new defaults which weren't present
+    	// previously
+    	this.savePreferences();
     }
+	
+	/**
+	 * Saves our preferences out
+	 */
+	public void savePreferences()
+	{
+		File prefs = MineCraftEnvironment.getXrayConfigFile();
+		try
+		{
+			xray_properties.store(new FileOutputStream(prefs), "Feel free to edit, though take care with the formatting.");
+		}
+		catch (IOException e)
+		{
+			// Just report on the console and move on
+			System.out.println("Could not save preferences to file: " + e.toString());
+		}
+	}
     
     /**
      * Sets our default key mappings
      */
     public void setKeyDefaults()
     {
-    	default_keys = new TreeMap<KEY_ACTIONS, Integer>();
-    	default_keys.put(KEY_ACTIONS.SPEED_INCREASE, Keyboard.KEY_LSHIFT);
-    	default_keys.put(KEY_ACTIONS.SPEED_DECREASE, Keyboard.KEY_RSHIFT);
-    	default_keys.put(KEY_ACTIONS.MOVE_FORWARD, Keyboard.KEY_W);
-    	default_keys.put(KEY_ACTIONS.MOVE_BACKWARD, Keyboard.KEY_S);
-    	default_keys.put(KEY_ACTIONS.MOVE_LEFT, Keyboard.KEY_A);
-    	default_keys.put(KEY_ACTIONS.MOVE_RIGHT, Keyboard.KEY_D);
-    	default_keys.put(KEY_ACTIONS.MOVE_UP, Keyboard.KEY_SPACE);
-    	default_keys.put(KEY_ACTIONS.MOVE_DOWN, Keyboard.KEY_LCONTROL);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_MINIMAP, Keyboard.KEY_TAB);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_1, Keyboard.KEY_F1);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_2, Keyboard.KEY_F2);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_3, Keyboard.KEY_F3);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_4, Keyboard.KEY_F4);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_5, Keyboard.KEY_F5);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_6, Keyboard.KEY_F6);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_7, Keyboard.KEY_F7);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_8, Keyboard.KEY_F8);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_9, Keyboard.KEY_F9);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_10, Keyboard.KEY_F10);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_FULLSCREEN, Keyboard.KEY_BACK);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_FULLBRIGHT, Keyboard.KEY_F);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING, Keyboard.KEY_H);
-    	default_keys.put(KEY_ACTIONS.MOVE_TO_SPAWN, Keyboard.KEY_HOME);
-    	default_keys.put(KEY_ACTIONS.MOVE_TO_PLAYER, Keyboard.KEY_END);
-    	default_keys.put(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS, Keyboard.KEY_INSERT);
-    	default_keys.put(KEY_ACTIONS.MOVE_PREV_CAMERAPOS, Keyboard.KEY_DELETE);
-    	default_keys.put(KEY_ACTIONS.LIGHT_INCREASE, Keyboard.KEY_ADD);
-    	default_keys.put(KEY_ACTIONS.LIGHT_DECREASE, Keyboard.KEY_SUBTRACT);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_POSITION_INFO, Keyboard.KEY_GRAVE);
-    	default_keys.put(KEY_ACTIONS.TOGGLE_BEDROCK, Keyboard.KEY_B);
-    	default_keys.put(KEY_ACTIONS.SWITCH_NETHER, Keyboard.KEY_N);
-    	default_keys.put(KEY_ACTIONS.CHUNK_RANGE_1, Keyboard.KEY_NUMPAD1);
-    	default_keys.put(KEY_ACTIONS.CHUNK_RANGE_2, Keyboard.KEY_NUMPAD2);
-    	default_keys.put(KEY_ACTIONS.CHUNK_RANGE_3, Keyboard.KEY_NUMPAD3);
-    	default_keys.put(KEY_ACTIONS.CHUNK_RANGE_4, Keyboard.KEY_NUMPAD4);
-    	default_keys.put(KEY_ACTIONS.CHUNK_RANGE_5, Keyboard.KEY_NUMPAD5);
-    	default_keys.put(KEY_ACTIONS.CHUNK_RANGE_6, Keyboard.KEY_NUMPAD6);
-    	default_keys.put(KEY_ACTIONS.HIGHLIGHT_RANGE_1, Keyboard.KEY_1);
-    	default_keys.put(KEY_ACTIONS.HIGHLIGHT_RANGE_2, Keyboard.KEY_2);
-    	default_keys.put(KEY_ACTIONS.HIGHLIGHT_RANGE_3, Keyboard.KEY_3);
-    	default_keys.put(KEY_ACTIONS.HIGHLIGHT_RANGE_4, Keyboard.KEY_4);
-    	default_keys.put(KEY_ACTIONS.HIGHLIGHT_RANGE_5, Keyboard.KEY_5);
-    	default_keys.put(KEY_ACTIONS.HIGHLIGHT_RANGE_6, Keyboard.KEY_6);
-    	default_keys.put(KEY_ACTIONS.HIGHLIGHT_RANGE_7, Keyboard.KEY_7);
-    	default_keys.put(KEY_ACTIONS.RELEASE_MOUSE, Keyboard.KEY_ESCAPE);
-    	default_keys.put(KEY_ACTIONS.QUIT, Keyboard.KEY_Q);
+    	key_mapping = new TreeMap<KEY_ACTIONS, Integer>();
+    	key_mapping.put(KEY_ACTIONS.SPEED_INCREASE, Keyboard.KEY_LSHIFT);
+    	key_mapping.put(KEY_ACTIONS.SPEED_DECREASE, Keyboard.KEY_RSHIFT);
+    	key_mapping.put(KEY_ACTIONS.MOVE_FORWARD, Keyboard.KEY_W);
+    	key_mapping.put(KEY_ACTIONS.MOVE_BACKWARD, Keyboard.KEY_S);
+    	key_mapping.put(KEY_ACTIONS.MOVE_LEFT, Keyboard.KEY_A);
+    	key_mapping.put(KEY_ACTIONS.MOVE_RIGHT, Keyboard.KEY_D);
+    	key_mapping.put(KEY_ACTIONS.MOVE_UP, Keyboard.KEY_SPACE);
+    	key_mapping.put(KEY_ACTIONS.MOVE_DOWN, Keyboard.KEY_LCONTROL);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_MINIMAP, Keyboard.KEY_TAB);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_1, Keyboard.KEY_F1);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_2, Keyboard.KEY_F2);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_3, Keyboard.KEY_F3);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_4, Keyboard.KEY_F4);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_5, Keyboard.KEY_F5);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_6, Keyboard.KEY_F6);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_7, Keyboard.KEY_F7);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_8, Keyboard.KEY_F8);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_9, Keyboard.KEY_F9);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_10, Keyboard.KEY_F10);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_FULLSCREEN, Keyboard.KEY_BACK);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_FULLBRIGHT, Keyboard.KEY_F);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING, Keyboard.KEY_H);
+    	key_mapping.put(KEY_ACTIONS.MOVE_TO_SPAWN, Keyboard.KEY_HOME);
+    	key_mapping.put(KEY_ACTIONS.MOVE_TO_PLAYER, Keyboard.KEY_END);
+    	key_mapping.put(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS, Keyboard.KEY_INSERT);
+    	key_mapping.put(KEY_ACTIONS.MOVE_PREV_CAMERAPOS, Keyboard.KEY_DELETE);
+    	key_mapping.put(KEY_ACTIONS.LIGHT_INCREASE, Keyboard.KEY_ADD);
+    	key_mapping.put(KEY_ACTIONS.LIGHT_DECREASE, Keyboard.KEY_SUBTRACT);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_POSITION_INFO, Keyboard.KEY_GRAVE);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_BEDROCK, Keyboard.KEY_B);
+    	key_mapping.put(KEY_ACTIONS.SWITCH_NETHER, Keyboard.KEY_N);
+    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_1, Keyboard.KEY_NUMPAD1);
+    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_2, Keyboard.KEY_NUMPAD2);
+    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_3, Keyboard.KEY_NUMPAD3);
+    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_4, Keyboard.KEY_NUMPAD4);
+    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_5, Keyboard.KEY_NUMPAD5);
+    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_6, Keyboard.KEY_NUMPAD6);
+    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_1, Keyboard.KEY_1);
+    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_2, Keyboard.KEY_2);
+    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_3, Keyboard.KEY_3);
+    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_4, Keyboard.KEY_4);
+    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_5, Keyboard.KEY_5);
+    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_6, Keyboard.KEY_6);
+    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_7, Keyboard.KEY_7);
+    	key_mapping.put(KEY_ACTIONS.RELEASE_MOUSE, Keyboard.KEY_ESCAPE);
+    	key_mapping.put(KEY_ACTIONS.QUIT, Keyboard.KEY_Q);
     }
     
     /**
@@ -1146,56 +1234,56 @@ public class XRay {
     	//
        
     	// Speed shifting
-    	if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.SPEED_INCREASE))) {
+    	if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.SPEED_INCREASE))) {
         	MOVEMENT_SPEED = 30.0f;
-        } else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.SPEED_DECREASE))) {
+        } else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.SPEED_DECREASE))) {
         	MOVEMENT_SPEED = 3.0f;
         } else {
         	MOVEMENT_SPEED = 10.0f;
         }
     	
         // Move forward
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_FORWARD)))
+        if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_FORWARD)))
         {
             camera.walkForward(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
         
         // Move backwards
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_BACKWARD)))
+        if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_BACKWARD)))
         {
             camera.walkBackwards(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
         
         // Strafe Left
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_LEFT)))
+        if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_LEFT)))
         {
             camera.strafeLeft(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
         
         // Strafe right
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_RIGHT)))
+        if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_RIGHT)))
         {
             camera.strafeRight(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
         
         // Fly Up
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_UP))) {
+        if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_UP))) {
             camera.moveUp(MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
         
         // Fly Down
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_DOWN))) {
+        if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_DOWN))) {
             camera.moveUp(-MOVEMENT_SPEED*timeDelta);
             triggerChunkLoads();
         }
        
         // Toggle minimap/largemap
-        key = current_keys.get(KEY_ACTIONS.TOGGLE_MINIMAP);
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_MINIMAP);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	mapBig = !mapBig;
         	keyPressed = key;
@@ -1215,77 +1303,77 @@ public class XRay {
         }
         
         // Fullscreen
-        key = current_keys.get(KEY_ACTIONS.TOGGLE_FULLSCREEN);
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_FULLSCREEN);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;                                     
             switchFullScreenMode();
         }
         
         //  Toggle fullbright
-        key = current_keys.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT);
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;                                     
             setLightMode(!lightMode);
         }
         
         // Toggle ore highlighting
-        key = current_keys.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING);
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;                                     
             highlightOres = !highlightOres;
         }
         
         // Move camera to spawn point
-        key = current_keys.get(KEY_ACTIONS.MOVE_TO_SPAWN);
+        key = key_mapping.get(KEY_ACTIONS.MOVE_TO_SPAWN);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;                                     
         	moveCameraToSpawnPoint();
         }
         
         // Move camera to player position
-        key = current_keys.get(KEY_ACTIONS.MOVE_TO_PLAYER);
+        key = key_mapping.get(KEY_ACTIONS.MOVE_TO_PLAYER);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;                                     
         	moveCameraToPlayerPos();
         }
         
         // Switch to the next available camera preset
-        key = current_keys.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS);
+        key = key_mapping.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS);
         if (Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;
         	moveCameraToNextPlayer();
         }
         
         // Switch to the previous camera preset
-        key = current_keys.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS);
+        key = key_mapping.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS);
         if (Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;
         	moveCameraToPreviousPlayer();
         }
         
         // Increase light level
-        key = current_keys.get(KEY_ACTIONS.LIGHT_INCREASE);
+        key = key_mapping.get(KEY_ACTIONS.LIGHT_INCREASE);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;                                     
         	incLightLevel();
         }
 
         // Decrease light level
-        key = current_keys.get(KEY_ACTIONS.LIGHT_DECREASE);
+        key = key_mapping.get(KEY_ACTIONS.LIGHT_DECREASE);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;                                     
         	decLightLevel();
         }
         
         // Toggle position info popup
-        key = current_keys.get(KEY_ACTIONS.TOGGLE_POSITION_INFO);
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_POSITION_INFO);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;                                     
         	levelInfoToggle = !levelInfoToggle;
         }
         
         // Toggle bedrock rendering
-        key = current_keys.get(KEY_ACTIONS.TOGGLE_BEDROCK);
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_BEDROCK);
         if (Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;
         	render_bedrock = !render_bedrock;
@@ -1293,7 +1381,7 @@ public class XRay {
         }
         
         // Toggle between Nether and Overworld
-        key = current_keys.get(KEY_ACTIONS.SWITCH_NETHER);
+        key = key_mapping.get(KEY_ACTIONS.SWITCH_NETHER);
         if (Keyboard.isKeyDown(key) && keyPressed != key) {
         	keyPressed = key;
         	switchNether();
@@ -1333,7 +1421,7 @@ public class XRay {
         }        
         	
         // Release the mouse
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.RELEASE_MOUSE))) {
+        if(Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.RELEASE_MOUSE))) {
             Mouse.setGrabbed(false);
         }
         
@@ -1343,7 +1431,7 @@ public class XRay {
         }
         
         // Quit
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.QUIT)) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+        if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.QUIT)) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
         	done = true;
         }
         

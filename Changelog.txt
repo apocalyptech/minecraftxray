@@ -1,3 +1,6 @@
+  * Key mappings are now taken from a config file which will get
+    generated automatically with the defaults if not present.
+
 Minecraft X-Ray 2.7 Maintenance Branch 6 (2011.01.19)
 
   * Fixed a bug where wool and wood wouldn't be considered solid blocks
