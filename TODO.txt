@@ -36,3 +36,5 @@
  
  * Draw distance keys don't seem to work properly when you've got ore highlighting
    turned off
+   
+ * Use a TreeMap for SMP players so their names are sorted
