@@ -1125,6 +1125,9 @@ public class XRay {
      * @param timeDelta
      */
 	private void handleInput(float timeDelta) {
+		
+		int key;
+		
 		  //distance in mouse movement from the last getDX() call.
         mouseX = Mouse.getDX();
         //distance in mouse movement from the last getDY() call.
@@ -1192,9 +1195,10 @@ public class XRay {
         }
        
         // Toggle minimap/largemap
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.TOGGLE_MINIMAP)) && keyPressed != current_keys.get(KEY_ACTIONS.TOGGLE_MINIMAP)) {
+        key = current_keys.get(KEY_ACTIONS.TOGGLE_MINIMAP);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
         	mapBig = !mapBig;
-        	keyPressed = current_keys.get(KEY_ACTIONS.TOGGLE_MINIMAP);  
+        	keyPressed = key;
         }
 
         // Toggle highlightable ores
@@ -1211,75 +1215,87 @@ public class XRay {
         }
         
         // Fullscreen
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.TOGGLE_FULLSCREEN)) && keyPressed != current_keys.get(KEY_ACTIONS.TOGGLE_FULLSCREEN)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.TOGGLE_FULLSCREEN);                                     
+        key = current_keys.get(KEY_ACTIONS.TOGGLE_FULLSCREEN);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;                                     
             switchFullScreenMode();
         }
         
         //  Toggle fullbright
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT)) && keyPressed != current_keys.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT);                                     
+        key = current_keys.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;                                     
             setLightMode(!lightMode);
         }
         
         // Toggle ore highlighting
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING)) && keyPressed != current_keys.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING);                                     
+        key = current_keys.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;                                     
             highlightOres = !highlightOres;
         }
         
         // Move camera to spawn point
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_TO_SPAWN)) && keyPressed != current_keys.get(KEY_ACTIONS.MOVE_TO_SPAWN)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.MOVE_TO_SPAWN);                                     
+        key = current_keys.get(KEY_ACTIONS.MOVE_TO_SPAWN);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;                                     
         	moveCameraToSpawnPoint();
         }
         
         // Move camera to player position
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_TO_PLAYER)) && keyPressed != current_keys.get(KEY_ACTIONS.MOVE_TO_PLAYER)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.MOVE_TO_PLAYER);                                     
+        key = current_keys.get(KEY_ACTIONS.MOVE_TO_PLAYER);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;                                     
         	moveCameraToPlayerPos();
         }
         
         // Switch to the next available camera preset
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS)) && keyPressed != current_keys.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS);
+        key = current_keys.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS);
+        if (Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;
         	moveCameraToNextPlayer();
         }
         
         // Switch to the previous camera preset
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS)) && keyPressed != current_keys.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS);
+        key = current_keys.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS);
+        if (Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;
         	moveCameraToPreviousPlayer();
         }
         
         // Increase light level
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.LIGHT_INCREASE)) && keyPressed != current_keys.get(KEY_ACTIONS.LIGHT_INCREASE)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.LIGHT_INCREASE);                                     
+        key = current_keys.get(KEY_ACTIONS.LIGHT_INCREASE);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;                                     
         	incLightLevel();
         }
 
         // Decrease light level
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.LIGHT_DECREASE)) && keyPressed != current_keys.get(KEY_ACTIONS.LIGHT_DECREASE)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.LIGHT_DECREASE);                                     
+        key = current_keys.get(KEY_ACTIONS.LIGHT_DECREASE);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;                                     
         	decLightLevel();
         }
         
         // Toggle position info popup
-        if(Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.TOGGLE_POSITION_INFO)) && keyPressed != current_keys.get(KEY_ACTIONS.TOGGLE_POSITION_INFO)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.TOGGLE_POSITION_INFO);                                     
+        key = current_keys.get(KEY_ACTIONS.TOGGLE_POSITION_INFO);
+        if(Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;                                     
         	levelInfoToggle = !levelInfoToggle;
         }
         
         // Toggle bedrock rendering
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.TOGGLE_BEDROCK)) && keyPressed != current_keys.get(KEY_ACTIONS.TOGGLE_BEDROCK)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.TOGGLE_BEDROCK);
+        key = current_keys.get(KEY_ACTIONS.TOGGLE_BEDROCK);
+        if (Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;
         	render_bedrock = !render_bedrock;
     		invalidateSelectedChunks(true);
         }
         
         // Toggle between Nether and Overworld
-        if (Keyboard.isKeyDown(current_keys.get(KEY_ACTIONS.SWITCH_NETHER)) && keyPressed != current_keys.get(KEY_ACTIONS.SWITCH_NETHER)) {
-        	keyPressed = current_keys.get(KEY_ACTIONS.SWITCH_NETHER);
+        key = current_keys.get(KEY_ACTIONS.SWITCH_NETHER);
+        if (Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;
         	switchNether();
         }
         
