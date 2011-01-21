@@ -299,7 +299,7 @@ public class XRay {
         	createWindow();
         	
         	// Save any prefs which may have changed
-        	savePreferences();
+        	//savePreferences();
         	
         	// basic opengl initialization
             initGL();
@@ -431,7 +431,7 @@ public class XRay {
 		File prefs = MineCraftEnvironment.getXrayConfigFile();
 		try
 		{
-			xray_properties.store(new FileOutputStream(prefs), "Feel free to edit - keys taken from http://www.lwjgl.org/javadoc/constant-values.html#org.lwjgl.input.Keyboard.KEY_1");
+			xray_properties.store(new FileOutputStream(prefs), "Feel free to edit.  Use \"NONE\" to disable an action.  Keys taken from http://www.lwjgl.org/javadoc/constant-values.html#org.lwjgl.input.Keyboard.KEY_1");
 		}
 		catch (IOException e)
 		{

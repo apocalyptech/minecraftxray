@@ -14,6 +14,17 @@
 	<property name="dist"  location="${dist_base}/${export_base}"/>
 	<property name="dist_src"  location="${dist_base}/${export_base}_src"/>
 	
+	<!-- Why the hell doesn't ant's "tar" task understand executable bits? -->
+	<patternset id="all.files">
+		<include name="${export_base}/**"/>
+	</patternset>
+	<selector id="executable.files">
+		<or>
+			<filename name="${export_base}/minecraft_xray_osx.command" />
+			<filename name="${export_base}/minecraft_xray.sh" />
+		</or>
+	</selector>
+	
 	<!-- JSmoothGen, for building the Windows EXE -->
 	<taskdef name="jsmoothgen"
 	     classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
@@ -112,13 +123,35 @@
 		<!-- Create our zipfiles, both "binary" and source. -->
 		<zip destfile="${dist_base}/${export_base}.zip" basedir="${dist_base}" includes="${export_base}/"/>
 		<zip destfile="${dist_base}/${export_base}_src.zip" basedir="${dist_base}" includes="${export_base}_src/"/>
-		
+		<tar destfile="${dist_base}/${export_base}.tbz2" compression="bzip2">
+			<!--
+			<tarfileset dir="${dist_base}" filemode="755">
+				<include name="${export_base}/minecraft_xray_osx.command"/>
+				<include name="${export_base}/minecraft_xray.sh"/>
+			</tarfileset>
+			<tarfileset dir="${dist_base}">
+				<include name="${export_base}/**"/>
+			</tarfileset>
+			-->
+			<tarfileset dir="${dist_base}" filemode="755">
+				<patternset refid="all.files" />
+				<selector refid="executable.files" />
+			</tarfileset>
+			<tarfileset dir="${dist_base}">
+				<patternset refid="all.files" />
+					<not>
+						<selector refid="executable.files" />
+					</not>
+			</tarfileset>
+		</tar>
+	
 	</target>
 		
 	<target name="clean"
 	        description="clean up" >
 		<!-- Delete the ${build} and ${dist} directory trees -->
 		<delete file="${dist_base}/${export_base}.zip"/>
+		<delete file="${dist_base}/${export_base}.tbz2"/>
 		<delete file="${dist_base}/${export_base}_src.zip"/>
 		<delete dir="${build}"/>
 		<delete dir="${dist}"/>
