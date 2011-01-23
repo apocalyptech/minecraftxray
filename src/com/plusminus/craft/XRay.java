@@ -16,7 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Properties;
@@ -276,7 +276,7 @@ public class XRay {
 		QUIT,
 	}
 	
-	private TreeMap<KEY_ACTIONS, Integer> key_mapping;
+	private HashMap<KEY_ACTIONS, Integer> key_mapping;
 	private SortedProperties xray_properties;
 	
 	// lets start with the program
@@ -445,7 +445,7 @@ public class XRay {
      */
     public void setKeyDefaults()
     {
-    	key_mapping = new TreeMap<KEY_ACTIONS, Integer>();
+    	key_mapping = new HashMap<KEY_ACTIONS, Integer>();
     	key_mapping.put(KEY_ACTIONS.SPEED_INCREASE, Keyboard.KEY_LSHIFT);
     	key_mapping.put(KEY_ACTIONS.SPEED_DECREASE, Keyboard.KEY_RSHIFT);
     	key_mapping.put(KEY_ACTIONS.MOVE_FORWARD, Keyboard.KEY_W);
@@ -871,7 +871,7 @@ public class XRay {
     	// We loop on this dialog "forever" because 
     	while (true)
     	{
-	    	if(ResolutionDialog.presentDialog(windowTitle, availableWorlds) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
+	    	if(ResolutionDialog.presentDialog(windowTitle, availableWorlds, (Properties)xray_properties) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
 	    		System.exit(0);
 	    	}
 	

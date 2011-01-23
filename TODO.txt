@@ -38,3 +38,8 @@
    turned off
    
  * Use a TreeMap for SMP players so their names are sorted
+ 
+ * As I've been editing the X-Ray code, I've been using underscore_variables like
+   that, mostly, instead of the camelCase which was more prevalent.  Should really
+   reformat everything to a single style (and retab the whole thing, and clean up
+   formatting and style in general)

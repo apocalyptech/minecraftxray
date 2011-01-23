@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.swing.Box;
 import javax.swing.ComboBoxModel;
@@ -57,7 +58,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -109,6 +109,7 @@ import org.lwjgl.opengl.DisplayMode;
  * @version 1.0
  */
 public class ResolutionDialog extends JFrame {
+	private static final long serialVersionUID = -1496486770452508286L;
 	private static final int FRAMEWIDTH = 400;
 	private static final int FRAMEHEIGHT = 400;
 	private static final int[][] defaultPreferredResolutions = 
@@ -155,8 +156,12 @@ public class ResolutionDialog extends JFrame {
 	
 	private int exitCode = -1;
 	
+	private Properties xray_properties;
+	
 	public static DisplayMode selectedDisplayMode;
 	public static int selectedAntiAliasMode;
+	public static int selectedRefreshRate;
+	public static int selectedBitDepth;
 	public static boolean selectedFullScreenValue;
 	public static int selectedWorld;
 	
@@ -168,6 +173,7 @@ public class ResolutionDialog extends JFrame {
 	 * integer. This is used for holding resolution information
 	 * @author Vincent Vollers
 	 */
+	@SuppressWarnings("rawtypes")
 	private class IntegerPair implements Comparable {
 		private int valueOne;
 		private int valueTwo;
@@ -212,6 +218,9 @@ public class ResolutionDialog extends JFrame {
 	 * @author Vincent Vollers
 	 */
 	private class DisplayModesRenderer extends BasicComboBoxRenderer {
+
+		private static final long serialVersionUID = 8272355980006119103L;
+
 		public DisplayModesRenderer() {
 			super();
 		}
@@ -235,6 +244,9 @@ public class ResolutionDialog extends JFrame {
 	 * @author Vincent Vollers
 	 */
 	private class AntiAliasModesRenderer extends BasicComboBoxRenderer {
+
+		private static final long serialVersionUID = -3925894624131433L;
+
 		public AntiAliasModesRenderer() {
 			super();
 		}
@@ -737,6 +749,8 @@ public class ResolutionDialog extends JFrame {
 		}
 		
 		ResolutionDialog.selectedAntiAliasMode = antiAliasMode;
+		ResolutionDialog.selectedRefreshRate = refreshRate;
+		ResolutionDialog.selectedBitDepth = bitDepth;
 		
 		ResolutionDialog.selectedFullScreenValue = this.fullScreenCheckBox.isSelected();
 		
@@ -745,6 +759,7 @@ public class ResolutionDialog extends JFrame {
 			if (worldButtons[i].isSelected())
 			{
 				ResolutionDialog.selectedWorld = i;
+				break;
 			}
 		}
 	}
@@ -762,14 +777,30 @@ public class ResolutionDialog extends JFrame {
 	protected ResolutionDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
-			ArrayList<WorldInfo> availableWorlds) {
+			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		super(windowName);
 		
+		this.xray_properties		= xray_properties;
 		this.preferredResolutions	= preferredResolutions;
 		this.preferredBitDepths 	= preferredBitDepths;
 		this.preferredRefreshRates 	= preferredRefreshRates;
 		this.preferredAntiAliasModes = preferredAntialiasModes;
 		this.preferredFullScreenValue = preferredFullScreenValue;
+		
+		// Override our "preferred" values with the "last used" vars from our properties file
+		String val_1 = this.xray_properties.getProperty("LAST_RESOLUTION_X");
+		String val_2 = this.xray_properties.getProperty("LAST_RESOLUTION_Y");
+		if (val_1 != null && val_2 != null)
+		{
+			this.preferredResolutions = new int[preferredResolutions.length+1][];
+			this.preferredResolutions[0] = new int[2];
+			this.preferredResolutions[0][0] = Integer.valueOf(val_1);
+			this.preferredResolutions[0][1] = Integer.valueOf(val_2);
+			for (int i=0; i<preferredResolutions.length; i++)
+			{
+				this.preferredResolutions[i+1] = preferredResolutions[i];
+			}
+		}
 		
 		if(ResolutionDialog.iconImage != null)
 			this.setIconImage(ResolutionDialog.iconImage);
@@ -812,7 +843,7 @@ public class ResolutionDialog extends JFrame {
 	public static int presentDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
-			ArrayList<WorldInfo> availableWorlds) {
+			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		ResolutionDialog dialog = new ResolutionDialog(
 				windowName,
 				advancedPanel,
@@ -821,7 +852,8 @@ public class ResolutionDialog extends JFrame {
 				preferredRefreshRates,
 				preferredAntialiasModes,
 				preferredFullScreenValue,
-				availableWorlds
+				availableWorlds,
+				xray_properties
 		);
 		try {
 			synchronized(dialog) {
@@ -839,8 +871,8 @@ public class ResolutionDialog extends JFrame {
 	 * Pops up the dialog window using the default preffered values
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
-	public static int presentDialog(String windowName, ArrayList<WorldInfo> availableWorlds) {
-		return presentDialog(windowName, null, availableWorlds);
+	public static int presentDialog(String windowName, ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
+		return presentDialog(windowName, null, availableWorlds, xray_properties);
 	}
 	
 	/***
@@ -849,14 +881,15 @@ public class ResolutionDialog extends JFrame {
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
 	public static int presentDialog(String windowName, Container advancedPanel,
-			ArrayList<WorldInfo> availableWorlds) {
+			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		return presentDialog(windowName,advancedPanel,
 				defaultPreferredResolutions,
 				defaultPreferredBitDepths,
 				defaultPreferredRefreshRates,
 				defaultPreferredAntialiasModes,
 				defaultPreferredFullScreenValue,
-				availableWorlds
+				availableWorlds,
+				xray_properties
 		);
 	}
 	
@@ -873,10 +906,10 @@ public class ResolutionDialog extends JFrame {
 	public static int presentDialog(String windowName,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
-			ArrayList<WorldInfo> availableWorlds) {
+			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		return presentDialog(windowName, null,
 				preferredResolutions, preferredBitDepths, preferredRefreshRates,
 				preferredAntialiasModes, preferredFullScreenValue,
-				availableWorlds);
+				availableWorlds, xray_properties);
 	}
 }
