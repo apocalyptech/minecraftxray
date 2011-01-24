@@ -62,7 +62,7 @@ public class MinecraftLevel {
 			// Figure out what dimension the player's in.  If it matches, move our camera there.
 			// TODO: if playerDim is null, perhaps we should move the camera to the spawnpoint...
 			IntTag playerDim = (IntTag) levelPlayerData.getTagWithName("Dimension");
-			if (playerDim != null && ((playerDim.value == 0 && !world.isNether()) || (playerDim.value == -1 && world.isNether())))
+			if ((playerDim == null && !world.isNether()) || (playerDim != null && ((playerDim.value == 0 && !world.isNether()) || (playerDim.value == -1 && world.isNether()))))
 			{
 				ListTag playerPos = (ListTag) levelPlayerData .getTagWithName("Pos");
 				ListTag playerRotation = (ListTag) levelPlayerData .getTagWithName("Rotation");
