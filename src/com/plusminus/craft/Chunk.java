@@ -1751,7 +1751,7 @@ public class Chunk {
 		return isSolid(block) == transpararency;
 	}
 	
-	public void renderWorld(boolean transparency, boolean render_bedrock, boolean onlySelected, boolean[] selectedMap) {
+	public void renderWorld(boolean transparency, boolean render_bedrock, boolean render_water, boolean onlySelected, boolean[] selectedMap) {
 		float worldX = this.x*16;
 		float worldZ = this.z*16;
 		for(int x=0;x<16;x++) {
@@ -1771,6 +1771,11 @@ public class Chunk {
 						continue;
 					}
 					if(!transparency && !isSolid(t)) {
+						continue;
+					}
+					
+					if (!render_water && BLOCK_TYPE_MAP.get(t) == BLOCK_TYPE.WATER)
+					{
 						continue;
 					}
 					
@@ -2133,14 +2138,14 @@ public class Chunk {
 		}
 	}
 	
-	public void renderSolid(boolean render_bedrock) {
+	public void renderSolid(boolean render_bedrock, boolean render_water) {
 		if(isDirty) {
 				GL11.glNewList(this.displayListNum, GL11.GL_COMPILE);
-				renderWorld(false, render_bedrock, false, null);
+				renderWorld(false, render_bedrock, false, false, null);
 				GL11.glEndList();
 				GL11.glNewList(this.transparentListNum, GL11.GL_COMPILE);
 				//GL11.glDepthMask(false);
-				renderWorld(true, false, false, null);
+				renderWorld(true, false, render_water, false, null);
 				//GL11.glDepthMask(true);
 				GL11.glEndList();
 				this.isDirty = false;
@@ -2155,7 +2160,7 @@ public class Chunk {
 	public void renderSelected(boolean[] selectedMap) {
 		if(isSelectedDirty) {
 			GL11.glNewList(this.selectedDisplayListNum, GL11.GL_COMPILE);
-			renderWorld(false, false, true, selectedMap);
+			renderWorld(false, false, false, true, selectedMap);
 			GL11.glEndList();
 			this.isSelectedDirty = false;
 		}

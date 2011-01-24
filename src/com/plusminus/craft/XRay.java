@@ -125,8 +125,9 @@ public class XRay {
     private Texture minimapArrowTexture;
     private Graphics2D minimapGraphics;
     
-    // Whether or not we're showing bedrock
+    // Whether or not we're showing bedrock/water
     private boolean render_bedrock = false;
+    private boolean render_water = true;
     
     // the minecraft level we are exploring
     private MinecraftLevel level;
@@ -258,6 +259,7 @@ public class XRay {
 		LIGHT_DECREASE,
 		TOGGLE_POSITION_INFO,
 		TOGGLE_BEDROCK,
+		TOGGLE_WATER,
 		SWITCH_NETHER,
 		CHUNK_RANGE_1,
 		CHUNK_RANGE_2,
@@ -476,6 +478,7 @@ public class XRay {
     	key_mapping.put(KEY_ACTIONS.LIGHT_DECREASE, Keyboard.KEY_SUBTRACT);
     	key_mapping.put(KEY_ACTIONS.TOGGLE_POSITION_INFO, Keyboard.KEY_GRAVE);
     	key_mapping.put(KEY_ACTIONS.TOGGLE_BEDROCK, Keyboard.KEY_B);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_WATER, Keyboard.KEY_T);
     	key_mapping.put(KEY_ACTIONS.SWITCH_NETHER, Keyboard.KEY_N);
     	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_1, Keyboard.KEY_NUMPAD1);
     	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_2, Keyboard.KEY_NUMPAD2);
@@ -1390,6 +1393,14 @@ public class XRay {
     		invalidateSelectedChunks(true);
         }
         
+        // Toggle water rendering
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_WATER);
+        if (Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;
+        	render_water = !render_water;
+    		invalidateSelectedChunks(true);
+        }
+        
         // Toggle between Nether and Overworld
         key = key_mapping.get(KEY_ACTIONS.SWITCH_NETHER);
         if (Keyboard.isKeyDown(key) && keyPressed != key) {
@@ -1611,7 +1622,7 @@ public class XRay {
     	        
     			if(k != null)
     			{
-    				k.renderSolid(render_bedrock);
+    				k.renderSolid(render_bedrock, render_water);
     				k.renderSelected(this.mineralToggle);
     				paintingTexture.bind();
     				k.renderPaintings();
