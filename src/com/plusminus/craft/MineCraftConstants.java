@@ -40,8 +40,6 @@ public class MineCraftConstants {
 	public static final long MILLISPERSECOND 	= 1000;
 	public static final long NANOSPERMILLIS 	= NANOSPERSECOND / MILLISPERSECOND;
 	
-	public static final int TYPE_WATER = 8;
-	public static final int TYPE_WATER_STATIONARY = 9;
 	public static final int TYPE_LAVA = 10;
 	public static final int TYPE_LAVA_STATIONARY = 11;
 	
@@ -65,7 +63,8 @@ public class MineCraftConstants {
 		BUTTON,
 		PORTAL,
 		DATAVAL,
-		MINECART_TRACKS
+		MINECART_TRACKS,
+		WATER
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -263,6 +262,10 @@ public class MineCraftConstants {
 		// Blocks whose texture depends on their data value (in addition to block type)
 		BLOCK_TYPE_MAP.put((byte)BLOCK_LOG, BLOCK_TYPE.DATAVAL);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_WOOL, BLOCK_TYPE.DATAVAL);
+		
+		// Water
+		BLOCK_TYPE_MAP.put((byte)BLOCK_WATER, BLOCK_TYPE.WATER);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_STATIONARY_WATER, BLOCK_TYPE.WATER);
 	}
 	
 	   /***

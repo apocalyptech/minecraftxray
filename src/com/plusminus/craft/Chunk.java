@@ -745,8 +745,7 @@ public class Chunk {
 	
 	public boolean isSolid(byte i) {
 		BLOCK_TYPE block_type = BLOCK_TYPE_MAP.get(i);
-		if((i == 0) || (i == TYPE_WATER) || (i == TYPE_WATER_STATIONARY) ||
-				(i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY) ||
+		if((i == 0) || (i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY) ||
 				(block_type != BLOCK_TYPE.NORMAL && block_type != BLOCK_TYPE.DATAVAL)) {
 			return false;
 		}
@@ -1769,26 +1768,18 @@ public class Chunk {
 						continue;
 					}
 					
-					/*if(t == TYPE_TORCH) {
-						//System.out.println("Torch: " + getData(x,y,z));
-					}*/
-					
-					int textureId = blockDataToSpriteSheet[t];
-					
-					if(textureId == -1) {
-						//System.out.println("unknown block type: " + t);
-						continue;
-					}
-					
 					if(transparency && isSolid(t)) {
 						continue;
 					}
 					if(!transparency && !isSolid(t)) {
 						continue;
 					}
-					//if(!transparency && !isSolid(t)) {
-					//	continue;
-					//}
+					
+					int textureId = blockDataToSpriteSheet[t];
+					
+					if(textureId == -1) {
+						continue;
+					}
 					
 					boolean draw = false;
 					
@@ -2149,7 +2140,9 @@ public class Chunk {
 				renderWorld(false, render_bedrock, false, null);
 				GL11.glEndList();
 				GL11.glNewList(this.transparentListNum, GL11.GL_COMPILE);
+				//GL11.glDepthMask(false);
 				renderWorld(true, false, false, null);
+				//GL11.glDepthMask(true);
 				GL11.glEndList();
 				this.isDirty = false;
 		}
