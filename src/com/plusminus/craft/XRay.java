@@ -299,7 +299,7 @@ public class XRay {
         	createWindow();
         	
         	// Save any prefs which may have changed
-        	//savePreferences();
+        	savePreferences();
         	
         	// basic opengl initialization
             initGL();
@@ -884,7 +884,14 @@ public class XRay {
 	        	JFileChooser chooser = new JFileChooser();
 	        	chooser.setFileHidingEnabled(false);
 	        	chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	        	chooser.setCurrentDirectory(new File("."));
+	        	if (xray_properties.getProperty("LAST_WORLD") != null)
+	        	{
+	        		chooser.setCurrentDirectory(new File(xray_properties.getProperty("LAST_WORLD")));
+	        	}
+	        	else
+	        	{
+	        		chooser.setCurrentDirectory(new File("."));
+	        	}
 	        	chooser.setDialogTitle("Select a Minecraft World Directory");
 	        	if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
 	        	{
@@ -912,6 +919,9 @@ public class XRay {
 	        	break;
 	        }
     	}
+    	
+    	// Update our preferences
+    	this.xray_properties.setProperty("LAST_WORLD", availableWorlds.get(this.selectedWorld).getBasePath());
     	
        	// set fullscreen from the dialog
     	fullscreen = ResolutionDialog.selectedFullScreenValue;

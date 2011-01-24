@@ -101,7 +101,6 @@ import org.lwjgl.opengl.DisplayMode;
  * The selected properties can be read this way<br/>
  * <code>
  * ResolutionDialog.selectedDisplayMode
- * ResolutionDialog.selectedAntiAliasMode
  * ResolutionDialog.selectedFullScreenValue
  * ResolutionDialog.selectedWorld
  * </code>
@@ -122,8 +121,6 @@ public class ResolutionDialog extends JFrame {
 		new int[] {32, 16, 8};
 	private static final int[] defaultPreferredRefreshRates =
 		new int[] {85, 80, 75, 70, 65, 60};
-	private static final int[] defaultPreferredAntialiasModes =
-		new int[] {0,2,4,8};
 	private static final boolean defaultPreferredFullScreenValue = false;
 		
 	public static final int DIALOG_BUTTON_EXIT = 0;
@@ -132,7 +129,6 @@ public class ResolutionDialog extends JFrame {
 	private JComboBox resolutionsList;
 	private JComboBox bitDepthList;
 	private JComboBox refreshRateList;
-	private JComboBox antiAliasList;
 	private JButton runButton;
 	private JButton exitButton;
 	private GridBagLayout gridBagLayoutManager;
@@ -144,22 +140,22 @@ public class ResolutionDialog extends JFrame {
 	private DefaultComboBoxModel resolutionsModel;
 	private DefaultComboBoxModel bitDepthModel;
 	private DefaultComboBoxModel refreshRateModel;
-	private DefaultComboBoxModel antiAliasModel;
 	
 	private Map<IntegerPair, List<DisplayMode>> resolutionsMap;
+	
+	private ArrayList<WorldInfo> availableWorlds;
 	
 	private int[][] preferredResolutions;
 	private int[] preferredRefreshRates;
 	private int[] preferredBitDepths;
-	private int[] preferredAntiAliasModes;
 	private boolean preferredFullScreenValue;
+	private String preferredWorld;
 	
 	private int exitCode = -1;
 	
 	private Properties xray_properties;
 	
 	public static DisplayMode selectedDisplayMode;
-	public static int selectedAntiAliasMode;
 	public static int selectedRefreshRate;
 	public static int selectedBitDepth;
 	public static boolean selectedFullScreenValue;
@@ -240,35 +236,6 @@ public class ResolutionDialog extends JFrame {
 	}
 	
 	/***
-	 * Renders Integers and adds an 'x' to the end, so '2x' for example.
-	 * @author Vincent Vollers
-	 */
-	private class AntiAliasModesRenderer extends BasicComboBoxRenderer {
-
-		private static final long serialVersionUID = -3925894624131433L;
-
-		public AntiAliasModesRenderer() {
-			super();
-		}
-		
-		public Component getListCellRendererComponent(
-                 JList list, 
-                 Object value,
-                 int index, 
-                 boolean isSelected, 
-                 boolean cellHasFocus)
-		 {
-			Integer val = (Integer) value;
-			String newValue = "" + val + "x";
-			if(val == 0) {
-				newValue = "none";
-			}
-			
-			return super.getListCellRendererComponent(list, newValue, index, isSelected, cellHasFocus); 
-		 }
-	}
-	
-	/***
 	 * Centers this dialog on the screen
 	 */
 	private void centerDialogOnScreen() {
@@ -296,7 +263,6 @@ public class ResolutionDialog extends JFrame {
 		JLabel resolutionsLabel = new JLabel("Resolution: ");
 		JLabel bitDepthLabel 	= new JLabel("Bit Depth: ");
 		JLabel refreshRateLabel = new JLabel("Refresh Rate: ");
-		JLabel antiAliasLabel 	= new JLabel("Anti Aliasing: ");
 		JLabel fullScreenLabel  = new JLabel("Full Screen: ");
 		
 		float flabel = 0.1f;
@@ -344,22 +310,9 @@ public class ResolutionDialog extends JFrame {
 		c.gridx = 1; c.gridy = 2;
 		addComponent(basicPanel, refreshRateList,c);
 		
-		// Add the antialiasing label
-		c.weightx = flabel; 
-		c.gridx = 0; c.gridy = 3;
-		c.fill = GridBagConstraints.NONE;
-		c.anchor = GridBagConstraints.EAST;
-		addComponent(basicPanel, antiAliasLabel,c);
-		
-		// Add the antialiasing list
-		c.weightx = flist;  
-		c.gridx = 1; c.gridy = 3;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		addComponent(basicPanel, antiAliasList,c);
-		
 		// Add the fullscreen label
 		c.weightx = flabel; 
-		c.gridx = 0; c.gridy = 4;
+		c.gridx = 0; c.gridy = 3;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		addComponent(basicPanel, fullScreenLabel,c);
@@ -371,14 +324,14 @@ public class ResolutionDialog extends JFrame {
 		
 		// Add the fullscreen checkbox
 		c.weightx = flist;  
-		c.gridx = 1; c.gridy = 4;
+		c.gridx = 1; c.gridy = 3;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(basicPanel, fullScreenCheckBox,c);
 		
 		// Separator
 		c.insets = new Insets(5,5,5,5);
 		c.weightx = 1.0f;
-		c.gridx = 0; c.gridy = 5;
+		c.gridx = 0; c.gridy = 4;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(basicPanel, Box.createVerticalStrut(5), c);
@@ -386,7 +339,7 @@ public class ResolutionDialog extends JFrame {
 		addComponent(basicPanel, Box.createVerticalStrut(5), c);
 		
 		// World Label
-		c.gridx = 0; c.gridy = 7;
+		c.gridx = 0; c.gridy = 6;
 		c.gridwidth = 2;
 		addComponent(basicPanel, new JLabel("Choose a World to Open:"), c);
 		
@@ -394,6 +347,8 @@ public class ResolutionDialog extends JFrame {
 		worldButtonGroup = new ButtonGroup();
 		worldButtons = new JRadioButton[availableWorlds.size()];
 		int curidx = 0;
+		int selectedWorld = 0;
+		boolean matched_world = false;
 		for (WorldInfo world : availableWorlds)
 		{
 			JRadioButton button;
@@ -411,16 +366,26 @@ public class ResolutionDialog extends JFrame {
 			}
 			worldButtonGroup.add(button);
 			worldButtons[curidx] = button;
+			if (!matched_world && this.preferredWorld != null)
+			{
+				if (world.isCustom())
+				{
+					selectedWorld = curidx;
+					matched_world = true;
+				}
+				else if (world.getBasePath().equalsIgnoreCase(this.preferredWorld))
+				{
+					selectedWorld = curidx;
+					matched_world = true;
+				}
+			}
 			curidx += 1;
 		}
-		
-		// XRay.java checks to make sure we have at least one world available, so we should theoretically
-		// never get here unless we do.
-		worldButtons[0].setSelected(true);
+		worldButtons[selectedWorld].setSelected(true);
 		
 		// Now insert the world radio buttons
 		c.insets = new Insets(5, 15, 5, 5);
-		c.gridx = 0; c.gridy = 8;
+		c.gridx = 0; c.gridy = 7;
 		c.gridwidth = 2;
 		for (JRadioButton button : worldButtons)
 		{
@@ -504,17 +469,12 @@ public class ResolutionDialog extends JFrame {
 	private void buildLists() {
 		resolutionsModel 	= new DefaultComboBoxModel();
 		bitDepthModel 		= new DefaultComboBoxModel();
-		antiAliasModel 		= new DefaultComboBoxModel();
 		refreshRateModel 	= new DefaultComboBoxModel();
 		
 		resolutionsMap 	= new TreeMap<IntegerPair, List<DisplayMode>>();
 		
 		bitDepthList 	= new JComboBox();
 		bitDepthList.setModel(bitDepthModel);
-		
-		antiAliasList	= new JComboBox();
-		antiAliasList.setModel(antiAliasModel);
-		antiAliasList.setRenderer(new AntiAliasModesRenderer());
 		
 		refreshRateList	= new JComboBox();
 		refreshRateList.setModel(refreshRateModel);
@@ -577,14 +537,7 @@ public class ResolutionDialog extends JFrame {
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		antiAliasModel.addElement(0);
-		antiAliasModel.addElement(2);
-		antiAliasModel.addElement(4);
-		antiAliasModel.addElement(8);
-		antiAliasModel.addElement(16);
-		
+		}		
 
 		resolutionsList = new JComboBox();
 		resolutionsList.setModel(resolutionsModel);
@@ -599,7 +552,6 @@ public class ResolutionDialog extends JFrame {
 		});
 		
 		findSelectionIntegerPair(resolutionsList, preferredResolutions);
-		findSelectionInteger(antiAliasList, preferredAntiAliasModes);
 	}
 	
 	/***
@@ -733,13 +685,6 @@ public class ResolutionDialog extends JFrame {
 			refreshRate = (Integer) refreshRateModel.getElementAt(refreshRateList.getSelectedIndex());
 		}
 		
-		Integer antiAliasMode;
-		if(antiAliasList.getSelectedIndex() == -1) {
-			antiAliasMode = (Integer) antiAliasModel.getElementAt(0);
-		} else {
-			antiAliasMode = (Integer) antiAliasModel.getElementAt(antiAliasList.getSelectedIndex());
-		}
-		
 		for(DisplayMode mode : resolutionsMap.get(resolution)) {
 			if(mode.getBitsPerPixel() == bitDepth &&
 				mode.getFrequency() == refreshRate) {
@@ -748,7 +693,6 @@ public class ResolutionDialog extends JFrame {
 			}
 		}
 		
-		ResolutionDialog.selectedAntiAliasMode = antiAliasMode;
 		ResolutionDialog.selectedRefreshRate = refreshRate;
 		ResolutionDialog.selectedBitDepth = bitDepth;
 		
@@ -762,6 +706,44 @@ public class ResolutionDialog extends JFrame {
 				break;
 			}
 		}
+		
+		// Also set the info in our properties object
+		this.xray_properties.setProperty("LAST_RESOLUTION_X", Integer.toString(ResolutionDialog.selectedDisplayMode.getWidth()));
+		this.xray_properties.setProperty("LAST_RESOLUTION_Y", Integer.toString(ResolutionDialog.selectedDisplayMode.getHeight()));
+		this.xray_properties.setProperty("LAST_BPP", Integer.toString(ResolutionDialog.selectedBitDepth));
+		this.xray_properties.setProperty("LAST_REFRESH_RATE", Integer.toString(ResolutionDialog.selectedRefreshRate));
+		if (ResolutionDialog.selectedFullScreenValue)
+		{
+			this.xray_properties.setProperty("LAST_FULLSCREEN", "1");
+		}
+		else
+		{
+			this.xray_properties.setProperty("LAST_FULLSCREEN", "0");			
+		}
+		// World directory preference is set out in XRay.java, because we might have loaded a world from an arbitrary dir
+	}
+	
+	/**
+	 * Given an array of ints, prepend it with a value from our properties file, if it
+	 * exists.
+	 * 
+	 * @param prop_name
+	 * @param dest_var
+	 * @param existing_var
+	 */
+	private int[] prepend_int_array(String prop_name, int[] dest_var, int[] existing_var)
+	{
+		String val = this.xray_properties.getProperty(prop_name);
+		if (val != null)
+		{
+			dest_var = new int[existing_var.length+1];
+			dest_var[0] = Integer.valueOf(val);
+			for (int i=0; i<existing_var.length; i++)
+			{
+				dest_var[i+1] = existing_var[i];
+			}
+		}
+		return dest_var;
 	}
 	
 	/***
@@ -771,12 +753,11 @@ public class ResolutionDialog extends JFrame {
 	 * @param preferredResolutions a list of resolutions, in order of preference, which will be looked for
 	 * @param preferredBitDepths a list of color depths, in order of preference, which will be looked for
 	 * @param preferredRefreshRates a list of refresh rates, in order of preference, which will be looked for
-	 * @param preferredAntialiasModes a list of antia-alias values, in order of preference, which will be looked for
 	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
 	 */
 	protected ResolutionDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
+			boolean preferredFullScreenValue,
 			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		super(windowName);
 		
@@ -784,10 +765,10 @@ public class ResolutionDialog extends JFrame {
 		this.preferredResolutions	= preferredResolutions;
 		this.preferredBitDepths 	= preferredBitDepths;
 		this.preferredRefreshRates 	= preferredRefreshRates;
-		this.preferredAntiAliasModes = preferredAntialiasModes;
 		this.preferredFullScreenValue = preferredFullScreenValue;
+		this.availableWorlds		= availableWorlds;
 		
-		// Override our "preferred" values with the "last used" vars from our properties file
+		// Load last-used resolution/display information from our properties file
 		String val_1 = this.xray_properties.getProperty("LAST_RESOLUTION_X");
 		String val_2 = this.xray_properties.getProperty("LAST_RESOLUTION_Y");
 		if (val_1 != null && val_2 != null)
@@ -799,6 +780,26 @@ public class ResolutionDialog extends JFrame {
 			for (int i=0; i<preferredResolutions.length; i++)
 			{
 				this.preferredResolutions[i+1] = preferredResolutions[i];
+			}
+		}
+		this.preferredBitDepths = this.prepend_int_array("LAST_BPP", this.preferredBitDepths, preferredBitDepths);
+		this.preferredRefreshRates = this.prepend_int_array("LAST_REFRESH_RATE", this.preferredRefreshRates, preferredRefreshRates);
+		this.preferredWorld = this.xray_properties.getProperty("LAST_WORLD");
+		
+		// ... aaand fullscreen, too
+		val_1 = this.xray_properties.getProperty("LAST_FULLSCREEN");
+		if (val_1 != null)
+		{
+			val_1 = val_1.substring(0, 1);
+			if (val_1.equalsIgnoreCase("y") ||
+					val_1.equalsIgnoreCase("t") ||
+					val_1.equalsIgnoreCase("1"))
+			{
+				this.preferredFullScreenValue = true;
+			}
+			else
+			{
+				this.preferredFullScreenValue = false;
 			}
 		}
 		
@@ -836,13 +837,12 @@ public class ResolutionDialog extends JFrame {
 	 * @param preferredResolutions a list of resolutions, in order of preference, which will be looked for
 	 * @param preferredBitDepths a list of color depths, in order of preference, which will be looked for
 	 * @param preferredRefreshRates a list of refresh rates, in order of preference, which will be looked for
-	 * @param preferredAntialiasModes a list of antia-alias values, in order of preference, which will be looked for
 	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
 	public static int presentDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
+			boolean preferredFullScreenValue,
 			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		ResolutionDialog dialog = new ResolutionDialog(
 				windowName,
@@ -850,7 +850,6 @@ public class ResolutionDialog extends JFrame {
 				preferredResolutions,
 				preferredBitDepths,
 				preferredRefreshRates,
-				preferredAntialiasModes,
 				preferredFullScreenValue,
 				availableWorlds,
 				xray_properties
@@ -886,7 +885,6 @@ public class ResolutionDialog extends JFrame {
 				defaultPreferredResolutions,
 				defaultPreferredBitDepths,
 				defaultPreferredRefreshRates,
-				defaultPreferredAntialiasModes,
 				defaultPreferredFullScreenValue,
 				availableWorlds,
 				xray_properties
@@ -899,17 +897,16 @@ public class ResolutionDialog extends JFrame {
 	 * @param preferredResolutions a list of resolutions, in order of preference, which will be looked for
 	 * @param preferredBitDepths a list of color depths, in order of preference, which will be looked for
 	 * @param preferredRefreshRates a list of refresh rates, in order of preference, which will be looked for
-	 * @param preferredAntialiasModes a list of antia-alias values, in order of preference, which will be looked for
 	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
 	public static int presentDialog(String windowName,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			int[] preferredAntialiasModes, boolean preferredFullScreenValue,
+			boolean preferredFullScreenValue,
 			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		return presentDialog(windowName, null,
 				preferredResolutions, preferredBitDepths, preferredRefreshRates,
-				preferredAntialiasModes, preferredFullScreenValue,
+				preferredFullScreenValue,
 				availableWorlds, xray_properties);
 	}
 }
