@@ -62,7 +62,8 @@ public class MineCraftConstants {
 		DATAVAL,
 		MINECART_TRACKS,
 		WATER,
-		LAVA
+		LAVA,
+		FIRE
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -268,6 +269,9 @@ public class MineCraftConstants {
 		// Lava
 		BLOCK_TYPE_MAP.put((byte)BLOCK_LAVA, BLOCK_TYPE.LAVA);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STATIONARY_LAVA, BLOCK_TYPE.LAVA);
+		
+		// Fire
+		BLOCK_TYPE_MAP.put((byte)BLOCK_FIRE, BLOCK_TYPE.FIRE);
 	}
 	
 	   /***

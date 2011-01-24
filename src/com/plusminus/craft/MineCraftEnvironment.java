@@ -327,6 +327,14 @@ public class MineCraftEnvironment {
 		return getMinecraftTexturepackData("misc/water.png");
 	}
 	
+	/***
+	 * Returns a stream to the water texture data
+	 * @return
+	 */
+	public static InputStream getMinecraftParticleData() {
+		return getMinecraftTexturepackData("particles.png");
+	}
+	
 	/**
 	 * Returns a stream to the painting data
 	 * @return
@@ -433,14 +441,43 @@ public class MineCraftEnvironment {
 		}
 		g2d.drawImage(bi2, 15*square_width, 12*square_width, square_width, square_width, null);
 		
-    	try
-    	{
-    		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
-    	}
-    	catch (Exception e)
-    	{
-    		// whatever
-    	}
+		// Also create a fake sort of "fire" graphic to use
+		bi2 = buildImageFromInput(getMinecraftParticleData());
+		int particle_width = bi2.getWidth()/16;
+		int fire_x = 15;
+		int fire_y = 1;
+		int flame_x = 0;
+		int flame_y = 3;
+		int start_fire_x = fire_x*square_width;
+		int start_fire_y = fire_y*square_width;
+		int start_flame_x = flame_x*particle_width;
+		int start_flame_y = flame_y*particle_width;
+		g2d.setComposite(AlphaComposite.Src);
+		g2d.setColor(new Color(0f, 0f, 0f, 0f));
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
+		g2d.fillRect(fire_x*square_width, fire_y*square_width, square_width, square_width);
+		if (square_width < (particle_width*2))
+		{
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);			
+		}
+		g2d.drawImage(bi2,
+				start_fire_x, start_fire_y, start_fire_x+(square_width/2), start_fire_y+(square_width/2),
+				start_flame_x, start_flame_y, start_flame_x+particle_width, start_flame_y+particle_width,
+				null);
+		g2d.drawImage(bi2,
+				start_fire_x+(square_width/2), start_fire_y, start_fire_x+square_width, start_fire_y+(square_width/2),
+				start_flame_x, start_flame_y, start_flame_x+particle_width, start_flame_y+particle_width,
+				null);
+		g2d.drawImage(bi2,
+				start_fire_x, start_fire_y+(square_width/2), start_fire_x+(square_width/2), start_fire_y+square_width,
+				start_flame_x, start_flame_y, start_flame_x+particle_width, start_flame_y+particle_width,
+				null);
+		g2d.drawImage(bi2,
+				start_fire_x+(square_width/2), start_fire_y+(square_width/2), start_fire_x+square_width, start_fire_y+square_width,
+				start_flame_x, start_flame_y, start_flame_x+particle_width, start_flame_y+particle_width,
+				null);
     	
 		return bi;
 	}
