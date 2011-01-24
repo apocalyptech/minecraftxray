@@ -33,9 +33,6 @@
    markers won't show up properly on the minimap; should fix those.
    
  * "Explored Caverns" toggle, based on torch placement
- 
- * Draw distance keys don't seem to work properly when you've got ore highlighting
-   turned off
    
  * Use a TreeMap for SMP players so their names are sorted
  

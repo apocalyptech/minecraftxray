@@ -3,6 +3,8 @@
   * Water rendering can be toggled with "T"
   * Camera can be locked onto the Y axis with "L"
   * Water and fire should render properly regardless of texture pack
+  * Fixed a bug where changes to the draw distance wouldn't get
+    updated if ore highlighting was turned off
 
 Minecraft X-Ray 2.7 Maintenance Branch 7 (2011.01.21)
 

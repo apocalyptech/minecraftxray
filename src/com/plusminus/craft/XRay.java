@@ -1335,7 +1335,7 @@ public class XRay {
         // Toggle ore highlighting
         key = key_mapping.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING);
         if(Keyboard.isKeyDown(key) && keyPressed != key) {
-        	keyPressed = key;                                     
+        	keyPressed = key;
             highlightOres = !highlightOres;
         }
         
@@ -1668,9 +1668,9 @@ public class XRay {
 			}
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			setLightLevel();
     	}
         
+		setLightLevel();
         
         GL11.glPopMatrix();
         
