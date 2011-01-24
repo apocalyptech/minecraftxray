@@ -6,7 +6,9 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileInputStream;
@@ -317,6 +319,14 @@ public class MineCraftEnvironment {
 		return getMinecraftTexturepackData("terrain.png");
 	}
 	
+	/***
+	 * Returns a stream to the water texture data
+	 * @return
+	 */
+	public static InputStream getMinecraftWaterData() {
+		return getMinecraftTexturepackData("misc/water.png");
+	}
+	
 	/**
 	 * Returns a stream to the painting data
 	 * @return
@@ -362,6 +372,7 @@ public class MineCraftEnvironment {
 	 */
 	public static BufferedImage getMinecraftTexture() {
 		BufferedImage bi = buildImageFromInput(getMinecraftTextureData());
+		Graphics2D g2d = bi.createGraphics();
 		
 		// Figure out our square size, and then check to see if the grass tile is
 		// grayscale or not; we do this by examining the middle row of pixels.  If
@@ -389,7 +400,6 @@ public class MineCraftEnvironment {
 		// Now do the coloring if we have to.
 		if (grayscale)
 		{	
-			Graphics2D g2d = bi.createGraphics();
 			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.3f);
 			
 			// First greenify grass
@@ -406,6 +416,32 @@ public class MineCraftEnvironment {
 			g2d.fill(rect);
 			g2d.drawImage(bi, null, 0, 0);
 		}
+		
+		// Load in the water texture separately and pretend it's a part of the main texture pack.
+		BufferedImage bi2 = buildImageFromInput(getMinecraftWaterData());
+		int water_width = bi2.getWidth();
+		g2d.setComposite(AlphaComposite.Src);
+		if (square_width < water_width)
+		{
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		}
+		else
+		{
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
+		}
+		g2d.drawImage(bi2, 15*square_width, 12*square_width, square_width, square_width, null);
+		
+    	try
+    	{
+    		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
+    	}
+    	catch (Exception e)
+    	{
+    		// whatever
+    	}
+    	
 		return bi;
 	}
 	
