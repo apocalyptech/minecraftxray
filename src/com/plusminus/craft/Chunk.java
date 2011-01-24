@@ -745,8 +745,7 @@ public class Chunk {
 	
 	public boolean isSolid(byte i) {
 		BLOCK_TYPE block_type = BLOCK_TYPE_MAP.get(i);
-		if((i == 0) || (i==TYPE_LAVA) || (i==TYPE_LAVA_STATIONARY) ||
-				(block_type != BLOCK_TYPE.NORMAL && block_type != BLOCK_TYPE.DATAVAL)) {
+		if((i == 0) || (block_type != BLOCK_TYPE.NORMAL && block_type != BLOCK_TYPE.DATAVAL)) {
 			return false;
 		}
 		

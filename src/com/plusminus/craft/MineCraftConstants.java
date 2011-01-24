@@ -40,9 +40,6 @@ public class MineCraftConstants {
 	public static final long MILLISPERSECOND 	= 1000;
 	public static final long NANOSPERMILLIS 	= NANOSPERSECOND / MILLISPERSECOND;
 	
-	public static final int TYPE_LAVA = 10;
-	public static final int TYPE_LAVA_STATIONARY = 11;
-	
 	// Types of blocks
 	public static enum BLOCK_TYPE {
 		NORMAL,
@@ -64,7 +61,8 @@ public class MineCraftConstants {
 		PORTAL,
 		DATAVAL,
 		MINECART_TRACKS,
-		WATER
+		WATER,
+		LAVA
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -266,6 +264,10 @@ public class MineCraftConstants {
 		// Water
 		BLOCK_TYPE_MAP.put((byte)BLOCK_WATER, BLOCK_TYPE.WATER);
 		BLOCK_TYPE_MAP.put((byte)BLOCK_STATIONARY_WATER, BLOCK_TYPE.WATER);
+		
+		// Lava
+		BLOCK_TYPE_MAP.put((byte)BLOCK_LAVA, BLOCK_TYPE.LAVA);
+		BLOCK_TYPE_MAP.put((byte)BLOCK_STATIONARY_LAVA, BLOCK_TYPE.LAVA);
 	}
 	
 	   /***
