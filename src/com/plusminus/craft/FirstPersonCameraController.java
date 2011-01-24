@@ -46,19 +46,25 @@ public class FirstPersonCameraController {
     }
     
    
-    public void walkForward(float distance)
+    public void walkForward(float distance, boolean camera_lock)
     {
         position.x -= distance * (float)Math.sin(Math.toRadians(yaw));
         position.z += distance * (float)Math.cos(Math.toRadians(yaw));
-        position.y += distance * (float)Math.sin(Math.toRadians(pitch));
+        if (!camera_lock)
+        {
+        	position.y += distance * (float)Math.sin(Math.toRadians(pitch));
+        }
     }
 
  
-    public void walkBackwards(float distance)
+    public void walkBackwards(float distance, boolean camera_lock)
     {
         position.x += distance * (float)Math.sin(Math.toRadians(yaw));
         position.z -= distance * (float)Math.cos(Math.toRadians(yaw));
-        position.y -= distance * (float)Math.sin(Math.toRadians(pitch));
+        if (!camera_lock)
+        {
+        	position.y -= distance * (float)Math.sin(Math.toRadians(pitch));
+        }
     }
 
     public void strafeLeft(float distance)

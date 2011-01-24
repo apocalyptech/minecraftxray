@@ -1,6 +1,7 @@
   * Removed useless "antialiasing" option on startup dialog
   * Startup dialog will remember your previously-chosen options
   * Water rendering can be toggled with "T"
+  * Camera can be locked onto the Y axis with "L"
 
 Minecraft X-Ray 2.7 Maintenance Branch 7 (2011.01.21)
 

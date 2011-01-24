@@ -109,6 +109,7 @@ public class XRay {
     
     // our camera
     private FirstPersonCameraController camera;
+    private boolean camera_lock = false;
     
     // the current mouseX and mouseY on the screen
     private int mouseX;
@@ -251,6 +252,7 @@ public class XRay {
 		TOGGLE_FULLSCREEN,
 		TOGGLE_FULLBRIGHT,
 		TOGGLE_ORE_HIGHLIGHTING,
+		TOGGLE_CAMERA_LOCK,
 		MOVE_TO_SPAWN,
 		MOVE_TO_PLAYER,
 		MOVE_NEXT_CAMERAPOS,
@@ -470,6 +472,7 @@ public class XRay {
     	key_mapping.put(KEY_ACTIONS.TOGGLE_FULLSCREEN, Keyboard.KEY_BACK);
     	key_mapping.put(KEY_ACTIONS.TOGGLE_FULLBRIGHT, Keyboard.KEY_F);
     	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING, Keyboard.KEY_H);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_CAMERA_LOCK, Keyboard.KEY_L);
     	key_mapping.put(KEY_ACTIONS.MOVE_TO_SPAWN, Keyboard.KEY_HOME);
     	key_mapping.put(KEY_ACTIONS.MOVE_TO_PLAYER, Keyboard.KEY_END);
     	key_mapping.put(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS, Keyboard.KEY_INSERT);
@@ -1258,14 +1261,14 @@ public class XRay {
         // Move forward
         if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_FORWARD)))
         {
-            camera.walkForward(MOVEMENT_SPEED*timeDelta);
+            camera.walkForward(MOVEMENT_SPEED*timeDelta, camera_lock);
             triggerChunkLoads();
         }
         
         // Move backwards
         if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_BACKWARD)))
         {
-            camera.walkBackwards(MOVEMENT_SPEED*timeDelta);
+            camera.walkBackwards(MOVEMENT_SPEED*timeDelta, camera_lock);
             triggerChunkLoads();
         }
         
@@ -1401,6 +1404,13 @@ public class XRay {
     		invalidateSelectedChunks(true);
         }
         
+        // Toggle camera lock
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_CAMERA_LOCK);
+        if (Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;
+        	camera_lock = !camera_lock;
+        }        
+
         // Toggle between Nether and Overworld
         key = key_mapping.get(KEY_ACTIONS.SWITCH_NETHER);
         if (Keyboard.isKeyDown(key) && keyPressed != key) {
