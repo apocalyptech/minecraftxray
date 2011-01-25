@@ -10,8 +10,6 @@
  
  * GUI to set custom key bindings and custom ore highlights
  
- * Highlighting for Reed/Sugarcane and other "special" block types
- 
  * Find a way to eliminate the stuttering when new map chunks are loading
  
  * Home/End will wipe the minimap and load chunks, even if we're already

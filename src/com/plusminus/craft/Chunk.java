@@ -1754,6 +1754,15 @@ public class Chunk {
 	public void renderWorld(boolean transparency, boolean render_bedrock, boolean render_water, boolean onlySelected, boolean[] selectedMap) {
 		float worldX = this.x*16;
 		float worldZ = this.z*16;
+		
+		boolean draw = false;
+		boolean above = true;
+		boolean below = true;
+		boolean left = true;
+		boolean right = true;
+		boolean near = true;
+		boolean far = true;
+		
 		for(int x=0;x<16;x++) {
 			int xOff = (x * 128 * 16);
 			for(int z=0;z<16;z++) {
@@ -1767,11 +1776,39 @@ public class Chunk {
 						continue;
 					}
 					
-					if(transparency && isSolid(t)) {
-						continue;
+					if (onlySelected)
+					{
+						draw = false;
+						for(int i=0;i<selectedMap.length;i++) {
+							if(selectedMap[i] && level.HIGHLIGHT_ORES[i].id == t) {
+								// TODO: should maybe check our boundaries for similar ores, like we do for regular blocks
+								draw = true;
+								above = false;
+								below = false;
+								left = false;
+								right = false;
+								near = false;
+								far = false;
+								break;
+							}
+						}
 					}
-					if(!transparency && !isSolid(t)) {
-						continue;
+					else
+					{
+						if(transparency && isSolid(t)) {
+							continue;
+						}
+						if(!transparency && !isSolid(t)) {
+							continue;
+						}
+						
+						draw = false;
+						above = true;
+						below = true;
+						left = true;
+						right = true;
+						near = true;
+						far = true;
 					}
 					
 					if (!render_water && BLOCK_TYPE_MAP.get(t) == BLOCK_TYPE.WATER)
@@ -1784,17 +1821,9 @@ public class Chunk {
 					if(textureId == -1) {
 						continue;
 					}
-					
-					boolean draw = false;
-					
-					if(!onlySelected) {
-						boolean above = true;
-						boolean below = true;
-						boolean left = true;
-						boolean right = true;
-						boolean near = true;
-						boolean far = true;
 
+					if (!onlySelected)
+					{
 						if (render_bedrock && t == MineCraftConstants.BLOCK.BEDROCK.id)
 						{
 							// This block of code was more or less copied/modified directly from the "else" block
@@ -1923,7 +1952,10 @@ public class Chunk {
 								}
 							}
 						}
-						
+					}
+					
+					if (draw)
+					{
 						switch(BLOCK_TYPE_MAP.get(t))
 						{
 							case TORCH:
@@ -2002,38 +2034,16 @@ public class Chunk {
 									System.out.println("Unknown data value for block type " + t + ": " + data);
 								}
 							default:
-								// if we have to draw this block
-								if(draw) {
-									if(!near) this.renderWestEast(textureId, worldX+x, y, worldZ+z);
-									if(!far) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1);
-									
-									if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
-									if(!above) this.renderTopDown(textureId, worldX+x, y+1, worldZ+z);	
-									
-									if(!left) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z);
-									if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z);
-								}
-						}
-					} else {
-						draw = false;
-						for(int i=0;i<selectedMap.length;i++) {
-							if(selectedMap[i] && level.HIGHLIGHT_ORES[i].id == t) {
-								draw = true;
-								break;
-							}
-						}
-						if(draw) {
-							this.renderWestEast(textureId, worldX+x, y, worldZ+z);
-							this.renderWestEast(textureId, worldX+x, y, worldZ+z+1);
-							
-							this.renderTopDown(textureId, worldX+x, y, worldZ+z);
-							this.renderTopDown(textureId, worldX+x, y+1, worldZ+z);	
-							
-							this.renderNorthSouth(textureId, worldX+x, y, worldZ+z);
-							this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z);
-						}
+								if(!near) this.renderWestEast(textureId, worldX+x, y, worldZ+z);
+								if(!far) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1);
+								
+								if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
+								if(!above) this.renderTopDown(textureId, worldX+x, y+1, worldZ+z);	
+								
+								if(!left) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z);
+								if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z);
+						}					
 					}
-					
 				}
 			}
 		}
