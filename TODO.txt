@@ -30,8 +30,6 @@
    
  * There are various conditions where the player position and spawn position
    markers won't show up properly on the minimap; should fix those.
-   
- * "Explored Caverns" toggle, based on torch placement
  
  * As I've been editing the X-Ray code, I've been using underscore_variables like
    that, mostly, instead of the camelCase which was more prevalent.  Should really

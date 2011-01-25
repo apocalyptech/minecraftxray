@@ -7,6 +7,7 @@
     updated if ore highlighting was turned off
   * Ore highlights can be specified in the properties file now
   * Multiplayer camera presets are now sorted by username
+  * Highlight (in green) areas near torches with "E"
 
 Minecraft X-Ray 2.7 Maintenance Branch 7 (2011.01.21)
 

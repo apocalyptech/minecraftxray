@@ -1751,7 +1751,107 @@ public class Chunk {
 		return isSolid(block) == transpararency;
 	}
 	
-	public void renderWorld(boolean transparency, boolean render_bedrock, boolean render_water, boolean onlySelected, boolean[] selectedMap) {
+	/**
+	 * Tests if the given source block has a torch nearby.  This feels very
+	 * cumbersome and inelegant to me, though surprisingly it seems to run fast
+	 * enough to not make a real noticeable difference, so I'll probably not get
+	 * around to making it do something sensible.  Alas!
+	 * 
+	 * @param sx
+	 * @param sy
+	 * @param sz
+	 * @return
+	 */
+	public boolean hasAdjacentTorch(int sx, int sy, int sz)
+	{
+		int distance = 3;
+		int x, y, z;
+		int min_x = sx-distance;
+		int max_x = sx+distance;
+		int min_z = sz-distance;
+		int max_z = sz+distance;
+		int min_y = Math.max(0, sy-distance);
+		int max_y = Math.min(127, sy+distance);
+		Chunk otherChunk;
+		int cx, cz;
+		int tx, tz;
+		for (x = min_x; x<=max_x; x++)
+		{
+			for (y = min_y; y<=max_y; y++)
+			{
+				for (z = min_z; z<=max_z; z++)
+				{
+					otherChunk = null;
+					if (x < 0)
+					{
+						cx = this.x-1;
+						tx = 16+x;
+					}
+					else if (x > 15)
+					{
+						cx = this.x+1;
+						tx = x-16;
+					}
+					else
+					{
+						cx = this.x;
+						tx = x;
+					}
+
+					if (z < 0)
+					{
+						cz = this.z-1;
+						tz = 16+z;
+					}
+					else if (z > 15)
+					{
+						cz = this.z+1;
+						tz = z-16;
+					}
+					else
+					{
+						cz = this.z;
+						tz = z;
+					}
+					
+					if (cx != this.x || cz != this.z)
+					{
+						otherChunk = level.getChunk(cx, cz);
+						if (otherChunk == null)
+						{
+							continue;
+						}
+						else if (otherChunk.blockData.value[(tz*128)+(tx*128*16)+y] == BLOCK.TORCH.id)
+						{
+							return true;
+						}
+					}
+					else
+					{
+						if (blockData.value[(z*128)+(x*128*16)+y] == BLOCK.TORCH.id)
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Renders our chunk.  Most of these options should really be consolidated somehow; maybe just pass in
+	 * a HashMap or something with the options.  Anyway, for now it'll remain the same.
+	 * 
+	 * @param transparency Are we rendering "transparent" objects this time?  (ie: any nonstandard, nonsolid block)
+	 * @param render_bedrock Are we forcing bedrock to be rendered?
+	 * @param render_water Are we forcing water to be rendered?
+	 * @param highlight_explored Are we highlighting the area around torches?
+	 * @param onlySelected Are we ONLY rendering ores that the user's selected?
+	 * @param selectedMap ... if so, here's a HashMap to which ones to highlight.
+	 */
+	public void renderWorld(boolean transparency, boolean render_bedrock, boolean render_water, boolean highlight_explored,
+			boolean onlySelected, boolean[] selectedMap) {
 		float worldX = this.x*16;
 		float worldZ = this.z*16;
 		
@@ -1954,8 +2054,17 @@ public class Chunk {
 						}
 					}
 					
+					boolean adj_torch = false;
 					if (draw)
 					{
+						if (highlight_explored)
+						{
+							adj_torch = hasAdjacentTorch(x,y,z);
+							if (adj_torch)
+							{
+								GL11.glColor4f(.7f, 1f, .7f, 1f);
+							}
+						}
 						switch(BLOCK_TYPE_MAP.get(t))
 						{
 							case TORCH:
@@ -2043,6 +2152,10 @@ public class Chunk {
 								if(!left) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z);
 								if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z);
 						}					
+					}
+					if (highlight_explored && adj_torch)
+					{
+						GL11.glColor4f(1f, 1f, 1f, 1f);
 					}
 				}
 			}
@@ -2148,14 +2261,14 @@ public class Chunk {
 		}
 	}
 	
-	public void renderSolid(boolean render_bedrock, boolean render_water) {
+	public void renderSolid(boolean render_bedrock, boolean render_water, boolean highlight_explored) {
 		if(isDirty) {
 				GL11.glNewList(this.displayListNum, GL11.GL_COMPILE);
-				renderWorld(false, render_bedrock, false, false, null);
+				renderWorld(false, render_bedrock, false, highlight_explored, false, null);
 				GL11.glEndList();
 				GL11.glNewList(this.transparentListNum, GL11.GL_COMPILE);
 				//GL11.glDepthMask(false);
-				renderWorld(true, false, render_water, false, null);
+				renderWorld(true, false, render_water, highlight_explored, false, null);
 				//GL11.glDepthMask(true);
 				GL11.glEndList();
 				this.isDirty = false;
@@ -2170,7 +2283,7 @@ public class Chunk {
 	public void renderSelected(boolean[] selectedMap) {
 		if(isSelectedDirty) {
 			GL11.glNewList(this.selectedDisplayListNum, GL11.GL_COMPILE);
-			renderWorld(false, false, false, true, selectedMap);
+			renderWorld(false, false, false, false, true, selectedMap);
 			GL11.glEndList();
 			this.isSelectedDirty = false;
 		}

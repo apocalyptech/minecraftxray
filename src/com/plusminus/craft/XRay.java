@@ -127,9 +127,10 @@ public class XRay {
     private Texture minimapArrowTexture;
     private Graphics2D minimapGraphics;
     
-    // Whether or not we're showing bedrock/water
+    // Whether or not we're showing bedrock/water/explored areas
     private boolean render_bedrock = false;
     private boolean render_water = true;
+    private boolean highlight_explored = false;
     
     // the minecraft level we are exploring
     private MinecraftLevel level;
@@ -230,6 +231,7 @@ public class XRay {
 	private String cameraTextOverride = null;
 	
 	// Keyboard actions
+	// TODO: These should really go in MineCraftConstants, yeah?
 	private static enum KEY_ACTIONS {
 		SPEED_INCREASE,
 		SPEED_DECREASE,
@@ -263,6 +265,7 @@ public class XRay {
 		TOGGLE_POSITION_INFO,
 		TOGGLE_BEDROCK,
 		TOGGLE_WATER,
+		TOGGLE_HIGHLIGHT_EXPLORED,
 		SWITCH_NETHER,
 		CHUNK_RANGE_1,
 		CHUNK_RANGE_2,
@@ -469,6 +472,7 @@ public class XRay {
     public void setPreferenceDefaults()
     {
     	// First do the default key mappings
+    	// TODO: these should really go in MineCraftConstants, yeah?
     	key_mapping = new HashMap<KEY_ACTIONS, Integer>();
     	key_mapping.put(KEY_ACTIONS.SPEED_INCREASE, Keyboard.KEY_LSHIFT);
     	key_mapping.put(KEY_ACTIONS.SPEED_DECREASE, Keyboard.KEY_RSHIFT);
@@ -502,6 +506,7 @@ public class XRay {
     	key_mapping.put(KEY_ACTIONS.TOGGLE_POSITION_INFO, Keyboard.KEY_GRAVE);
     	key_mapping.put(KEY_ACTIONS.TOGGLE_BEDROCK, Keyboard.KEY_B);
     	key_mapping.put(KEY_ACTIONS.TOGGLE_WATER, Keyboard.KEY_T);
+    	key_mapping.put(KEY_ACTIONS.TOGGLE_HIGHLIGHT_EXPLORED, Keyboard.KEY_E);
     	key_mapping.put(KEY_ACTIONS.SWITCH_NETHER, Keyboard.KEY_N);
     	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_1, Keyboard.KEY_NUMPAD1);
     	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_2, Keyboard.KEY_NUMPAD2);
@@ -1422,6 +1427,14 @@ public class XRay {
     		invalidateSelectedChunks(true);
         }
         
+        // Toggle explored-area highlighting
+        key = key_mapping.get(KEY_ACTIONS.TOGGLE_HIGHLIGHT_EXPLORED);
+        if (Keyboard.isKeyDown(key) && keyPressed != key) {
+        	keyPressed = key;
+        	highlight_explored = !highlight_explored;
+    		invalidateSelectedChunks(true);
+        }
+        
         // Toggle water rendering
         key = key_mapping.get(KEY_ACTIONS.TOGGLE_WATER);
         if (Keyboard.isKeyDown(key) && keyPressed != key) {
@@ -1658,7 +1671,7 @@ public class XRay {
     	        
     			if(k != null)
     			{
-    				k.renderSolid(render_bedrock, render_water);
+    				k.renderSolid(render_bedrock, render_water, highlight_explored);
     				k.renderSelected(this.mineralToggle);
     				paintingTexture.bind();
     				k.renderPaintings();
