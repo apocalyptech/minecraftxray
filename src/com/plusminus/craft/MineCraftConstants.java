@@ -23,6 +23,7 @@ public class MineCraftConstants {
 	public static final float TEX32 = 1.0f/32.0f;
 	public static final float TEX64 = 1.0f/64.0f;
 	public static final float TEX128 = 1.0f/128.0f;
+	public static final float TEX256 = 1.0f/256.0f;
 	
 	public static final int BLOCKSPERROW = 128;
 	public static final int BLOCKSPERCOLUMN = BLOCKSPERROW * 16;
@@ -493,10 +494,10 @@ public class MineCraftConstants {
 	 * Sprite sheet texture index to texture coordinates
 	 */
 	public static void initSpriteSheetToTextureTable() {
-		precalcSpriteSheetToTextureX = new float[256];
-		precalcSpriteSheetToTextureY = new float[256];
-		for(int i=0;i<256;i++) {
-			float texYy = ((int) (i / 16))/16.0f;
+		precalcSpriteSheetToTextureX = new float[512];
+		precalcSpriteSheetToTextureY = new float[512];
+		for(int i=0;i<512;i++) {
+			float texYy = ((int) (i / 16))/32.0f;
 		    float texXx = ((int) (i % 16))/16.0f;
 		    precalcSpriteSheetToTextureX[i] = texXx;
 		    precalcSpriteSheetToTextureY[i] = texYy;

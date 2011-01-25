@@ -1834,7 +1834,7 @@ public class XRay {
 						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]], 
 						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
 						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX16,
-						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX16
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX32
 				);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 			} else {
@@ -1847,7 +1847,7 @@ public class XRay {
 					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]], 
 					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
 					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX16,
-					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX16
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX32
 			);
 			
 			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i], curX + 32 + 10, curY+7);

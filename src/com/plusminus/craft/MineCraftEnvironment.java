@@ -25,6 +25,8 @@ import java.util.zip.ZipEntry;
 
 import javax.imageio.ImageIO;
 
+import org.lwjgl.opengl.GL11;
+
 /***
  * Utility class which has convenience methods to access the
  * files of the current minecraft installation
@@ -477,9 +479,19 @@ public class MineCraftEnvironment {
 		g2d.drawImage(bi2,
 				start_fire_x+(square_width/2), start_fire_y+(square_width/2), start_fire_x+square_width, start_fire_y+square_width,
 				start_flame_x, start_flame_y, start_flame_x+particle_width, start_flame_y+particle_width,
-				null);
-    	
-		return bi;
+				null);		
+		
+		// Duplicate the texture underneath, tinted for our "explored" areas
+		bi2 = new BufferedImage(bi.getWidth(), bi.getHeight()*2, bi.getType());
+		g2d = bi2.createGraphics();
+		g2d.setComposite(AlphaComposite.Src);
+		g2d.drawImage(bi, 0, 0, bi.getWidth(), bi.getHeight(), null);
+		g2d.drawImage(bi, 0, bi.getHeight(), bi.getWidth(), bi.getHeight(), null);
+		g2d.setComposite(AlphaComposite.SrcAtop);
+		g2d.setColor(new Color(0f, 1f, 0f, .2f));
+		g2d.fillRect(0, bi.getHeight(), bi.getWidth(), bi.getHeight());
+		
+		return bi2;
 	}
 	
 	/***

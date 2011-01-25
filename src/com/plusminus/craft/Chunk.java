@@ -100,10 +100,10 @@ public class Chunk {
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
 			GL11.glVertex3f(x-xzScale, y+yHeightOffset, z-xzScale);
 	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t],precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t],precalcSpriteSheetToTextureY[t]+TEX32);
 			GL11.glVertex3f(x-xzScale, y-xzScale, z+xzScale);
 	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
 			GL11.glVertex3f(x-xzScale, y-xzScale, z-xzScale);
 		GL11.glEnd();
 	}
@@ -132,26 +132,26 @@ public class Chunk {
 			case 0:
 				x1 = tx;       y1 = ty;
 				x2 = tx+TEX16; y2 = ty;
-				x3 = tx;       y3 = ty+TEX16;
-				x4 = tx+TEX16; y4 = ty+TEX16;
+				x3 = tx;       y3 = ty+TEX32;
+				x4 = tx+TEX16; y4 = ty+TEX32;
 				break;
 			case 1:
 				x1 = tx+TEX16; y1 = ty;
-				x2 = tx+TEX16; y2 = ty+TEX16;
+				x2 = tx+TEX16; y2 = ty+TEX32;
 				x3 = tx;       y3 = ty;
-				x4 = tx;       y4 = ty+TEX16;
+				x4 = tx;       y4 = ty+TEX32;
 				break;
 			case 2:
-				x1 = tx+TEX16; y1 = ty+TEX16;
-				x2 = tx;       y2 = ty+TEX16;
+				x1 = tx+TEX16; y1 = ty+TEX32;
+				x2 = tx;       y2 = ty+TEX32;
 				x3 = tx+TEX16; y3 = ty;
 				x4 = tx;       y4 = ty;
 				break;
 			case 3:
 			default:
-				x1 = tx;       y1 = ty+TEX16;
+				x1 = tx;       y1 = ty+TEX32;
 				x2 = tx;       y2 = ty;
-				x3 = tx+TEX16; y3 = ty+TEX16;
+				x3 = tx+TEX16; y3 = ty+TEX32;
 				x4 = tx+TEX16; y4 = ty;
 				break;
 		}
@@ -193,10 +193,10 @@ public class Chunk {
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
 			GL11.glVertex3f(x-scale, y-scale, z-scale);
 	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX32);
 			GL11.glVertex3f(x+scale, y-scale, z+scale);
 	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
 			GL11.glVertex3f(x+scale, y-scale, z-scale);
 		GL11.glEnd();
 	}
@@ -224,10 +224,10 @@ public class Chunk {
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
 			GL11.glVertex3f(x+xzScale, y+yHeightOffset, z-xzScale);
 	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX32);
 			GL11.glVertex3f(x-xzScale, y-xzScale, z-xzScale);
 	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX16);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
 			GL11.glVertex3f(x+xzScale, y-xzScale, z-xzScale);
 		GL11.glEnd();
 	}
@@ -256,10 +256,10 @@ public class Chunk {
 			GL11.glTexCoord2f(bx+TEX16, by);
 			GL11.glVertex3f(x2, y+height, z2);
 	
-			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x1, y, z1);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x2, y, z2);
 		GL11.glEnd();
 	}
@@ -320,10 +320,10 @@ public class Chunk {
 			GL11.glTexCoord2f(bx+TEX16, by);
 			GL11.glVertex3f(x1, y, z2);
 	
-			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x2, y, z1);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x2, y, z2);
 		GL11.glEnd();
 	}
@@ -355,10 +355,10 @@ public class Chunk {
 			GL11.glTexCoord2f(bx+TEX16, by);
 			GL11.glVertex3f(x2, y, z2);
 	
-			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x3, y, z3);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x4, y, z4);
 		GL11.glEnd();
 	}
@@ -427,10 +427,10 @@ public class Chunk {
 			GL11.glTexCoord2f(tx+TEX16, ty);
 			GL11.glVertex3f(x2, y2, z2);
 	
-			GL11.glTexCoord2f(tx, ty+TEX16);
+			GL11.glTexCoord2f(tx, ty+TEX32);
 			GL11.glVertex3f(x3, y3, z3);
 	
-			GL11.glTexCoord2f(tx+TEX16, ty+TEX16);
+			GL11.glTexCoord2f(tx+TEX16, ty+TEX32);
 			GL11.glVertex3f(x4, y4, z4);
 		GL11.glEnd();
 		
@@ -467,16 +467,16 @@ public class Chunk {
 		
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
-			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x-0.5f, y-0.5f, z+zoff);
 	
-			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glTexCoord2f(bx, by+TEX64);
 			GL11.glVertex3f(x-0.5f, y, z+zoff);
 			
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x-0.5f, y-0.5f, z-zoff);
 	
-			GL11.glTexCoord2f(bx+TEX32, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX32, by+TEX64);
 			GL11.glVertex3f(x-0.5f, y, z);
 	
 			GL11.glTexCoord2f(bx+TEX16, by);
@@ -516,40 +516,40 @@ public class Chunk {
 			GL11.glTexCoord2f(bx+TEX16, by);
 			GL11.glVertex3f(x-0.5f, y, z+zoff);
 	
-			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glTexCoord2f(bx, by+TEX64);
 			GL11.glVertex3f(x+0.5f, y, z);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
 			GL11.glVertex3f(x-0.5f, y, z);
 		GL11.glEnd();
 
 		// Lower Step Side
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glTexCoord2f(bx, by+TEX64);
 			GL11.glVertex3f(x+0.5f, y, z+zoff);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
 			GL11.glVertex3f(x-0.5f, y, z+zoff);
 	
-			GL11.glTexCoord2f(bx,by+TEX16);
+			GL11.glTexCoord2f(bx,by+TEX32);
 			GL11.glVertex3f(x+0.5f, y-0.5f, z+zoff);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x-0.5f, y-0.5f, z+zoff);
 		GL11.glEnd();
 
 		// Higher Step surface
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glTexCoord2f(bx, by+TEX64);
 			GL11.glVertex3f(x+0.5f, y+0.5f, z);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
 			GL11.glVertex3f(x-0.5f, y+0.5f, z);
 	
-			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x+0.5f, y+0.5f, z-zoff);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x-0.5f, y+0.5f, z-zoff);
 		GL11.glEnd();
 
@@ -561,10 +561,10 @@ public class Chunk {
 			GL11.glTexCoord2f(bx+TEX16, by);
 			GL11.glVertex3f(x-0.5f, y+0.5f, z);
 	
-			GL11.glTexCoord2f(bx,by+TEX32);
+			GL11.glTexCoord2f(bx,by+TEX64);
 			GL11.glVertex3f(x+0.5f, y, z);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
 			GL11.glVertex3f(x-0.5f, y, z);
 		GL11.glEnd();
 	}
@@ -600,16 +600,16 @@ public class Chunk {
 		
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
-			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x+xoff, y-0.5f, z-0.5f);
 	
-			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glTexCoord2f(bx, by+TEX64);
 			GL11.glVertex3f(x+xoff, y, z-0.5f);
 			
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x-xoff, y-0.5f, z-0.5f);
 	
-			GL11.glTexCoord2f(bx+TEX32, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX32, by+TEX64);
 			GL11.glVertex3f(x, y, z-0.5f);
 	
 			GL11.glTexCoord2f(bx+TEX16, by);
@@ -649,40 +649,40 @@ public class Chunk {
 			GL11.glTexCoord2f(bx+TEX16, by);
 			GL11.glVertex3f(x+xoff, y, z-0.5f);
 	
-			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glTexCoord2f(bx, by+TEX64);
 			GL11.glVertex3f(x, y, z+0.5f);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
 			GL11.glVertex3f(x, y, z-0.5f);
 		GL11.glEnd();
 
 		// Lower Step Side
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glTexCoord2f(bx, by+TEX64);
 			GL11.glVertex3f(x+xoff, y, z+0.5f);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
 			GL11.glVertex3f(x+xoff, y, z-0.5f);
 	
-			GL11.glTexCoord2f(bx,by+TEX16);
+			GL11.glTexCoord2f(bx,by+TEX32);
 			GL11.glVertex3f(x+xoff, y-0.5f, z+0.5f);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x+xoff, y-0.5f, z-0.5f);
 		GL11.glEnd();
 
 		// Higher Step surface
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by+TEX32);
+			GL11.glTexCoord2f(bx, by+TEX64);
 			GL11.glVertex3f(x, y+0.5f, z+0.5f);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
 			GL11.glVertex3f(x, y+0.5f, z-0.5f);
 	
-			GL11.glTexCoord2f(bx, by+TEX16);
+			GL11.glTexCoord2f(bx, by+TEX32);
 			GL11.glVertex3f(x-xoff, y+0.5f, z+0.5f);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX16);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
 			GL11.glVertex3f(x-xoff, y+0.5f, z-0.5f);
 		GL11.glEnd();
 
@@ -695,10 +695,10 @@ public class Chunk {
 			GL11.glTexCoord2f(bx+TEX16, by);
 			GL11.glVertex3f(x, y+0.5f, z-0.5f);
 	
-			GL11.glTexCoord2f(bx,by+TEX32);
+			GL11.glTexCoord2f(bx,by+TEX64);
 			GL11.glVertex3f(x, y, z+0.5f);
 	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
+			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
 			GL11.glVertex3f(x, y, z-0.5f);
 		GL11.glEnd();
 	}
@@ -806,10 +806,10 @@ public class Chunk {
 		 {
 			 x1 *= 2.125f; z1 *= 2.125f;
 			 GL11.glNormal3f(0.0f, 1.0f, 0.0f);
-			 GL11.glTexCoord2f(bx+TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
-			 GL11.glTexCoord2f(ex-TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
-			 GL11.glTexCoord2f(ex-TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
-			 GL11.glTexCoord2f(bx+TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
+			 GL11.glTexCoord2f(bx+TEX128, by+TEX256); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
+			 GL11.glTexCoord2f(ex-TEX128, by+TEX256); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
+			 GL11.glTexCoord2f(ex-TEX128, ey-TEX64); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
+			 GL11.glTexCoord2f(bx+TEX128, ey-TEX64); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
 		 }
 		 
 		 GL11.glEnd();
@@ -937,7 +937,7 @@ public class Chunk {
 		 by = precalcSpriteSheetToTextureY[textureId];
 
 		 ex = bx + TEX16-TEX32;
-		 ey = by + TEX16;
+		 ey = by + TEX32;
 		 
 		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, true);
 	}
@@ -1011,7 +1011,7 @@ public class Chunk {
 		 by = precalcSpriteSheetToTextureY[textureId];
 
 		 ex = bx + TEX16-TEX32;
-		 ey = by + TEX16;
+		 ey = by + TEX32;
 		 
 		 renderSpecialLever(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, true, thrown);
 	}
@@ -1035,7 +1035,7 @@ public class Chunk {
 		 bx = precalcSpriteSheetToTextureX[textureId] + TEX64;
 		 by = precalcSpriteSheetToTextureY[textureId];
  		 ex = bx + TEX16-TEX32;
- 		 ey = by + TEX16;
+ 		 ey = by + TEX32;
 
  		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
 	}
@@ -1060,7 +1060,7 @@ public class Chunk {
 		 bx = precalcSpriteSheetToTextureX[textureId];
 		 by = precalcSpriteSheetToTextureY[textureId];
 		 ex = bx + TEX16;
-		 ey = by + TEX16;
+		 ey = by + TEX32;
 
 		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
 	}
@@ -1090,7 +1090,7 @@ public class Chunk {
 		 bx -= TEX16 * (7-data);
 		 
 		 ex = bx + TEX16;
-		 ey = by + TEX16;
+		 ey = by + TEX32;
 		 
 		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
 	}
@@ -2062,7 +2062,7 @@ public class Chunk {
 							adj_torch = hasAdjacentTorch(x,y,z);
 							if (adj_torch)
 							{
-								GL11.glColor4f(.7f, 1f, .7f, 1f);
+								textureId += 256;
 							}
 						}
 						switch(BLOCK_TYPE_MAP.get(t))
@@ -2136,6 +2136,10 @@ public class Chunk {
 								try
 								{
 									textureId = blockDataSpriteSheetMap.get(t).get(data);
+									if (highlight_explored && adj_torch)
+									{
+										textureId += 256;
+									}
 								}
 								catch (NullPointerException e)
 								{
@@ -2152,10 +2156,6 @@ public class Chunk {
 								if(!left) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z);
 								if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z);
 						}					
-					}
-					if (highlight_explored && adj_torch)
-					{
-						GL11.glColor4f(1f, 1f, 1f, 1f);
 					}
 				}
 			}
