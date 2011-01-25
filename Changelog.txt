@@ -6,6 +6,7 @@
   * Fixed a bug where changes to the draw distance wouldn't get
     updated if ore highlighting was turned off
   * Ore highlights can be specified in the properties file now
+  * Multiplayer camera presets are now sorted by username
 
 Minecraft X-Ray 2.7 Maintenance Branch 7 (2011.01.21)
 

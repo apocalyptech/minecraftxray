@@ -3,7 +3,7 @@ package com.plusminus.craft;
 import java.io.File;
 import java.io.IOException;
 import java.io.FilenameFilter;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * Class to aid in maintaining a list of possible worlds for us to use.
@@ -14,7 +14,7 @@ public class WorldInfo
 	private int worldnum;
 	private boolean nether;
 	private boolean custom;
-	public HashMap<String, File> mp_players;
+	public TreeMap<String, File> mp_players;
 	
 	private class PlayerDatFilter implements FilenameFilter
 	{
@@ -79,7 +79,7 @@ public class WorldInfo
 	
 	public void populateMPPlayerList()
 	{
-		this.mp_players = new HashMap<String, File>();
+		this.mp_players = new TreeMap<String, File>();
 		if (this.basepath != null)
 		{
 			File playerdir = this.getPlayerListDir();
