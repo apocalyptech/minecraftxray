@@ -230,60 +230,6 @@ public class XRay {
 	private CameraPreset currentPosition;
 	private String cameraTextOverride = null;
 	
-	// Keyboard actions
-	// TODO: These should really go in MineCraftConstants, yeah?
-	private static enum KEY_ACTIONS {
-		SPEED_INCREASE,
-		SPEED_DECREASE,
-		MOVE_FORWARD,
-		MOVE_BACKWARD,
-		MOVE_LEFT,
-		MOVE_RIGHT,
-		MOVE_UP,
-		MOVE_DOWN,
-		TOGGLE_MINIMAP,
-		TOGGLE_ORE_1,
-		TOGGLE_ORE_2,
-		TOGGLE_ORE_3,
-		TOGGLE_ORE_4,
-		TOGGLE_ORE_5,
-		TOGGLE_ORE_6,
-		TOGGLE_ORE_7,
-		TOGGLE_ORE_8,
-		TOGGLE_ORE_9,
-		TOGGLE_ORE_10,
-		TOGGLE_FULLSCREEN,
-		TOGGLE_FULLBRIGHT,
-		TOGGLE_ORE_HIGHLIGHTING,
-		TOGGLE_CAMERA_LOCK,
-		MOVE_TO_SPAWN,
-		MOVE_TO_PLAYER,
-		MOVE_NEXT_CAMERAPOS,
-		MOVE_PREV_CAMERAPOS,
-		LIGHT_INCREASE,
-		LIGHT_DECREASE,
-		TOGGLE_POSITION_INFO,
-		TOGGLE_BEDROCK,
-		TOGGLE_WATER,
-		TOGGLE_HIGHLIGHT_EXPLORED,
-		SWITCH_NETHER,
-		CHUNK_RANGE_1,
-		CHUNK_RANGE_2,
-		CHUNK_RANGE_3,
-		CHUNK_RANGE_4,
-		CHUNK_RANGE_5,
-		CHUNK_RANGE_6,
-		HIGHLIGHT_RANGE_1,
-		HIGHLIGHT_RANGE_2,
-		HIGHLIGHT_RANGE_3,
-		HIGHLIGHT_RANGE_4,
-		HIGHLIGHT_RANGE_5,
-		HIGHLIGHT_RANGE_6,
-		HIGHLIGHT_RANGE_7,
-		RELEASE_MOUSE,
-		QUIT,
-	}
-	
 	private HashMap<KEY_ACTIONS, Integer> key_mapping;
 	private SortedProperties xray_properties;
 	
@@ -472,57 +418,11 @@ public class XRay {
     public void setPreferenceDefaults()
     {
     	// First do the default key mappings
-    	// TODO: these should really go in MineCraftConstants, yeah?
     	key_mapping = new HashMap<KEY_ACTIONS, Integer>();
-    	key_mapping.put(KEY_ACTIONS.SPEED_INCREASE, Keyboard.KEY_LSHIFT);
-    	key_mapping.put(KEY_ACTIONS.SPEED_DECREASE, Keyboard.KEY_RSHIFT);
-    	key_mapping.put(KEY_ACTIONS.MOVE_FORWARD, Keyboard.KEY_W);
-    	key_mapping.put(KEY_ACTIONS.MOVE_BACKWARD, Keyboard.KEY_S);
-    	key_mapping.put(KEY_ACTIONS.MOVE_LEFT, Keyboard.KEY_A);
-    	key_mapping.put(KEY_ACTIONS.MOVE_RIGHT, Keyboard.KEY_D);
-    	key_mapping.put(KEY_ACTIONS.MOVE_UP, Keyboard.KEY_SPACE);
-    	key_mapping.put(KEY_ACTIONS.MOVE_DOWN, Keyboard.KEY_LCONTROL);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_MINIMAP, Keyboard.KEY_TAB);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_1, Keyboard.KEY_F1);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_2, Keyboard.KEY_F2);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_3, Keyboard.KEY_F3);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_4, Keyboard.KEY_F4);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_5, Keyboard.KEY_F5);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_6, Keyboard.KEY_F6);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_7, Keyboard.KEY_F7);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_8, Keyboard.KEY_F8);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_9, Keyboard.KEY_F9);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_10, Keyboard.KEY_F10);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_FULLSCREEN, Keyboard.KEY_BACK);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_FULLBRIGHT, Keyboard.KEY_F);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING, Keyboard.KEY_H);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_CAMERA_LOCK, Keyboard.KEY_L);
-    	key_mapping.put(KEY_ACTIONS.MOVE_TO_SPAWN, Keyboard.KEY_HOME);
-    	key_mapping.put(KEY_ACTIONS.MOVE_TO_PLAYER, Keyboard.KEY_END);
-    	key_mapping.put(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS, Keyboard.KEY_INSERT);
-    	key_mapping.put(KEY_ACTIONS.MOVE_PREV_CAMERAPOS, Keyboard.KEY_DELETE);
-    	key_mapping.put(KEY_ACTIONS.LIGHT_INCREASE, Keyboard.KEY_ADD);
-    	key_mapping.put(KEY_ACTIONS.LIGHT_DECREASE, Keyboard.KEY_SUBTRACT);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_POSITION_INFO, Keyboard.KEY_GRAVE);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_BEDROCK, Keyboard.KEY_B);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_WATER, Keyboard.KEY_T);
-    	key_mapping.put(KEY_ACTIONS.TOGGLE_HIGHLIGHT_EXPLORED, Keyboard.KEY_E);
-    	key_mapping.put(KEY_ACTIONS.SWITCH_NETHER, Keyboard.KEY_N);
-    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_1, Keyboard.KEY_NUMPAD1);
-    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_2, Keyboard.KEY_NUMPAD2);
-    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_3, Keyboard.KEY_NUMPAD3);
-    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_4, Keyboard.KEY_NUMPAD4);
-    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_5, Keyboard.KEY_NUMPAD5);
-    	key_mapping.put(KEY_ACTIONS.CHUNK_RANGE_6, Keyboard.KEY_NUMPAD6);
-    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_1, Keyboard.KEY_1);
-    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_2, Keyboard.KEY_2);
-    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_3, Keyboard.KEY_3);
-    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_4, Keyboard.KEY_4);
-    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_5, Keyboard.KEY_5);
-    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_6, Keyboard.KEY_6);
-    	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_7, Keyboard.KEY_7);
-    	key_mapping.put(KEY_ACTIONS.RELEASE_MOUSE, Keyboard.KEY_ESCAPE);
-    	key_mapping.put(KEY_ACTIONS.QUIT, Keyboard.KEY_Q);
+    	for (KEY_ACTIONS action : KEY_ACTIONS.values())
+    	{
+    		key_mapping.put(action, action.def_key);
+    	}
     	
     	// Then populate our highlight blocks
     	for (int i=0; i<preferred_highlight_ores.length; i++)

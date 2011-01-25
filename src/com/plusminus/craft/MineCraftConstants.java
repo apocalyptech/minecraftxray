@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.HashMap;
 
+import org.lwjgl.input.Keyboard;
+
 /***
  * Precalcs and the like
  * @author Vincent
@@ -171,6 +173,65 @@ public class MineCraftConstants {
 	public static final BLOCK[] preferred_highlight_ores = new BLOCK[] {
 		BLOCK.CLAY, BLOCK.PUMPKIN, BLOCK.OBSIDIAN, BLOCK.COAL_ORE, BLOCK.IRON_ORE,
 		BLOCK.GOLD_ORE, BLOCK.LAPIS_LAZULI_ORE, BLOCK.DIAMOND_ORE, BLOCK.REDSTONE_ORE, BLOCK.MOB_SPAWNER};
+
+	// Keyboard actions
+	public static enum KEY_ACTIONS {
+		SPEED_INCREASE (Keyboard.KEY_LSHIFT),
+		SPEED_DECREASE (Keyboard.KEY_RSHIFT),
+		MOVE_FORWARD (Keyboard.KEY_W),
+		MOVE_BACKWARD (Keyboard.KEY_S),
+		MOVE_LEFT (Keyboard.KEY_A),
+		MOVE_RIGHT (Keyboard.KEY_D),
+		MOVE_UP (Keyboard.KEY_SPACE),
+		MOVE_DOWN (Keyboard.KEY_LCONTROL),
+		TOGGLE_MINIMAP (Keyboard.KEY_TAB),
+		TOGGLE_ORE_1 (Keyboard.KEY_F1),
+		TOGGLE_ORE_2 (Keyboard.KEY_F2),
+		TOGGLE_ORE_3 (Keyboard.KEY_F3),
+		TOGGLE_ORE_4 (Keyboard.KEY_F4),
+		TOGGLE_ORE_5 (Keyboard.KEY_F5),
+		TOGGLE_ORE_6 (Keyboard.KEY_F6),
+		TOGGLE_ORE_7 (Keyboard.KEY_F7),
+		TOGGLE_ORE_8 (Keyboard.KEY_F8),
+		TOGGLE_ORE_9 (Keyboard.KEY_F9),
+		TOGGLE_ORE_10 (Keyboard.KEY_F10),
+		TOGGLE_FULLSCREEN (Keyboard.KEY_BACK),
+		TOGGLE_FULLBRIGHT (Keyboard.KEY_F),
+		TOGGLE_ORE_HIGHLIGHTING (Keyboard.KEY_H),
+		TOGGLE_CAMERA_LOCK (Keyboard.KEY_L),
+		MOVE_TO_SPAWN (Keyboard.KEY_HOME),
+		MOVE_TO_PLAYER (Keyboard.KEY_END),
+		MOVE_NEXT_CAMERAPOS (Keyboard.KEY_INSERT),
+		MOVE_PREV_CAMERAPOS (Keyboard.KEY_DELETE),
+		LIGHT_INCREASE (Keyboard.KEY_ADD),
+		LIGHT_DECREASE (Keyboard.KEY_SUBTRACT),
+		TOGGLE_POSITION_INFO (Keyboard.KEY_GRAVE),
+		TOGGLE_BEDROCK (Keyboard.KEY_B),
+		TOGGLE_WATER (Keyboard.KEY_T),
+		TOGGLE_HIGHLIGHT_EXPLORED (Keyboard.KEY_E),
+		SWITCH_NETHER (Keyboard.KEY_N),
+		CHUNK_RANGE_1 (Keyboard.KEY_NUMPAD1),
+		CHUNK_RANGE_2 (Keyboard.KEY_NUMPAD2),
+		CHUNK_RANGE_3 (Keyboard.KEY_NUMPAD3),
+		CHUNK_RANGE_4 (Keyboard.KEY_NUMPAD4),
+		CHUNK_RANGE_5 (Keyboard.KEY_NUMPAD5),
+		CHUNK_RANGE_6 (Keyboard.KEY_NUMPAD6),
+		HIGHLIGHT_RANGE_1 (Keyboard.KEY_1),
+		HIGHLIGHT_RANGE_2 (Keyboard.KEY_2),
+		HIGHLIGHT_RANGE_3 (Keyboard.KEY_3),
+		HIGHLIGHT_RANGE_4 (Keyboard.KEY_4),
+		HIGHLIGHT_RANGE_5 (Keyboard.KEY_5),
+		HIGHLIGHT_RANGE_6 (Keyboard.KEY_6),
+		HIGHLIGHT_RANGE_7 (Keyboard.KEY_7),
+		RELEASE_MOUSE (Keyboard.KEY_ESCAPE),
+		QUIT (Keyboard.KEY_Q)
+		;
+		public final int def_key;
+		KEY_ACTIONS(int def_key)
+		{
+			this.def_key = def_key;
+		}
+	}
 	
 	public static final Block[] SURROUNDINGBLOCKS = new Block[] { 
     	new Block(+1,0,0),
