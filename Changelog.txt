@@ -8,8 +8,7 @@
   * Ore highlights can be specified in the properties file now
   * Multiplayer camera presets are now sorted by username
   * Highlight (in green) areas near torches with "E"
-  * Switched Jukebox texture to the face with a slot, to differentiate
-    between it and note blocks
+  * Updated texture info for Jukeboxes and Workbenches
 
 Minecraft X-Ray 2.7 Maintenance Branch 7 (2011.01.21)
 

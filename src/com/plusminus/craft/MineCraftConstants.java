@@ -487,7 +487,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.REDSTONE_WIRE.id] = 100;
 		blockDataToSpriteSheet[BLOCK.DIAMOND_ORE.id] = (3*16) + 2;
 		blockDataToSpriteSheet[BLOCK.DIAMOND_BLOCK.id] = 24;
-		blockDataToSpriteSheet[BLOCK.WORKBENCH.id] = 25;
+		blockDataToSpriteSheet[BLOCK.WORKBENCH.id] = (3*16)+12;
 		blockDataToSpriteSheet[BLOCK.CROPS.id] = (5*16)+15;
 		blockDataToSpriteSheet[BLOCK.FARMLAND.id] = (5*16)+6;
 		blockDataToSpriteSheet[BLOCK.FURNACE.id] = 44;
