@@ -78,7 +78,7 @@ public class MineCraftConstants {
 		GRASS (2, "Grass"),
 		DIRT (3, "Dirt"),
 		COBBLESTONE (4, "Cobbles"),
-		WOOD (5, "Wood"),
+		PLANK (5, "Plank"),
 		SAPLING (6, "Sapling"),
 		BEDROCK (7, "Bedrock"),
 		WATER (8, "Water"),
@@ -90,7 +90,7 @@ public class MineCraftConstants {
 		GOLD_ORE (14, "Gold"),
 		IRON_ORE (15, "Iron"),
 		COAL_ORE (16, "Coal"),
-		LOG (17, "Wood"),
+		WOOD (17, "Wood"),
 		LEAVES (18, "Leaves"),
 		SPONGE (19, "Sponge"),
 		GLASS (20, "Glass"),
@@ -123,7 +123,7 @@ public class MineCraftConstants {
 		DIAMOND_BLOCK (57, "Diamond"),
 		WORKBENCH (58, "Bench"),
 		CROPS (59, "Crops"),
-		SOIL (60, "Soil"),
+		FARMLAND (60, "Farmland"),
 		FURNACE (61, "Furnace"),
 		BURNING_FURNACE (62, "Furnace"),
 		SIGNPOST (63, "Sign"),
@@ -150,9 +150,9 @@ public class MineCraftConstants {
 		JUKEBOX (84, "Jukebox"),
 		FENCE (85, "Fence"),
 		PUMPKIN (86, "Pumpkin"),
-		NETHERSTONE (87, "Netherrack"),
-		SLOW_SAND (88, "Soul Sand"),
-		LIGHTSTONE (89, "Glowstone"),
+		NETHERRACK (87, "Netherrack"),
+		SOUL_SAND (88, "Soul Sand"),
+		GLOWSTONE (89, "Glowstone"),
 		PORTAL (90, "Portal"),
 		JACK_O_LANTERN (91, "Jack"),
 		CAKE (92, "Cake")
@@ -265,7 +265,7 @@ public class MineCraftConstants {
 		BLOCK_TYPE_MAP.put((byte)BLOCK.PORTAL.id, BLOCK_TYPE.PORTAL);
 		
 		// Blocks whose texture depends on their data value (in addition to block type)
-		BLOCK_TYPE_MAP.put((byte)BLOCK.LOG.id, BLOCK_TYPE.DATAVAL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.WOOD.id, BLOCK_TYPE.DATAVAL);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.WOOL.id, BLOCK_TYPE.DATAVAL);
 		
 		// Water
@@ -296,7 +296,7 @@ public class MineCraftConstants {
 		blockColors[BLOCK.DIRT.id] = new Color(134,96,67);
 		blockColors[BLOCK.COBBLESTONE.id] = new Color(115,115,115);
 		blockColors[BLOCK.MOSSY_COBBLESTONE.id] = new Color(115,115,115);
-		blockColors[BLOCK.WOOD.id] = new  Color(157,128,79);
+		blockColors[BLOCK.PLANK.id] = new  Color(157,128,79);
 		blockColors[BLOCK.SAPLING.id] = new Color(120,120,120);
 		blockColors[BLOCK.BEDROCK.id] = new Color(84,84,84);
 		blockColors[BLOCK.WATER.id] = new Color(38,92,255);
@@ -308,7 +308,7 @@ public class MineCraftConstants {
 		blockColors[BLOCK.GOLD_ORE.id] = new Color(143,140,125);
 		blockColors[BLOCK.IRON_ORE.id] = new Color(136,130,127);
 		blockColors[BLOCK.COAL_ORE.id] = new Color(115,115,115);
-		blockColors[BLOCK.LOG.id] = new Color(102,81,51);
+		blockColors[BLOCK.WOOD.id] = new Color(102,81,51);
 		blockColors[BLOCK.LEAVES.id] = new Color(60,192,41);
 		blockColors[BLOCK.GLASS.id] = new Color(255,255,255);
 		blockColors[BLOCK.LAPIS_LAZULI_ORE.id] = new Color(27,70,161);
@@ -336,7 +336,7 @@ public class MineCraftConstants {
 		blockColors[BLOCK.DIAMOND_BLOCK.id] = new Color(45,166,152);
 		blockColors[BLOCK.WORKBENCH.id] = blockColors[BLOCK.NOTE_BLOCK.id];
 		blockColors[BLOCK.CROPS.id] = new Color(146,192,0);
-		blockColors[BLOCK.SOIL.id] = new Color(95,58,30);
+		blockColors[BLOCK.FARMLAND.id] = new Color(95,58,30);
 		blockColors[BLOCK.FURNACE.id] = new Color(96,96,96);
 		blockColors[BLOCK.BURNING_FURNACE.id] = new Color(96,96,96);
 		blockColors[BLOCK.SIGNPOST.id] = new Color(111,91,54);
@@ -381,7 +381,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.GRASS.id] = 0;
 		blockDataToSpriteSheet[BLOCK.DIRT.id] = 2;
 		blockDataToSpriteSheet[BLOCK.COBBLESTONE.id] = 16;
-		blockDataToSpriteSheet[BLOCK.WOOD.id] = 4;
+		blockDataToSpriteSheet[BLOCK.PLANK.id] = 4;
 		blockDataToSpriteSheet[BLOCK.SAPLING.id] = 15;
 		blockDataToSpriteSheet[BLOCK.BEDROCK.id] = 17;
 		blockDataToSpriteSheet[BLOCK.WATER.id] = 207;
@@ -393,7 +393,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.GOLD_ORE.id] = (2*16) + 0;
 		blockDataToSpriteSheet[BLOCK.IRON_ORE.id] = (2*16) + 1;
 		blockDataToSpriteSheet[BLOCK.COAL_ORE.id] = (2*16) + 2;
-		blockDataToSpriteSheet[BLOCK.LOG.id] = 20;
+		blockDataToSpriteSheet[BLOCK.WOOD.id] = 20;
 		blockDataToSpriteSheet[BLOCK.LEAVES.id] = (3*16)+5; // The "correct" one is actually +4, but with the current transparency
 														 // rendering glitches, the non-transparent texture looks better.
 		blockDataToSpriteSheet[BLOCK.SPONGE.id] = (3*16);
@@ -427,7 +427,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.DIAMOND_BLOCK.id] = 24;
 		blockDataToSpriteSheet[BLOCK.WORKBENCH.id] = 25;
 		blockDataToSpriteSheet[BLOCK.CROPS.id] = (5*16)+15;
-		blockDataToSpriteSheet[BLOCK.SOIL.id] = (5*16)+6;
+		blockDataToSpriteSheet[BLOCK.FARMLAND.id] = (5*16)+6;
 		blockDataToSpriteSheet[BLOCK.FURNACE.id] = 44;
 		blockDataToSpriteSheet[BLOCK.BURNING_FURNACE.id] = (3*16)+13;
 		blockDataToSpriteSheet[BLOCK.SIGNPOST.id] = 4;
@@ -454,16 +454,16 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.JUKEBOX.id] = (4*16)+10;
 		blockDataToSpriteSheet[BLOCK.FENCE.id] = 4;
 		blockDataToSpriteSheet[BLOCK.PUMPKIN.id] = (7*16)+7;
-		blockDataToSpriteSheet[BLOCK.NETHERSTONE.id] = (6*16)+7;
-		blockDataToSpriteSheet[BLOCK.SLOW_SAND.id] = (6*16)+8;
-		blockDataToSpriteSheet[BLOCK.LIGHTSTONE.id] = (6*16)+9;
+		blockDataToSpriteSheet[BLOCK.NETHERRACK.id] = (6*16)+7;
+		blockDataToSpriteSheet[BLOCK.SOUL_SAND.id] = (6*16)+8;
+		blockDataToSpriteSheet[BLOCK.GLOWSTONE.id] = (6*16)+9;
 		blockDataToSpriteSheet[BLOCK.PORTAL.id] = 16+14;
 		blockDataToSpriteSheet[BLOCK.JACK_O_LANTERN.id] = (7*16)+8;
 		blockDataToSpriteSheet[BLOCK.CAKE.id] = (7*16) + 9;
 		
 		// Textures used by logs
 		HashMap<Byte, Integer> logMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK.LOG.id, logMap);
+		blockDataSpriteSheetMap.put((byte)BLOCK.WOOD.id, logMap);
 		logMap.put((byte)0, 16+4); // Regular log
 		logMap.put((byte)1, (7*16)+4); // Redwood-or-whatever
 		logMap.put((byte)2, (7*16)+5); // Birch
