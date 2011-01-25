@@ -77,8 +77,9 @@ public class XRay {
 	private static final int[] HIGHLIGHT_RANGES = new int[] {2, 3, 4, 5, 6, 7, 8};
 	private int currentHighlightDistance = 1;
 	
-	// ore highlight keys
-	private static final int[] HIGHLIGHT_ORE_KEYS = new int[HIGHLIGHT_ORES.length];
+	// ore highlight vars
+	private static BLOCK[] HIGHLIGHT_ORES = new BLOCK[preferred_highlight_ores.length];
+	private static final int[] HIGHLIGHT_ORE_KEYS = new int[preferred_highlight_ores.length];
 	
 	// By default we'll keep 20x20 chunks in our cache, which should hopefully let
 	// us stay ahead of the camera
@@ -296,7 +297,7 @@ public class XRay {
         	checkMinecraftFiles();
         	
         	// Load our preferences (this includes key mappings)
-        	setKeyDefaults();
+        	setPreferenceDefaults();
         	loadPreferences();
         	
         	// prompt for the resolution and initialize the window
@@ -422,6 +423,24 @@ public class XRay {
     		HIGHLIGHT_ORE_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("TOGGLE_ORE_" + (i+1)));
     	}
     	
+    	// Populate our list of ores to highlight
+    	String prefs_highlight;
+    	String prefs_highlight_key;
+    	for (i=0; i<preferred_highlight_ores.length; i++)
+    	{
+    		prefs_highlight_key = "HIGHLIGHT_" + (i+1);
+    		prefs_highlight = xray_properties.getProperty(prefs_highlight_key);
+			try
+			{
+				HIGHLIGHT_ORES[i] = BLOCK.valueOf(prefs_highlight);
+			}
+			catch (Exception e)
+			{
+				// no worries, just populate with our default
+			}
+			xray_properties.put(prefs_highlight_key, HIGHLIGHT_ORES[i].toString());
+    	}
+    	
     	// Save the file immediately, in case we picked up new defaults which weren't present
     	// previously
     	this.savePreferences();
@@ -445,10 +464,11 @@ public class XRay {
 	}
     
     /**
-     * Sets our default key mappings
+     * Sets our default preferences
      */
-    public void setKeyDefaults()
+    public void setPreferenceDefaults()
     {
+    	// First do the default key mappings
     	key_mapping = new HashMap<KEY_ACTIONS, Integer>();
     	key_mapping.put(KEY_ACTIONS.SPEED_INCREASE, Keyboard.KEY_LSHIFT);
     	key_mapping.put(KEY_ACTIONS.SPEED_DECREASE, Keyboard.KEY_RSHIFT);
@@ -498,6 +518,12 @@ public class XRay {
     	key_mapping.put(KEY_ACTIONS.HIGHLIGHT_RANGE_7, Keyboard.KEY_7);
     	key_mapping.put(KEY_ACTIONS.RELEASE_MOUSE, Keyboard.KEY_ESCAPE);
     	key_mapping.put(KEY_ACTIONS.QUIT, Keyboard.KEY_Q);
+    	
+    	// Then populate our highlight blocks
+    	for (int i=0; i<preferred_highlight_ores.length; i++)
+    	{
+    		XRay.HIGHLIGHT_ORES[i] = preferred_highlight_ores[i];
+    	}
     }
     
     /**
@@ -792,7 +818,7 @@ public class XRay {
 				Graphics2D g = mineralToggleTextures[i].getImage().createGraphics();
 				g.setFont(ARIALFONT);
 				g.setColor(Color.white);
-				g.drawString("[F" + (i+1) + "] " + ORES_DESCRIPTION[i], 10, 16);
+				g.drawString("[F" + (i+1) + "] " + HIGHLIGHT_ORES[i].name, 10, 16);
 				mineralToggleTextures[i].update();
 			}
 			
@@ -1001,7 +1027,7 @@ public class XRay {
      */
     private void setMinecraftWorld(WorldInfo world) {
     	this.world = world;
-    	this.level =  new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture);
+    	this.level =  new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture, HIGHLIGHT_ORES);
     	
     	// determine which chunks are available in this world
     	mapChunksToLoad = new LinkedList<Block>();
@@ -1020,7 +1046,7 @@ public class XRay {
     private void setMinecraftWorld(WorldInfo world, FirstPersonCameraController camera)
     {
     	this.world = world;
-    	this.level =  new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture);
+    	this.level =  new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture, HIGHLIGHT_ORES);
     	
     	// determine which chunks are available in this world
     	mapChunksToLoad = new LinkedList<Block>();
@@ -1792,10 +1818,10 @@ public class XRay {
 				SpriteTool.drawCurrentSprite(
 						curX - 2, curY -2, 
 						36, 36, 
-						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]], 
-						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]],
-						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]]+TEX16,
-						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]]+TEX16
+						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]], 
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
+						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX16,
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX16
 				);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 			} else {
@@ -1805,10 +1831,10 @@ public class XRay {
 			SpriteTool.drawCurrentSprite(
 					curX, curY, 
 					32, 32, 
-					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]], 
-					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]],
-					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]]+TEX16,
-					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]]+TEX16
+					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]], 
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
+					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX16,
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]+TEX16
 			);
 			
 			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i], curX + 32 + 10, curY+7);

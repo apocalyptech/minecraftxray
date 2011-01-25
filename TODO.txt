@@ -8,11 +8,9 @@
  
  * Draw messages on signs like you'd expect.
  
- * GUI to set custom key bindings
+ * GUI to set custom key bindings and custom ore highlights
  
  * Highlighting for Reed/Sugarcane and other "special" block types
- 
- * Highlighting for any arbitrary (user-chosen) block type
  
  * Find a way to eliminate the stuttering when new map chunks are loading
  

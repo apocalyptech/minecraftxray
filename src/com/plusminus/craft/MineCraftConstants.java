@@ -73,97 +73,103 @@ public class MineCraftConstants {
 	// what texture to use
 	public static HashMap<Byte, HashMap<Byte, Integer>> blockDataSpriteSheetMap = new HashMap<Byte, HashMap<Byte, Integer>>();
 	
-	public static final int BLOCK_STONE = 1;
-	public static final int BLOCK_GRASS = 2;
-	public static final int BLOCK_DIRT = 3;
-	public static final int BLOCK_COBBLESTONE = 4;
-	public static final int BLOCK_WOOD = 5;
-	public static final int BLOCK_SAPLING = 6;
-	public static final int BLOCK_BEDROCK = 7;
-	public static final int BLOCK_WATER = 8;
-	public static final int BLOCK_STATIONARY_WATER = 9;
-	public static final int BLOCK_LAVA = 10;
-	public static final int BLOCK_STATIONARY_LAVA = 11;
-	public static final int BLOCK_SAND = 12;
-	public static final int BLOCK_GRAVEL = 13;
-	public static final int BLOCK_GOLD_ORE = 14;
-	public static final int BLOCK_IRON_ORE = 15;
-	public static final int BLOCK_COAL_ORE = 16;
-	public static final int BLOCK_LOG = 17;
-	public static final int BLOCK_LEAVES = 18;
-	public static final int BLOCK_SPONGE = 19;
-	public static final int BLOCK_GLASS = 20;
-	public static final int BLOCK_LAPIS_LAZULI_ORE = 21;
-	public static final int BLOCK_LAPIS_LAZULI_BLOCK = 22;
-	public static final int BLOCK_DISPENSER = 23;
-	public static final int BLOCK_SANDSTONE = 24;
-	public static final int BLOCK_NOTE_BLOCK = 25;
-	public static final int BLOCK_WOOL = 35;
-	public static final int BLOCK_YELLOW_FLOWER = 37;
-	public static final int BLOCK_RED_ROSE = 38;
-	public static final int BLOCK_BROWN_MUSHROOM = 39;
-	public static final int BLOCK_RED_MUSHROOM = 40;
-	public static final int BLOCK_GOLD_BLOCK = 41;
-	public static final int BLOCK_IRON_BLOCK = 42;
-	public static final int BLOCK_DOUBLE_STEP = 43;
-	public static final int BLOCK_STEP = 44;
-	public static final int BLOCK_BRICK = 45;
-	public static final int BLOCK_TNT = 46;
-	public static final int BLOCK_BOOKSHELF = 47;
-	public static final int BLOCK_MOSSY_COBBLESTONE = 48;
-	public static final int BLOCK_OBSIDIAN = 49;
-	public static final int BLOCK_TORCH = 50;
-	public static final int BLOCK_FIRE = 51;
-	public static final int BLOCK_MOB_SPAWNER = 52;
-	public static final int BLOCK_WOODEN_STAIRS = 53;
-	public static final int BLOCK_CHEST = 54;
-	public static final int BLOCK_REDSTONE_WIRE = 55;
-	public static final int BLOCK_DIAMOND_ORE = 56;
-	public static final int BLOCK_DIAMOND_BLOCK = 57;
-	public static final int BLOCK_WORKBENCH = 58;
-	public static final int BLOCK_CROPS = 59;
-	public static final int BLOCK_SOIL = 60;
-	public static final int BLOCK_FURNACE = 61;
-	public static final int BLOCK_BURNING_FURNACE = 62;
-	public static final int BLOCK_SIGNPOST = 63;
-	public static final int BLOCK_WOODEN_DOOR = 64;
-	public static final int BLOCK_LADDER = 65;
-	public static final int BLOCK_MINECART_TRACKS = 66;
-	public static final int BLOCK_COBBLESTONE_STAIRS = 67;
-	public static final int BLOCK_WALL_SIGN = 68;
-	public static final int BLOCK_LEVER = 69;
-	public static final int BLOCK_STONE_PRESSURE_PLATE = 70;
-	public static final int BLOCK_IRON_DOOR = 71;
-	public static final int BLOCK_WOODEN_PRESSURE_PLATE = 72;
-	public static final int BLOCK_REDSTONE_ORE = 73;
-	public static final int BLOCK_GLOWING_REDSTONE_ORE = 74;
-	public static final int BLOCK_REDSTONE_TORCH_OFF = 75;
-	public static final int BLOCK_REDSTONE_TORCH_ON = 76;
-	public static final int BLOCK_STONE_BUTTON = 77;
-	public static final int BLOCK_SNOW = 78;
-	public static final int BLOCK_ICE = 79;
-	public static final int BLOCK_SNOW_BLOCK = 80;
-	public static final int BLOCK_CACTUS = 81;
-	public static final int BLOCK_CLAY = 82;
-	public static final int BLOCK_SUGARCANE = 83;
-	public static final int BLOCK_JUKEBOX = 84;
-	public static final int BLOCK_FENCE = 85;
-	public static final int BLOCK_PUMPKIN = 86;
-	public static final int BLOCK_NETHERSTONE = 87;
-	public static final int BLOCK_SLOW_SAND = 88;
-	public static final int BLOCK_LIGHTSTONE = 89;
-	public static final int BLOCK_PORTAL = 90;
-	public static final int BLOCK_JACK_O_LANTERN = 91;
-	public static final int BLOCK_CAKE = 92;
+	public static enum BLOCK {
+		STONE (1, "Stone"),
+		GRASS (2, "Grass"),
+		DIRT (3, "Dirt"),
+		COBBLESTONE (4, "Cobbles"),
+		WOOD (5, "Wood"),
+		SAPLING (6, "Sapling"),
+		BEDROCK (7, "Bedrock"),
+		WATER (8, "Water"),
+		STATIONARY_WATER (9, "Water"),
+		LAVA (10, "Lava"),
+		STATIONARY_LAVA (11, "Lava"),
+		SAND (12, "Sand"),
+		GRAVEL (13, "Gravel"),
+		GOLD_ORE (14, "Gold"),
+		IRON_ORE (15, "Iron"),
+		COAL_ORE (16, "Coal"),
+		LOG (17, "Wood"),
+		LEAVES (18, "Leaves"),
+		SPONGE (19, "Sponge"),
+		GLASS (20, "Glass"),
+		LAPIS_LAZULI_ORE (21, "Lapis"),
+		LAPIS_LAZULI_BLOCK (22, "Lapis"),
+		DISPENSER (23, "Dispenser"),
+		SANDSTONE (24, "Sandstone"),
+		NOTE_BLOCK (25, "Note"),
+		WOOL (35, "Wool"),
+		YELLOW_FLOWER (37, "Flower"),
+		RED_ROSE (38, "Rose"),
+		BROWN_MUSHROOM (39, "Mushroom"),
+		RED_MUSHROOM (40, "Mushroom"),
+		GOLD_BLOCK (41, "Gold"),
+		IRON_BLOCK (42, "Iron"),
+		DOUBLE_STEP (43, "Step"),
+		STEP (44, "Step"),
+		BRICK (45, "Brick"),
+		TNT (46, "TNT"),
+		BOOKSHELF (47, "Bookshelf"),
+		MOSSY_COBBLESTONE (48, "Moss"),
+		OBSIDIAN (49, "Obsidian"),
+		TORCH (50, "Torch"),
+		FIRE (51, "Fire"),
+		MOB_SPAWNER (52, "Spawner"),
+		WOODEN_STAIRS (53, "Stairs"),
+		CHEST (54, "Chest"),
+		REDSTONE_WIRE (55, "Wire"),
+		DIAMOND_ORE (56, "Diamond"),
+		DIAMOND_BLOCK (57, "Diamond"),
+		WORKBENCH (58, "Bench"),
+		CROPS (59, "Crops"),
+		SOIL (60, "Soil"),
+		FURNACE (61, "Furnace"),
+		BURNING_FURNACE (62, "Furnace"),
+		SIGNPOST (63, "Sign"),
+		WOODEN_DOOR (64, "Door"),
+		LADDER (65, "Ladder"),
+		MINECART_TRACKS (66, "Tracks"),
+		COBBLESTONE_STAIRS (67, "Stairs"),
+		WALL_SIGN (68, "Sign"),
+		LEVER (69, "Lever"),
+		STONE_PRESSURE_PLATE (70, "Plate"),
+		IRON_DOOR (71, "Door"),
+		WOODEN_PRESSURE_PLATE (72, "Plate"),
+		REDSTONE_ORE (73, "Redstone"),
+		GLOWING_REDSTONE_ORE (74, "Redstone"),
+		REDSTONE_TORCH_OFF (75, "Torch"),
+		REDSTONE_TORCH_ON (76, "Torch"),
+		STONE_BUTTON (77, "Button"),
+		SNOW (78, "Snow"),
+		ICE (79, "Ice"),
+		SNOW_BLOCK (80, "Snow"),
+		CACTUS (81, "Cactus"),
+		CLAY (82, "Clay"),
+		SUGARCANE (83, "Sugarcane"),
+		JUKEBOX (84, "Jukebox"),
+		FENCE (85, "Fence"),
+		PUMPKIN (86, "Pumpkin"),
+		NETHERSTONE (87, "Netherrack"),
+		SLOW_SAND (88, "Soul Sand"),
+		LIGHTSTONE (89, "Glowstone"),
+		PORTAL (90, "Portal"),
+		JACK_O_LANTERN (91, "Jack"),
+		CAKE (92, "Cake")
+		;
+		public final int id;
+		public final String name;
+		BLOCK(int id, String name)
+		{
+			this.id = id;
+			this.name = name;
+		}
+	}
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
-	// TODO: Really, redstone should highlight whether it's glowing or not - that's the one situation
-	// where it's a bit nicer to highlight based on texture rather than block type (which is what X-Ray
-	// used to do before the Maintenance Branch changed things around).  Because you'll only get glowing
-	// restone ore when you're actually LOOKING at it in-game, though, I feel okay leaving it the way
-	// it is.
-	public static final int[] HIGHLIGHT_ORES = new int[] {BLOCK_CLAY, BLOCK_PUMPKIN, BLOCK_OBSIDIAN, BLOCK_COAL_ORE, BLOCK_IRON_ORE, BLOCK_GOLD_ORE, BLOCK_LAPIS_LAZULI_ORE, BLOCK_DIAMOND_ORE, BLOCK_REDSTONE_ORE, BLOCK_MOB_SPAWNER};
-	public static final String[] ORES_DESCRIPTION = new String[] {"Clay", "Pumpkin", "Obsidian", "Coal", "Iron", "Gold", "Lapis", "Diamond", "Redstone", "Spawner"};
+	public static final BLOCK[] preferred_highlight_ores = new BLOCK[] {
+		BLOCK.CLAY, BLOCK.PUMPKIN, BLOCK.OBSIDIAN, BLOCK.COAL_ORE, BLOCK.IRON_ORE,
+		BLOCK.GOLD_ORE, BLOCK.LAPIS_LAZULI_ORE, BLOCK.DIAMOND_ORE, BLOCK.REDSTONE_ORE, BLOCK.MOB_SPAWNER};
 	
 	public static final Block[] SURROUNDINGBLOCKS = new Block[] { 
     	new Block(+1,0,0),
@@ -200,78 +206,78 @@ public class MineCraftConstants {
 		// Now our actual type values...
 		
 		// Torches
-		BLOCK_TYPE_MAP.put((byte)BLOCK_TORCH, BLOCK_TYPE.TORCH);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_ON, BLOCK_TYPE.TORCH);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_TORCH_OFF, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.TORCH.id, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_TORCH_ON.id, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_TORCH_OFF.id, BLOCK_TYPE.TORCH);
 		
 		// Small decoration blocks
-		BLOCK_TYPE_MAP.put((byte)BLOCK_RED_MUSHROOM, BLOCK_TYPE.DECORATION_SMALL);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_BROWN_MUSHROOM, BLOCK_TYPE.DECORATION_SMALL);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_RED_ROSE, BLOCK_TYPE.DECORATION_SMALL);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_YELLOW_FLOWER, BLOCK_TYPE.DECORATION_SMALL);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_SAPLING, BLOCK_TYPE.DECORATION_SMALL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.RED_MUSHROOM.id, BLOCK_TYPE.DECORATION_SMALL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.BROWN_MUSHROOM.id, BLOCK_TYPE.DECORATION_SMALL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.RED_ROSE.id, BLOCK_TYPE.DECORATION_SMALL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.YELLOW_FLOWER.id, BLOCK_TYPE.DECORATION_SMALL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.SAPLING.id, BLOCK_TYPE.DECORATION_SMALL);
 		
 		// "Full" decoration blocks
-		BLOCK_TYPE_MAP.put((byte)BLOCK_SUGARCANE, BLOCK_TYPE.DECORATION_FULL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.SUGARCANE.id, BLOCK_TYPE.DECORATION_FULL);
 		
 		// Crops
-		BLOCK_TYPE_MAP.put((byte)BLOCK_CROPS, BLOCK_TYPE.CROPS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.CROPS.id, BLOCK_TYPE.CROPS);
 		
 		// Ladders
-		BLOCK_TYPE_MAP.put((byte)BLOCK_LADDER, BLOCK_TYPE.LADDER);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.LADDER.id, BLOCK_TYPE.LADDER);
 		
 		// "floor" decorations
-		BLOCK_TYPE_MAP.put((byte)BLOCK_REDSTONE_WIRE, BLOCK_TYPE.FLOOR);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_WIRE.id, BLOCK_TYPE.FLOOR);
 		
 		// Minecart tracks
-		BLOCK_TYPE_MAP.put((byte)BLOCK_MINECART_TRACKS, BLOCK_TYPE.MINECART_TRACKS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.MINECART_TRACKS.id, BLOCK_TYPE.MINECART_TRACKS);
 		
 		// Pressure plates
-		BLOCK_TYPE_MAP.put((byte)BLOCK_STONE_PRESSURE_PLATE, BLOCK_TYPE.PRESSURE_PLATE);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_PRESSURE_PLATE, BLOCK_TYPE.PRESSURE_PLATE);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.STONE_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
 		
 		// Half-height blocks
-		BLOCK_TYPE_MAP.put((byte)BLOCK_STEP, BLOCK_TYPE.HALFHEIGHT);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_CAKE, BLOCK_TYPE.HALFHEIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.STEP.id, BLOCK_TYPE.HALFHEIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.CAKE.id, BLOCK_TYPE.HALFHEIGHT);
 		
 		// Doors
-		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_DOOR, BLOCK_TYPE.DOOR);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_IRON_DOOR, BLOCK_TYPE.DOOR);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_DOOR.id, BLOCK_TYPE.DOOR);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.IRON_DOOR.id, BLOCK_TYPE.DOOR);
 		
 		// Stairs
-		BLOCK_TYPE_MAP.put((byte)BLOCK_WOODEN_STAIRS, BLOCK_TYPE.STAIRS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_COBBLESTONE_STAIRS, BLOCK_TYPE.STAIRS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_STAIRS.id, BLOCK_TYPE.STAIRS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.COBBLESTONE_STAIRS.id, BLOCK_TYPE.STAIRS);
 		
 		// Signs
-		BLOCK_TYPE_MAP.put((byte)BLOCK_SIGNPOST, BLOCK_TYPE.SIGNPOST);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_WALL_SIGN, BLOCK_TYPE.WALLSIGN);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.SIGNPOST.id, BLOCK_TYPE.SIGNPOST);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.WALL_SIGN.id, BLOCK_TYPE.WALLSIGN);
 		
 		// Fences
-		BLOCK_TYPE_MAP.put((byte)BLOCK_FENCE, BLOCK_TYPE.FENCE);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.FENCE.id, BLOCK_TYPE.FENCE);
 		
 		// Lever
-		BLOCK_TYPE_MAP.put((byte)BLOCK_LEVER, BLOCK_TYPE.LEVER);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.LEVER.id, BLOCK_TYPE.LEVER);
 		
 		// Button
-		BLOCK_TYPE_MAP.put((byte)BLOCK_STONE_BUTTON, BLOCK_TYPE.BUTTON);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.STONE_BUTTON.id, BLOCK_TYPE.BUTTON);
 		
 		// Portal
-		BLOCK_TYPE_MAP.put((byte)BLOCK_PORTAL, BLOCK_TYPE.PORTAL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.PORTAL.id, BLOCK_TYPE.PORTAL);
 		
 		// Blocks whose texture depends on their data value (in addition to block type)
-		BLOCK_TYPE_MAP.put((byte)BLOCK_LOG, BLOCK_TYPE.DATAVAL);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_WOOL, BLOCK_TYPE.DATAVAL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.LOG.id, BLOCK_TYPE.DATAVAL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.WOOL.id, BLOCK_TYPE.DATAVAL);
 		
 		// Water
-		BLOCK_TYPE_MAP.put((byte)BLOCK_WATER, BLOCK_TYPE.WATER);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_STATIONARY_WATER, BLOCK_TYPE.WATER);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.WATER.id, BLOCK_TYPE.WATER);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.STATIONARY_WATER.id, BLOCK_TYPE.WATER);
 		
 		// Lava
-		BLOCK_TYPE_MAP.put((byte)BLOCK_LAVA, BLOCK_TYPE.LAVA);
-		BLOCK_TYPE_MAP.put((byte)BLOCK_STATIONARY_LAVA, BLOCK_TYPE.LAVA);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.LAVA.id, BLOCK_TYPE.LAVA);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.STATIONARY_LAVA.id, BLOCK_TYPE.LAVA);
 		
 		// Fire
-		BLOCK_TYPE_MAP.put((byte)BLOCK_FIRE, BLOCK_TYPE.FIRE);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.FIRE.id, BLOCK_TYPE.FIRE);
 	}
 	
 	   /***
@@ -285,71 +291,71 @@ public class MineCraftConstants {
 		}
 		
 		//blockColors[0] = new Color(255,255,255);
-		blockColors[BLOCK_STONE] = new Color(120,120,120);
-		blockColors[BLOCK_GRASS] = new Color(117,176,73);
-		blockColors[BLOCK_DIRT] = new Color(134,96,67);
-		blockColors[BLOCK_COBBLESTONE] = new Color(115,115,115);
-		blockColors[BLOCK_MOSSY_COBBLESTONE] = new Color(115,115,115);
-		blockColors[BLOCK_WOOD] = new  Color(157,128,79);
-		blockColors[BLOCK_SAPLING] = new Color(120,120,120);
-		blockColors[BLOCK_BEDROCK] = new Color(84,84,84);
-		blockColors[BLOCK_WATER] = new Color(38,92,255);
-		blockColors[BLOCK_STATIONARY_WATER] = new  Color(38,92,255);
-		blockColors[BLOCK_LAVA] = new Color(255,90,0);
-		blockColors[BLOCK_STATIONARY_LAVA] = new Color(255,90,0);
-		blockColors[BLOCK_SAND] = new Color(218,210,158);
-		blockColors[BLOCK_GRAVEL] = new Color(136,126,126);
-		blockColors[BLOCK_GOLD_ORE] = new Color(143,140,125);
-		blockColors[BLOCK_IRON_ORE] = new Color(136,130,127);
-		blockColors[BLOCK_COAL_ORE] = new Color(115,115,115);
-		blockColors[BLOCK_LOG] = new Color(102,81,51);
-		blockColors[BLOCK_LEAVES] = new Color(60,192,41);
-		blockColors[BLOCK_GLASS] = new Color(255,255,255);
-		blockColors[BLOCK_LAPIS_LAZULI_ORE] = new Color(27,70,161);
-		blockColors[BLOCK_LAPIS_LAZULI_BLOCK] = blockColors[BLOCK_LAPIS_LAZULI_BLOCK];
-		blockColors[BLOCK_DISPENSER] = new Color(96,96,96);
-		blockColors[BLOCK_NOTE_BLOCK] = new Color(114,88,56);
-		blockColors[BLOCK_SANDSTONE] = blockColors[BLOCK_SAND];
-		blockColors[BLOCK_WOOL] = new Color(222,222,222); //Color(143,143,143,255); 
-		blockColors[BLOCK_RED_ROSE] = new Color(255,0,0);
-		blockColors[BLOCK_YELLOW_FLOWER] = new Color(255,255,0);
-		blockColors[BLOCK_GOLD_BLOCK] = new Color(231,165,45);
-		blockColors[BLOCK_IRON_BLOCK] = new Color(191,191,191);
-		blockColors[BLOCK_DOUBLE_STEP] = new Color(200,200,200);
-		blockColors[BLOCK_STEP] = new Color(200,200,200);
-		blockColors[BLOCK_BRICK] = new Color(170,86,62);
-		blockColors[BLOCK_TNT] = new Color(160,83,65);
-		blockColors[BLOCK_OBSIDIAN] = new Color(26,11,43);
-		blockColors[BLOCK_TORCH] = new Color(245,220,50);
-		blockColors[BLOCK_FIRE] = new Color(255,170,30);
-		//blockColors[BLOCK_MOB_SPAWNER] = Color(245,220,50,255); unnecessary afaik
-		blockColors[BLOCK_WOODEN_STAIRS] = new Color(157,128,79);
-		blockColors[BLOCK_CHEST] = new Color(125,91,38);
-		//blockColors[BLOCK_REDSTONE_WIRE] = Color(245,220,50,255); unnecessary afaik
-		blockColors[BLOCK_DIAMOND_ORE] = new Color(129,140,143);
-		blockColors[BLOCK_DIAMOND_BLOCK] = new Color(45,166,152);
-		blockColors[BLOCK_WORKBENCH] = blockColors[BLOCK_NOTE_BLOCK];
-		blockColors[BLOCK_CROPS] = new Color(146,192,0);
-		blockColors[BLOCK_SOIL] = new Color(95,58,30);
-		blockColors[BLOCK_FURNACE] = new Color(96,96,96);
-		blockColors[BLOCK_BURNING_FURNACE] = new Color(96,96,96);
-		blockColors[BLOCK_SIGNPOST] = new Color(111,91,54);
-		blockColors[BLOCK_WOODEN_DOOR] = new Color(136,109,67);
-		blockColors[BLOCK_LADDER] = new Color(181,140,64);
-		blockColors[BLOCK_MINECART_TRACKS] = new Color(150,134,102);
-		blockColors[BLOCK_COBBLESTONE_STAIRS] = new Color(115,115,115);
-		blockColors[BLOCK_IRON_DOOR] = new Color(191,191,191);
-		blockColors[BLOCK_REDSTONE_ORE] = new Color(131,107,107);
-		blockColors[BLOCK_GLOWING_REDSTONE_ORE] = new Color(131,107,107);
-		blockColors[BLOCK_REDSTONE_TORCH_OFF] = new Color(181,140,64);
-		blockColors[BLOCK_REDSTONE_TORCH_ON] = new Color(255,0,0);
-		blockColors[BLOCK_SNOW] = new Color(255,255,255);
-		blockColors[BLOCK_ICE] = new Color(83,113,163);
-		blockColors[BLOCK_SNOW_BLOCK] = new Color(250,250,250);
-		blockColors[BLOCK_CACTUS] = new Color(25,120,25);
-		blockColors[BLOCK_CLAY] = new Color(151,157,169);
-		blockColors[BLOCK_SUGARCANE] = new Color(100,67,50);
-		blockColors[BLOCK_JUKEBOX] = blockColors[BLOCK_NOTE_BLOCK];
+		blockColors[BLOCK.STONE.id] = new Color(120,120,120);
+		blockColors[BLOCK.GRASS.id] = new Color(117,176,73);
+		blockColors[BLOCK.DIRT.id] = new Color(134,96,67);
+		blockColors[BLOCK.COBBLESTONE.id] = new Color(115,115,115);
+		blockColors[BLOCK.MOSSY_COBBLESTONE.id] = new Color(115,115,115);
+		blockColors[BLOCK.WOOD.id] = new  Color(157,128,79);
+		blockColors[BLOCK.SAPLING.id] = new Color(120,120,120);
+		blockColors[BLOCK.BEDROCK.id] = new Color(84,84,84);
+		blockColors[BLOCK.WATER.id] = new Color(38,92,255);
+		blockColors[BLOCK.STATIONARY_WATER.id] = new  Color(38,92,255);
+		blockColors[BLOCK.LAVA.id] = new Color(255,90,0);
+		blockColors[BLOCK.STATIONARY_LAVA.id] = new Color(255,90,0);
+		blockColors[BLOCK.SAND.id] = new Color(218,210,158);
+		blockColors[BLOCK.GRAVEL.id] = new Color(136,126,126);
+		blockColors[BLOCK.GOLD_ORE.id] = new Color(143,140,125);
+		blockColors[BLOCK.IRON_ORE.id] = new Color(136,130,127);
+		blockColors[BLOCK.COAL_ORE.id] = new Color(115,115,115);
+		blockColors[BLOCK.LOG.id] = new Color(102,81,51);
+		blockColors[BLOCK.LEAVES.id] = new Color(60,192,41);
+		blockColors[BLOCK.GLASS.id] = new Color(255,255,255);
+		blockColors[BLOCK.LAPIS_LAZULI_ORE.id] = new Color(27,70,161);
+		blockColors[BLOCK.LAPIS_LAZULI_BLOCK.id] = blockColors[BLOCK.LAPIS_LAZULI_BLOCK.id];
+		blockColors[BLOCK.DISPENSER.id] = new Color(96,96,96);
+		blockColors[BLOCK.NOTE_BLOCK.id] = new Color(114,88,56);
+		blockColors[BLOCK.SANDSTONE.id] = blockColors[BLOCK.SAND.id];
+		blockColors[BLOCK.WOOL.id] = new Color(222,222,222); //Color(143,143,143,255); 
+		blockColors[BLOCK.RED_ROSE.id] = new Color(255,0,0);
+		blockColors[BLOCK.YELLOW_FLOWER.id] = new Color(255,255,0);
+		blockColors[BLOCK.GOLD_BLOCK.id] = new Color(231,165,45);
+		blockColors[BLOCK.IRON_BLOCK.id] = new Color(191,191,191);
+		blockColors[BLOCK.DOUBLE_STEP.id] = new Color(200,200,200);
+		blockColors[BLOCK.STEP.id] = new Color(200,200,200);
+		blockColors[BLOCK.BRICK.id] = new Color(170,86,62);
+		blockColors[BLOCK.TNT.id] = new Color(160,83,65);
+		blockColors[BLOCK.OBSIDIAN.id] = new Color(26,11,43);
+		blockColors[BLOCK.TORCH.id] = new Color(245,220,50);
+		blockColors[BLOCK.FIRE.id] = new Color(255,170,30);
+		//blockColors[BLOCK.MOB_SPAWNER.id] = Color(245,220,50,255); unnecessary afaik
+		blockColors[BLOCK.WOODEN_STAIRS.id] = new Color(157,128,79);
+		blockColors[BLOCK.CHEST.id] = new Color(125,91,38);
+		//blockColors[BLOCK.REDSTONE_WIRE.id] = Color(245,220,50,255); unnecessary afaik
+		blockColors[BLOCK.DIAMOND_ORE.id] = new Color(129,140,143);
+		blockColors[BLOCK.DIAMOND_BLOCK.id] = new Color(45,166,152);
+		blockColors[BLOCK.WORKBENCH.id] = blockColors[BLOCK.NOTE_BLOCK.id];
+		blockColors[BLOCK.CROPS.id] = new Color(146,192,0);
+		blockColors[BLOCK.SOIL.id] = new Color(95,58,30);
+		blockColors[BLOCK.FURNACE.id] = new Color(96,96,96);
+		blockColors[BLOCK.BURNING_FURNACE.id] = new Color(96,96,96);
+		blockColors[BLOCK.SIGNPOST.id] = new Color(111,91,54);
+		blockColors[BLOCK.WOODEN_DOOR.id] = new Color(136,109,67);
+		blockColors[BLOCK.LADDER.id] = new Color(181,140,64);
+		blockColors[BLOCK.MINECART_TRACKS.id] = new Color(150,134,102);
+		blockColors[BLOCK.COBBLESTONE_STAIRS.id] = new Color(115,115,115);
+		blockColors[BLOCK.IRON_DOOR.id] = new Color(191,191,191);
+		blockColors[BLOCK.REDSTONE_ORE.id] = new Color(131,107,107);
+		blockColors[BLOCK.GLOWING_REDSTONE_ORE.id] = new Color(131,107,107);
+		blockColors[BLOCK.REDSTONE_TORCH_OFF.id] = new Color(181,140,64);
+		blockColors[BLOCK.REDSTONE_TORCH_ON.id] = new Color(255,0,0);
+		blockColors[BLOCK.SNOW.id] = new Color(255,255,255);
+		blockColors[BLOCK.ICE.id] = new Color(83,113,163);
+		blockColors[BLOCK.SNOW_BLOCK.id] = new Color(250,250,250);
+		blockColors[BLOCK.CACTUS.id] = new Color(25,120,25);
+		blockColors[BLOCK.CLAY.id] = new Color(151,157,169);
+		blockColors[BLOCK.SUGARCANE.id] = new Color(100,67,50);
+		blockColors[BLOCK.JUKEBOX.id] = blockColors[BLOCK.NOTE_BLOCK.id];
 	}
 	public static final int TEXTURE_COAL = (2*16) + 2;
 	public static final int TEXTURE_IRON = (2*16) + 1;
@@ -371,100 +377,100 @@ public class MineCraftConstants {
 			blockDataToSpriteSheet[i] = -1;
 		}
 		//blockTrans[0] = -1;
-		blockDataToSpriteSheet[BLOCK_STONE] = 1;
-		blockDataToSpriteSheet[BLOCK_GRASS] = 0;
-		blockDataToSpriteSheet[BLOCK_DIRT] = 2;
-		blockDataToSpriteSheet[BLOCK_COBBLESTONE] = 16;
-		blockDataToSpriteSheet[BLOCK_WOOD] = 4;
-		blockDataToSpriteSheet[BLOCK_SAPLING] = 15;
-		blockDataToSpriteSheet[BLOCK_BEDROCK] = 17;
-		blockDataToSpriteSheet[BLOCK_WATER] = 207;
-		blockDataToSpriteSheet[BLOCK_STATIONARY_WATER] = 207;
-		blockDataToSpriteSheet[BLOCK_LAVA] = 239;
-		blockDataToSpriteSheet[BLOCK_STATIONARY_LAVA] = 239;
-		blockDataToSpriteSheet[BLOCK_SAND] = 18;
-		blockDataToSpriteSheet[BLOCK_GRAVEL] = 19;
-		blockDataToSpriteSheet[BLOCK_GOLD_ORE] = (2*16) + 0;
-		blockDataToSpriteSheet[BLOCK_IRON_ORE] = (2*16) + 1;
-		blockDataToSpriteSheet[BLOCK_COAL_ORE] = (2*16) + 2;
-		blockDataToSpriteSheet[BLOCK_LOG] = 20;
-		blockDataToSpriteSheet[BLOCK_LEAVES] = (3*16)+5; // The "correct" one is actually +4, but with the current transparency
+		blockDataToSpriteSheet[BLOCK.STONE.id] = 1;
+		blockDataToSpriteSheet[BLOCK.GRASS.id] = 0;
+		blockDataToSpriteSheet[BLOCK.DIRT.id] = 2;
+		blockDataToSpriteSheet[BLOCK.COBBLESTONE.id] = 16;
+		blockDataToSpriteSheet[BLOCK.WOOD.id] = 4;
+		blockDataToSpriteSheet[BLOCK.SAPLING.id] = 15;
+		blockDataToSpriteSheet[BLOCK.BEDROCK.id] = 17;
+		blockDataToSpriteSheet[BLOCK.WATER.id] = 207;
+		blockDataToSpriteSheet[BLOCK.STATIONARY_WATER.id] = 207;
+		blockDataToSpriteSheet[BLOCK.LAVA.id] = 239;
+		blockDataToSpriteSheet[BLOCK.STATIONARY_LAVA.id] = 239;
+		blockDataToSpriteSheet[BLOCK.SAND.id] = 18;
+		blockDataToSpriteSheet[BLOCK.GRAVEL.id] = 19;
+		blockDataToSpriteSheet[BLOCK.GOLD_ORE.id] = (2*16) + 0;
+		blockDataToSpriteSheet[BLOCK.IRON_ORE.id] = (2*16) + 1;
+		blockDataToSpriteSheet[BLOCK.COAL_ORE.id] = (2*16) + 2;
+		blockDataToSpriteSheet[BLOCK.LOG.id] = 20;
+		blockDataToSpriteSheet[BLOCK.LEAVES.id] = (3*16)+5; // The "correct" one is actually +4, but with the current transparency
 														 // rendering glitches, the non-transparent texture looks better.
-		blockDataToSpriteSheet[BLOCK_SPONGE] = (3*16);
-		blockDataToSpriteSheet[BLOCK_GLASS] = 49;
-		blockDataToSpriteSheet[BLOCK_LAPIS_LAZULI_ORE] = 10*16;
-		blockDataToSpriteSheet[BLOCK_LAPIS_LAZULI_BLOCK] = 9*16;
-		blockDataToSpriteSheet[BLOCK_DISPENSER] = (2*16) + 14;
-		blockDataToSpriteSheet[BLOCK_SANDSTONE] = 12*16;
-		blockDataToSpriteSheet[BLOCK_NOTE_BLOCK] = (4*16) + 10;
-		blockDataToSpriteSheet[BLOCK_WOOL] = 64;		
-		blockDataToSpriteSheet[BLOCK_YELLOW_FLOWER] = 13;
-		blockDataToSpriteSheet[BLOCK_RED_ROSE] = 12;
-		blockDataToSpriteSheet[BLOCK_BROWN_MUSHROOM] = (1*16) + 13;
-		blockDataToSpriteSheet[BLOCK_RED_MUSHROOM] = (1*16) + 12;
-		blockDataToSpriteSheet[BLOCK_GOLD_BLOCK] = 23;
-		blockDataToSpriteSheet[BLOCK_IRON_BLOCK] = 22;
-		blockDataToSpriteSheet[BLOCK_DOUBLE_STEP] = 5; // previously 72, which was clay
-		blockDataToSpriteSheet[BLOCK_STEP] = 6; // previously 72, which was clay
-		blockDataToSpriteSheet[BLOCK_BRICK] = 7;
-		blockDataToSpriteSheet[BLOCK_TNT] = 8;
-		blockDataToSpriteSheet[BLOCK_BOOKSHELF] = 35;
-		blockDataToSpriteSheet[BLOCK_MOSSY_COBBLESTONE] = (2*16)+4;
-		blockDataToSpriteSheet[BLOCK_OBSIDIAN] = (2*16)+5;
-		blockDataToSpriteSheet[BLOCK_TORCH] = 80;
-		blockDataToSpriteSheet[BLOCK_FIRE] = 16+15;  // previously 30
-		blockDataToSpriteSheet[BLOCK_MOB_SPAWNER] = (4*16) + 1;
-		blockDataToSpriteSheet[BLOCK_WOODEN_STAIRS] = 4;  // previously 55
-		blockDataToSpriteSheet[BLOCK_CHEST] = 26;
-		blockDataToSpriteSheet[BLOCK_REDSTONE_WIRE] = 100;
-		blockDataToSpriteSheet[BLOCK_DIAMOND_ORE] = (3*16) + 2;
-		blockDataToSpriteSheet[BLOCK_DIAMOND_BLOCK] = 24;
-		blockDataToSpriteSheet[BLOCK_WORKBENCH] = 25;
-		blockDataToSpriteSheet[BLOCK_CROPS] = (5*16)+15;
-		blockDataToSpriteSheet[BLOCK_SOIL] = (5*16)+6;
-		blockDataToSpriteSheet[BLOCK_FURNACE] = 44;
-		blockDataToSpriteSheet[BLOCK_BURNING_FURNACE] = (3*16)+13;
-		blockDataToSpriteSheet[BLOCK_SIGNPOST] = 4;
-		blockDataToSpriteSheet[BLOCK_WOODEN_DOOR] = (6*16)+1;
-		blockDataToSpriteSheet[BLOCK_LADDER] = (5*16)+3;
-		blockDataToSpriteSheet[BLOCK_MINECART_TRACKS] = (8*16);
-		blockDataToSpriteSheet[BLOCK_COBBLESTONE_STAIRS] = 16;
-		blockDataToSpriteSheet[BLOCK_WALL_SIGN] = 4;
-		blockDataToSpriteSheet[BLOCK_LEVER] = (6*16);
-	    blockDataToSpriteSheet[BLOCK_STONE_PRESSURE_PLATE] = 6;
-		blockDataToSpriteSheet[BLOCK_IRON_DOOR] = (6*16)+2;
-		blockDataToSpriteSheet[BLOCK_WOODEN_PRESSURE_PLATE] = 4;
-		blockDataToSpriteSheet[BLOCK_REDSTONE_ORE] = (3*16) + 3;
-		blockDataToSpriteSheet[BLOCK_GLOWING_REDSTONE_ORE] = 51;
-		blockDataToSpriteSheet[BLOCK_REDSTONE_TORCH_OFF] = (7*16)+3;
-		blockDataToSpriteSheet[BLOCK_REDSTONE_TORCH_ON] = (6*16)+3;
-		blockDataToSpriteSheet[BLOCK_STONE_BUTTON] = 6;
-		blockDataToSpriteSheet[BLOCK_SNOW] = 66;
-		blockDataToSpriteSheet[BLOCK_ICE] = 67;
-		blockDataToSpriteSheet[BLOCK_SNOW_BLOCK] = 66;
-		blockDataToSpriteSheet[BLOCK_CACTUS] = 70;
-		blockDataToSpriteSheet[BLOCK_CLAY] = (4*16)+8;
-		blockDataToSpriteSheet[BLOCK_SUGARCANE] = 73;
-		blockDataToSpriteSheet[BLOCK_JUKEBOX] = (4*16)+10;
-		blockDataToSpriteSheet[BLOCK_FENCE] = 4;
-		blockDataToSpriteSheet[BLOCK_PUMPKIN] = (7*16)+7;
-		blockDataToSpriteSheet[BLOCK_NETHERSTONE] = (6*16)+7;
-		blockDataToSpriteSheet[BLOCK_SLOW_SAND] = (6*16)+8;
-		blockDataToSpriteSheet[BLOCK_LIGHTSTONE] = (6*16)+9;
-		blockDataToSpriteSheet[BLOCK_PORTAL] = 16+14;
-		blockDataToSpriteSheet[BLOCK_JACK_O_LANTERN] = (7*16)+8;
-		blockDataToSpriteSheet[BLOCK_CAKE] = (7*16) + 9;
+		blockDataToSpriteSheet[BLOCK.SPONGE.id] = (3*16);
+		blockDataToSpriteSheet[BLOCK.GLASS.id] = 49;
+		blockDataToSpriteSheet[BLOCK.LAPIS_LAZULI_ORE.id] = 10*16;
+		blockDataToSpriteSheet[BLOCK.LAPIS_LAZULI_BLOCK.id] = 9*16;
+		blockDataToSpriteSheet[BLOCK.DISPENSER.id] = (2*16) + 14;
+		blockDataToSpriteSheet[BLOCK.SANDSTONE.id] = 12*16;
+		blockDataToSpriteSheet[BLOCK.NOTE_BLOCK.id] = (4*16) + 10;
+		blockDataToSpriteSheet[BLOCK.WOOL.id] = 64;		
+		blockDataToSpriteSheet[BLOCK.YELLOW_FLOWER.id] = 13;
+		blockDataToSpriteSheet[BLOCK.RED_ROSE.id] = 12;
+		blockDataToSpriteSheet[BLOCK.BROWN_MUSHROOM.id] = (1*16) + 13;
+		blockDataToSpriteSheet[BLOCK.RED_MUSHROOM.id] = (1*16) + 12;
+		blockDataToSpriteSheet[BLOCK.GOLD_BLOCK.id] = 23;
+		blockDataToSpriteSheet[BLOCK.IRON_BLOCK.id] = 22;
+		blockDataToSpriteSheet[BLOCK.DOUBLE_STEP.id] = 5; // previously 72, which was clay
+		blockDataToSpriteSheet[BLOCK.STEP.id] = 6; // previously 72, which was clay
+		blockDataToSpriteSheet[BLOCK.BRICK.id] = 7;
+		blockDataToSpriteSheet[BLOCK.TNT.id] = 8;
+		blockDataToSpriteSheet[BLOCK.BOOKSHELF.id] = 35;
+		blockDataToSpriteSheet[BLOCK.MOSSY_COBBLESTONE.id] = (2*16)+4;
+		blockDataToSpriteSheet[BLOCK.OBSIDIAN.id] = (2*16)+5;
+		blockDataToSpriteSheet[BLOCK.TORCH.id] = 80;
+		blockDataToSpriteSheet[BLOCK.FIRE.id] = 16+15;  // previously 30
+		blockDataToSpriteSheet[BLOCK.MOB_SPAWNER.id] = (4*16) + 1;
+		blockDataToSpriteSheet[BLOCK.WOODEN_STAIRS.id] = 4;  // previously 55
+		blockDataToSpriteSheet[BLOCK.CHEST.id] = 26;
+		blockDataToSpriteSheet[BLOCK.REDSTONE_WIRE.id] = 100;
+		blockDataToSpriteSheet[BLOCK.DIAMOND_ORE.id] = (3*16) + 2;
+		blockDataToSpriteSheet[BLOCK.DIAMOND_BLOCK.id] = 24;
+		blockDataToSpriteSheet[BLOCK.WORKBENCH.id] = 25;
+		blockDataToSpriteSheet[BLOCK.CROPS.id] = (5*16)+15;
+		blockDataToSpriteSheet[BLOCK.SOIL.id] = (5*16)+6;
+		blockDataToSpriteSheet[BLOCK.FURNACE.id] = 44;
+		blockDataToSpriteSheet[BLOCK.BURNING_FURNACE.id] = (3*16)+13;
+		blockDataToSpriteSheet[BLOCK.SIGNPOST.id] = 4;
+		blockDataToSpriteSheet[BLOCK.WOODEN_DOOR.id] = (6*16)+1;
+		blockDataToSpriteSheet[BLOCK.LADDER.id] = (5*16)+3;
+		blockDataToSpriteSheet[BLOCK.MINECART_TRACKS.id] = (8*16);
+		blockDataToSpriteSheet[BLOCK.COBBLESTONE_STAIRS.id] = 16;
+		blockDataToSpriteSheet[BLOCK.WALL_SIGN.id] = 4;
+		blockDataToSpriteSheet[BLOCK.LEVER.id] = (6*16);
+	    blockDataToSpriteSheet[BLOCK.STONE_PRESSURE_PLATE.id] = 6;
+		blockDataToSpriteSheet[BLOCK.IRON_DOOR.id] = (6*16)+2;
+		blockDataToSpriteSheet[BLOCK.WOODEN_PRESSURE_PLATE.id] = 4;
+		blockDataToSpriteSheet[BLOCK.REDSTONE_ORE.id] = (3*16) + 3;
+		blockDataToSpriteSheet[BLOCK.GLOWING_REDSTONE_ORE.id] = 51;
+		blockDataToSpriteSheet[BLOCK.REDSTONE_TORCH_OFF.id] = (7*16)+3;
+		blockDataToSpriteSheet[BLOCK.REDSTONE_TORCH_ON.id] = (6*16)+3;
+		blockDataToSpriteSheet[BLOCK.STONE_BUTTON.id] = 6;
+		blockDataToSpriteSheet[BLOCK.SNOW.id] = 66;
+		blockDataToSpriteSheet[BLOCK.ICE.id] = 67;
+		blockDataToSpriteSheet[BLOCK.SNOW_BLOCK.id] = 66;
+		blockDataToSpriteSheet[BLOCK.CACTUS.id] = 70;
+		blockDataToSpriteSheet[BLOCK.CLAY.id] = (4*16)+8;
+		blockDataToSpriteSheet[BLOCK.SUGARCANE.id] = 73;
+		blockDataToSpriteSheet[BLOCK.JUKEBOX.id] = (4*16)+10;
+		blockDataToSpriteSheet[BLOCK.FENCE.id] = 4;
+		blockDataToSpriteSheet[BLOCK.PUMPKIN.id] = (7*16)+7;
+		blockDataToSpriteSheet[BLOCK.NETHERSTONE.id] = (6*16)+7;
+		blockDataToSpriteSheet[BLOCK.SLOW_SAND.id] = (6*16)+8;
+		blockDataToSpriteSheet[BLOCK.LIGHTSTONE.id] = (6*16)+9;
+		blockDataToSpriteSheet[BLOCK.PORTAL.id] = 16+14;
+		blockDataToSpriteSheet[BLOCK.JACK_O_LANTERN.id] = (7*16)+8;
+		blockDataToSpriteSheet[BLOCK.CAKE.id] = (7*16) + 9;
 		
 		// Textures used by logs
 		HashMap<Byte, Integer> logMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK_LOG, logMap);
+		blockDataSpriteSheetMap.put((byte)BLOCK.LOG.id, logMap);
 		logMap.put((byte)0, 16+4); // Regular log
 		logMap.put((byte)1, (7*16)+4); // Redwood-or-whatever
 		logMap.put((byte)2, (7*16)+5); // Birch
 
 		// Textures used by wool
 		HashMap<Byte, Integer> woolMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK_WOOL, woolMap);
+		blockDataSpriteSheetMap.put((byte)BLOCK.WOOL.id, woolMap);
 		woolMap.put((byte)0, 64); // Regular wool
 		woolMap.put((byte)15, (7*16)+1); // Black
 		woolMap.put((byte)14, (8*16)+1); // Red

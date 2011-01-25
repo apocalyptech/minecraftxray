@@ -11,6 +11,8 @@ import com.plusminus.craft.dtf.IntTag;
 import com.plusminus.craft.dtf.ListTag;
 import com.plusminus.craft.dtf.Tag;
 
+import com.plusminus.craft.MineCraftConstants.BLOCK;
+
 /***
  * A Minecraft level 
  * @author Vincent
@@ -28,6 +30,7 @@ public class MinecraftLevel {
 	private ArrayList<CameraPreset> playerPositions;
 	private int playerPos_idx;
 	private int spawnPoint_idx;
+	public BLOCK[] HIGHLIGHT_ORES;
 	
 	public Texture minecraftTexture;
 	public Texture paintingTexture;
@@ -37,11 +40,12 @@ public class MinecraftLevel {
 	 * Create a minecraftLevel from the given world
 	 * @param world
 	 */
-	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture paintingTexture, Texture portalTexture) {
+	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture paintingTexture, Texture portalTexture, BLOCK[] HIGHLIGHT_ORES) {
 		this.world = world;
 		this.minecraftTexture = minecraftTexture;
 		this.paintingTexture = paintingTexture;
 		this.portalTexture = portalTexture;
+		this.HIGHLIGHT_ORES = HIGHLIGHT_ORES;
 		
 		this.levelData = new Chunk[LEVELDATA_SIZE][LEVELDATA_SIZE];
 		
