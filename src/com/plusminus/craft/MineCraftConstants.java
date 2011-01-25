@@ -513,7 +513,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.CACTUS.id] = 70;
 		blockDataToSpriteSheet[BLOCK.CLAY.id] = (4*16)+8;
 		blockDataToSpriteSheet[BLOCK.SUGARCANE.id] = 73;
-		blockDataToSpriteSheet[BLOCK.JUKEBOX.id] = (4*16)+10;
+		blockDataToSpriteSheet[BLOCK.JUKEBOX.id] = (4*16)+11;
 		blockDataToSpriteSheet[BLOCK.FENCE.id] = 4;
 		blockDataToSpriteSheet[BLOCK.PUMPKIN.id] = (7*16)+7;
 		blockDataToSpriteSheet[BLOCK.NETHERRACK.id] = (6*16)+7;
