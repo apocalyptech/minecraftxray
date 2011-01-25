@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileInputStream;
@@ -24,8 +23,6 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import javax.imageio.ImageIO;
-
-import org.lwjgl.opengl.GL11;
 
 /***
  * Utility class which has convenience methods to access the
@@ -482,7 +479,7 @@ public class MineCraftEnvironment {
 				null);		
 		
 		// Duplicate the texture underneath, tinted for our "explored" areas
-		bi2 = new BufferedImage(bi.getWidth(), bi.getHeight()*2, bi.getType());
+		bi2 = new BufferedImage(bi.getWidth(), bi.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
 		g2d = bi2.createGraphics();
 		g2d.setComposite(AlphaComposite.Src);
 		g2d.drawImage(bi, 0, 0, bi.getWidth(), bi.getHeight(), null);
