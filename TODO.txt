@@ -2,7 +2,10 @@
    transparent leaf texture for trees once that's been figured out.  Right
    now they look better with the solid texture.  In particular, all the
    "decorative" blocks like torches, flowers, reed, etc, look weird, as
-   does water and portals.
+   does water and portals.  As it turns out, this is all to do with OpenGL
+   alpha blending; in addition to a couple quick calls to glDepthMask (see
+   renderSolid() in Chunk.java), we then need to make sure that all GL
+   objects are rendered from far-away to near, which will take some doing.
    
  * Proper rendering support for redstone wire
  
@@ -35,4 +38,5 @@
  * As I've been editing the X-Ray code, I've been using underscore_variables like
    that, mostly, instead of the camelCase which was more prevalent.  Should really
    reformat everything to a single style (and retab the whole thing, and clean up
-   formatting and style in general)
+   formatting and style in general).  And really, I've been pretty lazy all around
+   with doing things the "right way."  The code could use cleanup in general.
