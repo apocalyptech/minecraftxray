@@ -74,6 +74,7 @@
 				<include name="Changelog.txt" />
 				<include name="BUILDING.txt" />
 				<include name="TODO.txt" />
+				<include name="README.txt" />
 				<include name="COPYING.txt" />
 				<include name="COPYING-lwjgl.txt" />
 				<include name="COPYING-jsmooth.txt" />
