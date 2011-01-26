@@ -20,9 +20,6 @@
    
  * Minimap effective size has been cut quite a bit, would like to increase that
    
- * X-Ray should go into a "sleep" mode of sorts when it doesn't have focus,
-   so that it can be run a bit more easily alongside Minecraft itself.
-   
  * Figure out some kind of useful minimap when in the Nether
  
  * Would be nice to have a check when warping between Nether and Overworld

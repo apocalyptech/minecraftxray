@@ -9,6 +9,7 @@
   * Multiplayer camera presets are now sorted by username
   * Highlight (in green) areas near torches with "E"
   * Updated texture info for Jukeboxes and Workbenches
+  * Manually throttle back FPS when we don't have focus, or are offscreen
 
 Minecraft X-Ray 2.7 Maintenance Branch 7 (2011.01.21)
 

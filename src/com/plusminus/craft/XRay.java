@@ -291,8 +291,21 @@ public class XRay {
                 	minimap_needs_updating=false;
                 }
                 
-                // Push to screen
+                // Sleep a bit if we're not visible, to save on CPU
+                // This is especially important when isVisible() is false, because
+                // Display.update() does NOT vSync in that case.
+                if (!Display.isVisible())
+                {
+                	Thread.sleep(100);
+                }
+                else if (!Display.isActive())
+                {
+                	Thread.sleep(33);
+                }
+                
+               	// Push to screen
                 Display.update();
+
             }
             // cleanup
             cleanup();
