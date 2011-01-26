@@ -36,7 +36,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.awt.RenderingHints;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileInputStream;
@@ -174,7 +173,9 @@ public class XRay
 	private int currentLevelX, currentLevelZ;
 
 	// we render to a display list and use that later for quick drawing, this is the index
+	@SuppressWarnings("unused")
 	private int worldDisplayListNum;
+	@SuppressWarnings("unused")
 	private int visibleOresListNum;
 
 	// wheter we need to reload the world

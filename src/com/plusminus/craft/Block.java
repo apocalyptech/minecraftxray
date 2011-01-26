@@ -26,10 +26,6 @@
  */
 package com.plusminus.craft;
 
-
-import static com.plusminus.craft.MineCraftConstants.*;
-import java.lang.Thread;
-import java.lang.StackTraceElement;
 /**
  * @author Vincent Vollers
  *

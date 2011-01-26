@@ -168,9 +168,7 @@ public class ResolutionDialog extends JFrame {
 	private DefaultComboBoxModel refreshRateModel;
 	
 	private Map<IntegerPair, List<DisplayMode>> resolutionsMap;
-	
-	private ArrayList<WorldInfo> availableWorlds;
-	
+		
 	private int[][] preferredResolutions;
 	private int[] preferredRefreshRates;
 	private int[] preferredBitDepths;
@@ -792,7 +790,6 @@ public class ResolutionDialog extends JFrame {
 		this.preferredBitDepths 	= preferredBitDepths;
 		this.preferredRefreshRates 	= preferredRefreshRates;
 		this.preferredFullScreenValue = preferredFullScreenValue;
-		this.availableWorlds		= availableWorlds;
 		
 		// Load last-used resolution/display information from our properties file
 		String val_1 = this.xray_properties.getProperty("LAST_RESOLUTION_X");

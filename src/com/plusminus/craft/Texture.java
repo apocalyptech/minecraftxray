@@ -26,17 +26,11 @@
  */
 package com.plusminus.craft;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -72,16 +66,10 @@ public class Texture {
 	private int textureWidth = -1;
 
 	private int textureHeight = -1;
-
-	private int imageWidth;
-	
-	private int imageHeight;
 	
 	private int xScaleUnit;
 
 	private int yScaleUnit;
-
-	private ComponentSampleModel imageSampleModel;
 
 	private int scanLineStride;
 
@@ -204,7 +192,7 @@ public class Texture {
 		raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
 				this.textureWidth, this.textureHeight, 4, null);
 		texImage = new BufferedImage(TextureTool.glAlphaColorModel, raster, false,
-				new Hashtable());
+				new Hashtable<String, Object>());
 
 		// get the pointers to the data of the [t]exture buffer
 		// and the data of the [i]image buffer

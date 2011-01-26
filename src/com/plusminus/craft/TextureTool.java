@@ -33,7 +33,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
