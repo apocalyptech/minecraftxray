@@ -203,7 +203,7 @@ public class XRay {
 	private Texture[] mineralToggleTextures;
 
 	// lighting on or of (its actually fog, but hey...)
-	private boolean lightMode = false;
+	private boolean lightMode = true;
 
 	// highlight the ores by making them blink
 	private boolean highlightOres = true;
