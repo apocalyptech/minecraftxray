@@ -66,13 +66,15 @@ import org.lwjgl.input.Mouse;
 import com.plusminus.craft.WorldInfo;
 import static com.plusminus.craft.MineCraftConstants.*;
 
-public class XRay {
+public class XRay
+{
 
 	/**
 	 * Private class to provide a sorted properties list in our config file.
 	 * Taken from http://www.rgagnon.com/javadetails/java-0614.html
 	 */
-	private class SortedProperties extends Properties {
+	private class SortedProperties extends Properties
+	{
 
 		// Added at the behest of Eclipse (or, well, presumably Java itself)
 		private static final long serialVersionUID = 2578311914423692774L;
@@ -81,10 +83,12 @@ public class XRay {
 		 * Overrides, called by the store method.
 		 */
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		public synchronized Enumeration keys() {
+		public synchronized Enumeration keys()
+		{
 			Enumeration keysEnum = super.keys();
 			Vector keyList = new Vector();
-			while (keysEnum.hasMoreElements()) {
+			while (keysEnum.hasMoreElements())
+			{
 				keyList.add(keysEnum.nextElement());
 			}
 			Collections.sort(keyList);
@@ -108,8 +112,7 @@ public class XRay {
 	private static BLOCK[] HIGHLIGHT_ORES = new BLOCK[preferred_highlight_ores.length];
 	private static final int[] HIGHLIGHT_ORE_KEYS = new int[preferred_highlight_ores.length];
 
-	// By default we'll keep 20x20 chunks in our cache, which should hopefully
-	// let
+	// By default we'll keep 20x20 chunks in our cache, which should hopefully let
 	// us stay ahead of the camera
 	// TODO: keep this at 8, or back up to 10?
 	private final int loadChunkRange = 8;
@@ -120,7 +123,7 @@ public class XRay {
 	private boolean fullscreen = false;
 	// window title
 	private final String app_version = "2.7 Maintenance Branch 8";
-	private final String app_name = "Minecraft X-Ray";
+	private final String app_name    = "Minecraft X-Ray";
 	private final String windowTitle = app_name + " " + app_version;
 
 	// Minimap size - I did try increasing this but there were some performance
@@ -134,8 +137,7 @@ public class XRay {
 	// current display mode
 	private DisplayMode displayMode;
 
-	// last system time in the main loop (to calculate delta for camera
-	// movement)
+	// last system time in the main loop (to calculate delta for camera movement)
 	private long lastTime;
 
 	// our camera
@@ -168,12 +170,10 @@ public class XRay {
 	// the current block (universal coordinate) where the camera is hovering on
 	private int levelBlockX, levelBlockZ;
 
-	// the current and previous chunk coordinates where the camera is hovering
-	// on
+	// the current and previous chunk coordinates where the camera is hovering on
 	private int currentLevelX, currentLevelZ;
 
-	// we render to a display list and use that later for quick drawing, this is
-	// the index
+	// we render to a display list and use that later for quick drawing, this is the index
 	private int worldDisplayListNum;
 	private int visibleOresListNum;
 
@@ -190,8 +190,7 @@ public class XRay {
 	// wheter we show the big map or the mini map
 	private boolean mapBig = false;
 
-	// wheter we are done with loading the map data (just for the mini map
-	// really)
+	// wheter we are done with loading the map data (just for the mini map really)
 	private boolean map_load_started = false;
 
 	// the available world numbers
@@ -212,7 +211,7 @@ public class XRay {
 
 	// the laste time fps was updated
 	private long lastFpsTime = -1;
-
+	
 	// the number of frames since the last fps update
 	private int framesSinceLastFps;
 
@@ -241,6 +240,7 @@ public class XRay {
 	private Texture renderDetailsTexture;
 	private int renderDetails_w = 160;
 	private int cur_renderDetails_h;
+	private int levelInfoTexture_h = 144;
 
 	// light level
 	private int[] lightLevelEnd = new int[] { 30, 50, 70, 100, 130 };
@@ -261,9 +261,7 @@ public class XRay {
 	private int minimap_trim_chunk_distance = 64;
 
 	// How long are we allowed to spend loading chunks before we update?
-	private long max_chunkload_time = Sys.getTimerResolution() / 10; // a tenth
-																		// of a
-																		// second
+	private long max_chunkload_time = Sys.getTimerResolution() / 10; // a tenth of a second
 
 	// The current camera position that we're at
 	private CameraPreset currentPosition;
@@ -273,13 +271,16 @@ public class XRay {
 	private SortedProperties xray_properties;
 
 	// lets start with the program
-	public static void main(String args[]) {
+	public static void main(String args[])
+	{
 		new XRay().run();
 	}
 
 	// go
-	public void run() {
-		try {
+	public void run()
+	{
+		try
+		{
 			// check whether we can access minecraft
 			// and if we have worlds to load
 			checkMinecraftFiles();
@@ -303,12 +304,13 @@ public class XRay {
 			// And now load our world
 			this.setMinecraftWorld(availableWorlds.get(this.selectedWorld));
 			this.triggerChunkLoads();
-			
+
 			// Render details
 			updateRenderDetails();
 
 			// main loop
-			while (!done) {
+			while (!done)
+			{
 				long time = Sys.getTime();
 				float timeDelta = (time - lastTime) / 1000.0f;
 				lastTime = time;
@@ -317,7 +319,8 @@ public class XRay {
 				handleInput(timeDelta);
 
 				// Load chunks if needed
-				if (mapChunksToLoad != null) {
+				if (mapChunksToLoad != null)
+				{
 					loadPendingChunks();
 				}
 
@@ -325,18 +328,21 @@ public class XRay {
 				render(timeDelta);
 
 				// update our minimap if we need to (new chunks loaded, etc)
-				if (minimap_needs_updating) {
+				if (minimap_needs_updating)
+				{
 					minimapTexture.update();
 					minimap_needs_updating = false;
 				}
 
 				// Sleep a bit if we're not visible, to save on CPU
-				// This is especially important when isVisible() is false,
-				// because
+				// This is especially important when isVisible() is false, because
 				// Display.update() does NOT vSync in that case.
-				if (!Display.isVisible()) {
+				if (!Display.isVisible())
+				{
 					Thread.sleep(100);
-				} else if (!Display.isActive()) {
+				}
+				else if (!Display.isActive())
+				{
 					Thread.sleep(33);
 				}
 
@@ -346,7 +352,9 @@ public class XRay {
 			}
 			// cleanup
 			cleanup();
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			// bah some error happened
 			e.printStackTrace();
 			System.exit(0);
@@ -357,46 +365,50 @@ public class XRay {
 	 * Loads our preferences. This also sets our default keybindings if they're
 	 * not overridden somewhere.
 	 */
-	public void loadPreferences() {
+	public void loadPreferences()
+	{
 		xray_properties = new SortedProperties();
 
 		// First load our defaults into the prefs object
-		for (KEY_ACTIONS action : KEY_ACTIONS.values()) {
-			xray_properties.setProperty("KEY_" + action.toString(),
-					Keyboard.getKeyName(this.key_mapping.get(action)));
+		for (KEY_ACTIONS action : KEY_ACTIONS.values())
+		{
+			xray_properties.setProperty("KEY_" + action.toString(), Keyboard.getKeyName(this.key_mapping.get(action)));
 		}
 
 		// Here's where we would load from our prefs file
 		File prefs = MineCraftEnvironment.getXrayConfigFile();
-		if (prefs.exists() && prefs.canRead()) {
-			try {
+		if (prefs.exists() && prefs.canRead())
+		{
+			try
+			{
 				xray_properties.load(new FileInputStream(prefs));
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				// Just report and continue
-				System.out.println("Could not load configuration file: "
-						+ e.toString());
+				System.out.println("Could not load configuration file: " + e.toString());
 			}
 		}
 
 		// Loop through the key mappings that we just loaded
 		int newkey;
 		String prefskey;
-		for (KEY_ACTIONS action : KEY_ACTIONS.values()) {
+		for (KEY_ACTIONS action : KEY_ACTIONS.values())
+		{
 			prefskey = xray_properties.getProperty("KEY_" + action.toString());
-			if (prefskey.equalsIgnoreCase("none")) {
+			if (prefskey.equalsIgnoreCase("none"))
+			{
 				// If the user actually specified "NONE" in the config file,
 				// unbind the key
 				newkey = Keyboard.KEY_NONE;
-			} else {
+			}
+			else
+			{
 				newkey = Keyboard.getKeyIndex(prefskey);
-				if (newkey == Keyboard.KEY_NONE) {
+				if (newkey == Keyboard.KEY_NONE)
+				{
 					// TODO: Should output something more visible to the user
-					System.out
-							.println("Warning: key '"
-									+ prefskey
-									+ "' for action "
-									+ action
-									+ " in the config file is unknown.  Default key assigned.");
+					System.out.println("Warning: key '" + prefskey + "' for action " + action + " in the config file is unknown.  Default key assigned.");
 					continue;
 				}
 			}
@@ -405,68 +417,74 @@ public class XRay {
 
 		// Populate our key ranges
 		int i;
-		for (i = 0; i < CHUNK_RANGES.length; i++) {
-			CHUNK_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTIONS
-					.valueOf("CHUNK_RANGE_" + (i + 1)));
+		for (i = 0; i < CHUNK_RANGES.length; i++)
+		{
+			CHUNK_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("CHUNK_RANGE_" + (i + 1)));
 		}
-		for (i = 0; i < HIGHLIGHT_RANGES.length; i++) {
-			HIGHLIGHT_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTIONS
-					.valueOf("HIGHLIGHT_RANGE_" + (i + 1)));
+		for (i = 0; i < HIGHLIGHT_RANGES.length; i++)
+		{
+			HIGHLIGHT_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("HIGHLIGHT_RANGE_" + (i + 1)));
 		}
-		for (i = 0; i < HIGHLIGHT_ORES.length; i++) {
-			HIGHLIGHT_ORE_KEYS[i] = this.key_mapping.get(KEY_ACTIONS
-					.valueOf("TOGGLE_ORE_" + (i + 1)));
+		for (i = 0; i < HIGHLIGHT_ORES.length; i++)
+		{
+			HIGHLIGHT_ORE_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("TOGGLE_ORE_" + (i + 1)));
 		}
 
 		// Populate our list of ores to highlight
 		String prefs_highlight;
 		String prefs_highlight_key;
-		for (i = 0; i < preferred_highlight_ores.length; i++) {
+		for (i = 0; i < preferred_highlight_ores.length; i++)
+		{
 			prefs_highlight_key = "HIGHLIGHT_" + (i + 1);
 			prefs_highlight = xray_properties.getProperty(prefs_highlight_key);
-			try {
+			try
+			{
 				HIGHLIGHT_ORES[i] = BLOCK.valueOf(prefs_highlight);
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				// no worries, just populate with our default
 			}
-			xray_properties.put(prefs_highlight_key,
-					HIGHLIGHT_ORES[i].toString());
+			xray_properties.put(prefs_highlight_key, HIGHLIGHT_ORES[i].toString());
 		}
 
-		// Save the file immediately, in case we picked up new defaults which
-		// weren't present
-		// previously
+		// Save the file immediately, in case we picked up new defaults which weren't present previously
 		this.savePreferences();
 	}
 
 	/**
 	 * Saves our preferences out
 	 */
-	public void savePreferences() {
+	public void savePreferences()
+	{
 		File prefs = MineCraftEnvironment.getXrayConfigFile();
-		try {
-			xray_properties
-					.store(new FileOutputStream(prefs),
-							"Feel free to edit.  Use \"NONE\" to disable an action.  Keys taken from http://www.lwjgl.org/javadoc/constant-values.html#org.lwjgl.input.Keyboard.KEY_1");
-		} catch (IOException e) {
+		try
+		{
+			xray_properties.store(new FileOutputStream(prefs),
+					"Feel free to edit.  Use \"NONE\" to disable an action.  Keys taken from http://www.lwjgl.org/javadoc/constant-values.html#org.lwjgl.input.Keyboard.KEY_1");
+		}
+		catch (IOException e)
+		{
 			// Just report on the console and move on
-			System.out.println("Could not save preferences to file: "
-					+ e.toString());
+			System.out.println("Could not save preferences to file: " + e.toString());
 		}
 	}
 
 	/**
 	 * Sets our default preferences
 	 */
-	public void setPreferenceDefaults() {
+	public void setPreferenceDefaults()
+	{
 		// First do the default key mappings
 		key_mapping = new HashMap<KEY_ACTIONS, Integer>();
-		for (KEY_ACTIONS action : KEY_ACTIONS.values()) {
+		for (KEY_ACTIONS action : KEY_ACTIONS.values())
+		{
 			key_mapping.put(action, action.def_key);
 		}
 
 		// Then populate our highlight blocks
-		for (int i = 0; i < preferred_highlight_ores.length; i++) {
+		for (int i = 0; i < preferred_highlight_ores.length; i++)
+		{
 			XRay.HIGHLIGHT_ORES[i] = preferred_highlight_ores[i];
 		}
 	}
@@ -475,12 +493,14 @@ public class XRay {
 	 * Loads any pending chunks, but won't exceed max_chunkload_time timer ticks
 	 * (unless we're doing the initial load).
 	 */
-	public void loadPendingChunks() {
+	public void loadPendingChunks()
+	{
 		Block b;
 		long time = Sys.getTime();
 		int total = 0;
 		int counter = 0;
-		if (!initial_load_done) {
+		if (!initial_load_done)
+		{
 			total = mapChunksToLoad.size();
 			setOrthoOn();
 
@@ -495,55 +515,56 @@ public class XRay {
 			g.setComposite(AlphaComposite.Src);
 			g.fillRect(0, 0, i.getWidth(), i.getHeight());
 			String statusmessage;
-			if (this.cameraTextOverride == null) {
+			if (this.cameraTextOverride == null)
+			{
 				statusmessage = "Moving camera to " + this.currentPosition.name;
-			} else {
+			}
+			else
+			{
 				statusmessage = "Moving camera to " + this.cameraTextOverride;
 				this.cameraTextOverride = null;
 			}
-			Rectangle2D bounds = HEADERFONT.getStringBounds(statusmessage,
-					g.getFontRenderContext());
+			Rectangle2D bounds = HEADERFONT.getStringBounds(statusmessage, g.getFontRenderContext());
 			g.setFont(HEADERFONT);
 			g.setColor(Color.white);
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			g.drawString(statusmessage,
-					(screenWidth / 2) - ((float) bounds.getWidth() / 2), 40f);
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g.drawString(statusmessage, (screenWidth / 2) - ((float) bounds.getWidth() / 2), 40f);
 			loadingTextTexture.update();
 		}
 
-		// There's various cases where parts of our crosshairs may be covered
-		// over by
-		// other blocks, or bits of the crosshairs left on the map when
-		// wrapping, etc.
+		// There's various cases where parts of our crosshairs may be covered over by
+		// other blocks, or bits of the crosshairs left on the map when wrapping, etc.
 		// Whatever.
 		boolean got_spawn_chunk = false;
 		boolean got_playerpos_chunk = false;
 		CameraPreset spawn = level.getSpawnPoint();
 		CameraPreset playerpos = level.getPlayerPosition();
 		Chunk c;
-		while (!mapChunksToLoad.isEmpty()) {
+		while (!mapChunksToLoad.isEmpty())
+		{
 			// Load and draw the chunk
 			b = (Block) mapChunksToLoad.pop();
 			// System.out.println("Loading chunk " + b.x + "," + b.z);
 
-			// There may be some circumstances where a chunk we're going to load
-			// is already loaded.
-			// Mostly while moving diagonally, I think. I'm actually not
-			// convinced that it's worth
+			// There may be some circumstances where a chunk we're going to load is already loaded.
+			// Mostly while moving diagonally, I think. I'm actually not convinced that it's worth
 			// checking for, as it doesn't happen TOO often.
 			c = level.getChunk(b.x, b.z);
-			if (c != null) {
-				if (c.x == b.x && c.z == b.z) {
+			if (c != null)
+			{
+				if (c.x == b.x && c.z == b.z)
+				{
 					continue;
 				}
 			}
 			level.loadChunk(b.x, b.z);
 			drawChunkToMap(b.x, b.z);
-			if (spawn.block.cx == b.x && spawn.block.cz == b.z) {
+			if (spawn.block.cx == b.x && spawn.block.cz == b.z)
+			{
 				got_spawn_chunk = true;
 			}
-			if (playerpos.block.cx == b.x && playerpos.block.cz == b.z) {
+			if (playerpos.block.cx == b.x && playerpos.block.cz == b.z)
+			{
 				got_playerpos_chunk = true;
 			}
 
@@ -551,9 +572,11 @@ public class XRay {
 			minimap_needs_updating = true;
 
 			// Draw a progress bar if we're doing the initial load
-			if (!initial_load_done) {
+			if (!initial_load_done)
+			{
 				counter++;
-				if (counter % 5 == 0) {
+				if (counter % 5 == 0)
+				{
 					float progress = ((float) counter / (float) total);
 
 					float bx = 100;
@@ -582,17 +605,16 @@ public class XRay {
 					// Draw our message
 					GL11.glEnable(GL11.GL_BLEND);
 					GL11.glEnable(GL11.GL_TEXTURE_2D);
-					SpriteTool.drawSpriteAbsoluteXY(loadingTextTexture, 0f,
-							by - 100);
+					SpriteTool.drawSpriteAbsoluteXY(loadingTextTexture, 0f, by - 100);
 					GL11.glDisable(GL11.GL_BLEND);
 					GL11.glDisable(GL11.GL_TEXTURE_2D);
 					Display.update();
 				}
-			} else {
-				// Otherwise (if our initial load is done), mark any existing
-				// adjacent chunks
-				// as dirty so that they re-render. This is needed so that we
-				// don't get gaps
+			}
+			else
+			{
+				// Otherwise (if our initial load is done), mark any existing adjacent chunks
+				// as dirty so that they re-render. This is needed so that we don't get gaps
 				// in our terrain because the adjacent chunks weren't ready yet.
 				level.markChunkAsDirty(b.x + 1, b.z);
 				level.markChunkAsDirty(b.x - 1, b.z);
@@ -601,17 +623,21 @@ public class XRay {
 			}
 
 			// If we've taken too long, break out so the GUI can update
-			if (initial_load_done && Sys.getTime() - time > max_chunkload_time) {
+			if (initial_load_done && Sys.getTime() - time > max_chunkload_time)
+			{
 				break;
 			}
 		}
-		if (got_spawn_chunk) {
+		if (got_spawn_chunk)
+		{
 			drawSpawnMarkerToMinimap();
 		}
-		if (got_playerpos_chunk) {
+		if (got_playerpos_chunk)
+		{
 			drawPlayerposMarkerToMinimap();
 		}
-		if (!initial_load_done) {
+		if (!initial_load_done)
+		{
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			setOrthoOff();
@@ -619,35 +645,43 @@ public class XRay {
 		initial_load_done = true;
 	}
 
-	public void incLightLevel() {
+	public void incLightLevel()
+	{
 		this.currentLightLevel++;
-		if (this.currentLightLevel >= this.lightLevelStart.length) {
+		if (this.currentLightLevel >= this.lightLevelStart.length)
+		{
 			this.currentLightLevel = this.lightLevelStart.length - 1;
 		}
 	}
 
-	public void decLightLevel() {
+	public void decLightLevel()
+	{
 		this.currentLightLevel--;
-		if (this.currentLightLevel <= 0) {
+		if (this.currentLightLevel <= 0)
+		{
 			this.currentLightLevel = 0;
 		}
 	}
 
-	public void setLightLevel() {
+	public void setLightLevel()
+	{
 		this.setLightLevel(0);
 	}
 
-	public void setLightLevel(int diff) {
+	public void setLightLevel(int diff)
+	{
 		int min = this.lightLevelStart[this.currentLightLevel];
 		int max = this.lightLevelEnd[this.currentLightLevel];
 
 		min = min + diff;
 		max = max + diff;
 
-		if (min <= 0) {
+		if (min <= 0)
+		{
 			min = 0;
 		}
-		if (max <= 0) {
+		if (max <= 0)
+		{
 			max = 0;
 		}
 
@@ -658,7 +692,8 @@ public class XRay {
 	/***
 	 * Initialize the basic openGL environment
 	 */
-	private void initGL() {
+	private void initGL()
+	{
 		GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
 		GL11.glShadeModel(GL11.GL_FLAT); // Disable Smooth Shading
 		GL11.glClearColor(0.0f, 0.3f, 1.0f, 0.3f); // Blue Background
@@ -675,8 +710,7 @@ public class XRay {
 		GL11.glLoadIdentity(); // Reset The Projection Matrix
 
 		// Calculate The Aspect Ratio Of The Window
-		GLU.gluPerspective(90.0f, (float) displayMode.getWidth()
-				/ (float) displayMode.getHeight(), 0.1f, 400.0f);
+		GLU.gluPerspective(90.0f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 400.0f);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
 
 		// Really Nice Perspective Calculations
@@ -701,7 +735,8 @@ public class XRay {
 	 * Load textures init precalc tables determine available worlds init misc
 	 * variables
 	 */
-	private void initialize() {
+	private void initialize()
+	{
 		// init the precalc tables
 
 		mineralToggle = new boolean[HIGHLIGHT_ORES.length];
@@ -715,31 +750,28 @@ public class XRay {
 		camera = new FirstPersonCameraController(0, 0, 0);
 
 		// textures
-		try {
-			// ui textures
-			minimapTexture = TextureTool.allocateTexture(minimap_dim,
-					minimap_dim);
+		try
+		{
+			// Note that in order to avoid weird texture-resize fuzziness, these textures
+			// should have dimensions which are powers of 2
+			minimapTexture = TextureTool.allocateTexture(minimap_dim, minimap_dim);
 			minimapGraphics = minimapTexture.getImage().createGraphics();
 			minimapArrowTexture = TextureTool.allocateTexture(32, 32);
 			fpsTexture = TextureTool.allocateTexture(128, 32);
-			levelInfoTexture = TextureTool.allocateTexture(128, 144);
+			levelInfoTexture = TextureTool.allocateTexture(128, 256);
 			loadingTextTexture = TextureTool.allocateTexture(screenWidth, 50);
 			renderDetailsTexture = TextureTool.allocateTexture(256, 256);
 
 			createMinimapSprites();
 
 			// minecraft textures
-			BufferedImage minecraftTextureImage = MineCraftEnvironment
-					.getMinecraftTexture();
-			minecraftTexture = TextureTool.allocateTexture(
-					minecraftTextureImage, GL11.GL_NEAREST);
+			BufferedImage minecraftTextureImage = MineCraftEnvironment.getMinecraftTexture();
+			minecraftTexture = TextureTool.allocateTexture(minecraftTextureImage, GL11.GL_NEAREST);
 			minecraftTexture.update();
 
 			// painting textures
-			BufferedImage minecraftPaintingImage = MineCraftEnvironment
-					.getMinecraftPaintings();
-			paintingTexture = TextureTool.allocateTexture(
-					minecraftPaintingImage, GL11.GL_NEAREST);
+			BufferedImage minecraftPaintingImage = MineCraftEnvironment.getMinecraftPaintings();
+			paintingTexture = TextureTool.allocateTexture(minecraftPaintingImage, GL11.GL_NEAREST);
 			paintingTexture.update();
 
 			// Nether portal texture to use for drawing those, since there's no
@@ -753,18 +785,19 @@ public class XRay {
 			portalTexture.update();
 
 			// mineral textures
-			for (int i = 0; i < HIGHLIGHT_ORES.length; i++) {
+			for (int i = 0; i < HIGHLIGHT_ORES.length; i++)
+			{
 				mineralToggleTextures[i] = TextureTool.allocateTexture(128, 32);
-				Graphics2D g = mineralToggleTextures[i].getImage()
-						.createGraphics();
+				Graphics2D g = mineralToggleTextures[i].getImage().createGraphics();
 				g.setFont(ARIALFONT);
 				g.setColor(Color.white);
-				g.drawString("[F" + (i + 1) + "] " + HIGHLIGHT_ORES[i].name,
-						10, 16);
+				g.drawString("[F" + (i + 1) + "] " + HIGHLIGHT_ORES[i].name, 10, 16);
 				mineralToggleTextures[i].update();
 			}
 
-		} catch (IOException e1) {
+		}
+		catch (IOException e1)
+		{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -777,19 +810,20 @@ public class XRay {
 		Mouse.setGrabbed(true);
 	}
 
-	private BufferedImage resizeImage(Image baseImage, int newWidth,
-			int newHeight) {
-		BufferedImage newImage = new BufferedImage(newWidth, newHeight,
-				BufferedImage.TYPE_4BYTE_ABGR);
+	private BufferedImage resizeImage(Image baseImage, int newWidth, int newHeight)
+	{
+		BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = newImage.createGraphics();
 		g.drawImage(baseImage, 0, 0, newWidth, newHeight, null);
 
 		return newImage;
 	}
 
-	private byte[] convertIcon(byte[] icon) {
+	private byte[] convertIcon(byte[] icon)
+	{
 		byte[] newIcon = new byte[icon.length];
-		for (int i = 0; i < newIcon.length; i += 4) {
+		for (int i = 0; i < newIcon.length; i += 4)
+		{
 			newIcon[i + 3] = icon[i + 0];
 			newIcon[i + 2] = icon[i + 1];
 			newIcon[i + 1] = icon[i + 2];
@@ -804,37 +838,27 @@ public class XRay {
 	 * 
 	 * @throws Exception
 	 */
-	private void createWindow() throws Exception {
+	private void createWindow() throws Exception
+	{
 
 		// set icon buffers
 		// stupid conversions needed
 		File iconFile = new File("xray_icon.png");
 		ByteBuffer[] icons = null;
-		if (iconFile.exists() || iconFile.canRead()) {
+		if (iconFile.exists() || iconFile.canRead())
+		{
 			BufferedImage iconTexture128 = ImageIO.read(iconFile);
-			iconTexture128 = resizeImage(iconTexture128, 128, 128); // just to
-																	// be sure
-																	// all icons
-																	// are the
-																	// same
-																	// imagetype
+			iconTexture128 = resizeImage(iconTexture128, 128, 128); // just to be sure all icons are the same imagetype
 			BufferedImage iconTexture64 = resizeImage(iconTexture128, 64, 64);
 			BufferedImage iconTexture32 = resizeImage(iconTexture128, 32, 32);
 			BufferedImage iconTexture16 = resizeImage(iconTexture128, 16, 16);
 
-			byte[] iconBuffer128d = ((DataBufferByte) iconTexture128
-					.getRaster().getDataBuffer()).getData();
-			byte[] iconBuffer64d = ((DataBufferByte) iconTexture64.getRaster()
-					.getDataBuffer()).getData();
-			byte[] iconBuffer32d = ((DataBufferByte) iconTexture32.getRaster()
-					.getDataBuffer()).getData();
-			byte[] iconBuffer16d = ((DataBufferByte) iconTexture16.getRaster()
-					.getDataBuffer()).getData();
+			byte[] iconBuffer128d = ((DataBufferByte) iconTexture128.getRaster().getDataBuffer()).getData();
+			byte[] iconBuffer64d = ((DataBufferByte) iconTexture64.getRaster().getDataBuffer()).getData();
+			byte[] iconBuffer32d = ((DataBufferByte) iconTexture32.getRaster().getDataBuffer()).getData();
+			byte[] iconBuffer16d = ((DataBufferByte) iconTexture16.getRaster().getDataBuffer()).getData();
 
-			iconBuffer128d = convertIcon(iconBuffer128d); // LWJGL (opengl?)
-															// needs RGBA ...
-															// imagetype
-															// available is ABGR
+			iconBuffer128d = convertIcon(iconBuffer128d); // LWJGL (opengl?) needs RGBA ... imagetype available is ABGR
 			iconBuffer64d = convertIcon(iconBuffer64d);
 			iconBuffer32d = convertIcon(iconBuffer32d);
 			iconBuffer16d = convertIcon(iconBuffer16d);
@@ -849,65 +873,64 @@ public class XRay {
 			iconBuffer32.rewind();
 			iconBuffer16.rewind();
 
-			icons = new ByteBuffer[] { iconBuffer128, iconBuffer64,
-					iconBuffer32, iconBuffer16 };
+			icons = new ByteBuffer[] { iconBuffer128, iconBuffer64, iconBuffer32, iconBuffer16 };
 
 			ResolutionDialog.iconImage = iconTexture128;
 		}
 
 		// We loop on this dialog "forever" because
-		while (true) {
-			if (ResolutionDialog.presentDialog(windowTitle, availableWorlds,
-					(Properties) xray_properties) == ResolutionDialog.DIALOG_BUTTON_EXIT) {
+		while (true)
+		{
+			if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, (Properties) xray_properties) == ResolutionDialog.DIALOG_BUTTON_EXIT)
+			{
 				System.exit(0);
 			}
 
-			// Mark which world to load (which will happen later during
-			// initialize()
+			// Mark which world to load (which will happen later during initialize()
 			this.selectedWorld = ResolutionDialog.selectedWorld;
 
-			// The last option will always be "Other..." If that's been chosen,
-			// open a chooser dialog.
-			if (this.selectedWorld == availableWorlds.size() - 1) {
+			// The last option will always be "Other..." If that's been chosen, open a chooser dialog.
+			if (this.selectedWorld == availableWorlds.size() - 1)
+			{
 				JFileChooser chooser = new JFileChooser();
 				chooser.setFileHidingEnabled(false);
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				if (xray_properties.getProperty("LAST_WORLD") != null) {
-					chooser.setCurrentDirectory(new File(xray_properties
-							.getProperty("LAST_WORLD")));
-				} else {
+				if (xray_properties.getProperty("LAST_WORLD") != null)
+				{
+					chooser.setCurrentDirectory(new File(xray_properties.getProperty("LAST_WORLD")));
+				}
+				else
+				{
 					chooser.setCurrentDirectory(new File("."));
 				}
 				chooser.setDialogTitle("Select a Minecraft World Directory");
-				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					WorldInfo customWorld = availableWorlds
-							.get(this.selectedWorld);
-					customWorld.setBasePath(chooser.getSelectedFile()
-							.getCanonicalPath());
+				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+				{
+					WorldInfo customWorld = availableWorlds.get(this.selectedWorld);
+					customWorld.setBasePath(chooser.getSelectedFile().getCanonicalPath());
 					File leveldat = customWorld.getLevelDatFile();
-					if (leveldat.exists() && leveldat.canRead()) {
+					if (leveldat.exists() && leveldat.canRead())
+					{
 						// We appear to have a valid level; break and continue.
 						break;
-					} else {
+					}
+					else
+					{
 						// Invalid, show an error and then re-open the main
 						// dialog.
-						JOptionPane
-								.showMessageDialog(
-										null,
-										"Couldn't find a valid level.dat file for the specified directory",
-										"Minecraft XRAY error",
-										JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Couldn't find a valid level.dat file for the specified directory", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-			} else {
+			}
+			else
+			{
 				// We chose one of the auto-detected worlds, continue.
 				break;
 			}
 		}
 
 		// Update our preferences
-		this.xray_properties.setProperty("LAST_WORLD",
-				availableWorlds.get(this.selectedWorld).getBasePath());
+		this.xray_properties.setProperty("LAST_WORLD", availableWorlds.get(this.selectedWorld).getBasePath());
 
 		// set fullscreen from the dialog
 		fullscreen = ResolutionDialog.selectedFullScreenValue;
@@ -930,27 +953,21 @@ public class XRay {
 	/***
 	 * Checks for sanity of the minecraft environment
 	 */
-	private void checkMinecraftFiles() {
-		if (MineCraftEnvironment.getMinecraftDirectory() == null) {
-			JOptionPane.showMessageDialog(null,
-					"OS not supported (" + System.getProperty("os.name")
-							+ "), please report.", "Minecraft XRAY error",
-					JOptionPane.ERROR_MESSAGE);
+	private void checkMinecraftFiles()
+	{
+		if (MineCraftEnvironment.getMinecraftDirectory() == null)
+		{
+			JOptionPane.showMessageDialog(null, "OS not supported (" + System.getProperty("os.name") + "), please report.", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		if (!MineCraftEnvironment.getMinecraftDirectory().exists()) {
-			JOptionPane.showMessageDialog(null,
-					"Minecraft directory not found: "
-							+ MineCraftEnvironment.getMinecraftDirectory()
-									.getAbsolutePath(), "Minecraft XRAY error",
-					JOptionPane.ERROR_MESSAGE);
+		if (!MineCraftEnvironment.getMinecraftDirectory().exists())
+		{
+			JOptionPane.showMessageDialog(null, "Minecraft directory not found: " + MineCraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		if (!MineCraftEnvironment.getMinecraftDirectory().canRead()) {
-			JOptionPane.showMessageDialog(null,
-					"Minecraft directory not readable: "
-							+ MineCraftEnvironment.getMinecraftDirectory()
-									.getAbsolutePath(), "Minecraft XRAY error",
+		if (!MineCraftEnvironment.getMinecraftDirectory().canRead())
+		{
+			JOptionPane.showMessageDialog(null, "Minecraft directory not readable: " + MineCraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft XRAY error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
@@ -961,22 +978,21 @@ public class XRay {
 
 		// Since we're adding our custom world, this'll actually never get hit.
 		// Ah well.
-		if (availableWorlds.size() == 0) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Minecraft directory found, but no minecraft levels available.",
-							"Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
+		if (availableWorlds.size() == 0)
+		{
+			JOptionPane.showMessageDialog(null, "Minecraft directory found, but no minecraft levels available.", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 	}
 
-	private void setChunkRange(int n) {
+	private void setChunkRange(int n)
+	{
 		if (n >= CHUNK_RANGES.length)
 			n = CHUNK_RANGES.length - 1;
 		if (n <= 0)
 			n = 0;
-		if (n == currentChunkRange) {
+		if (n == currentChunkRange)
+		{
 			return;
 		}
 		this.currentChunkRange = n;
@@ -984,12 +1000,14 @@ public class XRay {
 		this.needToReloadWorld = true;
 	}
 
-	private void setHighlightRange(int n) {
+	private void setHighlightRange(int n)
+	{
 		if (n >= HIGHLIGHT_RANGES.length)
 			n = HIGHLIGHT_RANGES.length - 1;
 		if (n <= 0)
 			n = 0;
-		if (n == currentHighlightDistance) {
+		if (n == currentHighlightDistance)
+		{
 			return;
 		}
 		this.currentHighlightDistance = n;
@@ -1000,10 +1018,10 @@ public class XRay {
 	 * 
 	 * @param world
 	 */
-	private void setMinecraftWorld(WorldInfo world) {
+	private void setMinecraftWorld(WorldInfo world)
+	{
 		this.world = world;
-		this.level = new MinecraftLevel(world, minecraftTexture,
-				paintingTexture, portalTexture, HIGHLIGHT_ORES);
+		this.level = new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture, HIGHLIGHT_ORES);
 
 		// determine which chunks are available in this world
 		mapChunksToLoad = new LinkedList<Block>();
@@ -1020,11 +1038,10 @@ public class XRay {
 	 * @param camera_x
 	 * @param camera_z
 	 */
-	private void setMinecraftWorld(WorldInfo world,
-			FirstPersonCameraController camera) {
+	private void setMinecraftWorld(WorldInfo world, FirstPersonCameraController camera)
+	{
 		this.world = world;
-		this.level = new MinecraftLevel(world, minecraftTexture,
-				paintingTexture, portalTexture, HIGHLIGHT_ORES);
+		this.level = new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture, HIGHLIGHT_ORES);
 
 		// determine which chunks are available in this world
 		mapChunksToLoad = new LinkedList<Block>();
@@ -1037,9 +1054,9 @@ public class XRay {
 
 	}
 
-	private void moveCameraToPosition(CameraPreset playerPos) {
-		this.camera.getPosition().set(playerPos.block.x, playerPos.block.y,
-				playerPos.block.z);
+	private void moveCameraToPosition(CameraPreset playerPos)
+	{
+		this.camera.getPosition().set(playerPos.block.x, playerPos.block.y, playerPos.block.z);
 		this.camera.setYawAndPitch(180 + playerPos.yaw, playerPos.pitch);
 		initial_load_queued = false;
 		initial_load_done = false;
@@ -1048,22 +1065,24 @@ public class XRay {
 		this.currentPosition = playerPos;
 	}
 
-	private void moveCameraToSpawnPoint() {
+	private void moveCameraToSpawnPoint()
+	{
 		this.moveCameraToPosition(level.getSpawnPoint());
 	}
 
-	private void moveCameraToPlayerPos() {
+	private void moveCameraToPlayerPos()
+	{
 		this.moveCameraToPosition(level.getPlayerPosition());
 	}
 
-	private void moveCameraToNextPlayer() {
-		this.moveCameraToPosition(level
-				.getNextPlayerPosition(this.currentPosition));
+	private void moveCameraToNextPlayer()
+	{
+		this.moveCameraToPosition(level.getNextPlayerPosition(this.currentPosition));
 	}
 
-	private void moveCameraToPreviousPlayer() {
-		this.moveCameraToPosition(level
-				.getPrevPlayerPosition(this.currentPosition));
+	private void moveCameraToPreviousPlayer()
+	{
+		this.moveCameraToPosition(level.getPrevPlayerPosition(this.currentPosition));
 	}
 
 	/**
@@ -1073,11 +1092,13 @@ public class XRay {
 	 * getting hit with ridiculously low FPS or something, perhaps there could
 	 * end up being more.
 	 */
-	private void triggerChunkLoads() {
+	private void triggerChunkLoads()
+	{
 		int chunkX = level.getChunkX((int) -camera.getPosition().x);
 		int chunkZ = level.getChunkZ((int) -camera.getPosition().z);
 
-		if (initial_load_queued) {
+		if (initial_load_queued)
+		{
 			Chunk tempchunk;
 			int dx = chunkX - cur_chunk_x;
 			int dz = chunkZ - cur_chunk_z;
@@ -1088,27 +1109,31 @@ public class XRay {
 			int bot_z = 0;
 
 			// X
-			if (dx < 0) {
-				// System.out.println("Loading in chunks from the X range " +
-				// (cur_chunk_x-1-loadChunkRange) + " to " +
-				// (chunkX-loadChunkRange) + " (going down)");
+			if (dx < 0)
+			{
+				// System.out.println("Loading in chunks from the X range " + (cur_chunk_x-1-loadChunkRange) + " to " + (chunkX-loadChunkRange) + " (going down)");
 				top_x = cur_chunk_x - 1 - loadChunkRange;
 				bot_x = chunkX - loadChunkRange;
-			} else if (dx > 0) {
-				// System.out.println("Loading in chunks from the X range " +
-				// (cur_chunk_x+1+loadChunkRange) + " to " +
-				// (chunkX+loadChunkRange) + " (going up)");
+			}
+			else if (dx > 0)
+			{
+				// System.out.println("Loading in chunks from the X range " + (cur_chunk_x+1+loadChunkRange) + " to " + (chunkX+loadChunkRange) + " (going up)");
 				top_x = chunkX + loadChunkRange;
 				bot_x = cur_chunk_x + 1 + loadChunkRange;
 			}
-			if (dx != 0) {
-				for (int lx = bot_x; lx <= top_x; lx++) {
-					for (int lz = chunkZ - loadChunkRange; lz <= chunkZ
-							+ loadChunkRange; lz++) {
+			if (dx != 0)
+			{
+				for (int lx = bot_x; lx <= top_x; lx++)
+				{
+					for (int lz = chunkZ - loadChunkRange; lz <= chunkZ + loadChunkRange; lz++)
+					{
 						tempchunk = level.getChunk(lx, lz);
-						if (tempchunk != null) {
-							if (tempchunk.x == lx && tempchunk.z == lz) {
-								if (!tempchunk.isOnMinimap) {
+						if (tempchunk != null)
+						{
+							if (tempchunk.x == lx && tempchunk.z == lz)
+							{
+								if (!tempchunk.isOnMinimap)
+								{
 									drawChunkToMap(tempchunk.x, tempchunk.z);
 									// minimap_changed = true;
 								}
@@ -1122,27 +1147,31 @@ public class XRay {
 			}
 
 			// Z
-			if (dz < 0) {
-				// System.out.println("Loading in chunks from the Z range " +
-				// (cur_chunk_z-1-loadChunkRange) + " to " +
-				// (chunkZ-loadChunkRange) + " (going down)");
+			if (dz < 0)
+			{
+				// System.out.println("Loading in chunks from the Z range " + (cur_chunk_z-1-loadChunkRange) + " to " + (chunkZ-loadChunkRange) + " (going down)");
 				top_z = cur_chunk_z - 1 - loadChunkRange;
 				bot_z = chunkZ - loadChunkRange;
-			} else if (dz > 0) {
-				// System.out.println("Loading in chunks from the Z range " +
-				// (cur_chunk_z+1+loadChunkRange) + " to " +
-				// (chunkZ+loadChunkRange) + " (going up)");
+			}
+			else if (dz > 0)
+			{
+				// System.out.println("Loading in chunks from the Z range " + (cur_chunk_z+1+loadChunkRange) + " to " + (chunkZ+loadChunkRange) + " (going up)");
 				top_z = chunkZ + loadChunkRange;
 				bot_z = cur_chunk_z + 1 + loadChunkRange;
 			}
-			if (dz != 0) {
-				for (int lx = chunkX - loadChunkRange; lx <= chunkX
-						+ loadChunkRange; lx++) {
-					for (int lz = bot_z; lz <= top_z; lz++) {
+			if (dz != 0)
+			{
+				for (int lx = chunkX - loadChunkRange; lx <= chunkX + loadChunkRange; lx++)
+				{
+					for (int lz = bot_z; lz <= top_z; lz++)
+					{
 						tempchunk = level.getChunk(lx, lz);
-						if (tempchunk != null) {
-							if (tempchunk.x == lx && tempchunk.z == lz) {
-								if (!tempchunk.isOnMinimap) {
+						if (tempchunk != null)
+						{
+							if (tempchunk.x == lx && tempchunk.z == lz)
+							{
+								if (!tempchunk.isOnMinimap)
+								{
 									drawChunkToMap(tempchunk.x, tempchunk.z);
 									// minimap_changed = true;
 								}
@@ -1155,53 +1184,48 @@ public class XRay {
 				}
 			}
 
-			// Figure out if we need to trim our minimap (to prevent wrapping
-			// around)
+			// Figure out if we need to trim our minimap (to prevent wrapping around)
 			total_dX += dx;
 			total_dZ += dz;
 			ArrayList<Chunk> trimList = new ArrayList<Chunk>();
 			int i;
-			if (Math.abs(total_dX) >= minimap_trim_chunks) {
-				if (total_dX < 0) {
-					// System.out.println("Clearing X from " +
-					// (chunkX-minimap_trim_chunk_distance+minimap_trim_chunks)
-					// + " to " + (chunkX-minimap_trim_chunk_distance));
-					for (i = chunkX - minimap_trim_chunk_distance
-							+ minimap_trim_chunks; i >= chunkX
-							- minimap_trim_chunk_distance; i--) {
+			if (Math.abs(total_dX) >= minimap_trim_chunks)
+			{
+				if (total_dX < 0)
+				{
+					// System.out.println("Clearing X from " + (chunkX-minimap_trim_chunk_distance+minimap_trim_chunks) + " to " + (chunkX-minimap_trim_chunk_distance));
+					for (i = chunkX - minimap_trim_chunk_distance + minimap_trim_chunks; i >= chunkX - minimap_trim_chunk_distance; i--)
+					{
 						trimList.addAll(level.removeChunkRowXFromMinimap(i));
 					}
 					total_dX = -(Math.abs(total_dX) % minimap_trim_chunks);
-				} else {
-					// System.out.println("Clearing X from " +
-					// (chunkX+minimap_trim_chunk_distance-minimap_trim_chunks)
-					// + " to " + (chunkX+minimap_trim_chunk_distance));
-					for (i = chunkX + minimap_trim_chunk_distance
-							- minimap_trim_chunks; i <= chunkX
-							+ minimap_trim_chunk_distance; i++) {
+				}
+				else
+				{
+					// System.out.println("Clearing X from " + (chunkX+minimap_trim_chunk_distance-minimap_trim_chunks) + " to " + (chunkX+minimap_trim_chunk_distance));
+					for (i = chunkX + minimap_trim_chunk_distance - minimap_trim_chunks; i <= chunkX + minimap_trim_chunk_distance; i++)
+					{
 						trimList.addAll(level.removeChunkRowXFromMinimap(i));
 					}
 					total_dX = total_dX % minimap_trim_chunks;
 				}
 			}
-			if (Math.abs(total_dZ) >= minimap_trim_chunks) {
-				if (total_dZ < 0) {
-					// System.out.println("Clearing Z from " +
-					// (chunkZ-minimap_trim_chunk_distance+minimap_trim_chunks)
-					// + " to " + (chunkZ-minimap_trim_chunk_distance));
-					for (i = chunkZ - minimap_trim_chunk_distance
-							+ minimap_trim_chunks; i >= chunkZ
-							- minimap_trim_chunk_distance; i--) {
+			if (Math.abs(total_dZ) >= minimap_trim_chunks)
+			{
+				if (total_dZ < 0)
+				{
+					// System.out.println("Clearing Z from " + (chunkZ-minimap_trim_chunk_distance+minimap_trim_chunks) + " to " + (chunkZ-minimap_trim_chunk_distance));
+					for (i = chunkZ - minimap_trim_chunk_distance + minimap_trim_chunks; i >= chunkZ - minimap_trim_chunk_distance; i--)
+					{
 						trimList.addAll(level.removeChunkRowZFromMinimap(i));
 					}
 					total_dZ = -(Math.abs(total_dZ) % minimap_trim_chunks);
-				} else {
-					// System.out.println("Clearing Z from " +
-					// (chunkZ+minimap_trim_chunk_distance-minimap_trim_chunks)
-					// + " to " + (chunkZ+minimap_trim_chunk_distance));
-					for (i = chunkZ + minimap_trim_chunk_distance
-							- minimap_trim_chunks; i <= chunkZ
-							+ minimap_trim_chunk_distance; i++) {
+				}
+				else
+				{
+					// System.out.println("Clearing Z from " + (chunkZ+minimap_trim_chunk_distance-minimap_trim_chunks) + " to " + (chunkZ+minimap_trim_chunk_distance));
+					for (i = chunkZ + minimap_trim_chunk_distance - minimap_trim_chunks; i <= chunkZ + minimap_trim_chunk_distance; i++)
+					{
 						trimList.addAll(level.removeChunkRowZFromMinimap(i));
 					}
 					total_dZ = total_dZ % minimap_trim_chunks;
@@ -1209,15 +1233,14 @@ public class XRay {
 			}
 
 			removeChunklistFromMap(trimList);
-		} else {
-			// System.out.println("Loading world from X: " +
-			// (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) +
-			// ", Z: " + (chunkZ-loadChunkRange) + " - " +
-			// (chunkZ+loadChunkRange));
-			for (int lx = chunkX - loadChunkRange; lx <= chunkX
-					+ loadChunkRange; lx++) {
-				for (int lz = chunkZ - loadChunkRange; lz <= chunkZ
-						+ loadChunkRange; lz++) {
+		}
+		else
+		{
+			// System.out.println("Loading world from X: " + (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) + ", Z: " + (chunkZ-loadChunkRange) + " - " + (chunkZ+loadChunkRange));
+			for (int lx = chunkX - loadChunkRange; lx <= chunkX + loadChunkRange; lx++)
+			{
+				for (int lz = chunkZ - loadChunkRange; lz <= chunkZ + loadChunkRange; lz++)
+				{
 					level.clearChunk(lx, lz);
 					mapChunksToLoad.add(new Block(lx, 0, lz));
 				}
@@ -1233,7 +1256,8 @@ public class XRay {
 	 * 
 	 * @param timeDelta
 	 */
-	private void handleInput(float timeDelta) {
+	private void handleInput(float timeDelta)
+	{
 
 		int key;
 
@@ -1242,9 +1266,9 @@ public class XRay {
 		// distance in mouse movement from the last getDY() call.
 		mouseY = Mouse.getDY();
 
-		// we are on the main world screen or the level loading screen
-		// update the camera (but only if the mouse is grabbed)
-		if (Mouse.isGrabbed()) {
+		// we are on the main world screen or the level loading screen update the camera (but only if the mouse is grabbed)
+		if (Mouse.isGrabbed())
+		{
 			camera.incYaw(mouseX * MOUSE_SENSITIVITY);
 			camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
 		}
@@ -1254,85 +1278,97 @@ public class XRay {
 		//
 
 		// Speed shifting
-		if (Mouse.isButtonDown(0)
-				|| Keyboard.isKeyDown(key_mapping
-						.get(KEY_ACTIONS.SPEED_INCREASE))) {
+		if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.SPEED_INCREASE)))
+		{
 			MOVEMENT_SPEED = 30.0f;
-		} else if (Mouse.isButtonDown(1)
-				|| Keyboard.isKeyDown(key_mapping
-						.get(KEY_ACTIONS.SPEED_DECREASE))) {
+		}
+		else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.SPEED_DECREASE)))
+		{
 			MOVEMENT_SPEED = 3.0f;
-		} else {
+		}
+		else
+		{
 			MOVEMENT_SPEED = 10.0f;
 		}
 
 		// Move forward
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_FORWARD))) {
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_FORWARD)))
+		{
 			camera.walkForward(MOVEMENT_SPEED * timeDelta, camera_lock);
 			triggerChunkLoads();
 		}
 
 		// Move backwards
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_BACKWARD))) {
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_BACKWARD)))
+		{
 			camera.walkBackwards(MOVEMENT_SPEED * timeDelta, camera_lock);
 			triggerChunkLoads();
 		}
 
 		// Strafe Left
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_LEFT))) {
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_LEFT)))
+		{
 			camera.strafeLeft(MOVEMENT_SPEED * timeDelta);
 			triggerChunkLoads();
 		}
 
 		// Strafe right
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_RIGHT))) {
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_RIGHT)))
+		{
 			camera.strafeRight(MOVEMENT_SPEED * timeDelta);
 			triggerChunkLoads();
 		}
 
 		// Fly Up
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_UP))) {
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_UP)))
+		{
 			camera.moveUp(MOVEMENT_SPEED * timeDelta);
 			triggerChunkLoads();
 		}
 
 		// Fly Down
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_DOWN))) {
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_DOWN)))
+		{
 			camera.moveUp(-MOVEMENT_SPEED * timeDelta);
 			triggerChunkLoads();
 		}
 
 		// Toggle minimap/largemap
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_MINIMAP);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			mapBig = !mapBig;
 			keyPressed = key;
 		}
 
 		// Toggle highlightable ores
 		needToReloadWorld = false;
-		for (int i = 0; i < mineralToggle.length; i++) {
-			if (Keyboard.isKeyDown(HIGHLIGHT_ORE_KEYS[i])
-					&& keyPressed != HIGHLIGHT_ORE_KEYS[i]) {
+		for (int i = 0; i < mineralToggle.length; i++)
+		{
+			if (Keyboard.isKeyDown(HIGHLIGHT_ORE_KEYS[i]) && keyPressed != HIGHLIGHT_ORE_KEYS[i])
+			{
 				keyPressed = HIGHLIGHT_ORE_KEYS[i];
 				mineralToggle[i] = !mineralToggle[i];
 				needToReloadWorld = true;
 			}
 		}
-		if (needToReloadWorld) {
+		if (needToReloadWorld)
+		{
 			invalidateSelectedChunks();
 		}
 
 		// Fullscreen
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_FULLSCREEN);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			switchFullScreenMode();
 		}
 
 		// Toggle fullbright
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			setLightMode(!lightMode);
 			updateRenderDetails();
@@ -1340,7 +1376,8 @@ public class XRay {
 
 		// Toggle ore highlighting
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			highlightOres = !highlightOres;
 			updateRenderDetails();
@@ -1348,35 +1385,40 @@ public class XRay {
 
 		// Move camera to spawn point
 		key = key_mapping.get(KEY_ACTIONS.MOVE_TO_SPAWN);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			moveCameraToSpawnPoint();
 		}
 
 		// Move camera to player position
 		key = key_mapping.get(KEY_ACTIONS.MOVE_TO_PLAYER);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			moveCameraToPlayerPos();
 		}
 
 		// Switch to the next available camera preset
 		key = key_mapping.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			moveCameraToNextPlayer();
 		}
 
 		// Switch to the previous camera preset
 		key = key_mapping.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			moveCameraToPreviousPlayer();
 		}
 
 		// Increase light level
 		key = key_mapping.get(KEY_ACTIONS.LIGHT_INCREASE);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			incLightLevel();
 			updateRenderDetails();
@@ -1384,7 +1426,8 @@ public class XRay {
 
 		// Decrease light level
 		key = key_mapping.get(KEY_ACTIONS.LIGHT_DECREASE);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			decLightLevel();
 			updateRenderDetails();
@@ -1392,21 +1435,24 @@ public class XRay {
 
 		// Toggle position info popup
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_POSITION_INFO);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			levelInfoToggle = !levelInfoToggle;
 		}
 
 		// Toggle rendering info popup
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_RENDER_DETAILS);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			renderDetailsToggle = !renderDetailsToggle;
 		}
-		
+
 		// Toggle bedrock rendering
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_BEDROCK);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			render_bedrock = !render_bedrock;
 			invalidateSelectedChunks(true);
@@ -1415,7 +1461,8 @@ public class XRay {
 
 		// Toggle explored-area highlighting
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_HIGHLIGHT_EXPLORED);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			highlight_explored = !highlight_explored;
 			invalidateSelectedChunks(true);
@@ -1424,7 +1471,8 @@ public class XRay {
 
 		// Toggle water rendering
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_WATER);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			render_water = !render_water;
 			invalidateSelectedChunks(true);
@@ -1433,7 +1481,8 @@ public class XRay {
 
 		// Toggle camera lock
 		key = key_mapping.get(KEY_ACTIONS.TOGGLE_CAMERA_LOCK);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			camera_lock = !camera_lock;
 			updateRenderDetails();
@@ -1441,26 +1490,34 @@ public class XRay {
 
 		// Toggle between Nether and Overworld
 		key = key_mapping.get(KEY_ACTIONS.SWITCH_NETHER);
-		if (Keyboard.isKeyDown(key) && keyPressed != key) {
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
 			keyPressed = key;
 			switchNether();
 		}
 
-		// Temp routine to write the minimap out to a PNG (for debugging
-		// purposes)
+		// Temp routine to write the minimap out to a PNG (for debugging purposes)
 		/*
-		 * if (Keyboard.isKeyDown(Keyboard.KEY_P) && keyPressed !=
-		 * Keyboard.KEY_P) { keyPressed = Keyboard.KEY_P; BufferedImage bi =
-		 * minimapTexture.getImage(); try { ImageIO.write(bi, "PNG", new
-		 * File("/home/pez/xray.png"));
-		 * System.out.println("Wrote minimap to disk."); } catch (Exception e) {
-		 * // whatever } }
+		 * if (Keyboard.isKeyDown(Keyboard.KEY_P) && keyPressed != Keyboard.KEY_P)
+		 * {
+		 * 	keyPressed = Keyboard.KEY_P;
+		 * 	BufferedImage bi = minimapTexture.getImage();
+		 * 	try {
+		 * 		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
+		 * 		System.out.println("Wrote minimap to disk.");
+		 * 	}
+		 * 	catch (Exception e)
+		 * 	{
+		 * 		// whatever
+		 * 	}
+		 * }
 		 */
 
 		// Handle changing chunk ranges (how far out we draw from the camera
-		for (int i = 0; i < CHUNK_RANGES.length; i++) {
-			if (Keyboard.isKeyDown(CHUNK_RANGES_KEYS[i])
-					&& keyPressed != CHUNK_RANGES_KEYS[i]) {
+		for (int i = 0; i < CHUNK_RANGES.length; i++)
+		{
+			if (Keyboard.isKeyDown(CHUNK_RANGES_KEYS[i]) && keyPressed != CHUNK_RANGES_KEYS[i])
+			{
 				keyPressed = CHUNK_RANGES_KEYS[i];
 				setChunkRange(i);
 				updateRenderDetails();
@@ -1468,9 +1525,10 @@ public class XRay {
 		}
 
 		// Handle changing the ore highlight distances
-		for (int i = 0; i < HIGHLIGHT_RANGES.length; i++) {
-			if (Keyboard.isKeyDown(HIGHLIGHT_RANGES_KEYS[i])
-					&& keyPressed != HIGHLIGHT_RANGES_KEYS[i]) {
+		for (int i = 0; i < HIGHLIGHT_RANGES.length; i++)
+		{
+			if (Keyboard.isKeyDown(HIGHLIGHT_RANGES_KEYS[i]) && keyPressed != HIGHLIGHT_RANGES_KEYS[i])
+			{
 				keyPressed = HIGHLIGHT_RANGES_KEYS[i];
 				setHighlightRange(i);
 				updateRenderDetails();
@@ -1478,29 +1536,34 @@ public class XRay {
 		}
 
 		// Release the mouse
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.RELEASE_MOUSE))) {
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.RELEASE_MOUSE)))
+		{
 			Mouse.setGrabbed(false);
 		}
 
 		// Grab the mouse on a click
-		if (Mouse.isButtonDown(0)) {
+		if (Mouse.isButtonDown(0))
+		{
 			Mouse.setGrabbed(true);
 		}
 
 		// Quit
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.QUIT))
-				&& Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.QUIT)) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+		{
 			done = true;
 		}
 
 		// Handle a requested window close
-		if (Display.isCloseRequested()) {
+		if (Display.isCloseRequested())
+		{
 			done = true;
 		}
 
 		// Clear out our keyPressed var if it's improperly-set
-		if (keyPressed != -1) {
-			if (!Keyboard.isKeyDown(keyPressed)) {
+		if (keyPressed != -1)
+		{
+			if (!Keyboard.isKeyDown(keyPressed))
+			{
 				keyPressed = -1;
 			}
 		}
@@ -1513,19 +1576,24 @@ public class XRay {
 	 * height is unaffected by this, so the adjacent portal might show up higher
 	 * or lower, depending on the local terrain.
 	 */
-	private void switchNether() {
+	private void switchNether()
+	{
 		WorldInfo newworld = null;
 		float camera_mult = 1.0f;
-		if (world.isNether() && world.hasOverworld()) {
+		if (world.isNether() && world.hasOverworld())
+		{
 			this.cameraTextOverride = "equivalent Overworld location (approx.)";
 			newworld = world.getOverworldInfo();
 			camera_mult = 8.0f;
-		} else if (!world.isNether() && world.hasNether()) {
+		}
+		else if (!world.isNether() && world.hasNether())
+		{
 			this.cameraTextOverride = "equivalent Nether location (approx.)";
 			newworld = world.getNetherInfo();
 			camera_mult = 1.0f / 8.0f;
 		}
-		if (newworld != null) {
+		if (newworld != null)
+		{
 			// A full reinitialization is kind of overkill, but whatever.
 			FirstPersonCameraController cur_camera = this.camera;
 			this.camera.processNetherWarp(camera_mult);
@@ -1535,20 +1603,26 @@ public class XRay {
 		}
 	}
 
-	private void invalidateSelectedChunks() {
+	private void invalidateSelectedChunks()
+	{
 		level.invalidateSelected(false);
 	}
 
-	private void invalidateSelectedChunks(boolean main_dirty) {
+	private void invalidateSelectedChunks(boolean main_dirty)
+	{
 		level.invalidateSelected(main_dirty);
 	}
 
-	private void setLightMode(boolean lightMode) {
+	private void setLightMode(boolean lightMode)
+	{
 		this.lightMode = lightMode;
-		if (lightMode) {
+		if (lightMode)
+		{
 			GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
 			GL11.glEnable(GL11.GL_FOG);
-		} else {
+		}
+		else
+		{
 			GL11.glClearColor(0.0f, 0.3f, 1.0f, 0.3f); // Blue Background
 			GL11.glDisable(GL11.GL_FOG);
 		}
@@ -1557,11 +1631,15 @@ public class XRay {
 	/***
 	 * Switches full screen mode
 	 */
-	private void switchFullScreenMode() {
+	private void switchFullScreenMode()
+	{
 		fullscreen = !fullscreen;
-		try {
+		try
+		{
 			Display.setFullscreen(fullscreen);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
@@ -1569,13 +1647,13 @@ public class XRay {
 	/***
 	 * Draw the spawn position to the minimap
 	 */
-	private void drawSpawnMarkerToMinimap() {
+	private void drawSpawnMarkerToMinimap()
+	{
 		Graphics2D g = minimapGraphics;
 
 		CameraPreset spawn = level.getSpawnPoint();
 		int sy = getMinimapBaseY(spawn.block.cx) - (spawn.block.x % 16);
-		int sx = (getMinimapBaseX(spawn.block.cz) + (spawn.block.z % 16))
-				% minimap_dim;
+		int sx = (getMinimapBaseX(spawn.block.cz) + (spawn.block.z % 16)) % minimap_dim;
 
 		g.setStroke(new BasicStroke(2));
 		g.setColor(Color.red.brighter());
@@ -1588,7 +1666,8 @@ public class XRay {
 	/***
 	 * Draw the current position to the minimap
 	 */
-	private void drawPlayerposMarkerToMinimap() {
+	private void drawPlayerposMarkerToMinimap()
+	{
 		Graphics2D g = minimapGraphics;
 
 		CameraPreset player = level.getPlayerPosition();
@@ -1609,19 +1688,15 @@ public class XRay {
 	 * @param timeDelta
 	 * @return
 	 */
-	private boolean render(float timeDelta) {
+	private boolean render(float timeDelta)
+	{
 		// GL11.glLoadIdentity();
 		GL11.glLoadIdentity();
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear
-																			// The
-																			// Screen
-																			// And
-																			// The
-																			// Depth
-																			// Buffer
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
 
 		// are we still loading the map?
-		if (!map_load_started) {
+		if (!map_load_started)
+		{
 			map_load_started = true;
 			// drawMapMarkersToMinimap();
 			// minimapTexture.update();
@@ -1638,8 +1713,8 @@ public class XRay {
 		currentCameraPosZ = (int) -camera.getPosition().z;
 
 		// determine if we need to load new map chunks
-		if (currentCameraPosX != levelBlockX
-				|| currentCameraPosZ != levelBlockZ || needToReloadWorld) {
+		if (currentCameraPosX != levelBlockX || currentCameraPosZ != levelBlockZ || needToReloadWorld)
+		{
 			levelBlockX = currentCameraPosX;
 			levelBlockZ = currentCameraPosZ;
 			currentLevelX = level.getChunkX(levelBlockX);
@@ -1648,22 +1723,23 @@ public class XRay {
 
 		// draw the visible world
 		int chunk_range = visible_chunk_range;
-		if (HIGHLIGHT_RANGES[currentHighlightDistance] < chunk_range) {
+		if (HIGHLIGHT_RANGES[currentHighlightDistance] < chunk_range)
+		{
 			chunk_range = HIGHLIGHT_RANGES[currentHighlightDistance];
 		}
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glColor3f(1.0f, 1.0f, 1.0f);
 		minecraftTexture.bind();
-		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX
-				+ visible_chunk_range; lx++) {
-			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ
-					+ visible_chunk_range; lz++) {
+		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX + visible_chunk_range; lx++)
+		{
+			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ + visible_chunk_range; lz++)
+			{
 				Chunk k = level.getChunk(lx, lz);
 
-				if (k != null) {
-					k.renderSolid(render_bedrock, render_water,
-							highlight_explored);
+				if (k != null)
+				{
+					k.renderSolid(render_bedrock, render_water, highlight_explored);
 					k.renderSelected(this.mineralToggle);
 					paintingTexture.bind();
 					k.renderPaintings();
@@ -1671,10 +1747,10 @@ public class XRay {
 				}
 			}
 		}
-		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX
-				+ visible_chunk_range; lx++) {
-			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ
-					+ visible_chunk_range; lz++) {
+		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX + visible_chunk_range; lx++)
+		{
+			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ + visible_chunk_range; lz++)
+			{
 				Chunk k = level.getChunk(lx, lz);
 
 				if (k != null)
@@ -1682,7 +1758,8 @@ public class XRay {
 			}
 		}
 
-		if (highlightOres) {
+		if (highlightOres)
+		{
 
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 			long time = System.currentTimeMillis();
@@ -1693,10 +1770,10 @@ public class XRay {
 			GL11.glColor4f(alpha, alpha, alpha, alpha);
 			setLightLevel(20);
 			GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-			for (int lx = currentLevelX - chunk_range; lx < currentLevelX
-					+ chunk_range; lx++) {
-				for (int lz = currentLevelZ - chunk_range; lz < currentLevelZ
-						+ chunk_range; lz++) {
+			for (int lx = currentLevelX - chunk_range; lx < currentLevelX + chunk_range; lx++)
+			{
+				for (int lz = currentLevelZ - chunk_range; lz < currentLevelZ + chunk_range; lz++)
+				{
 					Chunk k = level.getChunk(lx, lz);
 					if (k != null)
 						k.renderSelected(this.mineralToggle);
@@ -1719,7 +1796,8 @@ public class XRay {
 	/***
 	 * Draw the ui
 	 */
-	private void drawUI() {
+	private void drawUI()
+	{
 		framesSinceLastFps++;
 
 		setOrthoOn(); // 2d mode
@@ -1739,14 +1817,15 @@ public class XRay {
 		setOrthoOff(); // back to 3d mode
 	}
 
-	private void updateLevelInfo() {
+	private void updateLevelInfo()
+	{
 		int labelX = 5;
 		int valueX = 70;
 		Graphics2D g = levelInfoTexture.getImage().createGraphics();
 		g.setBackground(Color.BLUE);
-		g.clearRect(0, 0, 128, 144);
+		g.clearRect(0, 0, 128, levelInfoTexture_h);
 		g.setColor(Color.WHITE);
-		g.fillRect(2, 2, 124, 140);
+		g.fillRect(2, 2, 124, levelInfoTexture_h - 4);
 		g.setFont(ARIALFONT);
 		int chunkX = level.getChunkX(levelBlockX);
 		int chunkZ = level.getChunkZ(levelBlockZ);
@@ -1773,31 +1852,39 @@ public class XRay {
 		g.setColor(Color.BLACK);
 		g.drawString("World Y:", labelX, 22 + 16 + 32 + 16);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString((int) -camera.getPosition().y), valueX,
-				22 + 16 + 32 + 16);
+		g.drawString(Integer.toString((int) -camera.getPosition().y), valueX, 22 + 16 + 32 + 16);
 
 		long heapSize = Runtime.getRuntime().totalMemory();
 		g.setColor(Color.BLACK);
 		g.drawString("Memory Used", labelX, 22 + 16 + 32 + 16 + 25);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString((int) (heapSize / 1024 / 1024)) + " MB",
-				20, 22 + 16 + 32 + 16 + 25 + 20);
+		g.drawString(Integer.toString((int) (heapSize / 1024 / 1024)) + " MB", 20, 22 + 16 + 32 + 16 + 25 + 20);
 
 		levelInfoTexture.update();
 	}
-	
+
 	/**
-	 * Renders a text label in an info box, with differing fonts/colors for the label and its value
+	 * Renders a text label in an info box, with differing fonts/colors for the
+	 * label and its value
 	 * 
-	 * @param g Graphics context to render to
-	 * @param x Baseline x offset for the label
-	 * @param y Baseline y offset for the label
-	 * @param label The label to draw
-	 * @param labelColor Label color
-	 * @param labelFont Label font
-	 * @param value The value
-	 * @param valueColor Value color
-	 * @param valueFont Value font
+	 * @param g
+	 *            Graphics context to render to
+	 * @param x
+	 *            Baseline x offset for the label
+	 * @param y
+	 *            Baseline y offset for the label
+	 * @param label
+	 *            The label to draw
+	 * @param labelColor
+	 *            Label color
+	 * @param labelFont
+	 *            Label font
+	 * @param value
+	 *            The value
+	 * @param valueColor
+	 *            Value color
+	 * @param valueFont
+	 *            Value font
 	 */
 	private void infoboxTextLabel(Graphics2D g, int x, int y, String label, Color labelColor, Font labelFont, String value, Color valueColor, Font valueFont)
 	{
@@ -1807,44 +1894,54 @@ public class XRay {
 		g.drawString(label, x, y);
 		g.setColor(valueColor);
 		g.setFont(valueFont);
-		g.drawString(value, (int)(x+bounds.getWidth()), y);
+		g.drawString(value, (int) (x + bounds.getWidth()), y);
 	}
-	
+
 	/**
 	 * Renders a slider-type graphic in an info box, including its label
 	 * 
-	 * @param g Graphics context to render to
-	 * @param x Baseline X offset for the label
-	 * @param y Baseline Y offset for the label
-	 * @param label The label
-	 * @param labelColor Label color
-	 * @param labelFont Label font
-	 * @param line_h How tall our individual lines are
-	 * @param slider_start_x X offset to start the slider at
-	 * @param curval Current value of slider
-	 * @param val_length Length of slider data (array length, for us)
+	 * @param g
+	 *            Graphics context to render to
+	 * @param x
+	 *            Baseline X offset for the label
+	 * @param y
+	 *            Baseline Y offset for the label
+	 * @param label
+	 *            The label
+	 * @param labelColor
+	 *            Label color
+	 * @param labelFont
+	 *            Label font
+	 * @param line_h
+	 *            How tall our individual lines are
+	 * @param slider_start_x
+	 *            X offset to start the slider at
+	 * @param curval
+	 *            Current value of slider
+	 * @param val_length
+	 *            Length of slider data (array length, for us)
 	 */
 	private void infoboxSlider(Graphics2D g, int x, int y, String label, Color labelColor, Font labelFont, int line_h, int slider_start_x, int curval, int val_length)
 	{
-		int slider_top_y = y-line_h+10;
+		int slider_top_y = y - line_h + 10;
 		int slider_h = 8;
-		int slider_end_x = renderDetails_w-8;
-		int marker_x = slider_start_x + (curval * ((slider_end_x-slider_start_x)/(val_length-1)));
-		
+		int slider_end_x = renderDetails_w - 8;
+		int marker_x = slider_start_x + (curval * ((slider_end_x - slider_start_x) / (val_length - 1)));
+
 		// Label
 		g.setColor(labelColor);
 		g.setFont(labelFont);
 		g.drawString(label, x, y);
-		
+
 		// Slider Base
 		g.setColor(Color.BLACK);
-		g.drawRect(slider_start_x, slider_top_y, slider_end_x-slider_start_x, slider_h);
+		g.drawRect(slider_start_x, slider_top_y, slider_end_x - slider_start_x, slider_h);
 
 		// Slider Location
 		g.setColor(Color.RED);
-		g.fillRect(marker_x, y-line_h+8, 3, 13);
+		g.fillRect(marker_x, y - line_h + 8, 3, 13);
 	}
-	
+
 	/**
 	 * Update our render-details infobox
 	 */
@@ -1860,125 +1957,129 @@ public class XRay {
 		g.setColor(Color.BLACK);
 		if (!lightMode)
 		{
-			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Fullbright: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT);
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Fullbright: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT);
 		}
 		else
 		{
-			line_count++; infoboxSlider(g, x_off, line_count*line_h, "Light Level:", Color.BLACK, DETAILFONT, line_h, 90, currentLightLevel, lightLevelEnd.length);
+			line_count++;
+			infoboxSlider(g, x_off, line_count * line_h, "Light Level:", Color.BLACK, DETAILFONT, line_h, 90, currentLightLevel, lightLevelEnd.length);
 		}
-		line_count++; infoboxSlider(g, x_off, line_count*line_h, "Render Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentChunkRange, CHUNK_RANGES.length);
-		line_count++; infoboxSlider(g, x_off, line_count*line_h, "Highlight Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentHighlightDistance, HIGHLIGHT_RANGES.length);
+		line_count++;
+		infoboxSlider(g, x_off, line_count * line_h, "Render Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentChunkRange, CHUNK_RANGES.length);
+		line_count++;
+		infoboxSlider(g, x_off, line_count * line_h, "Highlight Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentHighlightDistance, HIGHLIGHT_RANGES.length);
 		if (!highlightOres)
 		{
-			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Ore Highlight: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT); 
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Ore Highlight: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT);
 		}
 		if (highlight_explored)
 		{
-			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Explored Highlight: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT); 
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Explored Highlight: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT);
 		}
 		if (render_bedrock)
 		{
-			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Bedrock: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT); 
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Bedrock: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT);
 		}
 		if (!render_water)
 		{
-			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Water: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT); 
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Water: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT);
 		}
 		if (camera_lock)
 		{
-			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Vertical Lock: ", Color.BLACK, DETAILFONT, "On", Color.green.darker(), DETAILVALUEFONT);
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Vertical Lock: ", Color.BLACK, DETAILFONT, "On", Color.green.darker(), DETAILVALUEFONT);
 		}
-		cur_renderDetails_h = (line_count+1)*line_h-8;
+		cur_renderDetails_h = (line_count + 1) * line_h - 8;
 		g.setColor(Color.BLUE);
 		g.setStroke(new BasicStroke(2));
-		g.drawRect(1, 1, renderDetails_w-2, cur_renderDetails_h-2);
+		g.drawRect(1, 1, renderDetails_w - 2, cur_renderDetails_h - 2);
 		renderDetailsTexture.update();
 	}
 
 	/***
 	 * Draws our level info dialog to the screen
 	 */
-	private void drawLevelInfo() {
+	private void drawLevelInfo()
+	{
 		int y = 48;
 		if (renderDetailsToggle)
 		{
 			y += cur_renderDetails_h + 16;
 		}
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		SpriteTool.drawSpriteAbsoluteXY(levelInfoTexture, 0, y);
+		levelInfoTexture.bind();
+		SpriteTool.drawCurrentSprite(0, y, 128, levelInfoTexture_h, 0, 0, 1f, levelInfoTexture_h / 256f);
 	}
 
 	/***
 	 * Draws our rendering details infobox to the screen
 	 */
-	private void drawRenderDetails() {
+	private void drawRenderDetails()
+	{
 		renderDetailsTexture.bind();
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, .7f);
-		SpriteTool.drawCurrentSprite(0, 48, renderDetails_w, cur_renderDetails_h, 0, 0, renderDetails_w/256f, cur_renderDetails_h/256f);
+		SpriteTool.drawCurrentSprite(0, 48, renderDetails_w, cur_renderDetails_h, 0, 0, renderDetails_w / 256f, cur_renderDetails_h / 256f);
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 	}
 
 	/***
 	 * Draw the mineral toggles
 	 */
-	private void drawMineralToggle() {
+	private void drawMineralToggle()
+	{
 		int barWidth = 128 + 10 + 32;
 		int barHeight = 42;
 		int maxCols = 5;
 		float mineralTogglebarLength;
-		if ((mineralToggleTextures.length % maxCols) == 0) {
+		if ((mineralToggleTextures.length % maxCols) == 0)
+		{
 			mineralTogglebarLength = maxCols * barWidth;
-		} else {
-			mineralTogglebarLength = (mineralToggleTextures.length % maxCols)
-					* barWidth;
+		}
+		else
+		{
+			mineralTogglebarLength = (mineralToggleTextures.length % maxCols) * barWidth;
 		}
 		float curX = (screenWidth / 2.0f) - (mineralTogglebarLength / 2.0f);
 		float curY = screenHeight - barHeight;
-		if (mineralToggleTextures.length > maxCols) {
+		if (mineralToggleTextures.length > maxCols)
+		{
 			curY -= barHeight;
 		}
 
-		for (int i = 0; i < mineralToggleTextures.length; i++) {
-			if (i == mineralToggleTextures.length - maxCols) {
+		for (int i = 0; i < mineralToggleTextures.length; i++)
+		{
+			if (i == mineralToggleTextures.length - maxCols)
+			{
 				mineralTogglebarLength = maxCols * barWidth;
 				curY += barHeight;
 				curX = (screenWidth / 2.0f) - (mineralTogglebarLength / 2.0f);
 			}
-			if (mineralToggle[i]) {
+			if (mineralToggle[i])
+			{
 				GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
-				SpriteTool
-						.drawCurrentSprite(
-								curX - 2,
-								curY - 2,
-								36,
-								36,
-								MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
-								MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
-								MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]
-										+ TEX16,
-								MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]
-										+ TEX32);
+				SpriteTool.drawCurrentSprite(curX - 2, curY - 2, 36, 36, MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
+						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]] + TEX16,
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]] + TEX32);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
-			} else {
+			}
+			else
+			{
 				GL11.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 			}
 			minecraftTexture.bind();
-			SpriteTool
-					.drawCurrentSprite(
-							curX,
-							curY,
-							32,
-							32,
-							MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
-							MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
-							MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]
-									+ TEX16,
-							MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]]
-									+ TEX32);
+			SpriteTool.drawCurrentSprite(curX, curY, 32, 32, MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
+					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]] + TEX16,
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]] + TEX32);
 
-			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i],
-					curX + 32 + 10, curY + 7);
+			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i], curX + 32 + 10, curY + 7);
 			curX += barWidth;
 		}
 	}
@@ -1986,18 +2087,21 @@ public class XRay {
 	/***
 	 * Draws a simple fps counter on the top-left of the screen
 	 */
-	private void drawFPSCounter() {
+	private void drawFPSCounter()
+	{
 		previousTime = time;
 		time = System.nanoTime();
 		timeDelta = time - previousTime;
 
-		if (time - lastFpsTime > NANOSPERSECOND) {
+		if (time - lastFpsTime > NANOSPERSECOND)
+		{
 			fps = framesSinceLastFps;
 			framesSinceLastFps = 0;
 			lastFpsTime = time;
 			updateFPSText = true;
 		}
-		if (updateFPSText) {
+		if (updateFPSText)
+		{
 			if (levelInfoToggle)
 				updateLevelInfo();
 			Graphics2D g = fpsTexture.getImage().createGraphics();
@@ -2026,7 +2130,8 @@ public class XRay {
 	/***
 	 * Sets ortho (2d) mode
 	 */
-	public void setOrthoOn() {
+	public void setOrthoOn()
+	{
 		// prepare projection matrix to render in 2D
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix(); // preserve perspective view
@@ -2048,7 +2153,8 @@ public class XRay {
 	/**
 	 * Restore the previous mode
 	 */
-	public static void setOrthoOff() {
+	public static void setOrthoOff()
+	{
 		// restore the original positions and views
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPopMatrix();
@@ -2061,8 +2167,10 @@ public class XRay {
 	/***
 	 * draws the minimap or the big map
 	 */
-	private void drawMinimap() {
-		if (mapBig) {
+	private void drawMinimap()
+	{
+		if (mapBig)
+		{
 			// the big map
 			// just draws the texture, but move the texture so the middle of the
 			// screen is where we currently are
@@ -2096,19 +2204,16 @@ public class XRay {
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 
-			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture,
-					screenWidth / 2.0f, screenHeight / 2.0f,
-					camera.getYaw() + 90, 0.5f);
-		} else {
+			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth / 2.0f, screenHeight / 2.0f, camera.getYaw() + 90, 0.5f);
+		}
+		else
+		{
 			// the minimap
 			// I set the minimap to 200 wide and tall
 
-			// Interestingly, thanks to the fact that we're using GL11.GL_REPEAT
-			// on our
-			// textures (via glTexParameter), we don't have to worry about
-			// checking
-			// bounds here, etc. Or in other words, our map will automatically
-			// wrap for
+			// Interestingly, thanks to the fact that we're using GL11.GL_REPEAT on our
+			// textures (via glTexParameter), we don't have to worry about checking
+			// bounds here, etc. Or in other words, our map will automatically wrap for
 			// us. Sweet!
 			float vSizeFactor = 200.0f / minimap_dim_f;
 
@@ -2138,8 +2243,7 @@ public class XRay {
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 
-			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture,
-					screenWidth - 100, 100, camera.getYaw() + 90, 0.5f);
+			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth - 100, 100, camera.getYaw() + 90, 0.5f);
 		}
 	}
 
@@ -2153,10 +2257,14 @@ public class XRay {
 	 * @param chunkZ
 	 * @return
 	 */
-	private int getMinimapBaseX(int chunkZ) {
-		if (chunkZ < 0) {
+	private int getMinimapBaseX(int chunkZ)
+	{
+		if (chunkZ < 0)
+		{
 			return ((Math.abs(chunkZ + 1) * 16) % minimap_dim) + 15;
-		} else {
+		}
+		else
+		{
 			return minimap_dim - (((chunkZ * 16) + 1) % minimap_dim);
 		}
 	}
@@ -2172,11 +2280,14 @@ public class XRay {
 	 * @param chunkX
 	 * @return
 	 */
-	private int getMinimapBaseY(int chunkX) {
-		if (chunkX < 0) {
-			return (minimap_dim - ((Math.abs(chunkX) * 16) % minimap_dim))
-					% minimap_dim;
-		} else {
+	private int getMinimapBaseY(int chunkX)
+	{
+		if (chunkX < 0)
+		{
+			return (minimap_dim - ((Math.abs(chunkX) * 16) % minimap_dim)) % minimap_dim;
+		}
+		else
+		{
 			return (chunkX * 16) % minimap_dim;
 		}
 	}
@@ -2187,11 +2298,11 @@ public class XRay {
 	 * @param x
 	 * @param z
 	 */
-	public void removeMapChunkFromMap(int x, int z) {
+	public void removeMapChunkFromMap(int x, int z)
+	{
 		// minimapGraphics.setColor(new Color(0f, 0f, 0f, 1f));
 		// minimapGraphics.setComposite(AlphaComposite.Src);
-		minimapGraphics.fillRect(getMinimapBaseX(z) - 15, getMinimapBaseY(x),
-				16, 16);
+		minimapGraphics.fillRect(getMinimapBaseX(z) - 15, getMinimapBaseY(x), 16, 16);
 		level.getChunk(x, z).isOnMinimap = false;
 	}
 
@@ -2200,15 +2311,18 @@ public class XRay {
 	 * 
 	 * @param trimList
 	 */
-	private void removeChunklistFromMap(ArrayList<Chunk> trimList) {
+	private void removeChunklistFromMap(ArrayList<Chunk> trimList)
+	{
 		minimapGraphics.setColor(new Color(0f, 0f, 0f, 0f));
 		minimapGraphics.setComposite(AlphaComposite.Src);
 		boolean minimap_changed = false;
-		for (Chunk tempchunk_trim : trimList) {
+		for (Chunk tempchunk_trim : trimList)
+		{
 			removeMapChunkFromMap(tempchunk_trim.x, tempchunk_trim.z);
 			minimap_changed = true;
 		}
-		if (minimap_changed) {
+		if (minimap_changed)
+		{
 			minimapTexture.update();
 		}
 	}
@@ -2219,10 +2333,12 @@ public class XRay {
 	 * @param x
 	 * @param z
 	 */
-	public void drawChunkToMap(int x, int z) {
+	public void drawChunkToMap(int x, int z)
+	{
 
 		Chunk c = level.getChunk(x, z);
-		if (c != null) {
+		if (c != null)
+		{
 			c.isOnMinimap = true;
 		}
 		byte[] chunkData = level.getChunkData(x, z);
@@ -2231,27 +2347,27 @@ public class XRay {
 		int base_y = getMinimapBaseY(x);
 
 		Graphics2D g = minimapGraphics;
-		for (int zz = 0; zz < 16; zz++) {
-			for (int xx = 0; xx < 16; xx++) {
+		for (int zz = 0; zz < 16; zz++)
+		{
+			for (int xx = 0; xx < 16; xx++)
+			{
 				// determine the top most visible block
-				for (int yy = 127; yy >= 0; yy--) {
+				for (int yy = 127; yy >= 0; yy--)
+				{
 					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
 					byte blockData = chunkData[blockOffset];
 
-					if (MineCraftConstants.blockDataToSpriteSheet[blockData] > -1) {
-						if (blockData > -1) {
+					if (MineCraftConstants.blockDataToSpriteSheet[blockData] > -1)
+					{
+						if (blockData > -1)
+						{
 							Color blockColor = MineCraftConstants.blockColors[blockData];
-							if (blockColor != null) {
-								// Previously we were using g.drawLine() here,
-								// but a minute-or-so's worth of investigating
-								// didn't uncover a way to force that to be
-								// pixel-precise (the color would often bleed
-								// over
-								// into adjoining pixels), so we're using
-								// g.fillRect() instead, which actually looks
-								// like it
-								// is probably a faster operation anyway. I'm
-								// sure there'd have been a way to get drawLine
+							if (blockColor != null)
+							{
+								// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
+								// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
+								// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
+								// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
 								// to behave, but c'est la vie!
 								g.setColor(blockColor);
 								g.fillRect(base_x - zz, base_y + xx, 1, 1);
@@ -2268,7 +2384,8 @@ public class XRay {
 	 * Draws the minimap sprites (currently just the arrow image) to their
 	 * textures
 	 */
-	private void createMinimapSprites() {
+	private void createMinimapSprites()
+	{
 
 		// First the arrow
 		Graphics2D g = minimapArrowTexture.getImage().createGraphics();
@@ -2283,7 +2400,8 @@ public class XRay {
 	/***
 	 * cleanup
 	 */
-	private void cleanup() {
+	private void cleanup()
+	{
 		Display.destroy();
 	}
 
