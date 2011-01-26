@@ -1436,6 +1436,7 @@ public class XRay {
 		if (Keyboard.isKeyDown(key) && keyPressed != key) {
 			keyPressed = key;
 			camera_lock = !camera_lock;
+			updateRenderDetails();
 		}
 
 		// Toggle between Nether and Overworld
@@ -1882,6 +1883,10 @@ public class XRay {
 		if (!render_water)
 		{
 			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Water: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT); 
+		}
+		if (camera_lock)
+		{
+			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Vertical Lock: ", Color.BLACK, DETAILFONT, "On", Color.green.darker(), DETAILVALUEFONT);
 		}
 		cur_renderDetails_h = (line_count+1)*line_h-8;
 		g.setColor(Color.BLUE);
