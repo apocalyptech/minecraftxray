@@ -527,8 +527,7 @@ public class XRay
 			Rectangle2D bounds = HEADERFONT.getStringBounds(statusmessage, g.getFontRenderContext());
 			g.setFont(HEADERFONT);
 			g.setColor(Color.white);
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			g.drawString(statusmessage, (screenWidth / 2) - ((float) bounds.getWidth() / 2), 40f);
+			g.drawString(statusmessage, (1024 / 2) - ((float) bounds.getWidth() / 2), 40f);
 			loadingTextTexture.update();
 		}
 
@@ -759,7 +758,7 @@ public class XRay
 			minimapArrowTexture = TextureTool.allocateTexture(32, 32);
 			fpsTexture = TextureTool.allocateTexture(128, 32);
 			levelInfoTexture = TextureTool.allocateTexture(128, 256);
-			loadingTextTexture = TextureTool.allocateTexture(screenWidth, 50);
+			loadingTextTexture = TextureTool.allocateTexture(1024, 64);
 			renderDetailsTexture = TextureTool.allocateTexture(256, 256);
 
 			createMinimapSprites();
@@ -1498,20 +1497,20 @@ public class XRay
 
 		// Temp routine to write the minimap out to a PNG (for debugging purposes)
 		/*
-		 * if (Keyboard.isKeyDown(Keyboard.KEY_P) && keyPressed != Keyboard.KEY_P)
-		 * {
-		 * 	keyPressed = Keyboard.KEY_P;
-		 * 	BufferedImage bi = minimapTexture.getImage();
-		 * 	try {
-		 * 		ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
-		 * 		System.out.println("Wrote minimap to disk.");
-		 * 	}
-		 * 	catch (Exception e)
-		 * 	{
-		 * 		// whatever
-		 * 	}
-		 * }
-		 */
+		if (Keyboard.isKeyDown(Keyboard.KEY_P) && keyPressed != Keyboard.KEY_P)
+		{
+			keyPressed = Keyboard.KEY_P;
+			BufferedImage bi = minimapTexture.getImage();
+			try {
+				ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
+				System.out.println("Wrote minimap to disk.");
+			}
+			catch (Exception e)
+			{
+				// whatever
+			}
+		}
+		*/
 
 		// Handle changing chunk ranges (how far out we draw from the camera
 		for (int i = 0; i < CHUNK_RANGES.length; i++)
