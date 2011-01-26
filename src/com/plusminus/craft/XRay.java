@@ -3,6 +3,7 @@ package com.plusminus.craft;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -74,8 +75,7 @@ public class XRay {
 
 	// highlight distance
 	private static final int[] HIGHLIGHT_RANGES_KEYS = new int[7];
-	private static final int[] HIGHLIGHT_RANGES = new int[] { 2, 3, 4, 5, 6, 7,
-			8 };
+	private static final int[] HIGHLIGHT_RANGES = new int[] { 2, 3, 4, 5, 6, 7, 8 };
 	private int currentHighlightDistance = 1;
 
 	// ore highlight vars
@@ -1759,6 +1759,68 @@ public class XRay {
 		levelInfoTexture.update();
 	}
 	
+	/**
+	 * Renders a text label in an info box, with differing fonts/colors for the label and its value
+	 * 
+	 * @param g Graphics context to render to
+	 * @param x Baseline x offset for the label
+	 * @param y Baseline y offset for the label
+	 * @param label The label to draw
+	 * @param labelColor Label color
+	 * @param labelFont Label font
+	 * @param value The value
+	 * @param valueColor Value color
+	 * @param valueFont Value font
+	 */
+	private void infoboxTextLabel(Graphics2D g, int x, int y, String label, Color labelColor, Font labelFont, String value, Color valueColor, Font valueFont)
+	{
+		Rectangle2D bounds = labelFont.getStringBounds(label, g.getFontRenderContext());
+		g.setColor(labelColor);
+		g.setFont(labelFont);
+		g.drawString(label, x, y);
+		g.setColor(valueColor);
+		g.setFont(valueFont);
+		g.drawString(value, (int)(x+bounds.getWidth()), y);
+	}
+	
+	/**
+	 * Renders a slider-type graphic in an info box, including its label
+	 * 
+	 * @param g Graphics context to render to
+	 * @param x Baseline X offset for the label
+	 * @param y Baseline Y offset for the label
+	 * @param label The label
+	 * @param labelColor Label color
+	 * @param labelFont Label font
+	 * @param line_h How tall our individual lines are
+	 * @param slider_start_x X offset to start the slider at
+	 * @param curval Current value of slider
+	 * @param val_length Length of slider data (array length, for us)
+	 */
+	private void infoboxSlider(Graphics2D g, int x, int y, String label, Color labelColor, Font labelFont, int line_h, int slider_start_x, int curval, int val_length)
+	{
+		int slider_top_y = y-line_h+10;
+		int slider_h = 8;
+		int slider_end_x = renderDetails_w-8;
+		int marker_x = slider_start_x + (curval * ((slider_end_x-slider_start_x)/(val_length-1)));
+		
+		// Label
+		g.setColor(labelColor);
+		g.setFont(labelFont);
+		g.drawString(label, x, y);
+		
+		// Slider Base
+		g.setColor(Color.BLACK);
+		g.drawRect(slider_start_x, slider_top_y, slider_end_x-slider_start_x, slider_h);
+
+		// Slider Location
+		g.setColor(Color.RED);
+		g.fillRect(marker_x, y-line_h+8, 3, 13);
+	}
+	
+	/**
+	 * Update our render-details infobox
+	 */
 	private void updateRenderDetails()
 	{
 		int line_h = 20;
@@ -1771,33 +1833,29 @@ public class XRay {
 		g.setColor(Color.BLACK);
 		if (!lightMode)
 		{
-			line_count++; g.drawString("Fullbright Enabled", x_off, line_count*line_h);
+			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Fullbright: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT);
 		}
 		else
 		{
-			line_count++; g.drawString("Light Level: " + (currentLightLevel+1) + "/" + (lightLevelEnd.length), x_off, line_count*line_h);
+			line_count++; infoboxSlider(g, x_off, line_count*line_h, "Light Level:", Color.BLACK, DETAILFONT, line_h, 90, currentLightLevel, lightLevelEnd.length);
 		}
-		line_count++; g.drawString("Render Distance: " + CHUNK_RANGES[currentChunkRange] + "/" + CHUNK_RANGES[CHUNK_RANGES.length-1], x_off, line_count*line_h);
-		line_count++; g.drawString("Highlight Distance: " + HIGHLIGHT_RANGES[currentHighlightDistance] + "/" + HIGHLIGHT_RANGES[HIGHLIGHT_RANGES.length-1], x_off, line_count*line_h);
-		if (highlightOres)
+		line_count++; infoboxSlider(g, x_off, line_count*line_h, "Render Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentChunkRange, CHUNK_RANGES.length);
+		line_count++; infoboxSlider(g, x_off, line_count*line_h, "Highlight Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentHighlightDistance, HIGHLIGHT_RANGES.length);
+		if (!highlightOres)
 		{
-			line_count++; g.drawString("Highlighting Ores", x_off, line_count*line_h);
-		}
-		else
-		{
-			line_count++; g.drawString("Not Highlighting Ores", x_off, line_count*line_h);			
+			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Ore Highlight: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT); 
 		}
 		if (highlight_explored)
 		{
-			line_count++; g.drawString("Marking Explored Areas", x_off, line_count*line_h);			
+			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Explored Highlight: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT); 
 		}
 		if (render_bedrock)
 		{
-			line_count++; g.drawString("Rendering Bedrock", x_off, line_count*line_h);
+			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Bedrock: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT); 
 		}
 		if (!render_water)
 		{
-			line_count++; g.drawString("Not Rendering Water", x_off, line_count*line_h);
+			line_count++; infoboxTextLabel(g, x_off, line_count*line_h, "Water: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT); 
 		}
 		cur_renderDetails_h = (line_count+1)*line_h-8;
 		g.setColor(Color.BLUE);
@@ -1807,7 +1865,7 @@ public class XRay {
 	}
 
 	/***
-	 * 
+	 * Draws our level info dialog to the screen
 	 */
 	private void drawLevelInfo() {
 		int y = 48;
@@ -1820,7 +1878,7 @@ public class XRay {
 	}
 
 	/***
-	 * 
+	 * Draws our rendering details infobox to the screen
 	 */
 	private void drawRenderDetails() {
 		renderDetailsTexture.bind();
