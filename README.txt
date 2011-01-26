@@ -23,6 +23,15 @@ See TODO.txt for a list of known bugs and things that I'd like to
 implement, and BUILDING.txt if you wanted some info on building the project
 yourself.
 
+The official website for Minecraft X-Ray is currently:
+	http://apocalyptech.com/minecraft/xray/
+	
+The official forum link is currently:
+	http://www.minecraftforum.net/viewtopic.php?f=1022&t=119356
+	
+Once again, many thanks to plusminus for writing X-Ray in the first place,
+and providing the sourcecode so that it could be extended and maintained.
+
 RUNNING
 -------
 
