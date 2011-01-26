@@ -37,6 +37,7 @@ public class MineCraftConstants {
     // the font to draw information to the screen
     public static final Font ARIALFONT = new Font("Arial", Font.BOLD, 14);
     public static final Font HEADERFONT = new Font("Arial", Font.BOLD, 26);
+    public static final Font DETAILFONT = new Font("Arial", Font.PLAIN, 13);
 	
     // some convenience statics regarding time calculation
 	public static final long NANOSPERSECOND 	= 1000000000;
@@ -206,6 +207,7 @@ public class MineCraftConstants {
 		LIGHT_INCREASE (Keyboard.KEY_ADD),
 		LIGHT_DECREASE (Keyboard.KEY_SUBTRACT),
 		TOGGLE_POSITION_INFO (Keyboard.KEY_GRAVE),
+		TOGGLE_RENDER_DETAILS (Keyboard.KEY_R),
 		TOGGLE_BEDROCK (Keyboard.KEY_B),
 		TOGGLE_WATER (Keyboard.KEY_T),
 		TOGGLE_HIGHLIGHT_EXPLORED (Keyboard.KEY_E),
