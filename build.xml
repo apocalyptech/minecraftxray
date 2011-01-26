@@ -14,7 +14,7 @@
 	<property name="dist"  location="${dist_base}/${export_base}"/>
 	<property name="dist_src"  location="${dist_base}/${export_base}_src"/>
 	
-	<!-- Why the hell doesn't ant's "tar" task understand executable bits? -->
+	<!-- Would be nice if ant's "tar" task understood executable bits -->
 	<patternset id="all.files">
 		<include name="${export_base}/**"/>
 	</patternset>
@@ -74,6 +74,9 @@
 				<include name="Changelog.txt" />
 				<include name="BUILDING.txt" />
 				<include name="TODO.txt" />
+				<include name="COPYING.txt" />
+				<include name="COPYING-lwjgl.txt" />
+				<include name="COPYING-jsmooth.txt" />
 			</fileset>
 		</copy>
 		
@@ -124,15 +127,6 @@
 		<zip destfile="${dist_base}/${export_base}.zip" basedir="${dist_base}" includes="${export_base}/"/>
 		<zip destfile="${dist_base}/${export_base}_src.zip" basedir="${dist_base}" includes="${export_base}_src/"/>
 		<tar destfile="${dist_base}/${export_base}.tbz2" compression="bzip2">
-			<!--
-			<tarfileset dir="${dist_base}" filemode="755">
-				<include name="${export_base}/minecraft_xray_osx.command"/>
-				<include name="${export_base}/minecraft_xray.sh"/>
-			</tarfileset>
-			<tarfileset dir="${dist_base}">
-				<include name="${export_base}/**"/>
-			</tarfileset>
-			-->
 			<tarfileset dir="${dist_base}" filemode="755">
 				<patternset refid="all.files" />
 				<selector refid="executable.files" />
