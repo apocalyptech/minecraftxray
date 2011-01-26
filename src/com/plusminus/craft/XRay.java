@@ -82,7 +82,7 @@ public class XRay
 		 * Overrides, called by the store method.
 		 */
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		public synchronized Enumeration keys()
+		public synchronized Enumeration<Object> keys()
 		{
 			Enumeration keysEnum = super.keys();
 			Vector keyList = new Vector();
