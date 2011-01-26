@@ -374,7 +374,23 @@ public class MineCraftEnvironment {
 	}
 	
 	/***
-	 * Attempts to create a bufferedImage containing the texture sprite sheet
+	 * Attempts to create a bufferedImage containing the texture sprite sheet.  This does
+	 * some munging to make things a little more useful for us.  Namely:
+	 * 
+	 *   1) It will attempt to colorize any biome-ready skin by first checking for green
+	 *      pixels in the texture, and then doing some blending if it looks greyscale.
+	 *   2) We also copy in the water texture from misc/water.png, because many third-party
+	 *      skins don't actually have a water graphic in the same place as the default skin
+	 *   3) Then we attempt to construct a passable "fire" texture from the particles file.
+	 *   4) Lastly, we duplicate the texture with a green tint, immediately below the
+	 *      main texture group.  We do this to support our "explored" highlighting - the
+	 *      tinting can be done easily via OpenGL itself, but there were pretty severe
+	 *      performance issues when I tried that on my laptop.  If we just modify the texture
+	 *      and use offsets instead, there's no FPS drop on there.  This DOES have the
+	 *      unfortunate downside that, when specifying texture coordinates with glTexCoord2f(),
+	 *      we can no longer think of the textures as perfectly "square."  The Y offsets must
+	 *      be half of what we're used to.  Perhaps it would make sense to double the X axis
+	 *      here as well, so that we could avoid some confusion; for now I'll leave it though.
 	 * @return
 	 */
 	public static BufferedImage getMinecraftTexture() {
