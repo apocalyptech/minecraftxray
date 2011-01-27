@@ -1,3 +1,5 @@
+Minecraft X-Ray 2.7 Maintenance Branch 8 (2011.01.26)
+
   * Removed useless "antialiasing" option on startup dialog
   * Startup dialog will remember your previously-chosen options
   * Water rendering can be toggled with "T"

@@ -1778,10 +1778,13 @@ public class Chunk {
 	}
 	
 	/**
-	 * Tests if the given source block has a torch nearby.  This feels very
-	 * cumbersome and inelegant to me, though surprisingly it seems to run fast
-	 * enough to not make a real noticeable difference, so I'll probably not get
-	 * around to making it do something sensible.  Alas!
+	 * Tests if the given source block has a torch nearby.  This is, I'm willing
+	 * to bet, the least efficient way possible of doing this.  It turns out that
+	 * despite that, it doesn't really have a noticeable impact on performance,
+	 * which is why it remains in here, but perhaps one day I'll rewrite this
+	 * stuff to be less stupid.  The one upside to doing it like this is that
+	 * we're not using any extra memory storing data about which block should be
+	 * highlighted...
 	 * 
 	 * @param sx
 	 * @param sy
