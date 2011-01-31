@@ -1276,6 +1276,31 @@ public class Chunk {
 		this.renderVertical(textureId, x+radius, z+radius, x-radius, z+radius, y-0.5f, 0.05f);
 		this.renderVertical(textureId, x+radius, z-radius, x-radius, z-radius, y-0.5f, 0.05f);
 	}
+
+	/**
+	 * Renders a thin slice of something on the ground (used for snow currently).  Practically
+	 * the same as renderPlate actually, just wider and a bit taller
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderThinslice(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		float radius = 0.48f;
+		
+		// The top face
+		this.renderHorizontal(textureId, x+radius, z+radius, x-radius, z-radius, y-0.38f);
+		
+		// Sides
+		this.renderVertical(textureId, x+radius, z+radius, x+radius, z-radius, y-0.48f, 0.1f);
+		this.renderVertical(textureId, x-radius, z+radius, x-radius, z-radius, y-0.48f, 0.1f);
+		this.renderVertical(textureId, x+radius, z+radius, x-radius, z+radius, y-0.48f, 0.1f);
+		this.renderVertical(textureId, x+radius, z-radius, x-radius, z-radius, y-0.48f, 0.1f);
+	}
 	
 	/**
 	 * Renders a door
@@ -2144,8 +2169,10 @@ public class Chunk {
 							case PORTAL:
 								renderPortal(textureId,x,y,z,blockOffset);
 								break;
+							case THINSLICE:
+								renderThinslice(textureId,x,y,z);
+								break;
 							case HALFHEIGHT:
-								// TODO: these (and other non-"block" things) seem to disappear behind glass
 								if(draw) {
 									if(!near) this.renderWestEast(textureId, worldX+x, y, worldZ+z, 0f, .495f);
 									if(!far) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1, 0f, .495f);

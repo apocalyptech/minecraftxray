@@ -82,6 +82,7 @@ public class MineCraftConstants {
 		FLOOR,
 		PRESSURE_PLATE,
 		HALFHEIGHT,
+		THINSLICE,
 		DOOR,
 		STAIRS,
 		SIGNPOST,
@@ -362,6 +363,7 @@ public class MineCraftConstants {
 		// Water
 		BLOCK_TYPE_MAP.put((byte)BLOCK.WATER.id, BLOCK_TYPE.WATER);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.STATIONARY_WATER.id, BLOCK_TYPE.WATER);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.ICE.id, BLOCK_TYPE.WATER);
 		
 		// Lava
 		BLOCK_TYPE_MAP.put((byte)BLOCK.LAVA.id, BLOCK_TYPE.LAVA);
@@ -369,9 +371,12 @@ public class MineCraftConstants {
 		
 		// Fire
 		BLOCK_TYPE_MAP.put((byte)BLOCK.FIRE.id, BLOCK_TYPE.FIRE);
+
+		// "Thin" slices
+		BLOCK_TYPE_MAP.put((byte)BLOCK.SNOW.id, BLOCK_TYPE.THINSLICE);
 	}
 	
-	   /***
+	/***
      * Colors. From block data -> colors
      * (I took the color list from a c program which draws minecraft maps.. forgot the name)
      */
