@@ -98,6 +98,8 @@
 				<exclude name="bin/" />
 				<exclude name="build/" />
 				<exclude name="dist/" />
+				<exclude name=".git/" />
+				<exclude name=".gitignore" />
 			</fileset>
 		</copy>
 		
