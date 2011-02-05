@@ -1,6 +1,7 @@
 
   * Snow will render more properly (as a thin slice) now
   * Ice is now considered water, and won't cause you to see through terrain
+  * Player spawnpoints/locations were off by 1 on the Z axis; fixed that
 
 Minecraft X-Ray 2.7 Maintenance Branch 8 (2011.01.26)
 
