@@ -103,7 +103,7 @@ public class MinecraftLevel {
 				FloatTag rotYaw = (FloatTag) playerRotation.value.get(0);
 				FloatTag rotPitch = (FloatTag) playerRotation.value.get(1);
 
-				this.playerPositions.add(new CameraPreset(0, "Singleplayer User", new Block((int) -posX.value, (int) -posY.value, (int) -posZ.value),
+				this.playerPositions.add(new CameraPreset(0, "Singleplayer User", new Block((int) -posX.value, (int) -posY.value, (int) -posZ.value+1),
 						rotYaw.value, rotPitch.value));
 				this.playerPos_idx = 0;
 			}
@@ -144,7 +144,7 @@ public class MinecraftLevel {
 				FloatTag rotYaw = (FloatTag) playerRotation.value.get(0);
 				FloatTag rotPitch = (FloatTag) playerRotation.value.get(1);
 				this.playerPositions.add(new CameraPreset(this.playerPositions.size(),
-						mpusername, new Block((int) -posX.value, (int) -posY.value-1, (int) -posZ.value),
+						mpusername, new Block((int) -posX.value, (int) -posY.value-1, (int) -posZ.value+1),
 						rotYaw.value, rotPitch.value));
 			}
 			catch (Exception e)
@@ -165,7 +165,7 @@ public class MinecraftLevel {
 			IntTag spawnX = (IntTag) levelDataData.getTagWithName("SpawnX");
 			IntTag spawnY = (IntTag) levelDataData.getTagWithName("SpawnY");
 			IntTag spawnZ = (IntTag) levelDataData.getTagWithName("SpawnZ");
-			this.playerPositions.add(new CameraPreset(this.spawnPoint_idx, "Spawnpoint", new Block(-spawnX.value, -spawnY.value-1, -spawnZ.value), 0, 0));
+			this.playerPositions.add(new CameraPreset(this.spawnPoint_idx, "Spawnpoint", new Block(-spawnX.value, -spawnY.value-1, -spawnZ.value+1), 0, 0));
 		}
 
 		// Figure out where to set the "player" position, if we have no singleplayer user
