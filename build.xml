@@ -50,6 +50,26 @@
 			</classpath>
 		</javac>		
 	</target>
+
+    <target name="run" depends="compile"
+            description="run the application" >
+        <!-- Run our compiled sourcecode -->
+        <java fork="true" classname="com.plusminus.craft.XRay">
+            <classpath>
+                <pathelement path="${build}" />
+                <pathelement location="lib/AppleJavaExtensions.jar" />
+                <pathelement location="lib/jinput.jar" />
+                <pathelement location="lib/lwjgl.jar" />
+                <pathelement location="lib/lwjgl_test.jar" />
+                <pathelement location="lib/lwjgl_util.jar" />
+                <pathelement location="lib/lwjgl_util_applet.jar" />
+                <pathelement location="lib/lzma.jar" />
+            </classpath>
+            <jvmarg value="-Xms256m" />
+            <jvmarg value="-Xmx1024m" />
+            <jvmarg value="-Djava.library.path=lib/native" />
+        </java>
+    </target>
 	
 	<target name="prepare_distdir" depends="compile"
 	        description="prepares the distribution directories for release" >
