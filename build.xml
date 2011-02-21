@@ -1,3 +1,4 @@
+<!-- vim: set noexpandtab tabstop=4 shiftwidth=4: -->
 <project name="XRay" default="dist" basedir=".">
 	<description>
 		Minecraft X-Ray
@@ -10,6 +11,7 @@
 	<!-- set global properties for this build -->
 	<property name="src" location="src"/>
 	<property name="build" location="build"/>
+	<property name="debugbuild" location="debugbuild"/>
 	<property name="dist_base" location="dist"/>
 	<property name="dist"  location="${dist_base}/${export_base}"/>
 	<property name="dist_src"  location="${dist_base}/${export_base}_src"/>
@@ -27,7 +29,7 @@
 	
 	<!-- JSmoothGen, for building the Windows EXE -->
 	<taskdef name="jsmoothgen"
-	     classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
+		 classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
 		 classpath="build-lib/jsmoothgen-ant.jar" />
 
 	<target name="init">
@@ -35,6 +37,7 @@
 		<tstamp/>
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${build}"/>
+		<mkdir dir="${debugbuild}"/>
 	</target>
 	
 	<target name="compile" depends="init"
@@ -42,7 +45,21 @@
 		<!-- Compile the java code from ${src} into ${build} -->
 
 		<javac srcdir="${src}" destdir="${build}">
-		    <compilerarg value="-Xlint:unchecked"/>
+			<compilerarg value="-Xlint:unchecked"/>
+			<classpath>
+				<fileset dir="lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>		
+	</target>
+	
+	<target name="debugcompile" depends="init"
+			description="compile the source in debug mode" >
+		<!-- Compile the java code from ${src} into ${build} -->
+
+		<javac srcdir="${src}" destdir="${debugbuild}" debug="true">
+			<compilerarg value="-Xlint:unchecked"/>
 			<classpath>
 				<fileset dir="lib">
 					<include name="*.jar" />
@@ -51,12 +68,12 @@
 		</javac>		
 	</target>
 
-    <target name="run" depends="compile"
-            description="run the application" >
+    <target name="run" depends="debugcompile"
+            description="run the application (uses the debugging build)" >
         <!-- Run our compiled sourcecode -->
         <java fork="true" classname="com.apocalyptech.minecraft.xray.XRay">
             <classpath>
-                <pathelement path="${build}" />
+                <pathelement path="${debugbuild}" />
                 <pathelement location="lib/AppleJavaExtensions.jar" />
                 <pathelement location="lib/jinput.jar" />
                 <pathelement location="lib/lwjgl.jar" />
@@ -72,7 +89,7 @@
     </target>
 	
 	<target name="prepare_distdir" depends="compile"
-	        description="prepares the distribution directories for release" >
+			description="prepares the distribution directories for release" >
 		<!-- Create the distribution directories -->
 		<mkdir dir="${dist}"/>
 		<mkdir dir="${dist_src}"/>
@@ -145,7 +162,7 @@
 	</target>
 	
 	<target name="dist" depends="jsmooth"
-	        description="generate the distribution" >
+			description="generate the distribution" >
 		
 		<!-- Create our zipfiles, both "binary" and source. -->
 		<zip destfile="${dist_base}/${export_base}.zip" basedir="${dist_base}" includes="${export_base}/"/>
@@ -166,7 +183,7 @@
 	</target>
 		
 	<target name="clean"
-	        description="clean up" >
+			description="clean up" >
 		<!-- Delete the ${build} and ${dist} directory trees -->
 		<delete file="${dist_base}/${export_base}.zip"/>
 		<delete file="${dist_base}/${export_base}.tbz2"/>
