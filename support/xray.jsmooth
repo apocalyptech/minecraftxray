@@ -20,7 +20,7 @@
 <executableName>minecraft_xray.exe</executableName>
 <iconLocation>xray_icon.png</iconLocation>
 <initialMemoryHeap>268435456</initialMemoryHeap>
-<mainClassName>com.plusminus.craft.XRay</mainClassName>
+<mainClassName>com.apocalyptech.minecraft.xray.XRay</mainClassName>
 <maximumMemoryHeap>1073741824</maximumMemoryHeap>
 <maximumVersion></maximumVersion>
 <minimumVersion></minimumVersion>

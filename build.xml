@@ -54,7 +54,7 @@
     <target name="run" depends="compile"
             description="run the application" >
         <!-- Run our compiled sourcecode -->
-        <java fork="true" classname="com.plusminus.craft.XRay">
+        <java fork="true" classname="com.apocalyptech.minecraft.xray.XRay">
             <classpath>
                 <pathelement path="${build}" />
                 <pathelement location="lib/AppleJavaExtensions.jar" />
