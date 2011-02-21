@@ -10,6 +10,10 @@ Vollers and CJ Kucera, though the actual distribution of code copyright
 would probably be more complicated than that.  Please forgive any instances
 of code misattribution! 
 
+RegionFile.java and RegionFileCache.java are courtesy Jens Bergensten of
+Mojang: http://mojang.com/2011/02/16/minecraft-save-file-format-in-beta-1-3/
+They appear to be under a sort of generic public domain license.
+
 ----
 
 Copyright (c) 2010-2011, Vincent Vollers and Christopher J. Kucera

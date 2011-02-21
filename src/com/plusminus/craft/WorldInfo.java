@@ -42,6 +42,14 @@ public class WorldInfo
 	private boolean custom;
 	public TreeMap<String, File> mp_players;
 	
+	// Couple of variables to determine whether our chunks are stored in the new
+	// Region format introduced in Beta 1.3.  Minecraft converts chunks on the fly,
+	// so for a time a world directory will have chunks in both formats.  Once all
+	// the chunks have been converted, Minecraft will write out a few new tags in
+	// the main level data file, so we can stop looking for the old format.
+	public boolean has_region_data = false;
+	public boolean is_beta_1_3_level = false;
+	
 	private class PlayerDatFilter implements FilenameFilter
 	{
 		public PlayerDatFilter() {

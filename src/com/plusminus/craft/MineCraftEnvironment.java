@@ -37,12 +37,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileInputStream;
+import java.io.DataInputStream;
 import java.io.LineNumberReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipException;
 import java.util.jar.JarFile;
@@ -172,15 +174,45 @@ public class MineCraftEnvironment {
 	 * @param z
 	 * @return
 	 */
-	public static File getChunkFile(WorldInfo world, int x, int z) {
-		int xx = x % 64;
-		if(xx<0) xx = 64+xx;
-		int zz = z % 64;
-		if(zz<0) zz = 64+zz;
-		String firstFolder 		= Integer.toString(xx, 36);
-		String secondFolder 	= Integer.toString(zz, 36);
-		String filename 		= "c." + Integer.toString(x, 36) + "." + Integer.toString(z, 36) + ".dat";
-		return new File(world.getBasePath(), firstFolder + "/" + secondFolder + "/" + filename);
+	public static DataInputStream getChunkInputStream(WorldInfo world, int x, int z) {
+		if (world.has_region_data)
+		{
+			RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), x, z);
+			if (rf != null)
+			{
+				DataInputStream chunk = rf.getChunkDataInputStream(x, z);
+				if (chunk != null)
+				{
+					System.out.println("Read chunk (" + x + ", " + z + ") from Region file");
+					return chunk;
+				}
+			}
+		}
+		if (!world.is_beta_1_3_level)
+		{
+			int xx = x % 64;
+			if(xx<0) xx = 64+xx;
+			int zz = z % 64;
+			if(zz<0) zz = 64+zz;
+			String firstFolder 		= Integer.toString(xx, 36);
+			String secondFolder 	= Integer.toString(zz, 36);
+			String filename 		= "c." + Integer.toString(x, 36) + "." + Integer.toString(z, 36) + ".dat";
+			File chunk = new File(world.getBasePath(), firstFolder + "/" + secondFolder + "/" + filename);
+			if (chunk.exists())
+			{
+				//  There's some code duplication here from DTFReader.readDTFFile()
+				try {
+					return new DataInputStream(new GZIPInputStream(new FileInputStream(chunk)));
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
 	}
 	
 

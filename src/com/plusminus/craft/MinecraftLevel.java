@@ -27,6 +27,9 @@
 package com.plusminus.craft;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.plusminus.craft.dtf.CompoundTag;
@@ -35,6 +38,7 @@ import com.plusminus.craft.dtf.DoubleTag;
 import com.plusminus.craft.dtf.FloatTag;
 import com.plusminus.craft.dtf.IntTag;
 import com.plusminus.craft.dtf.ListTag;
+import com.plusminus.craft.dtf.StringTag;
 import com.plusminus.craft.dtf.Tag;
 
 import com.plusminus.craft.MineCraftConstants.BLOCK;
@@ -61,6 +65,17 @@ public class MinecraftLevel {
 	public Texture minecraftTexture;
 	public Texture paintingTexture;
 	public Texture portalTexture;
+	
+    private class RegionFileFilter implements FilenameFilter
+    {
+        public RegionFileFilter() {
+            // Nothing, really
+        }
+
+        public boolean accept(File directory, String filename) {
+            return (filename.endsWith(".mcr"));
+        }
+    }
 
 	/***
 	 * Create a minecraftLevel from the given world
@@ -172,6 +187,31 @@ public class MinecraftLevel {
 		if (this.playerPos_idx == -1)
 		{
 			this.playerPos_idx = this.spawnPoint_idx;
+		}
+		
+		// Figure out what kind of data we'll be reading
+		IntTag versionTag = (IntTag) levelData.getTagWithName("version");
+		StringTag levelNameTag = (StringTag) levelData.getTagWithName("LevelName");
+		if (versionTag != null && levelNameTag != null)
+		{
+			// Technically we should probably check for the magic version number "19132" here,
+			// but since it's a brand-new tag, we're just checking for its presence.
+			world.is_beta_1_3_level = true;
+			world.has_region_data = true;
+			System.out.println("We're a fully-converted Beta 1.3 level");
+		}
+		else
+		{
+			File regionDir = new File(world.getBasePath(), "region");
+			if (regionDir.exists() && regionDir.isDirectory())
+			{
+				File[] mcrFiles = regionDir.listFiles(new RegionFileFilter());
+				if (mcrFiles.length > 0)
+				{
+					world.has_region_data = true;
+					System.out.println("We have partial 1.3 Region data");
+				}
+			}
 		}
 	}
 	
@@ -320,18 +360,23 @@ public class MinecraftLevel {
 	}
 	
 	public Tag loadChunk(int x, int z) {
-		File chunkFile = MineCraftEnvironment.getChunkFile(world, x,z);
-		if(!chunkFile.exists()) {
+		DataInputStream chunkInputStream = MineCraftEnvironment.getChunkInputStream(world, x,z);
+		if(chunkInputStream == null) {
 			return null;
 		}
-		Tag t = DTFReader.readDTFFile(chunkFile);
-
-		if (t != null)
+		try
 		{
-			levelData[(x+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(z+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new Chunk(this, t);
+			Tag t = DTFReader.readTagData(chunkInputStream);
+			if (t != null)
+			{
+				levelData[(x+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(z+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new Chunk(this, t);
+			}	
+			return t;
 		}
-		
-		return t;
+		catch (IOException e)
+		{
+			return null;
+		}
 	}
 	
 	/**
