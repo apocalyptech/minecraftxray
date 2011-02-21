@@ -33,6 +33,3 @@
    reformat everything to a single style (and retab the whole thing, and clean up
    formatting and style in general).  And really, I've been pretty lazy all around
    with doing things the "right way."  The code could use cleanup in general.
-   
- * Might be nice to support block IDs > 127 (or at least fail more gracefully), so
-   that folks using the More Block IDs mod would be able to use this.

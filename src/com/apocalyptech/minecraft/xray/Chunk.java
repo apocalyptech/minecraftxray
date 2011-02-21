@@ -1926,7 +1926,7 @@ public class Chunk {
 					blockOffset++;
 					byte t = blockData.value[blockOffset];
 					
-					if(t == 0) {
+					if(t < 1) {
 						continue;
 					}
 					
