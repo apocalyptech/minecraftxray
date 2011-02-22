@@ -15,6 +15,7 @@
     internal change as to how we deal with variable-texture blocks)
   * Support for the "BurningSkull" painting, new in 1.2 and actually-
     supported in 1.3
+  * Support for rendering beds
 
 Minecraft X-Ray 2.7 Maintenance Branch 8 (2011.01.26)
 

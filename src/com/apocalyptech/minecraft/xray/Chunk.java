@@ -1301,6 +1301,106 @@ public class Chunk {
 		this.renderVertical(textureId, x+radius, z+radius, x-radius, z+radius, y-0.48f, 0.1f);
 		this.renderVertical(textureId, x+radius, z-radius, x-radius, z-radius, y-0.48f, 0.1f);
 	}
+
+	/**
+	 * Renders a bed block.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderBed(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		float side_part = 0.48f;
+		float side_full = 0.5f;
+		float bed_height = 0.7f;
+		float horiz_off = bed_height-0.5f;
+		boolean head = true;
+
+		byte data = getData(xxx, yyy, zzz);
+		data &= 0xF;
+		if ((data & 0x8) == 0)
+		{
+			textureId -= 1;
+			head = false;
+		}
+		data &= 0x3;
+		
+		// There's a fair amount of duplicated code in here, but whatever.  It
+		// feels like assigning variables to do all this would be a lot MORE work.
+		// TODO: it'd be nice to properly align the pillow texture so it looks right.
+		if (head)
+		{
+			switch (data)
+			{
+				case 0x0:
+					// Head is facing west
+					this.renderHorizontal(textureId, x+side_part, z+side_part, x-side_part, z-side_full, y+horiz_off);
+					this.renderVertical(textureId, x+side_part, z+side_part, x+side_part, z-side_full, y-side_part, bed_height);
+					this.renderVertical(textureId, x-side_part, z+side_part, x-side_part, z-side_full, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_part, z+side_part, x-side_part, z+side_part, y-side_part, bed_height);
+					break;
+				case 0x1:
+					// Head is facing north
+					this.renderHorizontal(textureId, x+side_full, z+side_part, x-side_part, z-side_part, y+horiz_off);
+					this.renderVertical(textureId, x-side_part, z+side_part, x-side_part, z-side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_full, z+side_part, x-side_part, z+side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_full, z-side_part, x-side_part, z-side_part, y-side_part, bed_height);
+					break;
+				case 0x2:
+					// Head is facing east
+					this.renderHorizontal(textureId, x+side_part, z+side_full, x-side_part, z-side_part, y+horiz_off);
+					this.renderVertical(textureId, x+side_part, z+side_full, x+side_part, z-side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x-side_part, z+side_full, x-side_part, z-side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_part, z-side_part, x-side_part, z-side_part, y-side_part, bed_height);
+					break;
+				case 0x3:
+					// Head is facing south
+					this.renderHorizontal(textureId, x+side_part, z+side_part, x-side_full, z-side_part, y+horiz_off);
+					this.renderVertical(textureId, x+side_part, z+side_part, x+side_part, z-side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_part, z+side_part, x-side_full, z+side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_part, z-side_part, x-side_full, z-side_part, y-side_part, bed_height);
+					break;
+			}
+		}
+		else
+		{
+			switch (data)
+			{
+				case 0x0:
+					// Head is facing west
+					this.renderHorizontal(textureId, x+side_part, z+side_full, x-side_part, z-side_part, y+horiz_off);
+					this.renderVertical(textureId, x+side_part, z+side_full, x+side_part, z-side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x-side_part, z+side_full, x-side_part, z-side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_part, z-side_part, x-side_part, z-side_part, y-side_part, bed_height);
+					break;
+				case 0x1:
+					// Head is facing north
+					this.renderHorizontal(textureId, x+side_part, z+side_part, x-side_full, z-side_part, y+horiz_off);
+					this.renderVertical(textureId, x+side_part, z+side_part, x+side_part, z-side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_part, z+side_part, x-side_full, z+side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_part, z-side_part, x-side_full, z-side_part, y-side_part, bed_height);
+					break;
+				case 0x2:
+					// Head is facing east
+					this.renderHorizontal(textureId, x+side_part, z+side_part, x-side_part, z-side_full, y+horiz_off);
+					this.renderVertical(textureId, x+side_part, z+side_part, x+side_part, z-side_full, y-side_part, bed_height);
+					this.renderVertical(textureId, x-side_part, z+side_part, x-side_part, z-side_full, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_part, z+side_part, x-side_part, z+side_part, y-side_part, bed_height);
+					break;
+				case 0x3:
+					// Head is facing south
+					this.renderHorizontal(textureId, x+side_full, z+side_part, x-side_part, z-side_part, y+horiz_off);
+					this.renderVertical(textureId, x-side_part, z+side_part, x-side_part, z-side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_full, z+side_part, x-side_part, z+side_part, y-side_part, bed_height);
+					this.renderVertical(textureId, x+side_full, z-side_part, x-side_part, z-side_part, y-side_part, bed_height);
+					break;
+			}
+		}
+	}
 	
 	/**
 	 * Renders a door
@@ -2192,6 +2292,9 @@ public class Chunk {
 								break;
 							case THINSLICE:
 								renderThinslice(textureId,x,y,z);
+								break;
+							case BED:
+								renderBed(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								if(draw) {

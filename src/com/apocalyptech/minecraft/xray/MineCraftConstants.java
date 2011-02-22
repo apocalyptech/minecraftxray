@@ -82,6 +82,7 @@ public class MineCraftConstants {
 		FLOOR,
 		PRESSURE_PLATE,
 		HALFHEIGHT,
+		BED,
 		THINSLICE,
 		DOOR,
 		STAIRS,
@@ -130,6 +131,7 @@ public class MineCraftConstants {
 		DISPENSER (23, "Dispenser"),
 		SANDSTONE (24, "Sandstone"),
 		NOTE_BLOCK (25, "Note"),
+		BED (26, "Bed"),
 		WOOL (35, "Wool"),
 		YELLOW_FLOWER (37, "Flower"),
 		RED_ROSE (38, "Rose"),
@@ -330,6 +332,9 @@ public class MineCraftConstants {
 		// Half-height blocks
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SLAB.id, BLOCK_TYPE.HALFHEIGHT);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.CAKE.id, BLOCK_TYPE.HALFHEIGHT);
+
+		// Bed blocks
+		BLOCK_TYPE_MAP.put((byte)BLOCK.BED.id, BLOCK_TYPE.BED);
 		
 		// Doors
 		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_DOOR.id, BLOCK_TYPE.DOOR);
@@ -406,6 +411,7 @@ public class MineCraftConstants {
 		blockColors[BLOCK.LAPIS_LAZULI_BLOCK.id] = blockColors[BLOCK.LAPIS_LAZULI_BLOCK.id];
 		blockColors[BLOCK.DISPENSER.id] = new Color(96,96,96);
 		blockColors[BLOCK.NOTE_BLOCK.id] = new Color(114,88,56);
+		blockColors[BLOCK.BED.id] = new Color(255,0,0);
 		blockColors[BLOCK.SANDSTONE.id] = blockColors[BLOCK.SAND.id];
 		blockColors[BLOCK.WOOL.id] = new Color(222,222,222); //Color(143,143,143,255); 
 		blockColors[BLOCK.RED_ROSE.id] = new Color(255,0,0);
@@ -494,6 +500,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.DISPENSER.id] = (2*16) + 14;
 		blockDataToSpriteSheet[BLOCK.SANDSTONE.id] = 12*16;
 		blockDataToSpriteSheet[BLOCK.NOTE_BLOCK.id] = (4*16) + 10;
+		blockDataToSpriteSheet[BLOCK.BED.id] = (8*16) + 7;
 		blockDataToSpriteSheet[BLOCK.WOOL.id] = 64;		
 		blockDataToSpriteSheet[BLOCK.YELLOW_FLOWER.id] = 13;
 		blockDataToSpriteSheet[BLOCK.RED_ROSE.id] = 12;
