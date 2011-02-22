@@ -13,6 +13,7 @@
     doesn't actually "link up" though)
   * Support for Beta 1.3 additions: extra slab blocks, beds, redstone
     repeaters, and the BurningSkull painting
+  * Fixed and added various wrong/missing minimap colors
 
 Minecraft X-Ray 2.7 Maintenance Branch 8 (2011.01.26)
 
