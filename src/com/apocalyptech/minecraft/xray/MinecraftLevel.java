@@ -190,15 +190,15 @@ public class MinecraftLevel {
 		}
 		
 		// Figure out what kind of data we'll be reading
-		IntTag versionTag = (IntTag) levelData.getTagWithName("version");
-		StringTag levelNameTag = (StringTag) levelData.getTagWithName("LevelName");
+		IntTag versionTag = (IntTag) levelDataData.getTagWithName("version");
+		StringTag levelNameTag = (StringTag) levelDataData.getTagWithName("LevelName");
 		if (versionTag != null && levelNameTag != null)
 		{
 			// Technically we should probably check for the magic version number "19132" here,
 			// but since it's a brand-new tag, we're just checking for its presence.
 			world.is_beta_1_3_level = true;
 			world.has_region_data = true;
-			System.out.println("We're a fully-converted Beta 1.3 level");
+			System.out.println("We're a fully-converted Beta 1.3 level, level name is: " + levelNameTag.value);
 		}
 		else
 		{

@@ -182,10 +182,9 @@ public class MineCraftEnvironment {
 			RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), x, z);
 			if (rf != null)
 			{
-				DataInputStream chunk = rf.getChunkDataInputStream(x, z);
+				DataInputStream chunk = rf.getChunkDataInputStream(x & 31, z & 31);
 				if (chunk != null)
 				{
-					System.out.println("Read chunk (" + x + ", " + z + ") from Region file");
 					return chunk;
 				}
 			}
