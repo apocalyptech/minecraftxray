@@ -33,6 +33,3 @@
    reformat everything to a single style (and retab the whole thing, and clean up
    formatting and style in general).  And really, I've been pretty lazy all around
    with doing things the "right way."  The code could use cleanup in general.
- 
- * World selection dialog currently just uses the actual directory name; might
-   be nice to read in the assigned name as well.

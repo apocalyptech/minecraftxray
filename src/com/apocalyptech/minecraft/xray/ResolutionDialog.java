@@ -355,7 +355,14 @@ public class ResolutionDialog extends JFrame {
 			}
 			else
 			{
-				button = new JRadioButton(world.getDirName());
+				if (world.getLevelName() != null)
+				{
+					button = new JRadioButton(world.getDirName() + " (" + world.getLevelName() + ")");
+				}
+				else
+				{
+					button = new JRadioButton(world.getDirName());
+				}
 			}
 			worldButtonGroup.add(button);
 			worldButtons[curidx] = button;

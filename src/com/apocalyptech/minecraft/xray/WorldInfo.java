@@ -38,6 +38,7 @@ public class WorldInfo
 {
 	private String basepath;
 	private String dirName;
+	private String levelName;
 	private boolean nether;
 	private boolean custom;
 	public TreeMap<String, File> mp_players;
@@ -77,6 +78,17 @@ public class WorldInfo
 		this.custom = custom;
 		this.dirName = dirName;
 		this.populateMPPlayerList();
+
+		// Load in the minecraft level, to read its name
+		if (basepath != null)
+		{
+			MinecraftLevel level = new MinecraftLevel(this);
+			this.levelName = level.levelName;
+		}
+		else
+		{
+			this.levelName = null;
+		}
 	}
 	
 	/**
@@ -194,6 +206,16 @@ public class WorldInfo
 	public String getDirName()
 	{
 		return this.dirName;
+	}
+	
+	/**
+	 * Returns our level name
+	 * 
+	 * @return
+	 */
+	public String getLevelName()
+	{
+		return this.levelName;
 	}
 	
 	/**

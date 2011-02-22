@@ -65,6 +65,8 @@ public class MinecraftLevel {
 	public Texture minecraftTexture;
 	public Texture paintingTexture;
 	public Texture portalTexture;
+
+	public String levelName;
 	
     private class RegionFileFilter implements FilenameFilter
     {
@@ -76,6 +78,16 @@ public class MinecraftLevel {
             return (filename.endsWith(".mcr"));
         }
     }
+
+	/**
+	 * Instansiate a minecraftLevel without any of our usual data.  Only
+	 * used to read in the base data from level.dat, so that our loader
+	 * can get the user-defined name of the level.
+	 */
+	public MinecraftLevel(WorldInfo world)
+	{
+		this(world, null, null, null, null);
+	}
 
 	/***
 	 * Create a minecraftLevel from the given world
@@ -198,7 +210,7 @@ public class MinecraftLevel {
 			// but since it's a brand-new tag, we're just checking for its presence.
 			world.is_beta_1_3_level = true;
 			world.has_region_data = true;
-			System.out.println("We're a fully-converted Beta 1.3 level, level name is: " + levelNameTag.value);
+			this.levelName = levelNameTag.value;
 		}
 		else
 		{
@@ -209,9 +221,9 @@ public class MinecraftLevel {
 				if (mcrFiles.length > 0)
 				{
 					world.has_region_data = true;
-					System.out.println("We have partial 1.3 Region data");
 				}
 			}
+			this.levelName = null;
 		}
 	}
 	
