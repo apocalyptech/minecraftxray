@@ -427,7 +427,7 @@ public class MineCraftConstants {
 		//blockColors[BLOCK.MOB_SPAWNER.id] = Color(245,220,50,255); unnecessary afaik
 		blockColors[BLOCK.WOODEN_STAIRS.id] = new Color(157,128,79);
 		blockColors[BLOCK.CHEST.id] = new Color(125,91,38);
-		//blockColors[BLOCK.REDSTONE_WIRE.id] = Color(245,220,50,255); unnecessary afaik
+		blockColors[BLOCK.REDSTONE_WIRE.id] = new Color(245,50,50);
 		blockColors[BLOCK.DIAMOND_ORE.id] = new Color(129,140,143);
 		blockColors[BLOCK.DIAMOND_BLOCK.id] = new Color(45,166,152);
 		blockColors[BLOCK.WORKBENCH.id] = blockColors[BLOCK.NOTE_BLOCK.id];
@@ -518,7 +518,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.MOB_SPAWNER.id] = (4*16) + 1;
 		blockDataToSpriteSheet[BLOCK.WOODEN_STAIRS.id] = 4;  // previously 55
 		blockDataToSpriteSheet[BLOCK.CHEST.id] = 26;
-		blockDataToSpriteSheet[BLOCK.REDSTONE_WIRE.id] = 100;
+		blockDataToSpriteSheet[BLOCK.REDSTONE_WIRE.id] = (10*16)+4;
 		blockDataToSpriteSheet[BLOCK.DIAMOND_ORE.id] = (3*16) + 2;
 		blockDataToSpriteSheet[BLOCK.DIAMOND_BLOCK.id] = 24;
 		blockDataToSpriteSheet[BLOCK.WORKBENCH.id] = (3*16)+12;

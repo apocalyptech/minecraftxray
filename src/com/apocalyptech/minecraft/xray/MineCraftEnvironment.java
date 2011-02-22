@@ -457,10 +457,12 @@ public class MineCraftEnvironment {
 	 * 
 	 *   1) It will attempt to colorize any biome-ready skin by first checking for green
 	 *      pixels in the texture, and then doing some blending if it looks greyscale.
-	 *   2) We also copy in the water texture from misc/water.png, because many third-party
+	 *   2) It will colorize the redstone wire texture appropriately (due to the Beta 1.3
+	 *      change where redstone wire color depends on how far from the source it is)
+	 *   3) We also copy in the water texture from misc/water.png, because many third-party
 	 *      skins don't actually have a water graphic in the same place as the default skin
-	 *   3) Then we attempt to construct a passable "fire" texture from the particles file.
-	 *   4) Lastly, we duplicate the texture with a green tint, immediately below the
+	 *   4) Then we attempt to construct a passable "fire" texture from the particles file.
+	 *   5) Lastly, we duplicate the texture with a green tint, immediately below the
 	 *      main texture group.  We do this to support our "explored" highlighting - the
 	 *      tinting can be done easily via OpenGL itself, but there were pretty severe
 	 *      performance issues when I tried that on my laptop.  If we just modify the texture
@@ -517,6 +519,14 @@ public class MineCraftEnvironment {
 			g2d.fill(rect);
 			g2d.drawImage(bi, null, 0, 0);
 		}
+
+		// Colorize redstone wire
+		AlphaComposite redstone_ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 1f);
+		Rectangle redstone_rect = new Rectangle(4*square_width, 10*square_width, square_width, square_width);
+		g2d.setComposite(redstone_ac);
+		g2d.setColor(Color.red);
+		g2d.fill(redstone_rect);
+		g2d.drawImage(bi, null, 0, 0);
 		
 		// Load in the water texture separately and pretend it's a part of the main texture pack.
 		BufferedImage bi2 = buildImageFromInput(getMinecraftWaterData());
