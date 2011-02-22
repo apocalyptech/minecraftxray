@@ -91,7 +91,6 @@ public class MineCraftConstants {
 		LEVER,
 		BUTTON,
 		PORTAL,
-		DATAVAL,
 		MINECART_TRACKS,
 		WATER,
 		LAVA,
@@ -138,8 +137,8 @@ public class MineCraftConstants {
 		RED_MUSHROOM (40, "Mushroom"),
 		GOLD_BLOCK (41, "Gold"),
 		IRON_BLOCK (42, "Iron"),
-		DOUBLE_STEP (43, "Step"),
-		STEP (44, "Step"),
+		DOUBLE_SLAB (43, "Slab"),
+		SLAB (44, "Slab"),
 		BRICK (45, "Brick"),
 		TNT (46, "TNT"),
 		BOOKSHELF (47, "Bookshelf"),
@@ -329,7 +328,7 @@ public class MineCraftConstants {
 		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
 		
 		// Half-height blocks
-		BLOCK_TYPE_MAP.put((byte)BLOCK.STEP.id, BLOCK_TYPE.HALFHEIGHT);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.SLAB.id, BLOCK_TYPE.HALFHEIGHT);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.CAKE.id, BLOCK_TYPE.HALFHEIGHT);
 		
 		// Doors
@@ -355,10 +354,6 @@ public class MineCraftConstants {
 		
 		// Portal
 		BLOCK_TYPE_MAP.put((byte)BLOCK.PORTAL.id, BLOCK_TYPE.PORTAL);
-		
-		// Blocks whose texture depends on their data value (in addition to block type)
-		BLOCK_TYPE_MAP.put((byte)BLOCK.WOOD.id, BLOCK_TYPE.DATAVAL);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.WOOL.id, BLOCK_TYPE.DATAVAL);
 		
 		// Water
 		BLOCK_TYPE_MAP.put((byte)BLOCK.WATER.id, BLOCK_TYPE.WATER);
@@ -417,8 +412,8 @@ public class MineCraftConstants {
 		blockColors[BLOCK.YELLOW_FLOWER.id] = new Color(255,255,0);
 		blockColors[BLOCK.GOLD_BLOCK.id] = new Color(231,165,45);
 		blockColors[BLOCK.IRON_BLOCK.id] = new Color(191,191,191);
-		blockColors[BLOCK.DOUBLE_STEP.id] = new Color(200,200,200);
-		blockColors[BLOCK.STEP.id] = new Color(200,200,200);
+		blockColors[BLOCK.DOUBLE_SLAB.id] = new Color(200,200,200);	// TODO: this should vary with the data value, technically
+		blockColors[BLOCK.SLAB.id] = new Color(200,200,200);	// TODO: this should vary with the data value, technically
 		blockColors[BLOCK.BRICK.id] = new Color(170,86,62);
 		blockColors[BLOCK.TNT.id] = new Color(160,83,65);
 		blockColors[BLOCK.OBSIDIAN.id] = new Color(26,11,43);
@@ -506,8 +501,8 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.RED_MUSHROOM.id] = (1*16) + 12;
 		blockDataToSpriteSheet[BLOCK.GOLD_BLOCK.id] = 23;
 		blockDataToSpriteSheet[BLOCK.IRON_BLOCK.id] = 22;
-		blockDataToSpriteSheet[BLOCK.DOUBLE_STEP.id] = 5; // previously 72, which was clay
-		blockDataToSpriteSheet[BLOCK.STEP.id] = 6; // previously 72, which was clay
+		blockDataToSpriteSheet[BLOCK.DOUBLE_SLAB.id] = 5;
+		blockDataToSpriteSheet[BLOCK.SLAB.id] = 6;
 		blockDataToSpriteSheet[BLOCK.BRICK.id] = 7;
 		blockDataToSpriteSheet[BLOCK.TNT.id] = 8;
 		blockDataToSpriteSheet[BLOCK.BOOKSHELF.id] = 35;
@@ -583,6 +578,24 @@ public class MineCraftConstants {
 		woolMap.put((byte)3, (11*16)+2); // Light Blue
 		woolMap.put((byte)2, (12*16)+2); // Magenta
 		woolMap.put((byte)1, (13*16)+2); // Orange	
+
+		// Textures used by slabs
+		HashMap<Byte, Integer> slabMap = new HashMap<Byte, Integer>();
+		blockDataSpriteSheetMap.put((byte)BLOCK.SLAB.id, slabMap);
+		slabMap.put((byte)0, 6); // Smooth stone
+		slabMap.put((byte)1, (12*16)); // Sandstone
+		slabMap.put((byte)2, 4); // Plank
+		slabMap.put((byte)3, (1*16)); // Cobblestone
+
+		// Textures used by double-slabs (we separate them because there's
+		// a separate texture for double-smoothstone which IMO is better
+		// to use, so this way it's separate between the two.
+		HashMap<Byte, Integer> dblSlabMap = new HashMap<Byte, Integer>();
+		blockDataSpriteSheetMap.put((byte)BLOCK.DOUBLE_SLAB.id, dblSlabMap);
+		dblSlabMap.put((byte)0, 5); // Smooth stone
+		dblSlabMap.put((byte)1, (12*16)); // Sandstone
+		dblSlabMap.put((byte)2, 4); // Plank
+		dblSlabMap.put((byte)3, (1*16)); // Cobblestone
 	}
 	
 	/***

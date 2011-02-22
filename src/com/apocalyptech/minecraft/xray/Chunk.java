@@ -771,7 +771,7 @@ public class Chunk {
 	
 	public boolean isSolid(byte i) {
 		BLOCK_TYPE block_type = BLOCK_TYPE_MAP.get(i);
-		if((i == 0) || (block_type != BLOCK_TYPE.NORMAL && block_type != BLOCK_TYPE.DATAVAL)) {
+		if((i == 0) || (block_type != BLOCK_TYPE.NORMAL)) {
 			return false;
 		}
 		
@@ -2111,6 +2111,25 @@ public class Chunk {
 					boolean adj_torch = false;
 					if (draw)
 					{
+						// Check to see if this block type has a texture ID which changes depending
+						// on the block's data value
+						if (blockDataSpriteSheetMap.containsKey(t))
+						{
+							byte data = getData(x, y, z);
+							data &= 0xF;
+							try
+							{
+								textureId = blockDataSpriteSheetMap.get(t).get(data);
+							}
+							catch (NullPointerException e)
+							{
+								// Just report and continue
+								System.out.println("Unknown data value for block type " + t + ": " + data);
+							}
+						}
+
+						// If we're highlighting explored regions and there's an adjacent
+						// torch, flip over to the "highlighted" textures
 						if (highlight_explored)
 						{
 							adj_torch = hasAdjacentTorch(x,y,z);
@@ -2119,6 +2138,8 @@ public class Chunk {
 								textureId += 256;
 							}
 						}
+
+						// Now process the actual drawing
 						switch(BLOCK_TYPE_MAP.get(t))
 						{
 							case TORCH:
@@ -2184,24 +2205,6 @@ public class Chunk {
 									if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z, 0f, .495f);
 								}
 								break;
-							case DATAVAL:
-								// Note that we don't break here; we DO want to pass through to the default case,
-								// because we're overriding textureId
-								byte data = getData(x, y, z);
-								data &= 0xF;
-								try
-								{
-									textureId = blockDataSpriteSheetMap.get(t).get(data);
-									if (highlight_explored && adj_torch)
-									{
-										textureId += 256;
-									}
-								}
-								catch (NullPointerException e)
-								{
-									// Just report and continue
-									System.out.println("Unknown data value for block type " + t + ": " + data);
-								}
 							default:
 								if(!near) this.renderWestEast(textureId, worldX+x, y, worldZ+z);
 								if(!far) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1);

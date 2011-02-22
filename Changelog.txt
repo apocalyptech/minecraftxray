@@ -11,6 +11,8 @@
     "saves" dir, instead of just those of the form WorldN
   * Updated redstone rendering for Minecraft Beta 1.3 (redstone still
     doesn't actually "link up" though)
+  * Support for the three new kinds of slab blocks (and relatedly an
+    internal change as to how we deal with variable-texture blocks)
 
 Minecraft X-Ray 2.7 Maintenance Branch 8 (2011.01.26)
 
