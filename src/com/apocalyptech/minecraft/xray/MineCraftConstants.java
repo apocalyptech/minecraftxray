@@ -645,6 +645,7 @@ public class MineCraftConstants {
 		paintings.put("donkeykong", new PaintingInfo(4, 3, 12, 7));
 		paintings.put("pointer", new PaintingInfo(4, 4, 0, 12));
 		paintings.put("pigscene", new PaintingInfo(4, 4, 4, 12));
+		paintings.put("burningskull", new PaintingInfo(4, 4, 8, 12));
 
 		paintingback = new PaintingInfo(4, 4, 12, 0);
 	}

@@ -13,6 +13,8 @@
     doesn't actually "link up" though)
   * Support for the three new kinds of slab blocks (and relatedly an
     internal change as to how we deal with variable-texture blocks)
+  * Support for the "BurningSkull" painting, new in 1.2 and actually-
+    supported in 1.3
 
 Minecraft X-Ray 2.7 Maintenance Branch 8 (2011.01.26)
 
