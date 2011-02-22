@@ -351,11 +351,11 @@ public class ResolutionDialog extends JFrame {
 			}
 			else if (world.isNether())
 			{
-				button = new JRadioButton("World " + world.getWorldnum() + " Nether");				
+				button = new JRadioButton(world.getDirName() + " Nether");				
 			}
 			else
 			{
-				button = new JRadioButton("World " + world.getWorldnum());
+				button = new JRadioButton(world.getDirName());
 			}
 			worldButtonGroup.add(button);
 			worldButtons[curidx] = button;

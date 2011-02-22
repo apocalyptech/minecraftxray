@@ -37,7 +37,7 @@ import java.util.TreeMap;
 public class WorldInfo
 {
 	private String basepath;
-	private int worldnum;
+	private String dirName;
 	private boolean nether;
 	private boolean custom;
 	public TreeMap<String, File> mp_players;
@@ -70,12 +70,12 @@ public class WorldInfo
 	 * @param isNether
 	 * @param custom
 	 */
-	public WorldInfo(String basepath, int worldnum, boolean isNether, boolean custom)
+	public WorldInfo(String basepath, String dirName, boolean isNether, boolean custom)
 	{
 		this.basepath = basepath;
 		this.nether = isNether;
 		this.custom = custom;
-		this.worldnum = worldnum;
+		this.dirName = dirName;
 		this.populateMPPlayerList();
 	}
 	
@@ -85,9 +85,9 @@ public class WorldInfo
 	 * @param basepath
 	 * @param isNether
 	 */
-	public WorldInfo(String basepath, int worldnum, boolean isNether)
+	public WorldInfo(String basepath, String dirName, boolean isNether)
 	{
-		this(basepath, worldnum, isNether, false);
+		this(basepath, dirName, isNether, false);
 	}
 	
 	/**
@@ -95,9 +95,9 @@ public class WorldInfo
 	 * 
 	 * @param basepath
 	 */
-	public WorldInfo(String basepath, int worldnum)
+	public WorldInfo(String basepath, String dirName)
 	{
-		this(basepath, worldnum, false, false);
+		this(basepath, dirName, false, false);
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class WorldInfo
 	 */
 	public WorldInfo(boolean custom)
 	{
-		this(null, -1, false, true);
+		this(null, null, false, true);
 	}
 	
 	public void populateMPPlayerList()
@@ -187,13 +187,13 @@ public class WorldInfo
 	}
 	
 	/**
-	 * Returns our world number (this value is meaningless for custom worlds)
+	 * Returns our directory name (this value is meaningless for custom worlds)
 	 * 
 	 * @return
 	 */
-	public int getWorldnum()
+	public String getDirName()
 	{
-		return this.worldnum;
+		return this.dirName;
 	}
 	
 	/**
@@ -267,7 +267,7 @@ public class WorldInfo
 			File info = new File(this.getBasePath(), "DIM-1");
 			try
 			{
-				return new WorldInfo(info.getCanonicalPath(), this.worldnum, true, this.custom);
+				return new WorldInfo(info.getCanonicalPath(), this.dirName, true, this.custom);
 			}
 			catch (IOException e)
 			{
@@ -293,7 +293,7 @@ public class WorldInfo
 			File info = new File(this.getBasePath(), "..");
 			try
 			{
-				return new WorldInfo(info.getCanonicalPath(), this.worldnum, false, this.custom);
+				return new WorldInfo(info.getCanonicalPath(), this.dirName, false, this.custom);
 			}
 			catch (IOException e)
 			{

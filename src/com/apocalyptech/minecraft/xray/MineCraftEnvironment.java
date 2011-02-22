@@ -42,8 +42,11 @@ import java.io.LineNumberReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileFilter;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Comparator;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipException;
@@ -62,6 +65,25 @@ public class MineCraftEnvironment {
 	public static OS os; 
 	public static File baseDir;
 	public static File xrayBaseDir;
+	
+    private static class DirectoryFilter implements FileFilter
+    {
+        public DirectoryFilter() {
+            // Nothing, really
+        }
+
+        public boolean accept(File pathname) {
+			return (pathname.exists() && pathname.isDirectory());
+        }
+    }
+
+	private static class CaseInsensitiveComparator implements Comparator<File>
+	{
+		public int compare(File filea, File fileb)
+		{
+			return filea.getName().compareToIgnoreCase(fileb.getName());
+		}
+	}
 	
 	static {
 		String os = System.getProperty( "os.name" );
@@ -144,25 +166,32 @@ public class MineCraftEnvironment {
 	 */
 	public static ArrayList<WorldInfo> getAvailableWorlds() {
 		ArrayList<WorldInfo> worlds = new ArrayList<WorldInfo>();
-		for(int i=0;i<10;i++) {
-			File worldDir = getWorldDirectory(i);
+		File saveDir = new File(baseDir, "saves");
+		File[] worldDirs = saveDir.listFiles(new DirectoryFilter());
+	    Arrays.sort(worldDirs, new CaseInsensitiveComparator());
+		for (File worldDir : worldDirs)
+		{
 			if(worldDir.exists() && worldDir.canRead()) {
-				try
+				File levelDat = new File(worldDir, "level.dat");
+				if (levelDat.exists() && levelDat.canRead())
 				{
-					// First snatch up the overworld
-					WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), i);
-					worlds.add(info);
-					
-					// Now see if there's an associated Nether world we can add.
-					WorldInfo netherinfo = info.getNetherInfo();
-					if (netherinfo != null)
+					try
 					{
-						worlds.add(netherinfo);
+						// First snatch up the overworld
+						WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), worldDir.getName());
+						worlds.add(info);
+						
+						// Now see if there's an associated Nether world we can add.
+						WorldInfo netherinfo = info.getNetherInfo();
+						if (netherinfo != null)
+						{
+							worlds.add(netherinfo);
+						}
 					}
-				}
-				catch (IOException e)
-				{
-					// Nothing; guess we'll ignore it.
+					catch (IOException e)
+					{
+						// Nothing; guess we'll ignore it.
+					}
 				}
 			}
 		}
@@ -214,16 +243,6 @@ public class MineCraftEnvironment {
 			}
 		}
 		return null;
-	}
-	
-
-	/***
-	 * Returns a file handle to a base world directory
-	 * @param world
-	 * @return
-	 */
-	public static File getWorldDirectory(int world) {
-		return new File(baseDir, "saves/World" + world);
 	}
 	
 	/***
