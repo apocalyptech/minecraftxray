@@ -107,16 +107,18 @@ public class MineCraftEnvironment {
 		
 		switch(MineCraftEnvironment.os) {
 			case Vista:
-				MineCraftEnvironment.baseDir = new File(System.getenv("APPDATA"), ".minecraft");
-				MineCraftEnvironment.xrayBaseDir = new File(System.getenv("APPDATA"), ".minecraft_xray");
+			case XP:
+				String basedir = System.getenv("APPDATA");
+				if (basedir == null)
+				{
+					basedir = System.getProperty("user.home");
+				}
+				MineCraftEnvironment.baseDir = new File(basedir, ".minecraft");
+				MineCraftEnvironment.xrayBaseDir = new File(basedir, ".minecraft_xray");
 				break;
 			case Linux:
 				MineCraftEnvironment.baseDir = new File(System.getProperty("user.home"), ".minecraft");
 				MineCraftEnvironment.xrayBaseDir = new File(System.getProperty("user.home"), ".minecraft_xray");
-				break;
-			case XP:
-				MineCraftEnvironment.baseDir = new File(System.getenv("APPDATA"), ".minecraft"); // untested
-				MineCraftEnvironment.xrayBaseDir = new File(System.getenv("APPDATA"), ".minecraft_xray");
 				break;
 			case MacOS:
 				// damn macs ;p
