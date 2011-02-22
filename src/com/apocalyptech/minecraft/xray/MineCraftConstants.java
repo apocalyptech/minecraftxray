@@ -188,7 +188,9 @@ public class MineCraftConstants {
 		GLOWSTONE (89, "Glowstone"),
 		PORTAL (90, "Portal"),
 		JACK_O_LANTERN (91, "Jack"),
-		CAKE (92, "Cake")
+		CAKE (92, "Cake"),
+		REDSTONE_REPEATER_OFF (93, "Redstone Repeater (off)"),
+		REDSTONE_REPEATER_ON (94, "Redstone Repeater (on)")
 		;
 		public final int id;
 		public final String name;
@@ -328,6 +330,8 @@ public class MineCraftConstants {
 		// Pressure plates
 		BLOCK_TYPE_MAP.put((byte)BLOCK.STONE_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_REPEATER_ON.id, BLOCK_TYPE.PRESSURE_PLATE);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_REPEATER_OFF.id, BLOCK_TYPE.PRESSURE_PLATE);
 		
 		// Half-height blocks
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SLAB.id, BLOCK_TYPE.HALFHEIGHT);
@@ -453,6 +457,8 @@ public class MineCraftConstants {
 		blockColors[BLOCK.CLAY.id] = new Color(151,157,169);
 		blockColors[BLOCK.SUGARCANE.id] = new Color(100,67,50);
 		blockColors[BLOCK.JUKEBOX.id] = blockColors[BLOCK.NOTE_BLOCK.id];
+		blockColors[BLOCK.REDSTONE_REPEATER_OFF.id] = new Color(245,50,50);
+		blockColors[BLOCK.REDSTONE_REPEATER_ON.id] = new Color(245,50,50);
 	}
 	public static final int TEXTURE_COAL = (2*16) + 2;
 	public static final int TEXTURE_IRON = (2*16) + 1;
@@ -558,6 +564,8 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.PORTAL.id] = 16+14;
 		blockDataToSpriteSheet[BLOCK.JACK_O_LANTERN.id] = (7*16)+8;
 		blockDataToSpriteSheet[BLOCK.CAKE.id] = (7*16) + 9;
+		blockDataToSpriteSheet[BLOCK.REDSTONE_REPEATER_OFF.id] = (8*16) + 3;
+		blockDataToSpriteSheet[BLOCK.REDSTONE_REPEATER_ON.id] = (9*16) + 3;
 		
 		// Textures used by logs
 		HashMap<Byte, Integer> logMap = new HashMap<Byte, Integer>();
