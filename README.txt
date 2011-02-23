@@ -70,34 +70,35 @@ But without the "KEY_" prefix.
 You can also set which resources you want to be highlightable in the app.
 For specifying resource highlights, you should use the following names:
 
-	BEDROCK                 GRAVEL                SAND
-	BOOKSHELF               ICE                   SANDSTONE
-	BRICK                   IRON_BLOCK            SAPLING
-	BROWN_MUSHROOM          IRON_DOOR             SIGNPOST
-	BURNING_FURNACE         IRON_ORE              SNOW
-	CACTUS                  JACK_O_LANTERN        SNOW_BLOCK
-	CAKE                    JUKEBOX               SOUL_SAND
-	CHEST                   LADDER                SPONGE
-	CLAY                    LAPIS_LAZULI_BLOCK    STATIONARY_LAVA
-	COAL_ORE                LAPIS_LAZULI_ORE      STATIONARY_WATER
-	COBBLESTONE             LAVA                  STEP
-	COBBLESTONE_STAIRS      LEAVES                STONE
-	CROPS                   LEVER                 STONE_BUTTON
-	DIAMOND_BLOCK           MINECART_TRACKS       STONE_PRESSURE_PLATE
-	DIAMOND_ORE             MOB_SPAWNER           SUGARCANE
-	DIRT                    MOSSY_COBBLESTONE     TNT
-	DISPENSER               NETHERRACK            TORCH
-	DOUBLE_STEP             NOTE_BLOCK            WALL_SIGN
-	FARMLAND                OBSIDIAN              WATER
-	FENCE                   PLANK                 WOOD
-	FIRE                    PORTAL                WOODEN_DOOR
-	FURNACE                 PUMPKIN               WOODEN_PRESSURE_PLATE
-	GLASS                   REDSTONE_ORE          WOODEN_STAIRS
-	GLOWING_REDSTONE_ORE    REDSTONE_TORCH_OFF    WOOL
-	GLOWSTONE               REDSTONE_TORCH_ON     WORKBENCH
-	GOLD_BLOCK              REDSTONE_WIRE         YELLOW_FLOWER
-	GOLD_ORE                RED_MUSHROOM
-	GRASS                   RED_ROSE
+    BED                     GRAVEL                   RED_ROSE
+    BEDROCK                 ICE                      SAND
+    BOOKSHELF               IRON_BLOCK               SANDSTONE
+    BRICK                   IRON_DOOR                SAPLING
+    BROWN_MUSHROOM          IRON_ORE                 SIGNPOST
+    BURNING_FURNACE         JACK_O_LANTERN           SLAB
+    CACTUS                  JUKEBOX                  SNOW
+    CAKE                    LADDER                   SNOW_BLOCK
+    CHEST                   LAPIS_LAZULI_BLOCK       SOUL_SAND
+    CLAY                    LAPIS_LAZULI_ORE         SPONGE
+    COAL_ORE                LAVA                     STATIONARY_LAVA
+    COBBLESTONE             LEAVES                   STATIONARY_WATER
+    COBBLESTONE_STAIRS      LEVER                    STONE
+    CROPS                   MINECART_TRACKS          STONE_BUTTON
+    DIAMOND_BLOCK           MOB_SPAWNER              STONE_PRESSURE_PLATE
+    DIAMOND_ORE             MOSSY_COBBLESTONE        SUGARCANE
+    DIRT                    NETHERRACK               TNT
+    DISPENSER               NOTE_BLOCK               TORCH
+    DOUBLE_SLAB             OBSIDIAN                 WALL_SIGN
+    FARMLAND                PLANK                    WATER
+    FENCE                   PORTAL                   WOOD
+    FIRE                    PUMPKIN                  WOODEN_DOOR
+    FURNACE                 REDSTONE_ORE             WOODEN_PRESSURE_PLATE
+    GLASS                   REDSTONE_REPEATER_OFF    WOODEN_STAIRS
+    GLOWING_REDSTONE_ORE    REDSTONE_REPEATER_ON     WOOL
+    GLOWSTONE               REDSTONE_TORCH_OFF       WORKBENCH
+    GOLD_BLOCK              REDSTONE_TORCH_ON        YELLOW_FLOWER
+    GOLD_ORE                REDSTONE_WIRE
+    GRASS                   RED_MUSHROOM
 	
 Perhaps someday there'll be an actual GUI for specifying all this.
 
