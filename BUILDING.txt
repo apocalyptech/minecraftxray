@@ -1,8 +1,12 @@
-The original author of X-Ray used Eclipse when building the project, so
-I've done so as well.  There are a couple of things to keep in mind
-to get this to run in Eclipse, which doesn't seem to be stored in the
-.project files which get saved in the actual source archive; sorry about
-that.
+You should be able to develop (or just use) the source either from
+the commandline or Eclipse.  The tool was originally developed in
+Eclipse, but EGit (Eclipse's Git interface) turned out to be kind of
+annoying, which was all the urging I needed to abandon the crutch of
+handy autocompletion for the warm comforts of my beloved vim (which,
+yes, I know, can do autocompletes if you coerce it into doing so).
+
+Anyway, either way you want to do it, there's a couple of path/file
+considerations first:
 
 1) The build expects the LWJGL libraries and a few other Jar files in
    the "lib" directory.  Specifically it's looking for:
@@ -25,8 +29,17 @@ that.
    jsmoothgen-ant.jar inside there, and the directory
    "jsmoothgen-skeletons/autodownload-wrapper" underneath that (with the
    three files from the JSmoothGen package inside there.
+
+At that point, if you're on the commandline, you can use Ant to build/run,
+etc.  "ant run" should be sufficient to run the app (it will compile up
+a debug version automatically).  "ant dist" will package it up as if you're
+doing a release.  See build.xml for other options.
+
+If you want to use Eclipse, there's a couple of extra steps.  I feel that
+both of them really *should* have workarounds which would prevent them from
+being needed, but I never did figure it out.  Anyway:
    
-3) In Eclipse, go to Window -> Preferences -> Java -> Build Path -> Classpath
+1) In Eclipse, go to Window -> Preferences -> Java -> Build Path -> Classpath
    Variables, then click the "New" button and create a variable called
    "XRAY_CLASSPATH".  Point that directory at the "lib" dir underneath the
    X-Ray project.  This should let you compile the app.
@@ -38,7 +51,7 @@ that.
    nice to know why, and equally nice to be able to get rid of having to
    set up that variable.)
    
-4) To actually RUN the app through Eclipse, right-click on the top project
+2) To actually RUN the app through Eclipse, right-click on the top project
    in Package Explorer, go to Properties -> Run/Debug Settings -> XRay, and
    click on "Edit".  In the Arguments tab, set the VM arguments to:
    
@@ -51,7 +64,5 @@ that.
    You MIGHT have to go into the Classpath tab there, as well, and add in
    the JARs under lib/ again (which would show up under that XRAY_CLASSPATH
    var), though I don't remember if that automatically happens or not.
-   
-Once you've gotten that, you should be good to go.  I've included a build.xml
-which you can use to build a distribution file, etc, which I'm assuming should
-work fine outside of Eclipse, too, though I've not tried it yet.
+
+The various build.xml targets will work fine inside Eclipse, too, of course.
