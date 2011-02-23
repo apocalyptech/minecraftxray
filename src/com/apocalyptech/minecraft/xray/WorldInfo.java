@@ -82,8 +82,7 @@ public class WorldInfo
 		// Load in the minecraft level, to read its name
 		if (basepath != null)
 		{
-			MinecraftLevel level = new MinecraftLevel(this);
-			this.levelName = level.levelName;
+			this.levelName = MinecraftLevel.getLevelName(this);
 		}
 		else
 		{
@@ -254,7 +253,7 @@ public class WorldInfo
 		else
 		{
 			File test = new File(this.getBasePath(), "DIM-1");
-			return (test.exists() && test.canRead());
+			return (test.exists() && test.canRead() && test.isDirectory());
 		}
 	}
 	

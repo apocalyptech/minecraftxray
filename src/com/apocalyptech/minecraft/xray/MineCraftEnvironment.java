@@ -66,14 +66,19 @@ public class MineCraftEnvironment {
 	public static File baseDir;
 	public static File xrayBaseDir;
 	
-    private static class DirectoryFilter implements FileFilter
+    private static class MCDirectoryFilter implements FileFilter
     {
-        public DirectoryFilter() {
+        public MCDirectoryFilter() {
             // Nothing, really
         }
 
         public boolean accept(File pathname) {
-			return (pathname.exists() && pathname.isDirectory());
+			if (pathname.exists() && pathname.canRead() && pathname.isDirectory())
+			{
+				File levelDat = new File(pathname, "level.dat");
+				return (levelDat.exists() && levelDat.canRead());
+			}
+			return false;
         }
     }
 
@@ -167,39 +172,38 @@ public class MineCraftEnvironment {
 	public static ArrayList<WorldInfo> getAvailableWorlds() {
 		ArrayList<WorldInfo> worlds = new ArrayList<WorldInfo>();
 		File saveDir = new File(baseDir, "saves");
-		File[] worldDirs = saveDir.listFiles(new DirectoryFilter());
+		File[] worldDirs = saveDir.listFiles(new MCDirectoryFilter());
 	    Arrays.sort(worldDirs, new CaseInsensitiveComparator());
 		for (File worldDir : worldDirs)
 		{
-			if(worldDir.exists() && worldDir.canRead()) {
-				File levelDat = new File(worldDir, "level.dat");
-				if (levelDat.exists() && levelDat.canRead())
+			try
+			{
+				// First snatch up the overworld
+				WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), worldDir.getName());
+				worlds.add(info);
+				
+				// Now see if there's an associated Nether world we can add.
+				WorldInfo netherinfo = info.getNetherInfo();
+				if (netherinfo != null)
 				{
-					try
-					{
-						// First snatch up the overworld
-						WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), worldDir.getName());
-						worlds.add(info);
-						
-						// Now see if there's an associated Nether world we can add.
-						WorldInfo netherinfo = info.getNetherInfo();
-						if (netherinfo != null)
-						{
-							worlds.add(netherinfo);
-						}
-					}
-					catch (IOException e)
-					{
-						// Nothing; guess we'll ignore it.
-					}
+					worlds.add(netherinfo);
 				}
+			}
+			catch (IOException e)
+			{
+				// Nothing; guess we'll ignore it.
 			}
 		}
 		return worlds;
 	}
 	
 	/***
-	 * Returns a file handle to a chunk file in a world
+	 * Returns a file handle to a chunk file in a world.  Will attempt to load
+	 * from region data first, if it's present, and then from the old-style
+	 * chunk-per-file format if the world's not from Beta 1.3 or later.  It
+	 * turns out that there isn't really any circumstance where there would be
+	 * a mix, so we could be more strict about it, but whatever.
+	 *
 	 * @param world
 	 * @param x
 	 * @param z

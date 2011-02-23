@@ -878,7 +878,8 @@ public class XRay
 			ResolutionDialog.iconImage = iconTexture128;
 		}
 
-		// We loop on this dialog "forever" because
+		// We loop on this dialog "forever" because we may have to re-draw it
+		// if the directory chosen by the "Other..." option isn't valid.
 		while (true)
 		{
 			if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, (Properties) xray_properties) == ResolutionDialog.DIALOG_BUTTON_EXIT)
@@ -976,13 +977,6 @@ public class XRay
 		// Add in a custom "Other..." world
 		availableWorlds.add(new WorldInfo(true));
 
-		// Since we're adding our custom world, this'll actually never get hit.
-		// Ah well.
-		if (availableWorlds.size() == 0)
-		{
-			JOptionPane.showMessageDialog(null, "Minecraft directory found, but no minecraft levels available.", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
-		}
 	}
 
 	private void setChunkRange(int n)

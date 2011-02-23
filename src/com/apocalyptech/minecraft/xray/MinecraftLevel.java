@@ -80,13 +80,24 @@ public class MinecraftLevel {
     }
 
 	/**
-	 * Instansiate a minecraftLevel without any of our usual data.  Only
-	 * used to read in the base data from level.dat, so that our loader
-	 * can get the user-defined name of the level.
+	 * Given a WorldInfo object, return its user-defined name.  There's
+	 * some duplication here from the constructor object, but I think that's
+	 * okay for this case.
 	 */
-	public MinecraftLevel(WorldInfo world)
+	public static String getLevelName(WorldInfo world)
 	{
-		this(world, null, null, null, null);
+		File levelFile = world.getLevelDatFile();
+		CompoundTag levelData = (CompoundTag) DTFReader.readDTFFile(levelFile);
+		CompoundTag levelDataData = (CompoundTag) levelData.getTagWithName("Data");
+		StringTag levelNameTag = (StringTag) levelDataData.getTagWithName("LevelName");
+		if (levelNameTag != null)
+		{
+			return levelNameTag.value;
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	/***
@@ -201,7 +212,11 @@ public class MinecraftLevel {
 			this.playerPos_idx = this.spawnPoint_idx;
 		}
 		
-		// Figure out what kind of data we'll be reading
+		// Figure out what kind of data we'll be reading.  It turns out that Minecraft
+		// will convert worlds all at once before loading, rather than doing it on-the-fly
+		// as was previously thought, so technically we can be a little more strict here
+		// if we want, but I'll support hybrids just for obscure corner cases where
+		// someone might have been playing around with conversions.
 		IntTag versionTag = (IntTag) levelDataData.getTagWithName("version");
 		StringTag levelNameTag = (StringTag) levelDataData.getTagWithName("LevelName");
 		if (versionTag != null && levelNameTag != null)
