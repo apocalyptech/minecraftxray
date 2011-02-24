@@ -120,8 +120,10 @@ public class XRay
 	private boolean done = false;
 	// are we full screen
 	private boolean fullscreen = false;
+	// are we inverting the mouse
+	private boolean invertMouse = false;
 	// window title
-	private final String app_version = "2.7 Maintenance Branch 9";
+	private final String app_version = "2.7 Maintenance Branch 10";
 	private final String app_name    = "Minecraft X-Ray";
 	private final String windowTitle = app_name + " " + app_version;
 
@@ -936,6 +938,9 @@ public class XRay
 		// set fullscreen from the dialog
 		fullscreen = ResolutionDialog.selectedFullScreenValue;
 
+		// set invertMouse from the dialog
+		invertMouse = ResolutionDialog.selectedInvertMouseValue;
+
 		if (icons != null)
 			Display.setIcon(icons);
 
@@ -1264,7 +1269,14 @@ public class XRay
 		if (Mouse.isGrabbed())
 		{
 			camera.incYaw(mouseX * MOUSE_SENSITIVITY);
-			camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
+			if (invertMouse)
+			{
+				camera.incPitch(mouseY * MOUSE_SENSITIVITY);
+			}
+			else
+			{
+				camera.incPitch(-mouseY * MOUSE_SENSITIVITY);
+			}
 		}
 
 		//

@@ -117,6 +117,7 @@ public class ResolutionDialog extends JFrame {
 	private static final int[] defaultPreferredRefreshRates =
 		new int[] {85, 80, 75, 70, 65, 60};
 	private static final boolean defaultPreferredFullScreenValue = false;
+	private static final boolean defaultPreferredInvertMouseValue = false;
 		
 	public static final int DIALOG_BUTTON_EXIT = 0;
 	public static final int DIALOG_BUTTON_GO = 1;
@@ -129,6 +130,7 @@ public class ResolutionDialog extends JFrame {
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
 	private JCheckBox fullScreenCheckBox;
+	private JCheckBox invertMouseCheckBox;
 	private ButtonGroup worldButtonGroup;
 	JRadioButton[] worldButtons;
 	
@@ -142,6 +144,7 @@ public class ResolutionDialog extends JFrame {
 	private int[] preferredRefreshRates;
 	private int[] preferredBitDepths;
 	private boolean preferredFullScreenValue;
+	private boolean preferredInvertMouseValue;
 	private String preferredWorld;
 	
 	private int exitCode = -1;
@@ -152,6 +155,7 @@ public class ResolutionDialog extends JFrame {
 	public static int selectedRefreshRate;
 	public static int selectedBitDepth;
 	public static boolean selectedFullScreenValue;
+	public static boolean selectedInvertMouseValue;
 	public static int selectedWorld;
 	
 	public static Image iconImage;
@@ -257,16 +261,19 @@ public class ResolutionDialog extends JFrame {
 		JLabel bitDepthLabel 	= new JLabel("Bit Depth: ");
 		JLabel refreshRateLabel = new JLabel("Refresh Rate: ");
 		JLabel fullScreenLabel  = new JLabel("Full Screen: ");
+		JLabel invertMouseLabel  = new JLabel("Invert Mouselook: ");
 		
 		float flabel = 0.1f;
 		float flist = 1.9f;
+
+		int current_grid_y = 0;
 		
 		c.insets = new Insets(5,5,5,5);
 		c.weighty = .1f;
 		
 		// Add the resolution label
 		c.weightx = flabel; 
-		c.gridx = 0; c.gridy = 0;
+		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.NONE;
 		addComponent(basicPanel, resolutionsLabel,c);
@@ -274,12 +281,13 @@ public class ResolutionDialog extends JFrame {
 		// Add the resolution list
 		c.weightx = flist; 
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1; c.gridy = 0;
+		c.gridx = 1; c.gridy = current_grid_y;
 		addComponent(basicPanel, resolutionsList,c);
 		
 		// Add the bit depth label
+		current_grid_y++;
 		c.weightx = flabel; 
-		c.gridx = 0; c.gridy = 1;
+		c.gridx = 0; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		addComponent(basicPanel, bitDepthLabel,c);
@@ -287,12 +295,13 @@ public class ResolutionDialog extends JFrame {
 		// Add the bit depth list
 		c.weightx = flist;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1; c.gridy = 1;
+		c.gridx = 1; c.gridy = current_grid_y;
 		addComponent(basicPanel, bitDepthList,c);
 		
 		// Add the refresh rate label
+		current_grid_y++;
 		c.weightx = flabel;
-		c.gridx = 0; c.gridy = 2;
+		c.gridx = 0; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		addComponent(basicPanel, refreshRateLabel,c);
@@ -300,12 +309,13 @@ public class ResolutionDialog extends JFrame {
 		// Add the refresh rate list
 		c.weightx = flist;  
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1; c.gridy = 2;
+		c.gridx = 1; c.gridy = current_grid_y;
 		addComponent(basicPanel, refreshRateList,c);
 		
 		// Add the fullscreen label
+		current_grid_y++;
 		c.weightx = flabel; 
-		c.gridx = 0; c.gridy = 3;
+		c.gridx = 0; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
 		addComponent(basicPanel, fullScreenLabel,c);
@@ -317,14 +327,34 @@ public class ResolutionDialog extends JFrame {
 		
 		// Add the fullscreen checkbox
 		c.weightx = flist;  
-		c.gridx = 1; c.gridy = 3;
+		c.gridx = 1; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(basicPanel, fullScreenCheckBox,c);
 		
+		// Add the invert mouse label
+		current_grid_y++;
+		c.weightx = flabel; 
+		c.gridx = 0; c.gridy = current_grid_y;
+		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.EAST;
+		addComponent(basicPanel, invertMouseLabel,c);
+
+		// Set up the invert mouse checkbox
+		invertMouseCheckBox = new JCheckBox();
+		c.insets = new Insets(5,0,5,0);
+		invertMouseCheckBox.setSelected(this.preferredInvertMouseValue);
+		
+		// Add the invert mouse checkbox
+		c.weightx = flist;  
+		c.gridx = 1; c.gridy = current_grid_y;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		addComponent(basicPanel, invertMouseCheckBox,c);
+		
 		// Separator
+		current_grid_y++;
 		c.insets = new Insets(5,5,5,5);
 		c.weightx = 1.0f;
-		c.gridx = 0; c.gridy = 4;
+		c.gridx = 0; c.gridy = current_grid_y;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(basicPanel, Box.createVerticalStrut(5), c);
@@ -332,7 +362,8 @@ public class ResolutionDialog extends JFrame {
 		addComponent(basicPanel, Box.createVerticalStrut(5), c);
 		
 		// World Label
-		c.gridx = 0; c.gridy = 6;
+		current_grid_y++;
+		c.gridx = 0; c.gridy = current_grid_y;
 		c.gridwidth = 2;
 		addComponent(basicPanel, new JLabel("Choose a World to Open:"), c);
 		
@@ -385,12 +416,13 @@ public class ResolutionDialog extends JFrame {
 		
 		// Now insert the world radio buttons
 		c.insets = new Insets(5, 15, 5, 5);
-		c.gridx = 0; c.gridy = 7;
+		c.gridx = 0;
 		c.gridwidth = 2;
 		for (JRadioButton button : worldButtons)
 		{
+			current_grid_y++;
+			c.gridy = current_grid_y;
 			addComponent(basicPanel, button, c);
-			c.gridy += 1;
 		}
 		
 		// Add our JPanel to the window
@@ -697,6 +729,7 @@ public class ResolutionDialog extends JFrame {
 		ResolutionDialog.selectedBitDepth = bitDepth;
 		
 		ResolutionDialog.selectedFullScreenValue = this.fullScreenCheckBox.isSelected();
+		ResolutionDialog.selectedInvertMouseValue = this.invertMouseCheckBox.isSelected();
 		
 		for (int i=0; i<worldButtons.length; i++)
 		{
@@ -719,6 +752,14 @@ public class ResolutionDialog extends JFrame {
 		else
 		{
 			this.xray_properties.setProperty("LAST_FULLSCREEN", "0");			
+		}
+		if (ResolutionDialog.selectedInvertMouseValue)
+		{
+			this.xray_properties.setProperty("LAST_INVERT_MOUSE", "1");
+		}
+		else
+		{
+			this.xray_properties.setProperty("LAST_INVERT_MOUSE", "0");			
 		}
 		// World directory preference is set out in XRay.java, because we might have loaded a world from an arbitrary dir
 	}
@@ -757,7 +798,7 @@ public class ResolutionDialog extends JFrame {
 	 */
 	protected ResolutionDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			boolean preferredFullScreenValue,
+			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
 			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		super(windowName);
 		
@@ -766,6 +807,7 @@ public class ResolutionDialog extends JFrame {
 		this.preferredBitDepths 	= preferredBitDepths;
 		this.preferredRefreshRates 	= preferredRefreshRates;
 		this.preferredFullScreenValue = preferredFullScreenValue;
+		this.preferredInvertMouseValue = preferredInvertMouseValue;
 		
 		// Load last-used resolution/display information from our properties file
 		String val_1 = this.xray_properties.getProperty("LAST_RESOLUTION_X");
@@ -799,6 +841,23 @@ public class ResolutionDialog extends JFrame {
 			else
 			{
 				this.preferredFullScreenValue = false;
+			}
+		}
+
+		// and our invert-mouse pref
+		val_1 = this.xray_properties.getProperty("LAST_INVERT_MOUSE");
+		if  (val_1 != null)
+		{
+			val_1 = val_1.substring(0, 1);
+			if (val_1.equalsIgnoreCase("y") ||
+					val_1.equalsIgnoreCase("t") ||
+					val_1.equalsIgnoreCase("1"))
+			{
+				this.preferredInvertMouseValue = true;
+			}
+			else
+			{
+				this.preferredInvertMouseValue = false;
 			}
 		}
 		
@@ -837,11 +896,12 @@ public class ResolutionDialog extends JFrame {
 	 * @param preferredBitDepths a list of color depths, in order of preference, which will be looked for
 	 * @param preferredRefreshRates a list of refresh rates, in order of preference, which will be looked for
 	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
+	 * @param preferredInvertMouseValue the initial value of the invert mouse checkbox
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
 	public static int presentDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			boolean preferredFullScreenValue,
+			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
 			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		ResolutionDialog dialog = new ResolutionDialog(
 				windowName,
@@ -850,6 +910,7 @@ public class ResolutionDialog extends JFrame {
 				preferredBitDepths,
 				preferredRefreshRates,
 				preferredFullScreenValue,
+				preferredInvertMouseValue,
 				availableWorlds,
 				xray_properties
 		);
@@ -885,6 +946,7 @@ public class ResolutionDialog extends JFrame {
 				defaultPreferredBitDepths,
 				defaultPreferredRefreshRates,
 				defaultPreferredFullScreenValue,
+				defaultPreferredInvertMouseValue,
 				availableWorlds,
 				xray_properties
 		);
@@ -901,11 +963,11 @@ public class ResolutionDialog extends JFrame {
 	 */
 	public static int presentDialog(String windowName,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			boolean preferredFullScreenValue,
+			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
 			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
 		return presentDialog(windowName, null,
 				preferredResolutions, preferredBitDepths, preferredRefreshRates,
-				preferredFullScreenValue,
+				preferredFullScreenValue, preferredInvertMouseValue,
 				availableWorlds, xray_properties);
 	}
 }

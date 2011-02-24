@@ -1,3 +1,5 @@
+  * Added Invert Mouse option to startup dialog
+
 Minecraft X-Ray 2.7 Maintenance Branch 9 (2011.02.22)
 
   * Snow will render more properly (as a thin slice) now
