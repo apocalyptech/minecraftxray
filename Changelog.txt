@@ -1,4 +1,5 @@
   * Added Invert Mouse option to startup dialog
+  * Changed default Up/Down keys to Q/Z
 
 Minecraft X-Ray 2.7 Maintenance Branch 9 (2011.02.22)
 
