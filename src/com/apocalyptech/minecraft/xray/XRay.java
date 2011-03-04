@@ -1417,13 +1417,6 @@ public class XRay
 					// Switch to the previous camera preset
 					moveCameraToPreviousPlayer();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.JUMP))
-				{
-					// Jump to a new coordinate
-					// TODO: buggy, LWJGL seems to think that the key is permanently
-					// down once it's been pressed once.
-					moveCameraToArbitraryPosition();
-				}
 				else if (key == key_mapping.get(KEY_ACTIONS.LIGHT_INCREASE))
 				{
 					// Increase light level
@@ -1542,6 +1535,25 @@ public class XRay
 							updateRenderDetails();
 						}
 					}
+				}
+			}
+			else
+			{
+				// Here are keys which we process once they're RELEASED.
+				// Currently that's just the Jump menu; if we launch other dialogs
+				// in the future they'll probably be here as well.  The reason for
+				// this is because if we handle it and launch the dialog on the key
+				// PRESS event, it's the new dialog which receives the key-release
+				// event, not the main window, so the LWJGL context doesn't know
+				// about the release and believes that the key is being perpetually
+				// pressed (at least, until the key is pressed again).
+
+				key = Keyboard.getEventKey();
+
+				if (key == key_mapping.get(KEY_ACTIONS.JUMP))
+				{
+					// Jump to a new coordinate
+					moveCameraToArbitraryPosition();
 				}
 			}
 		}
