@@ -545,7 +545,7 @@ public class XRay
 		while (!mapChunksToLoad.isEmpty())
 		{
 			// Load and draw the chunk
-			b = (Block) mapChunksToLoad.pop();
+			b = (Block) mapChunksToLoad.removeFirst();
 			// System.out.println("Loading chunk " + b.x + "," + b.z);
 
 			// There may be some circumstances where a chunk we're going to load is already loaded.

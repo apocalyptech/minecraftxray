@@ -1,5 +1,7 @@
   * Added Invert Mouse option to startup dialog
   * Changed default Up/Down keys to Q/Z
+  * Some changes to compile versus Java 1.5 instead of 1.6, for PPC OSX
+    users
 
 Minecraft X-Ray 2.7 Maintenance Branch 9 (2011.02.22)
 
