@@ -62,6 +62,7 @@ import org.lwjgl.util.glu.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.apocalyptech.minecraft.xray.Block;
 import com.apocalyptech.minecraft.xray.WorldInfo;
 import static com.apocalyptech.minecraft.xray.MineCraftConstants.*;
 
@@ -878,6 +879,7 @@ public class XRay
 			icons = new ByteBuffer[] { iconBuffer128, iconBuffer64, iconBuffer32, iconBuffer16 };
 
 			ResolutionDialog.iconImage = iconTexture128;
+			JumpDialog.iconImage = iconTexture128;
 		}
 
 		// We loop on this dialog "forever" because we may have to re-draw it
@@ -1062,6 +1064,30 @@ public class XRay
 		this.removeChunklistFromMap(level.removeAllChunksFromMinimap());
 		this.triggerChunkLoads();
 		this.currentPosition = playerPos;
+	}
+
+	private void moveCameraToArbitraryPosition()
+	{
+		Mouse.setGrabbed(false);
+		if (JumpDialog.presentDialog("Choose a New Position") == JumpDialog.DIALOG_BUTTON_JUMP)
+		{
+			int x = JumpDialog.selectedX;
+			int z = JumpDialog.selectedZ;
+			String name;
+			if (JumpDialog.selectedChunk)
+			{
+				name = "Chunk (" + x + ", " + z + ")";
+				x = x * 16;
+				z = z * 16;
+			}
+			else
+			{
+				name = "Position (" + x + ", " + z + ")";
+			}
+			Block block = new Block(-x, (int)-camera.getPosition().y, -z);
+			this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw(), camera.getPitch()));
+		}
+		Mouse.setGrabbed(true);
 	}
 
 	private void moveCameraToSpawnPoint()
@@ -1419,6 +1445,16 @@ public class XRay
 		{
 			keyPressed = key;
 			moveCameraToPreviousPlayer();
+		}
+
+		// Jump to a new coordinate
+		// TODO: buggy, LWJGL seems to think that the key is permanently
+		// down once it's been pressed once.
+		key = key_mapping.get(KEY_ACTIONS.JUMP);
+		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		{
+			keyPressed = key;
+			moveCameraToArbitraryPosition();
 		}
 
 		// Increase light level

@@ -257,6 +257,7 @@ public class MineCraftConstants {
 		HIGHLIGHT_RANGE_6 (Keyboard.KEY_6),
 		HIGHLIGHT_RANGE_7 (Keyboard.KEY_7),
 		RELEASE_MOUSE (Keyboard.KEY_ESCAPE),
+		JUMP (Keyboard.KEY_J),
 		QUIT (Keyboard.KEY_Q)
 		;
 		public final int def_key;
