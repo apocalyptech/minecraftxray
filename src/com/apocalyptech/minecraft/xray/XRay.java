@@ -207,9 +207,6 @@ public class XRay
 	// the current (selected) world number
 	private WorldInfo world = null;
 
-	// the currently pressed key
-	private int keyPressed = -1;
-
 	// the current fps we are 'doing'
 	private int fps;
 
@@ -811,6 +808,9 @@ public class XRay
 
 		// set mouse grabbed so we can get x/y coordinates
 		Mouse.setGrabbed(true);
+
+		// Disable repeat key events
+		Keyboard.enableRepeatEvents(false);
 	}
 
 	private BufferedImage resizeImage(Image baseImage, int newWidth, int newHeight)
@@ -1084,7 +1084,7 @@ public class XRay
 			{
 				name = "Position (" + x + ", " + z + ")";
 			}
-			Block block = new Block(-x, (int)-camera.getPosition().y, -z);
+			Block block = new Block(-x, (int)camera.getPosition().y, -z);
 			this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw(), camera.getPitch()));
 		}
 		Mouse.setGrabbed(true);
@@ -1307,6 +1307,7 @@ public class XRay
 
 		//
 		// Keyboard commands (well, and mouse presses)
+		// First up: "continual" commands which we're just using isKeyDown for
 		//
 
 		// Speed shifting
@@ -1365,222 +1366,184 @@ public class XRay
 			triggerChunkLoads();
 		}
 
-		// Toggle minimap/largemap
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_MINIMAP);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
+		//
+		// And now, keys that were meant to just be hit once and do their thing
+		// 
+		while (Keyboard.next())
 		{
-			mapBig = !mapBig;
-			keyPressed = key;
-		}
-
-		// Toggle highlightable ores
-		needToReloadWorld = false;
-		for (int i = 0; i < mineralToggle.length; i++)
-		{
-			if (Keyboard.isKeyDown(HIGHLIGHT_ORE_KEYS[i]) && keyPressed != HIGHLIGHT_ORE_KEYS[i])
+			if (Keyboard.getEventKeyState())
 			{
-				keyPressed = HIGHLIGHT_ORE_KEYS[i];
-				mineralToggle[i] = !mineralToggle[i];
-				needToReloadWorld = true;
+				key = Keyboard.getEventKey();
+
+				if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_MINIMAP))
+				{
+					// Toggle minimap/largemap
+					mapBig = !mapBig;
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_FULLSCREEN))
+				{
+					// Fullscreen
+					switchFullScreenMode();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT))
+				{
+					// Toggle fullbright
+					setLightMode(!lightMode);
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING))
+				{
+					// Toggle ore highlighting
+					highlightOres = !highlightOres;
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_TO_SPAWN))
+				{
+					// Move camera to spawn point
+					moveCameraToSpawnPoint();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_TO_PLAYER))
+				{
+					// Move camera to player position
+					moveCameraToPlayerPos();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS))
+				{
+					// Switch to the next available camera preset
+					moveCameraToNextPlayer();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS))
+				{
+					// Switch to the previous camera preset
+					moveCameraToPreviousPlayer();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.JUMP))
+				{
+					// Jump to a new coordinate
+					// TODO: buggy, LWJGL seems to think that the key is permanently
+					// down once it's been pressed once.
+					moveCameraToArbitraryPosition();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.LIGHT_INCREASE))
+				{
+					// Increase light level
+					incLightLevel();
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.LIGHT_DECREASE))
+				{
+					// Decrease light level
+					decLightLevel();
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_POSITION_INFO))
+				{
+					// Toggle position info popup
+					levelInfoToggle = !levelInfoToggle;
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_RENDER_DETAILS))
+				{
+					// Toggle rendering info popup
+					renderDetailsToggle = !renderDetailsToggle;
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_BEDROCK))
+				{
+					// Toggle bedrock rendering
+					render_bedrock = !render_bedrock;
+					invalidateSelectedChunks(true);
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_HIGHLIGHT_EXPLORED))
+				{
+					// Toggle explored-area highlighting
+					highlight_explored = !highlight_explored;
+					invalidateSelectedChunks(true);
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_WATER))
+				{
+					// Toggle water rendering
+					render_water = !render_water;
+					invalidateSelectedChunks(true);
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_CAMERA_LOCK))
+				{
+					// Toggle camera lock
+					camera_lock = !camera_lock;
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.SWITCH_NETHER))
+				{
+					// Toggle between Nether and Overworld
+					switchNether();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.RELEASE_MOUSE))
+				{
+					// Release the mouse
+					Mouse.setGrabbed(false);
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.QUIT))
+				{
+					// Quit
+					if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+					{
+						done = true;
+					}
+				}
+				/*
+				else if (key == Keyboard.KEY_P)
+				{
+					// Temp routine to write the minimap out to a PNG (for debugging purposes)
+					BufferedImage bi = minimapTexture.getImage();
+					try {
+						ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
+						System.out.println("Wrote minimap to disk.");
+					}
+					catch (Exception e)
+					{
+						// whatever
+					}
+				}
+				*/
+				else
+				{
+					// Toggle highlightable ores
+					needToReloadWorld = false;
+					for (int i = 0; i < mineralToggle.length; i++)
+					{
+						if (key == HIGHLIGHT_ORE_KEYS[i])
+						{
+							mineralToggle[i] = !mineralToggle[i];
+							needToReloadWorld = true;
+						}
+					}
+					if (needToReloadWorld)
+					{
+						invalidateSelectedChunks();
+					}
+
+					// Handle changing chunk ranges (how far out we draw from the camera
+					for (int i = 0; i < CHUNK_RANGES.length; i++)
+					{
+						if (key == CHUNK_RANGES_KEYS[i])
+						{
+							setChunkRange(i);
+							updateRenderDetails();
+						}
+					}
+
+					// Handle changing the ore highlight distances
+					for (int i = 0; i < HIGHLIGHT_RANGES.length; i++)
+					{
+						if (key == HIGHLIGHT_RANGES_KEYS[i])
+						{
+							setHighlightRange(i);
+							updateRenderDetails();
+						}
+					}
+				}
 			}
-		}
-		if (needToReloadWorld)
-		{
-			invalidateSelectedChunks();
-		}
-
-		// Fullscreen
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_FULLSCREEN);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			switchFullScreenMode();
-		}
-
-		// Toggle fullbright
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			setLightMode(!lightMode);
-			updateRenderDetails();
-		}
-
-		// Toggle ore highlighting
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			highlightOres = !highlightOres;
-			updateRenderDetails();
-		}
-
-		// Move camera to spawn point
-		key = key_mapping.get(KEY_ACTIONS.MOVE_TO_SPAWN);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			moveCameraToSpawnPoint();
-		}
-
-		// Move camera to player position
-		key = key_mapping.get(KEY_ACTIONS.MOVE_TO_PLAYER);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			moveCameraToPlayerPos();
-		}
-
-		// Switch to the next available camera preset
-		key = key_mapping.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			moveCameraToNextPlayer();
-		}
-
-		// Switch to the previous camera preset
-		key = key_mapping.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			moveCameraToPreviousPlayer();
-		}
-
-		// Jump to a new coordinate
-		// TODO: buggy, LWJGL seems to think that the key is permanently
-		// down once it's been pressed once.
-		key = key_mapping.get(KEY_ACTIONS.JUMP);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			moveCameraToArbitraryPosition();
-		}
-
-		// Increase light level
-		key = key_mapping.get(KEY_ACTIONS.LIGHT_INCREASE);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			incLightLevel();
-			updateRenderDetails();
-		}
-
-		// Decrease light level
-		key = key_mapping.get(KEY_ACTIONS.LIGHT_DECREASE);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			decLightLevel();
-			updateRenderDetails();
-		}
-
-		// Toggle position info popup
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_POSITION_INFO);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			levelInfoToggle = !levelInfoToggle;
-		}
-
-		// Toggle rendering info popup
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_RENDER_DETAILS);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			renderDetailsToggle = !renderDetailsToggle;
-		}
-
-		// Toggle bedrock rendering
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_BEDROCK);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			render_bedrock = !render_bedrock;
-			invalidateSelectedChunks(true);
-			updateRenderDetails();
-		}
-
-		// Toggle explored-area highlighting
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_HIGHLIGHT_EXPLORED);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			highlight_explored = !highlight_explored;
-			invalidateSelectedChunks(true);
-			updateRenderDetails();
-		}
-
-		// Toggle water rendering
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_WATER);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			render_water = !render_water;
-			invalidateSelectedChunks(true);
-			updateRenderDetails();
-		}
-
-		// Toggle camera lock
-		key = key_mapping.get(KEY_ACTIONS.TOGGLE_CAMERA_LOCK);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			camera_lock = !camera_lock;
-			updateRenderDetails();
-		}
-
-		// Toggle between Nether and Overworld
-		key = key_mapping.get(KEY_ACTIONS.SWITCH_NETHER);
-		if (Keyboard.isKeyDown(key) && keyPressed != key)
-		{
-			keyPressed = key;
-			switchNether();
-		}
-
-		// Temp routine to write the minimap out to a PNG (for debugging purposes)
-		/*
-		if (Keyboard.isKeyDown(Keyboard.KEY_P) && keyPressed != Keyboard.KEY_P)
-		{
-			keyPressed = Keyboard.KEY_P;
-			BufferedImage bi = minimapTexture.getImage();
-			try {
-				ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
-				System.out.println("Wrote minimap to disk.");
-			}
-			catch (Exception e)
-			{
-				// whatever
-			}
-		}
-		*/
-
-		// Handle changing chunk ranges (how far out we draw from the camera
-		for (int i = 0; i < CHUNK_RANGES.length; i++)
-		{
-			if (Keyboard.isKeyDown(CHUNK_RANGES_KEYS[i]) && keyPressed != CHUNK_RANGES_KEYS[i])
-			{
-				keyPressed = CHUNK_RANGES_KEYS[i];
-				setChunkRange(i);
-				updateRenderDetails();
-			}
-		}
-
-		// Handle changing the ore highlight distances
-		for (int i = 0; i < HIGHLIGHT_RANGES.length; i++)
-		{
-			if (Keyboard.isKeyDown(HIGHLIGHT_RANGES_KEYS[i]) && keyPressed != HIGHLIGHT_RANGES_KEYS[i])
-			{
-				keyPressed = HIGHLIGHT_RANGES_KEYS[i];
-				setHighlightRange(i);
-				updateRenderDetails();
-			}
-		}
-
-		// Release the mouse
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.RELEASE_MOUSE)))
-		{
-			Mouse.setGrabbed(false);
 		}
 
 		// Grab the mouse on a click
@@ -1589,25 +1552,10 @@ public class XRay
 			Mouse.setGrabbed(true);
 		}
 
-		// Quit
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.QUIT)) && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-		{
-			done = true;
-		}
-
 		// Handle a requested window close
 		if (Display.isCloseRequested())
 		{
 			done = true;
-		}
-
-		// Clear out our keyPressed var if it's improperly-set
-		if (keyPressed != -1)
-		{
-			if (!Keyboard.isKeyDown(keyPressed))
-			{
-				keyPressed = -1;
-			}
 		}
 	}
 
