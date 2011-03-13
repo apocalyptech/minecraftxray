@@ -58,7 +58,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.InputMap;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
@@ -66,7 +65,6 @@ import javax.swing.JComponent;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
-import javax.swing.Action;
 import javax.swing.AbstractAction;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
