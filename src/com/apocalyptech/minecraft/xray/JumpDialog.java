@@ -89,8 +89,9 @@ public class JumpDialog extends JFrame {
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
 
-    private static XRay xray_obj;
-    private static boolean dialog_showing = false;
+	private static XRay xray_obj;
+	private static boolean dialog_showing = false;
+	private static JumpDialog jump_dialog;
 
 	public static boolean selectedChunk;
 	public static int selectedX;
@@ -349,11 +350,19 @@ public class JumpDialog extends JFrame {
 	 */
 	public static void presentDialog(String windowName, XRay xray_obj)
 	{
-        if (!dialog_showing)
-        {
-            JumpDialog.xray_obj = xray_obj;
-            JumpDialog.dialog_showing = true;
-            JumpDialog dialog = new JumpDialog(windowName);
-        }
+		if (!dialog_showing)
+		{
+			JumpDialog.xray_obj = xray_obj;
+			JumpDialog.dialog_showing = true;
+			JumpDialog.jump_dialog = new JumpDialog(windowName);
+		}
+	}
+
+	public static void closeDialog()
+	{
+		if (JumpDialog.dialog_showing && JumpDialog.jump_dialog != null)
+		{
+			JumpDialog.jump_dialog.dialogCancel();
+		}
 	}
 }

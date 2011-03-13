@@ -2415,6 +2415,7 @@ public class XRay
 	 */
 	private void cleanup()
 	{
+		JumpDialog.closeDialog();
 		Display.destroy();
 	}
 
