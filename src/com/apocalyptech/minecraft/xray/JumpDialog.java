@@ -70,9 +70,6 @@ public class JumpDialog extends JFrame {
 	private static final int FRAMEWIDTH = 300;
 	private static final int FRAMEHEIGHT = 200;
 
-	public static final int DIALOG_BUTTON_CANCEL = 0;
-	public static final int DIALOG_BUTTON_JUMP = 1;
-
 	private JSpinner xSpinner;
 	private JSpinner zSpinner;
 	private SpinnerNumberModel xSpinnerModel;
@@ -87,10 +84,9 @@ public class JumpDialog extends JFrame {
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
 
-    private XRay xray_obj;
+    private static XRay xray_obj;
+    private static boolean dialog_showing = false;
 
-	private int exitCode = -1;
-	
 	public static boolean selectedChunk;
 	public static int selectedX;
 	public static int selectedZ;
@@ -245,11 +241,11 @@ public class JumpDialog extends JFrame {
 		
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				exitCode = JumpDialog.DIALOG_BUTTON_JUMP;
 				setSelectedValues();
 				setVisible(false);
 				dispose();
-                xray_obj.jump_dialog_trigger = true;
+                JumpDialog.xray_obj.jump_dialog_trigger = true;
+                JumpDialog.dialog_showing = false;
 				synchronized(JumpDialog.this) {
 					JumpDialog.this.notify();
 				}
@@ -259,9 +255,9 @@ public class JumpDialog extends JFrame {
 		exitButton 	= new JButton("Cancel");
 		exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				exitCode = JumpDialog.DIALOG_BUTTON_CANCEL;
 				setVisible(false);
 				dispose();
+                JumpDialog.dialog_showing = false;
 				synchronized(JumpDialog.this) {
 					JumpDialog.this.notify();
 				}
@@ -282,7 +278,7 @@ public class JumpDialog extends JFrame {
 	 * Creates a new JumpDialog
 	 * @param windowName the title of the dialog
 	 */
-	protected JumpDialog(String windowName, XRay xray_obj)
+	protected JumpDialog(String windowName)
 	{
 		super(windowName);
 		
@@ -292,7 +288,6 @@ public class JumpDialog extends JFrame {
 		this.setSize(FRAMEWIDTH,FRAMEHEIGHT);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setMinimumSize(new Dimension(FRAMEWIDTH, FRAMEHEIGHT));
-        this.xray_obj = xray_obj;
 
 		centerDialogOnScreen();
 	
@@ -307,23 +302,14 @@ public class JumpDialog extends JFrame {
 	/***
 	 * Pops up the dialog window
 	 * @param windowName the title of the dialog
-	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_CANCEL or DIALOG_BUTTON_JUMP)
 	 */
-	public static int presentDialog(String windowName, XRay xray_obj)
+	public static void presentDialog(String windowName, XRay xray_obj)
 	{
-		JumpDialog dialog = new JumpDialog(windowName, xray_obj);
-		/*
-		try {
-			synchronized(dialog) {
-				dialog.wait();
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return dialog.exitCode;
-		*/
-		return DIALOG_BUTTON_CANCEL;
+        if (!dialog_showing)
+        {
+            JumpDialog.xray_obj = xray_obj;
+            JumpDialog.dialog_showing = true;
+            JumpDialog dialog = new JumpDialog(windowName);
+        }
 	}
 }
