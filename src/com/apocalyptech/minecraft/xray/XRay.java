@@ -1092,6 +1092,7 @@ public class XRay
         Block block = new Block(-x, (int)camera.getPosition().y, -z);
         this.jump_dialog_trigger = false;
         this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw(), camera.getPitch()));
+		Mouse.setGrabbed(true);
 	}
 
 	private void moveCameraToSpawnPoint()
