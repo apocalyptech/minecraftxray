@@ -111,6 +111,7 @@ public class JumpDialog extends JFrame {
 		gridBagLayoutManager = new GridBagLayout();
 		
 		this.setLocation(x,y);
+		this.setAlwaysOnTop(true);
 	}
 	
 	/***
@@ -245,68 +246,68 @@ public class JumpDialog extends JFrame {
         JRootPane rootPane = this.getRootPane();
 		
         // The "Jump" button
-		runButton 	= new JButton("Jump");
+		runButton	= new JButton("Jump");
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                dialogOK();
+				dialogOK();
 			}
 		});
 
-        // Key mapping for the Jump button
-        KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
-        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enterStroke, "ENTER");
-        rootPane.getActionMap().put("ENTER", new AbstractAction() {
+		// Key mapping for the Jump button
+		KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enterStroke, "ENTER");
+		rootPane.getActionMap().put("ENTER", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-                dialogOK();
+				dialogOK();
 			}
-        });
+		});
 		
         // The Cancel button
-		exitButton 	= new JButton("Cancel");
+		exitButton	= new JButton("Cancel");
 		exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                dialogCancel();
+				dialogCancel();
 			}
 		});
 
-        // Key mapping for the Cancel button
-        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ESCAPE");
-        rootPane.getActionMap().put("ESCAPE", new AbstractAction() {
+		// Key mapping for the Cancel button
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ESCAPE");
+		rootPane.getActionMap().put("ESCAPE", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-                dialogCancel();
+				dialogCancel();
 			}
-        });
+		});
 	}
 
-    /**
-     * Actions to perform if the "Jump" button is hit, or otherwise triggered.
-     */
-    private void dialogOK()
-    {
-        setSelectedValues();
-        setVisible(false);
-        dispose();
-        JumpDialog.xray_obj.jump_dialog_trigger = true;
-        JumpDialog.dialog_showing = false;
-        synchronized(JumpDialog.this) {
-            JumpDialog.this.notify();
-        }
-    }
+	/**
+	 * Actions to perform if the "Jump" button is hit, or otherwise triggered.
+	 */
+	private void dialogOK()
+	{
+		setSelectedValues();
+		setVisible(false);
+		dispose();
+		JumpDialog.xray_obj.jump_dialog_trigger = true;
+		JumpDialog.dialog_showing = false;
+		synchronized(JumpDialog.this) {
+			JumpDialog.this.notify();
+		}
+	}
 
 
-    /**
-     * Actions to perform if the "Cancel" button is hit, or otherwise triggered.
-     */
-    private void dialogCancel()
-    {
-        setVisible(false);
-        dispose();
-        JumpDialog.dialog_showing = false;
-        synchronized(JumpDialog.this) {
-            JumpDialog.this.notify();
-        }
-    }
+	/**
+	 * Actions to perform if the "Cancel" button is hit, or otherwise triggered.
+	 */
+	private void dialogCancel()
+	{
+		setVisible(false);
+		dispose();
+		JumpDialog.dialog_showing = false;
+		synchronized(JumpDialog.this) {
+			JumpDialog.this.notify();
+		}
+	}
 	
 	/***
 	 * Sets the selected values to the static properties of this resolution dialog
