@@ -1068,30 +1068,30 @@ public class XRay
 		this.currentPosition = playerPos;
 	}
 
-    private void launchJumpDialog()
-    {
+	private void launchJumpDialog()
+	{
 		Mouse.setGrabbed(false);
-        JumpDialog.presentDialog("Choose a New Position", this);
-    }
+		JumpDialog.presentDialog("Choose a New Position", this);
+	}
 
 	private void moveCameraToArbitraryPosition()
 	{
-        int x = JumpDialog.selectedX;
-        int z = JumpDialog.selectedZ;
-        String name;
-        if (JumpDialog.selectedChunk)
-        {
-            name = "Chunk (" + x + ", " + z + ")";
-            x = x * 16;
-            z = z * 16;
-        }
-        else
-        {
-            name = "Position (" + x + ", " + z + ")";
-        }
-        Block block = new Block(-x, (int)camera.getPosition().y, -z);
-        this.jump_dialog_trigger = false;
-        this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw(), camera.getPitch()));
+		int x = JumpDialog.selectedX;
+		int z = JumpDialog.selectedZ;
+		String name;
+		if (JumpDialog.selectedChunk)
+		{
+			name = "Chunk (" + x + ", " + z + ")";
+			x = x * 16;
+			z = z * 16;
+		}
+		else
+		{
+			name = "Position (" + x + ", " + z + ")";
+		}
+		Block block = new Block(-x, (int)camera.getPosition().y, -z);
+		this.jump_dialog_trigger = false;
+		this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw(), camera.getPitch()));
 		Mouse.setGrabbed(true);
 	}
 
