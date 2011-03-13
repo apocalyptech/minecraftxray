@@ -39,6 +39,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Map;
@@ -332,6 +334,18 @@ public class JumpDialog extends JFrame {
 		
 		this.setSize(FRAMEWIDTH,FRAMEHEIGHT);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		this.addWindowListener(new WindowListener() {
+			public void windowActivated(WindowEvent e) {}
+			public void windowClosed(WindowEvent e) {}
+			public void windowClosing(WindowEvent e)
+			{
+				dialogCancel();
+			}
+			public void windowDeactivated(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowOpened(WindowEvent e) {}
+		});
 		this.setMinimumSize(new Dimension(FRAMEWIDTH, FRAMEHEIGHT));
 
 		centerDialogOnScreen();
