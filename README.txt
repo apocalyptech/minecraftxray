@@ -111,8 +111,8 @@ overridden, though.  The default keybindings are as follows:
 
 	Movement
 		Movement: 		WASD
-		Fly Upward: 	Q (previously SPACE)
-		Fly Downward: 	Z (previously LEFT CONTROL)
+		Fly Upward: 	SPACE
+		Fly Downward: 	LEFT CONTROL
 		Move Faster: 	Left Shift / Left Mouse Button (hold)
 		Move Slower: 	Right Shift / Right Mouse Button (hold)
 
