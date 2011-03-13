@@ -67,8 +67,8 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
  */
 public class JumpDialog extends JFrame {
 	private static final long serialVersionUID = -670931768263974900L;
-	private static final int FRAMEWIDTH = 400;
-	private static final int FRAMEHEIGHT = 400;
+	private static final int FRAMEWIDTH = 300;
+	private static final int FRAMEHEIGHT = 200;
 
 	public static final int DIALOG_BUTTON_CANCEL = 0;
 	public static final int DIALOG_BUTTON_JUMP = 1;
@@ -86,6 +86,8 @@ public class JumpDialog extends JFrame {
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
+
+    private XRay xray_obj;
 
 	private int exitCode = -1;
 	
@@ -163,6 +165,7 @@ public class JumpDialog extends JFrame {
 
 		// Add the X label
 		current_grid_y++;
+		c.gridwidth = 1;
 		c.weightx = flabel; 
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.EAST;
@@ -246,6 +249,7 @@ public class JumpDialog extends JFrame {
 				setSelectedValues();
 				setVisible(false);
 				dispose();
+                xray_obj.jump_dialog_trigger = true;
 				synchronized(JumpDialog.this) {
 					JumpDialog.this.notify();
 				}
@@ -278,7 +282,7 @@ public class JumpDialog extends JFrame {
 	 * Creates a new JumpDialog
 	 * @param windowName the title of the dialog
 	 */
-	protected JumpDialog(String windowName)
+	protected JumpDialog(String windowName, XRay xray_obj)
 	{
 		super(windowName);
 		
@@ -286,8 +290,9 @@ public class JumpDialog extends JFrame {
 			this.setIconImage(JumpDialog.iconImage);
 		
 		this.setSize(FRAMEWIDTH,FRAMEHEIGHT);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setMinimumSize(new Dimension(FRAMEWIDTH, FRAMEHEIGHT));
+        this.xray_obj = xray_obj;
 
 		centerDialogOnScreen();
 	
@@ -304,9 +309,10 @@ public class JumpDialog extends JFrame {
 	 * @param windowName the title of the dialog
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_CANCEL or DIALOG_BUTTON_JUMP)
 	 */
-	public static int presentDialog(String windowName)
+	public static int presentDialog(String windowName, XRay xray_obj)
 	{
-		JumpDialog dialog = new JumpDialog(windowName);
+		JumpDialog dialog = new JumpDialog(windowName, xray_obj);
+		/*
 		try {
 			synchronized(dialog) {
 				dialog.wait();
@@ -317,5 +323,7 @@ public class JumpDialog extends JFrame {
 		}
 		
 		return dialog.exitCode;
+		*/
+		return DIALOG_BUTTON_CANCEL;
 	}
 }

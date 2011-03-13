@@ -271,6 +271,8 @@ public class XRay
 	private HashMap<KEY_ACTIONS, Integer> key_mapping;
 	private SortedProperties xray_properties;
 
+    public boolean jump_dialog_trigger = false;
+
 	// lets start with the program
 	public static void main(String args[])
 	{
@@ -1066,28 +1068,30 @@ public class XRay
 		this.currentPosition = playerPos;
 	}
 
+    private void launchJumpDialog()
+    {
+		Mouse.setGrabbed(false);
+        JumpDialog.presentDialog("Choose a New Position", this);
+    }
+
 	private void moveCameraToArbitraryPosition()
 	{
-		Mouse.setGrabbed(false);
-		if (JumpDialog.presentDialog("Choose a New Position") == JumpDialog.DIALOG_BUTTON_JUMP)
-		{
-			int x = JumpDialog.selectedX;
-			int z = JumpDialog.selectedZ;
-			String name;
-			if (JumpDialog.selectedChunk)
-			{
-				name = "Chunk (" + x + ", " + z + ")";
-				x = x * 16;
-				z = z * 16;
-			}
-			else
-			{
-				name = "Position (" + x + ", " + z + ")";
-			}
-			Block block = new Block(-x, (int)camera.getPosition().y, -z);
-			this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw(), camera.getPitch()));
-		}
-		Mouse.setGrabbed(true);
+        int x = JumpDialog.selectedX;
+        int z = JumpDialog.selectedZ;
+        String name;
+        if (JumpDialog.selectedChunk)
+        {
+            name = "Chunk (" + x + ", " + z + ")";
+            x = x * 16;
+            z = z * 16;
+        }
+        else
+        {
+            name = "Position (" + x + ", " + z + ")";
+        }
+        Block block = new Block(-x, (int)camera.getPosition().y, -z);
+        this.jump_dialog_trigger = false;
+        this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw(), camera.getPitch()));
 	}
 
 	private void moveCameraToSpawnPoint()
@@ -1552,8 +1556,8 @@ public class XRay
 
 				if (key == key_mapping.get(KEY_ACTIONS.JUMP))
 				{
-					// Jump to a new coordinate
-					moveCameraToArbitraryPosition();
+					// Launch the Jump dialog
+					launchJumpDialog();
 				}
 			}
 		}
@@ -1569,6 +1573,12 @@ public class XRay
 		{
 			done = true;
 		}
+
+        // and finally, check to see if we should be jumping to a new position
+        if (this.jump_dialog_trigger)
+        {
+            moveCameraToArbitraryPosition();
+        }
 	}
 
 	/**
