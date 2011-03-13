@@ -39,6 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -57,10 +58,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.InputMap;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
+import javax.swing.JComponent;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
+import javax.swing.Action;
+import javax.swing.AbstractAction;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 /**
@@ -237,33 +244,64 @@ public class JumpDialog extends JFrame {
 	 * Builds the Go and Exit Buttons and attaches the actions to them
 	 */
 	private void buildButtons() {
-		runButton 	= new JButton("Jump");
+        JRootPane rootPane = this.getRootPane();
 		
+        // The "Jump" button
+		runButton 	= new JButton("Jump");
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setSelectedValues();
-				setVisible(false);
-				dispose();
-                JumpDialog.xray_obj.jump_dialog_trigger = true;
-                JumpDialog.dialog_showing = false;
-				synchronized(JumpDialog.this) {
-					JumpDialog.this.notify();
-				}
+                dialogOK();
 			}
 		});
+
+        // Key mapping for the Jump button
+        KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enterStroke, "ENTER");
+        rootPane.getActionMap().put("ENTER", new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+                dialogOK();
+			}
+        });
 		
+        // The Cancel button
 		exitButton 	= new JButton("Cancel");
 		exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				dispose();
-                JumpDialog.dialog_showing = false;
-				synchronized(JumpDialog.this) {
-					JumpDialog.this.notify();
-				}
+                dialogCancel();
 			}
 		});
+
+        // Key mapping for the Cancel button
+        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ESCAPE");
+        rootPane.getActionMap().put("ESCAPE", new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+                dialogCancel();
+			}
+        });
 	}
+
+    private void dialogOK()
+    {
+        setSelectedValues();
+        setVisible(false);
+        dispose();
+        JumpDialog.xray_obj.jump_dialog_trigger = true;
+        JumpDialog.dialog_showing = false;
+        synchronized(JumpDialog.this) {
+            JumpDialog.this.notify();
+        }
+    }
+
+    private void dialogCancel()
+    {
+        setVisible(false);
+        dispose();
+        JumpDialog.dialog_showing = false;
+        synchronized(JumpDialog.this) {
+            JumpDialog.this.notify();
+        }
+    }
 	
 	/***
 	 * Sets the selected values to the static properties of this resolution dialog
