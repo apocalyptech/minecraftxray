@@ -281,6 +281,9 @@ public class JumpDialog extends JFrame {
         });
 	}
 
+    /**
+     * Actions to perform if the "Jump" button is hit, or otherwise triggered.
+     */
     private void dialogOK()
     {
         setSelectedValues();
@@ -293,6 +296,10 @@ public class JumpDialog extends JFrame {
         }
     }
 
+
+    /**
+     * Actions to perform if the "Cancel" button is hit, or otherwise triggered.
+     */
     private void dialogCancel()
     {
         setVisible(false);
