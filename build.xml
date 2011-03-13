@@ -58,7 +58,7 @@
 			description="compile the source in debug mode" >
 		<!-- Compile the java code from ${src} into ${debugbuild} -->
 
-		<javac srcdir="${src}" destdir="${debugbuild}" debug="true">
+		<javac srcdir="${src}" destdir="${debugbuild}" debug="true" includeantruntime="false">
 			<compilerarg value="-Xlint:unchecked"/>
 			<classpath>
 				<fileset dir="lib">
