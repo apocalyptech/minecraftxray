@@ -61,6 +61,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
@@ -273,7 +274,7 @@ public class ResolutionDialog extends JFrame {
 		int current_grid_y = 0;
 		
 		c.insets = new Insets(5,5,5,5);
-		c.weighty = .1f;
+		c.weighty = 0f;
 		
 		// Add the resolution label
 		c.weightx = flabel; 
@@ -417,24 +418,54 @@ public class ResolutionDialog extends JFrame {
 			curidx += 1;
 		}
 		worldButtons[selectedWorld].setSelected(true);
-		
-		// Now insert the world radio buttons
+
+		// World scrollpane
+		JPanel worldPanel = new JPanel();
+		GridBagLayout worldLayout = new GridBagLayout();
+		worldPanel.setLayout(worldLayout);
+		GridBagConstraints wc = new GridBagConstraints();
+		JScrollPane worldPane = new JScrollPane(worldPanel);
+		worldPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		worldPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		worldPane.setPreferredSize(new Dimension(200, 300));
+		worldPane.setBorder(null);
+		current_grid_y++;
 		c.insets = new Insets(5, 15, 5, 5);
 		c.gridx = 0;
+		c.gridy = current_grid_y;
 		c.gridwidth = 2;
+		c.weightx = 1f;
+		c.weighty = 1f;
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		addComponent(basicPanel, worldPane, c);
+		
+		// Now insert the world radio buttons
+		int current_wc_grid_y = 0;
+		wc.insets = new Insets(0, 0, 0, 0);
+		wc.gridx = 0;
+		wc.gridwidth = 1;
+		wc.anchor = GridBagConstraints.NORTHWEST;
+		wc.weightx = 1f;
+		wc.weighty = 0f;
 		for (JRadioButton button : worldButtons)
 		{
-			current_grid_y++;
-			c.gridy = current_grid_y;
-			addComponent(basicPanel, button, c);
+			wc.gridy = current_wc_grid_y;
+			if (current_wc_grid_y == worldButtons.length-1)
+			{
+				wc.weighty = 1f;
+			}
+			addComponent(worldPanel, button, wc, worldLayout);
+			current_wc_grid_y++;
 		}
 		
 		// Add our JPanel to the window
 		c.weightx = 1.0f;  
-		c.weighty = .1f;
+		c.weighty = 1f;
 		c.gridwidth = 2;
 		c.gridx = 0; c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.NORTHWEST;
 		addComponent(this.getContentPane(), basicPanel,c);
 		
 		// Now add the buttons
@@ -442,14 +473,14 @@ public class ResolutionDialog extends JFrame {
 		c.gridwidth = 1;
 		
 		c.weightx = flabel; 
-		c.weighty = 1.0f; 
+		c.weighty = 0f; 
 		c.gridx = 0; c.gridy = 1;
 		c.anchor = GridBagConstraints.WEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(this.getContentPane(), exitButton,c);
 		
 		c.weightx = flist; 
-		c.weighty = 1.0f; 
+		c.weighty = 0f; 
 		c.gridx = 1; c.gridy = 1;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -463,7 +494,18 @@ public class ResolutionDialog extends JFrame {
 	 * @param constraints The constraints which affect the component
 	 */
 	private void addComponent(Container root, Component comp, GridBagConstraints constraints) {
-		gridBagLayoutManager.setConstraints(comp,constraints);
+		addComponent(root, comp, constraints, gridBagLayoutManager);
+	}
+
+	/***
+	 * Adds a component to the container and updates the constraints for that component
+	 * @param root The contiainer to add the component to
+	 * @param comp The component to add to the container
+	 * @param constraints The constraints which affect the component
+	 * @param manager The GridBagLayout to operate on
+	 */
+	private void addComponent(Container root, Component comp, GridBagConstraints constraints, GridBagLayout manager) {
+		manager.setConstraints(comp,constraints);
 		root.add(comp);
 	}
 

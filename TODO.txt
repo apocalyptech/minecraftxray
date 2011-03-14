@@ -33,3 +33,11 @@
    reformat everything to a single style (and retab the whole thing, and clean up
    formatting and style in general).  And really, I've been pretty lazy all around
    with doing things the "right way."  The code could use cleanup in general.
+
+blockers for MB10:
+
+* Warning about opening at the same time, on Windows
+* Remember selected options between runs
+* sync coordinates on Jump screen
+* refresh current position
+
