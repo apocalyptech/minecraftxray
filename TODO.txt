@@ -33,8 +33,3 @@
    reformat everything to a single style (and retab the whole thing, and clean up
    formatting and style in general).  And really, I've been pretty lazy all around
    with doing things the "right way."  The code could use cleanup in general.
-
-blockers for MB10:
-
-* sync coordinates on Jump screen
-

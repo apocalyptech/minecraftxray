@@ -277,7 +277,7 @@ public class MinecraftLevel {
 	 * @param x
 	 * @return
 	 */
-	public int getChunkX(int x) {
+	public static int getChunkX(int x) {
 		if(x<0) {
 			return  -(((-x)-1) / 16)-1; // otherwise -1 and +1 would return the same chunk
 		} else {
@@ -290,7 +290,7 @@ public class MinecraftLevel {
 	 * @param x
 	 * @return
 	 */
-	public int getBlockX(int x) {
+	public static int getBlockX(int x) {
 		if(x<0) {
 			return 15-(((-x)-1) % 16); // compensate for different chunk calculation
 		} else {
@@ -303,7 +303,7 @@ public class MinecraftLevel {
 	 * @param z
 	 * @return
 	 */
-	public int getChunkZ(int z) {
+	public static int getChunkZ(int z) {
 		if(z<0) {
 			return  -(((-z)-1) / 16)-1; // otherwise -1 and +1 would return the same chunk
 		} else {
@@ -316,7 +316,7 @@ public class MinecraftLevel {
 	 * @param z
 	 * @return
 	 */
-	public int getBlockZ(int z) {
+	public static int getBlockZ(int z) {
 		if(z<0) {
 			return 15-(((-z)-1) % 16); // compensate for different chunk calculation
 		} else {

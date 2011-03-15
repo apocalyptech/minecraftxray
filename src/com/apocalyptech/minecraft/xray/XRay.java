@@ -2422,6 +2422,14 @@ public class XRay
 	}
 
 	/**
+	 * Returns our camera object
+	 */
+	public FirstPersonCameraController getCamera()
+	{
+		return camera;
+	}
+
+	/**
 	 * Saves our current option states to our properties file.
 	 */
 	private void saveOptionStates()

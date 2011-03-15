@@ -74,8 +74,8 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
  */
 public class JumpDialog extends JFrame {
 	private static final long serialVersionUID = -670931768263974900L;
-	private static final int FRAMEWIDTH = 300;
-	private static final int FRAMEHEIGHT = 200;
+	private static final int FRAMEWIDTH = 420;
+	private static final int FRAMEHEIGHT = 220;
 
 	private JSpinner xSpinner;
 	private JSpinner zSpinner;
@@ -87,6 +87,7 @@ public class JumpDialog extends JFrame {
 
 	private JButton runButton;
 	private JButton exitButton;
+	private JButton syncButton;
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
@@ -149,7 +150,7 @@ public class JumpDialog extends JFrame {
 		// Now actually add the buttons
 		c.insets = new Insets(5, 15, 5, 5);
 		c.gridx = 0;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		current_grid_y++;
 		c.gridy = current_grid_y;
 		addComponent(basicPanel, positionButton, c);
@@ -162,14 +163,25 @@ public class JumpDialog extends JFrame {
 		c.insets = new Insets(5,5,5,5);
 		c.weightx = 1.0f;
 		c.gridx = 0; c.gridy = current_grid_y;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(basicPanel, Box.createVerticalStrut(5), c);
 		addComponent(basicPanel, new JSeparator(SwingConstants.HORIZONTAL), c);
 		addComponent(basicPanel, Box.createVerticalStrut(5), c);
 
-		// Add the X label
+		// Sync button
 		current_grid_y++;
+		c.gridx = 2;
+		c.gridy = current_grid_y;
+		c.gridheight = 2;
+		c.gridwidth = 1;
+		c.weightx = 0f;
+		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.CENTER;
+		addComponent(basicPanel, syncButton, c);
+		c.gridheight = 1;
+
+		// Add the X label
 		c.gridwidth = 1;
 		c.weightx = flabel; 
 		c.gridx = 0; c.gridy = current_grid_y;
@@ -207,7 +219,7 @@ public class JumpDialog extends JFrame {
 		// Add our JPanel to the window
 		c.weightx = 1.0f;  
 		c.weighty = .1f;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.gridx = 0; c.gridy = 0;
 		c.fill = GridBagConstraints.BOTH;
 		addComponent(this.getContentPane(), basicPanel,c);
@@ -281,6 +293,31 @@ public class JumpDialog extends JFrame {
 				dialogCancel();
 			}
 		});
+
+		// Sync Camera button
+		syncButton = new JButton("Sync to Camera");
+		syncButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				syncToCamera();
+			}
+		});
+	}
+
+	/**
+	 * Synchronizes our spinbuttons to the current camera position.
+	 */
+	private void syncToCamera()
+	{
+		FirstPersonCameraController camera = JumpDialog.xray_obj.getCamera();
+		int cam_x = -(int)camera.getPosition().x;
+		int cam_z = -(int)camera.getPosition().z;
+		if (chunkButton.isSelected())
+		{
+			cam_x = MinecraftLevel.getChunkX(cam_x);
+			cam_z = MinecraftLevel.getChunkZ(cam_z);
+		}
+		xSpinnerModel.setValue(cam_x);
+		zSpinnerModel.setValue(cam_z);
 	}
 
 	/**
