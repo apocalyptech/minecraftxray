@@ -835,9 +835,8 @@ public class Chunk {
 	
 	/**
 	 * Renders a "special" block; AKA something that's not just an ordinary cube.
-	 * Alters the geometry based on its input, which lets us do funky things to
-	 * torches and the like.  Basically it draws four "faces" of the object.
-	 * Note that the torch graphic also draws a little "cap" on the end.
+	 * Basically it draws four "faces" of the object, which creates a plus sign of
+	 * sorts.  This should probably be handled in some other way, actually.
 	 * 
 	 * @param bx Texture Beginning-X coordinate (inside the texture PNG)
 	 * @param by Texture Beginning-Y coordinate
@@ -846,52 +845,36 @@ public class Chunk {
 	 * @param x Absolute X position of block
 	 * @param y Absolute Y position of block
 	 * @param z Absolute Z position of block
-	 * @param yy Additional Y offset for rendering (this and the rest of the arguments are really
-	 *           only used for torches; pass in 0 for just about everything else)
-	 * @param x1 X offset for the top of the faces
-	 * @param x2 X offset for the bottom of the faces
-	 * @param z1 Z offset for the top of the faces
-	 * @param z2 Z offset for the bottom of the faces
-	 * @param torch Do we draw the "special" torch tips?
 	 */
-	public void renderSpecial(float bx, float by, float ex, float ey, float x, float y, float z, float yy, float x1, float x2, float z1, float z2, boolean torch) {
+	public void renderSpecial(float bx, float by, float ex, float ey, float x, float y, float z)
+	{
 		 
 		// GL11.glDisable(GL11.GL_CULL_FACE);
 		 //GL11.glDisable(GL11.GL_DEPTH_TEST);
 		 GL11.glBegin(GL11.GL_QUADS);
 		 GL11.glNormal3f(1.0f, 0.0f, 0.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+9/16.0f+TEX64, y+yy+1.0f, 	z+z1);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+9/16.0f+TEX64, y+yy+1.0f, 	z+z1+1.0f);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+9/16.0f-TEX64, y+yy, 		z+z2+1.0f);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2+9/16.0f-TEX64, y+yy,	 	z+z2);
+		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+9/16.0f+TEX64, y+1.0f, 	z);
+		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+9/16.0f+TEX64, y+1.0f, 	z+1.0f);
+		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+9/16.0f-TEX64, y, 		z+1.0f);
+		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+9/16.0f-TEX64, y,	 		z);
 		
 		 GL11.glNormal3f(-1.0f, 0.0f, 0.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+7/16.0f+TEX64, y+yy+1.0f, 	z+z1+1.0f);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+7/16.0f+TEX64, y+yy+1.0f, 	z+z1);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+7/16.0f-TEX64, y+yy, 		z+z2);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2+7/16.0f-TEX64, y+yy, 		z+z2+1.0f);
+		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+7/16.0f+TEX64, y+1.0f,	z+1.0f);
+		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+7/16.0f+TEX64, y+1.0f,	z);
+		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+7/16.0f-TEX64, y,			z);
+		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+7/16.0f-TEX64, y,			z+1.0f);
 		 
 		 GL11.glNormal3f(0.0f, 0.0f, 1.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+1.0f, 	y+yy+1.0f, 	z+z1+9/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1, 		y+yy+1.0f, 	z+z1+9/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2, 		y+yy, 		z+z2+9/16.0f-TEX64);
-		 GL11.glTexCoord2f(bx, ey);	 	GL11.glVertex3f(x+x2+1.0f, 	y+yy, 		z+z2+9/16.0f-TEX64);
+		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+1.0f,	y+1.0f,	z+9/16.0f+TEX64);
+		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x, 		y+1.0f,	z+9/16.0f+TEX64);
+		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x, 		y, 		z+9/16.0f-TEX64);
+		 GL11.glTexCoord2f(bx, ey);	 	GL11.glVertex3f(x+1.0f,	y, 		z+9/16.0f-TEX64);
 		 
 		 GL11.glNormal3f(0.0f, 0.0f, -1.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1, 		y+yy+1.0f, 	z+z1+7/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+1.0f, 	y+yy+1.0f, 	z+z1+7/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+1.0f, 	y+yy, 		z+z2+7/16.0f-TEX64);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2, 		y+yy, 		z+z2+7/16.0f-TEX64);
-		
-		 if (torch)
-		 {
-			 x1 *= 2.125f; z1 *= 2.125f;
-			 GL11.glNormal3f(0.0f, 1.0f, 0.0f);
-			 GL11.glTexCoord2f(bx+TEX128, by+TEX256); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
-			 GL11.glTexCoord2f(ex-TEX128, by+TEX256); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
-			 GL11.glTexCoord2f(ex-TEX128, ey-TEX64); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
-			 GL11.glTexCoord2f(bx+TEX128, ey-TEX64); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
-		 }
+		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x, 		y+1.0f,	z+7/16.0f+TEX64);
+		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+1.0f,	y+1.0f,	z+7/16.0f+TEX64);
+		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+1.0f,	y, 		z+7/16.0f-TEX64);
+		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x, 		y, 		z+7/16.0f-TEX64);
 		 
 		 GL11.glEnd();
 		 //GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -1178,7 +1161,7 @@ public class Chunk {
 		 ex = bx + TEX16;
 		 ey = by + TEX32;
 
-		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
+		 renderSpecial(bx, by, ex, ey, x, y, z);
 	}
 	
 	/**
@@ -1208,7 +1191,7 @@ public class Chunk {
 		 ex = bx + TEX16;
 		 ey = by + TEX32;
 		 
-		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
+		 renderSpecial(bx, by, ex, ey, x, y, z);
 	}
     
 	/**
