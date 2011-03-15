@@ -24,10 +24,10 @@ implement, and BUILDING.txt if you wanted some info on building the project
 yourself.
 
 The official website for Minecraft X-Ray is currently:
-	http://apocalyptech.com/minecraft/xray/
+    http://apocalyptech.com/minecraft/xray/
 	
 The official forum link is currently:
-	http://www.minecraftforum.net/viewtopic.php?f=1022&t=119356
+    http://www.minecraftforum.net/viewtopic.php?f=1022&t=119356
 	
 Once again, many thanks to plusminus for writing X-Ray in the first place,
 and providing the sourcecode so that it could be extended and maintained.
@@ -56,14 +56,14 @@ alongside the ".minecraft" directory that Minecraft itself uses.
 
 File locations:
 
-	Windows: %appdata%/.minecraft_xray/xray.properties
-	OSX: ~/Library/Application Support/.minecraft_xray/xray.properties
-	Linux: ~/.minecraft_xray/xray.properties 
+    Windows: %appdata%/.minecraft_xray/xray.properties
+    OSX: ~/Library/Application Support/.minecraft_xray/xray.properties
+    Linux: ~/.minecraft_xray/xray.properties 
 
 This is just a text file, and the format should be fairly obvious.  For the
 keyboard mappings, you should use the key names found at the LWJGL site:
 
-	http://www.lwjgl.org/javadoc/constant-values.html#org.lwjgl.input.Keyboard.KEY_1
+    http://www.lwjgl.org/javadoc/constant-values.html#org.lwjgl.input.Keyboard.KEY_1
 
 But without the "KEY_" prefix.
 
@@ -109,40 +109,42 @@ Note that currently the mouse buttons cannot be specified in the properties
 file, so those functions are hardcoded.  All keyboard commands can be
 overridden, though.  The default keybindings are as follows:
 
-	Movement
-		Movement: 		WASD
-		Fly Upward: 	SPACE
-		Fly Downward: 	LEFT CONTROL
-		Move Faster: 	Left Shift / Left Mouse Button (hold)
-		Move Slower: 	Right Shift / Right Mouse Button (hold)
+    Movement
+        Movement:       WASD
+        Fly Upward:     SPACE
+        Fly Downward:   LEFT CONTROL
+        Move Faster:    Left Shift / Left Mouse Button (hold)
+        Move Slower:    Right Shift / Right Mouse Button (hold)
 
-	Camera
-		Warp to Spawnpoint: 		HOME
-		Warp to Player Position: 	END
-		Cycle Up through Presets: 	INS
-		Cycle Down through Presets: DEL
-		Toggle Nether/Overworld: 	N
-		Lock to Vertical Axis:		L
+    Camera
+        Warp to Spawnpoint:         HOME
+        Warp to Player Position:    END
+        Cycle Up through Presets:   INS
+        Cycle Down through Presets: DEL
+        Jump to Arbitrary Position: J
+        Toggle Nether/Overworld:    N
+        Lock to Vertical Axis:      L
 
-	Rendering
-		Highlight Ores: 			F1 - F10
-		Toggle Highlight Glow: 		H
-		Set Highlight distance: 	1 - 7
-		Toggle Fullbright: 			F
-		Toggle Bedrock: 			B
-		Toggle Water:				T
-		Increase Lighting Range: 	+
-		Decrease Lighting Range: 	-
-		Set visibility range: 		NUMPAD1 - NUMPAD6 (remember numlock)
-		Toggle "explored" areas:    E
+    Rendering
+        Highlight Ores:             F1 - F10
+        Toggle Highlight Glow:      H
+        Set Highlight distance:     1 - 7
+        Toggle Fullbright:          F
+        Toggle Bedrock:             B
+        Toggle Water:               T
+        Increase Lighting Range:    +
+        Decrease Lighting Range:    -
+        Set visibility range:       NUMPAD1 - NUMPAD6 (remember numlock)
+        Toggle "explored" areas:    E
 
-	Other
-		Toggle Fullscreen: 		BACKSPACE
-		Toggle Level Info: 		` (grave accent)
-		Toggle Rendering Info:	R (on by default)
-		Show large map: 		TAB
-		Release Mouse: 			ESC
-		Quit: 					CTRL-Q
+    Other
+        Toggle Fullscreen:      BACKSPACE
+        Toggle Level Info:      ` (grave accent)
+        Toggle Rendering Info:  R (on by default)
+        Reload Map from Disk:   =
+        Show large map:         TAB
+        Release Mouse:          ESC
+        Quit:                   CTRL-Q
 		
 RENDERING DETAILS
 -----------------
