@@ -254,6 +254,10 @@ public class XRay
 	// go
 	public void run()
 	{
+		// This was moved from initialize() because we want to have this variable
+		// available for loadOptionStates(), which happens first.
+		mineralToggle = new boolean[HIGHLIGHT_ORES.length];
+
 		try
 		{
 			// check whether we can access minecraft
@@ -326,6 +330,7 @@ public class XRay
 
 			}
 			// cleanup
+			saveOptionStates();
 			cleanup();
 		}
 		catch (Exception e)
@@ -422,6 +427,9 @@ public class XRay
 			}
 			xray_properties.put(prefs_highlight_key, HIGHLIGHT_ORES[i].toString());
 		}
+
+		// Read in our saved option states, if we have 'em
+		this.loadOptionStates();
 
 		// Save the file immediately, in case we picked up new defaults which weren't present previously
 		this.savePreferences();
@@ -713,7 +721,6 @@ public class XRay
 	{
 		// init the precalc tables
 
-		mineralToggle = new boolean[HIGHLIGHT_ORES.length];
 		mineralToggleTextures = new Texture[HIGHLIGHT_ORES.length];
 
 		// world display list
@@ -1699,7 +1706,7 @@ public class XRay
 			map_load_started = true;
 			// drawMapMarkersToMinimap();
 			// minimapTexture.update();
-			setLightMode(true); // basically enable fog etc
+			setLightMode(lightMode); // basically enable fog etc
 		}
 
 		// we are viewing a world
@@ -2394,6 +2401,51 @@ public class XRay
 		g.drawLine(30, 24, 30, 8);
 		g.drawLine(30, 8, 3, 16);
 		minimapArrowTexture.update();
+	}
+
+	/**
+	 * Saves our current option states to our properties file.
+	 */
+	private void saveOptionStates()
+	{
+		xray_properties.setBooleanProperty("STATE_BEDROCK", render_bedrock);
+		xray_properties.setBooleanProperty("STATE_WATER", render_water);
+		xray_properties.setBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
+		xray_properties.setBooleanProperty("STATE_EXPLORED", highlight_explored);
+		xray_properties.setBooleanProperty("STATE_LIGHTING", lightMode);
+		xray_properties.setBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
+		xray_properties.setBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
+		xray_properties.setBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
+		xray_properties.setIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
+		xray_properties.setIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
+		xray_properties.setIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);
+		for (int i=0; i<mineralToggle.length; i++)
+		{
+			xray_properties.setBooleanProperty("STATE_HIGHLIGHT_" + i, mineralToggle[i]);
+		}
+		savePreferences();
+	}
+
+	/**
+	 * Loads our option states from the properties object.
+	 */
+	private void loadOptionStates()
+	{
+		render_bedrock = xray_properties.getBooleanProperty("STATE_BEDROCK", render_bedrock);
+		render_water = xray_properties.getBooleanProperty("STATE_WATER", render_water);
+		camera_lock = xray_properties.getBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
+		highlight_explored = xray_properties.getBooleanProperty("STATE_EXPLORED", highlight_explored);
+		lightMode = xray_properties.getBooleanProperty("STATE_LIGHTING", lightMode);
+		highlightOres = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
+		levelInfoToggle = xray_properties.getBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
+		renderDetailsToggle = xray_properties.getBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
+		currentChunkRange = xray_properties.getIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
+		currentHighlightDistance = xray_properties.getIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
+		currentLightLevel = xray_properties.getIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);
+		for (int i=0; i<mineralToggle.length; i++)
+		{
+			mineralToggle[i] = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_" + i, mineralToggle[i]);
+		}
 	}
 
 	/***

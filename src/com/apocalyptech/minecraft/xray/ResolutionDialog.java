@@ -822,10 +822,10 @@ public class ResolutionDialog extends JFrame {
 		}
 		
 		// Also set the info in our properties object
-		this.xray_properties.setProperty("LAST_RESOLUTION_X", Integer.toString(ResolutionDialog.selectedDisplayMode.getWidth()));
-		this.xray_properties.setProperty("LAST_RESOLUTION_Y", Integer.toString(ResolutionDialog.selectedDisplayMode.getHeight()));
-		this.xray_properties.setProperty("LAST_BPP", Integer.toString(ResolutionDialog.selectedBitDepth));
-		this.xray_properties.setProperty("LAST_REFRESH_RATE", Integer.toString(ResolutionDialog.selectedRefreshRate));
+		this.xray_properties.setIntProperty("LAST_RESOLUTION_X", ResolutionDialog.selectedDisplayMode.getWidth());
+		this.xray_properties.setIntProperty("LAST_RESOLUTION_Y", ResolutionDialog.selectedDisplayMode.getHeight());
+		this.xray_properties.setIntProperty("LAST_BPP", ResolutionDialog.selectedBitDepth);
+		this.xray_properties.setIntProperty("LAST_REFRESH_RATE", ResolutionDialog.selectedRefreshRate);
 		this.xray_properties.setBooleanProperty("LAST_FULLSCREEN", ResolutionDialog.selectedFullScreenValue);
 		this.xray_properties.setBooleanProperty("LAST_INVERT_MOUSE", ResolutionDialog.selectedInvertMouseValue);
 		// World directory preference is set out in XRay.java, because we might have loaded a world from an arbitrary dir

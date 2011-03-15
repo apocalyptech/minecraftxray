@@ -36,7 +36,6 @@
 
 blockers for MB10:
 
-* Remember selected options between runs
 * sync coordinates on Jump screen
 * refresh current position
 

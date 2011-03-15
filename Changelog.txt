@@ -8,6 +8,7 @@
     corruption if X-Ray is run at the same time as Minecraft.  (I haven't
     heard reports of this yet, but given the way Windows locks files, it
     could potentially be an issue.)
+  * Will now remember selected options inbetween runs
 
 Minecraft X-Ray 2.7 Maintenance Branch 9 (2011.02.22)
 

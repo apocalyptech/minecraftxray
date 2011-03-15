@@ -95,4 +95,28 @@ public class XRayProperties extends Properties
 			this.setProperty(keyName, "0");
 		}
 	}
+
+	/**
+	 * Gets an integer property, with a default vaule if it's not found.
+	 */
+	public int getIntProperty(String propName, int defaultValue)
+	{
+		String val = this.getProperty(propName);
+		if (val == null)
+		{
+			return defaultValue;
+		}
+		else
+		{
+			return Integer.valueOf(val);
+		}
+	}
+
+	/**
+	 * Sets an integer property (basically just wraps Integer.toString()
+	 */
+	public void setIntProperty(String propName, int propVal)
+	{
+		this.setProperty(propName, Integer.toString(propVal));
+	}
 }
