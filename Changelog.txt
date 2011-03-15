@@ -10,7 +10,7 @@ Minecraft X-Ray 2.7 Maintenance Branch 10 (2011.03.15)
     corruption if X-Ray is run at the same time as Minecraft.  (I haven't
     heard reports of this yet, but given the way Windows locks files, it
     could potentially be an issue.)
-  * Application settings state is remembered inbetwen runs
+  * Application settings state is remembered inbetween runs
   * A new Reload action will re-read the map from disk, with a default
     key of "="
   * Greatly improved torch and lever rendering

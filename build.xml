@@ -5,7 +5,7 @@
 	</description>
 
 	<!-- Project attributes -->
-	<property name="maint_branch" value="10"/>
+	<property name="maint_branch" value="11"/>
 	<property name="export_base" value="minecraft_xray_2.7_mb_${maint_branch}"/>
 	
 	<!-- set global properties for this build -->
