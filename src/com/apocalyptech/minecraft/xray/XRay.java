@@ -882,6 +882,43 @@ public class XRay
 
 			ResolutionDialog.iconImage = iconTexture128;
 			JumpDialog.iconImage = iconTexture128;
+			WarningDialog.iconImage = iconTexture128;
+		}
+
+		// If we're on Windows, show a warning about running at the same time as Minecraft
+		//if (MineCraftEnvironment.os == MineCraftEnvironment.OS.Linux)
+		if (MineCraftEnvironment.os == MineCraftEnvironment.OS.XP ||
+				MineCraftEnvironment.os == MineCraftEnvironment.OS.Vista)
+		{
+			String showValue = xray_properties.getProperty("SHOW_WINDOWS_WARNING");
+			String showLetter;
+			if (showValue != null)
+			{
+				showLetter = showValue.substring(0, 1);
+				if (showLetter == null || showLetter.length() == 0)
+				{
+					showLetter = "y";
+				}
+			}
+			else
+			{
+				showLetter = "y";
+			}
+			if (showLetter.equalsIgnoreCase("y") ||
+					showLetter.equalsIgnoreCase("t") ||
+					showLetter.equalsIgnoreCase("1"))
+			{
+				WarningDialog.presentDialog("Warning", "Because of the way Windows locks files, it's possible that your Minecraft data files could get corrupted if you use X-Ray on a world which Minecraft currently has open.  If you're running Minecraft at the same time as X-Ray, be extra careful and make sure you have backups.");
+				if (WarningDialog.selectedShow)
+				{
+					xray_properties.setProperty("SHOW_WINDOWS_WARNING", "1");
+				}
+				else
+				{
+					xray_properties.setProperty("SHOW_WINDOWS_WARNING", "0");
+				}
+				savePreferences();
+			}
 		}
 
 		// We loop on this dialog "forever" because we may have to re-draw it

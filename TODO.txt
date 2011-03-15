@@ -36,7 +36,6 @@
 
 blockers for MB10:
 
-* Warning about opening at the same time, on Windows
 * Remember selected options between runs
 * sync coordinates on Jump screen
 * refresh current position
