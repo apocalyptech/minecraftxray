@@ -46,7 +46,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.swing.Box;
 import javax.swing.ComboBoxModel;
@@ -154,7 +153,7 @@ public class ResolutionDialog extends JFrame {
 	
 	private int exitCode = -1;
 	
-	private Properties xray_properties;
+	private XRayProperties xray_properties;
 	
 	public static DisplayMode selectedDisplayMode;
 	public static int selectedRefreshRate;
@@ -827,22 +826,8 @@ public class ResolutionDialog extends JFrame {
 		this.xray_properties.setProperty("LAST_RESOLUTION_Y", Integer.toString(ResolutionDialog.selectedDisplayMode.getHeight()));
 		this.xray_properties.setProperty("LAST_BPP", Integer.toString(ResolutionDialog.selectedBitDepth));
 		this.xray_properties.setProperty("LAST_REFRESH_RATE", Integer.toString(ResolutionDialog.selectedRefreshRate));
-		if (ResolutionDialog.selectedFullScreenValue)
-		{
-			this.xray_properties.setProperty("LAST_FULLSCREEN", "1");
-		}
-		else
-		{
-			this.xray_properties.setProperty("LAST_FULLSCREEN", "0");			
-		}
-		if (ResolutionDialog.selectedInvertMouseValue)
-		{
-			this.xray_properties.setProperty("LAST_INVERT_MOUSE", "1");
-		}
-		else
-		{
-			this.xray_properties.setProperty("LAST_INVERT_MOUSE", "0");			
-		}
+		this.xray_properties.setBooleanProperty("LAST_FULLSCREEN", ResolutionDialog.selectedFullScreenValue);
+		this.xray_properties.setBooleanProperty("LAST_INVERT_MOUSE", ResolutionDialog.selectedInvertMouseValue);
 		// World directory preference is set out in XRay.java, because we might have loaded a world from an arbitrary dir
 	}
 	
@@ -881,7 +866,7 @@ public class ResolutionDialog extends JFrame {
 	protected ResolutionDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
-			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
+			ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
 		super(windowName);
 		
 		this.xray_properties		= xray_properties;
@@ -909,39 +894,8 @@ public class ResolutionDialog extends JFrame {
 		this.preferredRefreshRates = this.prepend_int_array("LAST_REFRESH_RATE", this.preferredRefreshRates, preferredRefreshRates);
 		this.preferredWorld = this.xray_properties.getProperty("LAST_WORLD");
 		
-		// ... aaand fullscreen, too
-		val_1 = this.xray_properties.getProperty("LAST_FULLSCREEN");
-		if (val_1 != null)
-		{
-			val_1 = val_1.substring(0, 1);
-			if (val_1.equalsIgnoreCase("y") ||
-					val_1.equalsIgnoreCase("t") ||
-					val_1.equalsIgnoreCase("1"))
-			{
-				this.preferredFullScreenValue = true;
-			}
-			else
-			{
-				this.preferredFullScreenValue = false;
-			}
-		}
-
-		// and our invert-mouse pref
-		val_1 = this.xray_properties.getProperty("LAST_INVERT_MOUSE");
-		if  (val_1 != null)
-		{
-			val_1 = val_1.substring(0, 1);
-			if (val_1.equalsIgnoreCase("y") ||
-					val_1.equalsIgnoreCase("t") ||
-					val_1.equalsIgnoreCase("1"))
-			{
-				this.preferredInvertMouseValue = true;
-			}
-			else
-			{
-				this.preferredInvertMouseValue = false;
-			}
-		}
+		this.preferredFullScreenValue = this.xray_properties.getBooleanProperty("LAST_FULLSCREEN", preferredFullScreenValue);
+		this.preferredInvertMouseValue = this.xray_properties.getBooleanProperty("LAST_INVERT_MOUSE", preferredInvertMouseValue);
 		
 		if(ResolutionDialog.iconImage != null)
 			this.setIconImage(ResolutionDialog.iconImage);
@@ -984,7 +938,7 @@ public class ResolutionDialog extends JFrame {
 	public static int presentDialog(String windowName, Container advancedPanel,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
-			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
+			ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
 		ResolutionDialog dialog = new ResolutionDialog(
 				windowName,
 				advancedPanel,
@@ -1012,7 +966,7 @@ public class ResolutionDialog extends JFrame {
 	 * Pops up the dialog window using the default preffered values
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
-	public static int presentDialog(String windowName, ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
+	public static int presentDialog(String windowName, ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
 		return presentDialog(windowName, null, availableWorlds, xray_properties);
 	}
 	
@@ -1022,7 +976,7 @@ public class ResolutionDialog extends JFrame {
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
 	public static int presentDialog(String windowName, Container advancedPanel,
-			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
+			ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
 		return presentDialog(windowName,advancedPanel,
 				defaultPreferredResolutions,
 				defaultPreferredBitDepths,
@@ -1046,7 +1000,7 @@ public class ResolutionDialog extends JFrame {
 	public static int presentDialog(String windowName,
 			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
 			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
-			ArrayList<WorldInfo> availableWorlds, Properties xray_properties) {
+			ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
 		return presentDialog(windowName, null,
 				preferredResolutions, preferredBitDepths, preferredRefreshRates,
 				preferredFullScreenValue, preferredInvertMouseValue,

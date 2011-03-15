@@ -45,7 +45,6 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Properties;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collections;
@@ -68,33 +67,6 @@ import static com.apocalyptech.minecraft.xray.MineCraftConstants.*;
 
 public class XRay
 {
-
-	/**
-	 * Private class to provide a sorted properties list in our config file.
-	 * Taken from http://www.rgagnon.com/javadetails/java-0614.html
-	 */
-	private class SortedProperties extends Properties
-	{
-
-		// Added at the behest of Eclipse (or, well, presumably Java itself)
-		private static final long serialVersionUID = 2578311914423692774L;
-
-		/**
-		 * Overrides, called by the store method.
-		 */
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		public synchronized Enumeration<Object> keys()
-		{
-			Enumeration keysEnum = super.keys();
-			Vector keyList = new Vector();
-			while (keysEnum.hasMoreElements())
-			{
-				keyList.add(keysEnum.nextElement());
-			}
-			Collections.sort(keyList);
-			return keyList.elements();
-		}
-	}
 
 	// number of chunks around the camera which are visible (Square)
 	private int visible_chunk_range = 5;
@@ -269,7 +241,7 @@ public class XRay
 	private String cameraTextOverride = null;
 
 	private HashMap<KEY_ACTIONS, Integer> key_mapping;
-	private SortedProperties xray_properties;
+	private XRayProperties xray_properties;
 
     public boolean jump_dialog_trigger = false;
 
@@ -370,7 +342,7 @@ public class XRay
 	 */
 	public void loadPreferences()
 	{
-		xray_properties = new SortedProperties();
+		xray_properties = new XRayProperties();
 
 		// First load our defaults into the prefs object
 		for (KEY_ACTIONS action : KEY_ACTIONS.values())
@@ -890,33 +862,10 @@ public class XRay
 		if (MineCraftEnvironment.os == MineCraftEnvironment.OS.XP ||
 				MineCraftEnvironment.os == MineCraftEnvironment.OS.Vista)
 		{
-			String showValue = xray_properties.getProperty("SHOW_WINDOWS_WARNING");
-			String showLetter;
-			if (showValue != null)
-			{
-				showLetter = showValue.substring(0, 1);
-				if (showLetter == null || showLetter.length() == 0)
-				{
-					showLetter = "y";
-				}
-			}
-			else
-			{
-				showLetter = "y";
-			}
-			if (showLetter.equalsIgnoreCase("y") ||
-					showLetter.equalsIgnoreCase("t") ||
-					showLetter.equalsIgnoreCase("1"))
+			if (xray_properties.getBooleanProperty("SHOW_WINDOWS_WARNING", true))
 			{
 				WarningDialog.presentDialog("Warning", "Because of the way Windows locks files, it's possible that your Minecraft data files could get corrupted if you use X-Ray on a world which Minecraft currently has open.  If you're running Minecraft at the same time as X-Ray, be extra careful and make sure you have backups.");
-				if (WarningDialog.selectedShow)
-				{
-					xray_properties.setProperty("SHOW_WINDOWS_WARNING", "1");
-				}
-				else
-				{
-					xray_properties.setProperty("SHOW_WINDOWS_WARNING", "0");
-				}
+				xray_properties.setBooleanProperty("SHOW_WINDOWS_WARNING", WarningDialog.selectedShow);
 				savePreferences();
 			}
 		}
@@ -925,7 +874,7 @@ public class XRay
 		// if the directory chosen by the "Other..." option isn't valid.
 		while (true)
 		{
-			if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, (Properties) xray_properties) == ResolutionDialog.DIALOG_BUTTON_EXIT)
+			if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, xray_properties) == ResolutionDialog.DIALOG_BUTTON_EXIT)
 			{
 				System.exit(0);
 			}
