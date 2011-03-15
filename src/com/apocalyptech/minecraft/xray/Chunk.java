@@ -324,6 +324,61 @@ public class Chunk {
 			GL11.glVertex3f(x2, y2, z2);
 		GL11.glEnd();
 	}
+
+	/**
+	 * Renders a nonstandard vertical rectangle that's been rotated.
+	 * 
+	 * @param tx X index within the texture
+	 * @param ty Y index within the texture
+	 * @param tdx Width of texture
+	 * @param tdy Height of texture
+	 * @param x_width The width of the rectangle in the X axis
+	 * @param z_width The width of the rectangle in the Z axis
+	 * @param radius Distance from the center point to draw each point
+	 * @param x1 Center X Coord
+	 * @param y1 Center Y Coord
+	 * @param z1 Center Z Coord
+	 * @param rotate_x Degrees to rotate on the X axis
+	 */
+	public void renderNonstandardVerticalRotatedX(float tx, float ty, float tdx, float tdy,
+			float x_width_h, float radius,
+			float x1, float y1, float z1,
+			double rotate_x)
+	{
+		/*
+		double radians = Math.toRadians(rotate_x);
+		float cosine = (float)Math.cos(radians);
+		float sine = (float)Math.sin(radians);
+
+		float x1a = x - x_width_h + radius * cosine;
+		float y1a = y - z_width_h + radius * sine;
+		float x1b = x + x_width_h + radius * cosine;
+		float y1b = y + z_width_h + radius * sine;
+
+		radians = Math.toRadians(rotate_x + 180);
+		cosine = (float)Math.cos(radians);
+		sine = (float)Math.sin(radians);
+
+		float x2a = x - x_width_h + radius * cosine;
+		float z2a = z - z_width_h + radius * sine;
+		float x2b = x + x_width_h + radius * cosine;
+		float z2b = z + z_width_h + radius * sine;
+
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(tx, ty);
+			GL11.glVertex3f(x1, y1, z1);
+			
+			GL11.glTexCoord2f(tx+tdx, ty);
+			GL11.glVertex3f(x2, y1, z2);
+			
+			GL11.glTexCoord2f(tx, ty+tdy);
+			GL11.glVertex3f(x1, y2, z1);
+			
+			GL11.glTexCoord2f(tx+tdx, ty+tdy);
+			GL11.glVertex3f(x2, y2, z2);
+		GL11.glEnd();
+		*/
+	}
 	
 	/**
 	 * Renders an arbitrary horizontal rectangle (will be orthogonal)
@@ -842,82 +897,6 @@ public class Chunk {
 		 //GL11.glEnable(GL11.GL_DEPTH_TEST);
 		 //GL11.glEnable(GL11.GL_CULL_FACE);	
 	}
-
-	/**
-	 * Modified version of renderSpecial() which accounts for some Lever peculiarities.  A bit lame, but what're
-	 * you gonna do, right?
-	 * 
-	 * @param bx
-	 * @param by
-	 * @param ex
-	 * @param ey
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param yy
-	 * @param x1
-	 * @param x2
-	 * @param z1
-	 * @param z2
-	 * @param torch
-	 * @param thrown
-	 */
-	public void renderSpecialLever(float bx, float by, float ex, float ey, float x, float y, float z, float yy, float x1, float x2, float z1, float z2, boolean torch, boolean thrown) {
-		 
-		float y_up = 1.0f;
-		float y_down = 0f;
-		if (thrown)
-		{
-			y_up = 0f;
-			y_down = 1.0f;
-			yy -= 0.4f;
-		}
-		
-		 //GL11.glDisable(GL11.GL_CULL_FACE);
-		 //GL11.glDisable(GL11.GL_DEPTH_TEST);
-		 GL11.glBegin(GL11.GL_QUADS);
-		 GL11.glNormal3f(1.0f, 0.0f, 0.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+9/16.0f+TEX64, y+yy+y_up, 	z+z1);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+9/16.0f+TEX64, y+yy+y_up, 	z+z1+1.0f);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+9/16.0f-TEX64, y+yy+y_down, 	z+z2+1.0f);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2+9/16.0f-TEX64, y+yy+y_down,	z+z2);
-		
-		 GL11.glNormal3f(-1.0f, 0.0f, 0.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+7/16.0f+TEX64, y+yy+y_up, 	z+z1+1.0f);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+7/16.0f+TEX64, y+yy+y_up, 	z+z1);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+7/16.0f-TEX64, y+yy+y_down, 	z+z2);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2+7/16.0f-TEX64, y+yy+y_down, 	z+z2+1.0f);
-		 
-		 GL11.glNormal3f(0.0f, 0.0f, 1.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1+1.0f, 	y+yy+y_up, 	z+z1+9/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1, 		y+yy+y_up, 	z+z1+9/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2, 		y+yy+y_down, 	z+z2+9/16.0f-TEX64);
-		 GL11.glTexCoord2f(bx, ey);	 	GL11.glVertex3f(x+x2+1.0f, 	y+yy+y_down, 	z+z2+9/16.0f-TEX64);
-		 
-		 GL11.glNormal3f(0.0f, 0.0f, -1.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+x1, 		y+yy+y_up, 	z+z1+7/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+x1+1.0f, 	y+yy+y_up, 	z+z1+7/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+x2+1.0f, 	y+yy+y_down,	z+z2+7/16.0f-TEX64);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+x2, 		y+yy+y_down, 	z+z2+7/16.0f-TEX64);
-		
-		 /*
-		  * This doesn't even really work for the torches at the moment, comment it out.
-		 if (torch)
-		 {
-			 x1 *= 2.125f; z1 *= 2.125f;
-			 GL11.glNormal3f(0.0f, 1.0f, 0.0f);
-			 GL11.glTexCoord2f(bx+TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
-			 GL11.glTexCoord2f(ex-TEX128, by+TEX128); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+7/16.0f);
-			 GL11.glTexCoord2f(ex-TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+7/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
-			 GL11.glTexCoord2f(bx+TEX128, ey-TEX32); 	GL11.glVertex3f(x+x1+9/16.0f, y+yy+10/16.0f, z+z1+9/16.0f);
-		 }
-		 */
-		 
-		 GL11.glEnd();
-		 //GL11.glEnable(GL11.GL_DEPTH_TEST);
-		 //GL11.glEnable(GL11.GL_CULL_FACE);	
-	}
-
 	
 	/**
 	 * Renders a torch, making an attempt to render properly given the wall face it's
@@ -930,42 +909,25 @@ public class Chunk {
 	 * @param zzz
 	 */
 	public void renderTorch(int textureId, int xxx, int yyy, int zzz) {
-		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
 		 byte data = getData(xxx, yyy, zzz);
+		 data &= 0xF;
 		 switch (data) {
-		 case 1:
-			 x1 -= 0.125; x2 -= 0.5;
-			 yy = 3/16.0f; break;
-		 case 2:
-			 x1 += 0.125; x2 += 0.5;
-			 yy = 3/16.0f; break;
-		 case 3:
-			 z1 -= 0.125; z2 -= 0.5;
-			 yy = 3/16.0f; break;
-		 case 4:
-			 z1 += 0.125; z2 += 0.5;
-			 yy = 3/16.0f; break;
+			 case 1:
+				 renderUprightDecoration(textureId, xxx, yyy, zzz, -30, 0f, 1f, -.6f, 0f);
+				 return;
+			 case 2:
+				 renderUprightDecoration(textureId, xxx, yyy, zzz, 30, 0f, 1f, .6f, 0f);
+				 return;
+			 case 3:
+				 renderUprightDecoration(textureId, xxx, yyy, zzz, 30, 1f, 0f, 0f, -.6f);
+				 return;
+			 case 4:
+				 renderUprightDecoration(textureId, xxx, yyy, zzz, -30, 1f, 0f, 0f, .6f);
+				 return;
+			 default:
+				 renderUprightDecoration(textureId, xxx, yyy, zzz);
+				 return;
 		 }
-		 //Light(chunk, x, y, z);
-		 float x = xxx + this.x*16 -0.5f;
-		 float z = zzz + this.z*16 -0.5f;
-		 float y = yyy - 0.5f;
-		 /*
-		  * 
-		  *  RectangleF rect = new RectangleF(x / 16.0f + 0.00004f, y / 16.0f + 0.00004f,
-1 / 16.0f - 0.00008f, 1 / 16.0f - 0.00008f);
-		  */
-		 
-		 float bx,by;
-		 float ex,ey;
-		 
-		 bx = precalcSpriteSheetToTextureX[textureId] + TEX64;
-		 by = precalcSpriteSheetToTextureY[textureId];
-
-		 ex = bx + TEX16-TEX32;
-		 ey = by + TEX32;
-		 
-		 renderSpecial(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, true);
 	}
 	
 	/**
@@ -977,93 +939,221 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderLever(int textureId, int xxx, int yyy, int zzz) {
-		 float x1 = 0, x2 = 0, z1 = 0, z2 = 0, yy = 0;
+	public void renderLever(int textureId, int xxx, int yyy, int zzz)
+	{
+		byte data = getData(xxx, yyy, zzz);
+		boolean thrown = false;
+		if ((data & 0x8) == 0x8)
+		{
+			thrown = true;
+		}
+		data &= 7;
+		//System.out.println("Data: " + data);
 		 
-		 byte data = getData(xxx, yyy, zzz);
-		 boolean thrown = false;
-		 if ((data & 0x8) == 0x8)
-		 {
-			 thrown = true;
-		 }
-		 data &= 7;
-		 //System.out.println("Data: " + data);
-		 
-		 switch (data) {
-			 case 1:
-				 x1 -= 0.125; x2 -= 0.5;
-				 yy = 3/16.0f; break;
-			 case 2:
-				 x1 += 0.125; x2 += 0.5;
-				 yy = 3/16.0f; break;
-			 case 3:
-				 z1 -= 0.125; z2 -= 0.5;
-				 yy = 3/16.0f; break;
-			 case 4:
-				 z1 += 0.125; z2 += 0.5;
-				 yy = 3/16.0f; break;
-			 case 5:
-				 if (thrown)
-				 {
-					 z1 -= 0.5;
-				 }
-				 else
-				 {
-					 z1 += 0.5;
-				 }
-				 thrown = false;
-				 break;
-			 case 6:
-				 if (thrown)
-				 {
-					 x1 -= 0.5;
-				 }
-				 else
-				 {
-					 x1 += 0.5;
-				 }
-				 thrown = false;
-				 break;
-		 }
-		 
-		 float x = xxx + this.x*16 -0.5f;
-		 float z = zzz + this.z*16 -0.5f;
-		 float y = yyy - 0.5f;
-		 
-		 float bx,by;
-		 float ex,ey;
-		 
-		 bx = precalcSpriteSheetToTextureX[textureId] + TEX64;
-		 by = precalcSpriteSheetToTextureY[textureId];
+		// First draw the cobblestoney box
+		int cobble_tex = blockDataToSpriteSheet[BLOCK.COBBLESTONE.id];
+		float box_height = .15f;
+		float box_length = .2f;
+		float box_width = .15f;
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		switch (data) {
+			case 1:
+				renderVertical(cobble_tex, x-.5f, z+box_width, x-.5f+box_height, z+box_width, y-box_length, box_length*2f);
+				renderVertical(cobble_tex, x-.5f, z-box_width, x-.5f+box_height, z-box_width, y-box_length, box_length*2f);
+				renderVertical(cobble_tex, x-.5f+box_height, z+box_width, x-.5f+box_height, z-box_width, y-box_length, box_length*2f);
+				renderHorizontal(cobble_tex, x-.5f, z-box_width, x-.5f+box_height, z+box_width, y-box_length);
+				renderHorizontal(cobble_tex, x-.5f, z-box_width, x-.5f+box_height, z+box_width, y+box_length);
+				break;
+			case 2:
+				renderVertical(cobble_tex, x+.5f, z+box_width, x+.5f-box_height, z+box_width, y-box_length, box_length*2f);
+				renderVertical(cobble_tex, x+.5f, z-box_width, x+.5f-box_height, z-box_width, y-box_length, box_length*2f);
+				renderVertical(cobble_tex, x+.5f-box_height, z+box_width, x+.5f-box_height, z-box_width, y-box_length, box_length*2f);
+				renderHorizontal(cobble_tex, x+.5f, z-box_width, x+.5f-box_height, z+box_width, y-box_length);
+				renderHorizontal(cobble_tex, x+.5f, z-box_width, x+.5f-box_height, z+box_width, y+box_length);
+				break;
+			case 3:
+				renderVertical(cobble_tex, x-box_width, z-.5f, x-box_width, z-.5f+box_height, y-box_length, box_length*2f);
+				renderVertical(cobble_tex, x+box_width, z-.5f, x+box_width, z-.5f+box_height, y-box_length, box_length*2f);
+				renderVertical(cobble_tex, x-box_width, z-.5f+box_height, x+box_width, z-.5f+box_height, y-box_length, box_length*2f);
+				renderHorizontal(cobble_tex, x-box_width, z-.5f, x+box_width, z-.5f+box_height, y-box_length);
+				renderHorizontal(cobble_tex, x-box_width, z-.5f, x+box_width, z-.5f+box_height, y+box_length);
+				break;
+			case 4:
+				renderVertical(cobble_tex, x-box_width, z+.5f, x-box_width, z+.5f-box_height, y-box_length, box_length*2f);
+				renderVertical(cobble_tex, x+box_width, z+.5f, x+box_width, z+.5f-box_height, y-box_length, box_length*2f);
+				renderVertical(cobble_tex, x-box_width, z+.5f-box_height, x+box_width, z+.5f-box_height, y-box_length, box_length*2f);
+				renderHorizontal(cobble_tex, x-box_width, z+.5f, x+box_width, z+.5f-box_height, y-box_length);
+				renderHorizontal(cobble_tex, x-box_width, z+.5f, x+box_width, z+.5f-box_height, y+box_length);
+				break;
+			case 5:
+				renderVertical(cobble_tex, x-box_width, z+box_length, x-box_width, z-box_length, y-.5f, box_height);
+				renderVertical(cobble_tex, x+box_width, z+box_length, x+box_width, z-box_length, y-.5f, box_height);
+				renderVertical(cobble_tex, x-box_width, z+box_length, x+box_width, z+box_length, y-.5f, box_height);
+				renderVertical(cobble_tex, x+box_width, z-box_length, x-box_width, z-box_length, y-.5f, box_height);
+				renderHorizontal(cobble_tex, x-box_width, z-box_length, x+box_width, z+box_length, y-.5f+box_height);
+				break;
+			case 6:
+			default:
+				renderVertical(cobble_tex, x-box_length, z+box_width, x-box_length, z-box_width, y-.5f, box_height);
+				renderVertical(cobble_tex, x+box_length, z+box_width, x+box_length, z-box_width, y-.5f, box_height);
+				renderVertical(cobble_tex, x-box_length, z+box_width, x+box_length, z+box_width, y-.5f, box_height);
+				renderVertical(cobble_tex, x+box_length, z-box_width, x-box_length, z-box_width, y-.5f, box_height);
+				renderHorizontal(cobble_tex, x-box_length, z-box_width, x+box_length, z+box_width, y-.5f+box_height);
+				break;
+		}
 
-		 ex = bx + TEX16-TEX32;
-		 ey = by + TEX32;
-		 
-		 renderSpecialLever(bx, by, ex, ey, x, y, z, yy, x1, x2, z1, z2, true, thrown);
+		// Now draw the lever itself
+		if (thrown)
+		{
+			switch (data) {
+				case 1:
+					renderUprightDecoration(textureId, xxx, yyy+1, zzz, -135, 0f, 1f, .6f, 0f);
+					break;
+				case 2:
+					renderUprightDecoration(textureId, xxx, yyy+1, zzz, 135, 0f, 1f, -.6f, 0f);
+					break;
+				case 3:
+					renderUprightDecoration(textureId, xxx, yyy+1, zzz, 135, 1f, 0f, 0f, .6f);
+					break;
+				case 4:
+					renderUprightDecoration(textureId, xxx, yyy+1, zzz, -135, 1f, 0f, 0f, -.6f);
+					break;
+				case 5:
+					renderUprightDecoration(textureId, xxx, yyy, zzz, -45, 1f, 0f, 0f, 0f);
+					break;
+				case 6:
+					renderUprightDecoration(textureId, xxx, yyy, zzz, 45, 0f, 1f, 0f, 0f);
+					break;
+			}
+		}
+		else
+		{
+			switch (data) {
+				case 1:
+					renderUprightDecoration(textureId, xxx, yyy, zzz, -45, 0f, 1f, -.6f, 0f);
+					break;
+				case 2:
+					renderUprightDecoration(textureId, xxx, yyy, zzz, 45, 0f, 1f, .6f, 0f);
+					break;
+				case 3:
+					renderUprightDecoration(textureId, xxx, yyy, zzz, 45, 1f, 0f, 0f, -.6f);
+					break;
+				case 4:
+					renderUprightDecoration(textureId, xxx, yyy, zzz, -45, 1f, 0f, 0f, .6f);
+					break;
+				case 5:
+					renderUprightDecoration(textureId, xxx, yyy, zzz, 45, 1f, 0f, 0f, 0f);
+					break;
+				case 6:
+					renderUprightDecoration(textureId, xxx, yyy, zzz, -45, 0f, 1f, 0f, 0f);
+					break;
+			}
+		}
 	}
-	
-	/***
-	 * Render a "small" floor-based decoration, like a flower or a mushroom
-	 * @param textureId
-	 * @param xxx
-	 * @param yyy
-	 * @param zzz
-	 * @param block_type
-	 */
-	public void renderDecorationSmall(int textureId, int xxx, int yyy, int zzz) {
-		 float x = xxx + this.x*16 -0.5f;
-		 float z = zzz + this.z*16 -0.5f;
-		 float y = yyy - 0.5f;
-		 
-		 float bx,by;
-		 float ex,ey;
-		 
-		 bx = precalcSpriteSheetToTextureX[textureId] + TEX64;
-		 by = precalcSpriteSheetToTextureY[textureId];
- 		 ex = bx + TEX16-TEX32;
- 		 ey = by + TEX32;
 
- 		 renderSpecial(bx, by, ex, ey, x, y, z, 0, 0, 0, 0, 0, false);
+	/**
+	 * Renders an upright decoration which is just standing straight up.  This will require
+	 * an entry in XRay.decorationStats for the given textureId.
+	 */
+	public void renderUprightDecoration(int textureId, int xxx, int yyy, int zzz)
+	{
+		renderUprightDecoration(textureId, xxx, yyy, zzz, 0, 0f, 0f, 0f, 0f);
+	}
+
+	/**
+	 * Renders an upright decoration.  This will require an entry in XRay.decorationStats for
+	 * the given textureId.  Optionally pass in some parameters for rotation, currently used
+	 * for torches and levers.
+	 *
+	 * @param textureId Texture to draw
+	 * @param xxx Chunk X
+	 * @param yyy Chunk Y
+	 * @param zzz Chunk Z
+	 * @param rotate_degrees Degrees to rotate, use zero for no rotation
+	 * @param rotate_x Use 1.0f to rotate in the X direction (passed to glRotatef)
+	 * @param rotate_z Use 1.0f to rotate in the X direction (passed to glRotatef)
+	 * @param x_off X offset, so it's not just in the center
+	 * @param z_off Z offset, so it's not just in the center
+	 */
+	public void renderUprightDecoration(int textureId, int xxx, int yyy, int zzz,
+			int rotate_degrees, float rotate_x, float rotate_z, float x_off, float z_off)
+	{
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy - 0.5f;
+
+		boolean do_rotate = false;
+		float tx=0, ty=0, tz=0;
+		if (rotate_degrees != 0)
+		{
+			tx = x;
+			ty = y;
+			tz = z;
+			x = x_off;
+			y = 0;
+			z = z_off;
+			do_rotate = true;
+		}
+
+		float my_x = xxx + this.x*16;
+		float my_z = zzz + this.z*16;
+		float my_y = yyy - 0.5f;
+		TextureDecorationStats stats = XRay.decorationStats.get(textureId);
+
+		float tex_begin_x = precalcSpriteSheetToTextureX[textureId] + stats.getTexLeft();
+		float tex_begin_y = precalcSpriteSheetToTextureY[textureId] + stats.getTexTop();
+		float tex_width = stats.getTexWidth();
+		float tex_height = stats.getTexHeight();
+
+		float width = stats.getWidth();
+		float width_h = width/2f;
+		float height = stats.getHeight();
+		float top_tex_height;
+		if (height > width)
+		{
+			top_tex_height = tex_width/2f;
+		}
+		else
+		{
+			top_tex_height = tex_height;
+		}
+
+		// Math is for suckers; let's let the video hardware take care of rotation
+		// Relatedly, is this how I should be drawing *everything?*  Draw relative
+		// to the origin for the actual verticies, and then translate?
+		if (do_rotate)
+		{
+			GL11.glPushMatrix();
+			GL11.glTranslatef(tx, ty, tz);
+			GL11.glRotatef((float)rotate_degrees, rotate_x, 0f, rotate_z);
+		}
+		
+		// First draw the borders
+		renderNonstandardVertical(tex_begin_x, tex_begin_y, tex_width, tex_height,
+				x-width_h, y+height, z-width_h,
+				x+width_h, y, z-width_h);
+		renderNonstandardVertical(tex_begin_x, tex_begin_y, tex_width, tex_height,
+				x-width_h, y+height, z+width_h,
+				x+width_h, y, z+width_h);
+		renderNonstandardVertical(tex_begin_x, tex_begin_y, tex_width, tex_height,
+				x+width_h, y+height, z-width_h,
+				x+width_h, y, z+width_h);
+		renderNonstandardVertical(tex_begin_x, tex_begin_y, tex_width, tex_height,
+				x-width_h, y+height, z+width_h,
+				x-width_h, y, z-width_h);
+
+		// Now the top
+		renderNonstandardHorizontal(tex_begin_x, tex_begin_y, tex_width, top_tex_height,
+				x-width_h, z-width_h,
+				x+width_h, z+width_h,
+				y+height);
+
+		if (do_rotate)
+		{
+			GL11.glPopMatrix();
+		}
 	}
 	
 	/**
@@ -2246,7 +2336,7 @@ public class Chunk {
 								renderTorch(textureId,x,y,z);
 								break;
 							case DECORATION_SMALL:
-								renderDecorationSmall(textureId,x,y,z);
+								renderUprightDecoration(textureId,x,y,z);
 								break;
 							case DECORATION_FULL:
 								renderDecorationFull(textureId,x,y,z);

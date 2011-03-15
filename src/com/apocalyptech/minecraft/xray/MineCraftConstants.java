@@ -200,6 +200,14 @@ public class MineCraftConstants {
 			this.name = name;
 		}
 	}
+
+	// Block types to compute decoration information for
+	public static final BLOCK[] DECORATION_BLOCKS = new BLOCK[] {
+		BLOCK.TORCH, BLOCK.REDSTONE_TORCH_ON, BLOCK.REDSTONE_TORCH_OFF,
+		BLOCK.RED_ROSE, BLOCK.YELLOW_FLOWER,
+		BLOCK.BROWN_MUSHROOM, BLOCK.RED_MUSHROOM,
+		BLOCK.LEVER
+	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
 	public static final BLOCK[] preferred_highlight_ores = new BLOCK[] {

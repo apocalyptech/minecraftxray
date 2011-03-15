@@ -245,6 +245,8 @@ public class XRay
 
     public boolean jump_dialog_trigger = false;
 
+	public static HashMap<Integer, TextureDecorationStats> decorationStats;
+
 	// lets start with the program
 	public static void main(String args[])
 	{
@@ -749,6 +751,14 @@ public class XRay
 			BufferedImage minecraftTextureImage = MineCraftEnvironment.getMinecraftTexture();
 			minecraftTexture = TextureTool.allocateTexture(minecraftTextureImage, GL11.GL_NEAREST);
 			minecraftTexture.update();
+
+			// Compute some information about some decorative textures
+			decorationStats = new HashMap<Integer, TextureDecorationStats>();
+			for (BLOCK decBlock : DECORATION_BLOCKS)
+			{
+				int textureId = blockDataToSpriteSheet[decBlock.id];
+				decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+			}
 
 			// painting textures
 			BufferedImage minecraftPaintingImage = MineCraftEnvironment.getMinecraftPaintings();

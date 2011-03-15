@@ -3,14 +3,15 @@
     users
   * Added a dialog to jump directly to a position, with a default key of J
   * Enter/Esc will do what you'd expect on the startup dialog
-  * World list is now scrollable, on main startup screen
+  * World list on the startup dialog is now scrollable
   * A startup warning was added for Windows systems about possible region
     corruption if X-Ray is run at the same time as Minecraft.  (I haven't
     heard reports of this yet, but given the way Windows locks files, it
     could potentially be an issue.)
-  * Will now remember selected options inbetween runs
-  * A new "reload" action will re-read the map from disk (default key is
-    equals)
+  * Application settings state is remembered inbetwen runs
+  * A new Reload action will re-read the map from disk, with a default
+    key of "="
+  * Greatly improved torch and lever rendering
 
 Minecraft X-Ray 2.7 Maintenance Branch 9 (2011.02.22)
 
