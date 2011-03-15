@@ -1067,6 +1067,19 @@ public class XRay
 		JumpDialog.presentDialog("Choose a New Position", this);
 	}
 
+	/**
+	 * Calls moveCameraToPosition() with our current camera position, to invalidate
+	 * our chunk cache and trigger reloads from disk.
+	 */
+	private void reloadFromDisk()
+	{
+		Block block = new Block((int)camera.getPosition().x, (int)camera.getPosition().y, (int)camera.getPosition().z);
+		this.moveCameraToPosition(new CameraPreset(-1, "current location", block, camera.getYaw()-180, camera.getPitch()));
+	}
+
+	/**
+	 * Moves the camera to the position specified by the JumpDialog.
+	 */
 	private void moveCameraToArbitraryPosition()
 	{
 		int x = JumpDialog.selectedX;
@@ -1084,7 +1097,7 @@ public class XRay
 		}
 		Block block = new Block(-x, (int)camera.getPosition().y, -z);
 		this.jump_dialog_trigger = false;
-		this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw(), camera.getPitch()));
+		this.moveCameraToPosition(new CameraPreset(-1, name, block, camera.getYaw()-180, camera.getPitch()));
 		Mouse.setGrabbed(true);
 	}
 
@@ -1414,6 +1427,11 @@ public class XRay
 				{
 					// Switch to the previous camera preset
 					moveCameraToPreviousPlayer();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.RELOAD))
+				{
+					// Reload from disk
+					reloadFromDisk();
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.LIGHT_INCREASE))
 				{

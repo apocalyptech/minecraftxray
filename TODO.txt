@@ -37,5 +37,4 @@
 blockers for MB10:
 
 * sync coordinates on Jump screen
-* refresh current position
 

@@ -9,6 +9,8 @@
     heard reports of this yet, but given the way Windows locks files, it
     could potentially be an issue.)
   * Will now remember selected options inbetween runs
+  * A new "reload" action will re-read the map from disk (default key is
+    equals)
 
 Minecraft X-Ray 2.7 Maintenance Branch 9 (2011.02.22)
 
