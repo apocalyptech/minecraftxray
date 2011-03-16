@@ -1083,7 +1083,13 @@ public class Chunk {
 		float my_x = xxx + this.x*16;
 		float my_z = zzz + this.z*16;
 		float my_y = yyy - 0.5f;
-		TextureDecorationStats stats = XRay.decorationStats.get(textureId);
+		// We do the "% 256" here because our texture ID might be in the "highlighted"
+		// range, for Explored highlighting.
+		TextureDecorationStats stats = XRay.decorationStats.get(textureId % 256);
+		if (stats == null)
+		{
+			return;
+		}
 
 		float tex_begin_x = precalcSpriteSheetToTextureX[textureId] + stats.getTexLeft();
 		float tex_begin_y = precalcSpriteSheetToTextureY[textureId] + stats.getTexTop();
