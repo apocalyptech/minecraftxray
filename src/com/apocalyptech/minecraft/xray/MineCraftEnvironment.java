@@ -497,7 +497,7 @@ public class MineCraftEnvironment {
 			g = (pixels[i] & 0x0000FF00) >> 8;
 			b = (pixels[i] & 0x000000FF);
 			//System.out.println("Pixel " + i + ": " + r + ", " + g + ", " + b + ", " + a);
-			if (g > r || g > b)
+			if (g > r+10 || g > b+10)
 			{
 				grayscale = false;
 				break;

@@ -1,3 +1,5 @@
+  * A fix to be not so picky about colorizing grass
+
 Minecraft X-Ray 2.7 Maintenance Branch 10 (2011.03.15)
 
   * Added Invert Mouse option to startup dialog
