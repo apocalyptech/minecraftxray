@@ -1,6 +1,8 @@
+Minecraft X-Ray 2.7 Maintenance Branch 11 (2011.03.16)
+
   * Fix to be not so picky about colorizing grass
   * Fix which prevents a crash while in Explored Highlighting mode
-  * Fix Sapling rendering
+  * Fix Sapling rendering (also a crash)
   * Override texture data for X-Ray will be read from the
     .minecraft_xray/texture directory now
 
