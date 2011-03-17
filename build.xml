@@ -13,7 +13,6 @@
 	<property name="build" location="build"/>
 	<property name="dist_base" location="dist"/>
 	<property name="dist"  location="${dist_base}/${export_base}"/>
-	<property name="dist_src"  location="${dist_base}/${export_base}_src"/>
 	
 	<!-- Would be nice if ant's "tar" task understood executable bits -->
 	<patternset id="all.files">
@@ -76,7 +75,6 @@
 			description="prepares the distribution directories for release" >
 		<!-- Create the distribution directories -->
 		<mkdir dir="${dist}"/>
-		<mkdir dir="${dist_src}"/>
 		
 		<!-- Put everything in ${build} into xray.jar file -->
 		<jar jarfile="${dist}/xray.jar" basedir="${build}"/>
@@ -124,15 +122,6 @@
 			</fileset>
 		</copy>
 		
-		<!-- Now copy sources over to the source-only distro -->
-		<copy todir="${dist_src}">
-			<fileset dir="${dist}/src">
-				<include name="**/*" />
-				<exclude name="lib/" />
-				<exclude name="build-lib/" />
-			</fileset>
-		</copy>
-		
 	</target>
 	
 	<target name="jsmooth" depends="prepare_distdir">
@@ -150,7 +139,6 @@
 		
 		<!-- Create our zipfiles, both "binary" and source. -->
 		<zip destfile="${dist_base}/${export_base}.zip" basedir="${dist_base}" includes="${export_base}/"/>
-		<zip destfile="${dist_base}/${export_base}_src.zip" basedir="${dist_base}" includes="${export_base}_src/"/>
 		<tar destfile="${dist_base}/${export_base}.tbz2" compression="bzip2">
 			<tarfileset dir="${dist_base}" filemode="755">
 				<patternset refid="all.files" />
@@ -171,9 +159,7 @@
 		<!-- Delete the ${build} and ${dist} directory trees -->
 		<delete file="${dist_base}/${export_base}.zip"/>
 		<delete file="${dist_base}/${export_base}.tbz2"/>
-		<delete file="${dist_base}/${export_base}_src.zip"/>
 		<delete dir="${build}"/>
 		<delete dir="${dist}"/>
-		<delete dir="${dist_src}"/>
 	</target>
 </project>
