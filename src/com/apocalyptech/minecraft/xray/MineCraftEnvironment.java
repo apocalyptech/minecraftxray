@@ -289,13 +289,24 @@ public class MineCraftEnvironment {
 	}
 	
 	/***
-	 * Returns a stream to an arbitrary file either from the main jar, or from the user-specified
-	 * texture pack.
+	 * Returns a stream to an arbitrary file either from our override directory,
+	 * the main jar, or from the user-specified texture pack.
 	 * 
 	 * @return
 	 */
 	public static InputStream getMinecraftTexturepackData(String filename) {
-		// First check the options.txt file to see if we should be using the defined
+
+		// First check our override directory for the file
+		File overrideFile = new File(xrayBaseDir, "textures/" + filename);
+		if(overrideFile.exists()) {
+			try {
+				return new FileInputStream(overrideFile);
+			} catch (FileNotFoundException e) {
+				// Don't do anything; just continue on our merry little way
+			}
+		}
+		
+		// Next check the options.txt file to see if we should be using the defined
 		// texture pack.
 		File optionsFile = new File(baseDir, "options.txt");
 		String texturepack = null;
@@ -422,14 +433,6 @@ public class MineCraftEnvironment {
 	 */
 	public static InputStream getMinecraftPaintingData() {
 		return getMinecraftTexturepackData("art/kz.png");
-	}
-	
-	/***
-	 * Returns a stream to the font data (overrides in the directory are handled)
-	 * @return
-	 */
-	public static InputStream getMinecraftFontData() {
-		return getMinecraftFile("default.png");
 	}
 	
 	/***
@@ -600,33 +603,11 @@ public class MineCraftEnvironment {
 	}
 	
 	/***
-	 * Attempts to create a bufferedImage containing the font
-	 * @return
-	 */
-	public static BufferedImage getMinecraftFont() {
-		return buildImageFromInput(getMinecraftFontData());
-	}
-	
-	/***
-	 * Creates an Inputstream to a file in the bin/ directory in the minecraft directory.
-	 * This handles overrides. If a file exists in the bin/ directory it will load that.
-	 * Otherwise it will look in the .jar file of minecraft
+	 * Creates an Inputstream to a file in side the main minecraft.jar file.
 	 * @param fileName
 	 * @return
 	 */
 	public static InputStream getMinecraftFile(String fileName){
-		File overrideFile = new File(baseDir, "bin/" + fileName);
-
-		if(overrideFile.exists()) {
-			try {
-				return new FileInputStream(overrideFile);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-		}
-		
 		File minecraftDataFile = new File(baseDir, "bin/minecraft.jar");
 		if(!minecraftDataFile.exists()) {
 			return null;
