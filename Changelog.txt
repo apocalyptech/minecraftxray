@@ -1,3 +1,6 @@
+  * Set glass to be considered "non-solid" which improves glass
+    rendering, in general.
+
 Minecraft X-Ray 2.7 Maintenance Branch 11 (2011.03.16)
 
   * Fix to be not so picky about colorizing grass

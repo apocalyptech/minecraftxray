@@ -95,7 +95,8 @@ public class MineCraftConstants {
 		MINECART_TRACKS,
 		WATER,
 		LAVA,
-		FIRE
+		FIRE,
+		GLASS
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -388,6 +389,9 @@ public class MineCraftConstants {
 
 		// "Thin" slices
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SNOW.id, BLOCK_TYPE.THINSLICE);
+
+		// Glass
+		BLOCK_TYPE_MAP.put((byte)BLOCK.GLASS.id, BLOCK_TYPE.GLASS);
 	}
 	
 	/***
