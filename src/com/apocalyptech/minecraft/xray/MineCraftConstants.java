@@ -96,7 +96,7 @@ public class MineCraftConstants {
 		WATER,
 		LAVA,
 		FIRE,
-		GLASS
+		SEMISOLID
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -390,8 +390,10 @@ public class MineCraftConstants {
 		// "Thin" slices
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SNOW.id, BLOCK_TYPE.THINSLICE);
 
-		// Glass
-		BLOCK_TYPE_MAP.put((byte)BLOCK.GLASS.id, BLOCK_TYPE.GLASS);
+		// Solid blocks which nevertheless shouldn't be considered "normal."
+		// Mostly for rendering purposes.
+		BLOCK_TYPE_MAP.put((byte)BLOCK.GLASS.id, BLOCK_TYPE.SEMISOLID);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.MOB_SPAWNER.id, BLOCK_TYPE.SEMISOLID);
 	}
 	
 	/***

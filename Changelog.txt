@@ -1,5 +1,4 @@
-  * Set glass to be considered "non-solid" which improves glass
-    rendering, in general.
+  * Glass and mob spawners render a bit better.
 
 Minecraft X-Ray 2.7 Maintenance Branch 11 (2011.03.16)
 
