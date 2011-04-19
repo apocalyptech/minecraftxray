@@ -1,3 +1,4 @@
+  * Added support for birch and spruce saplings
   * Glass and mob spawners render a bit better.
 
 Minecraft X-Ray 2.7 Maintenance Branch 11 (2011.03.16)

@@ -604,8 +604,15 @@ public class MineCraftConstants {
 		HashMap<Byte, Integer> logMap = new HashMap<Byte, Integer>();
 		blockDataSpriteSheetMap.put((byte)BLOCK.WOOD.id, logMap);
 		logMap.put((byte)0, 16+4); // Regular log
-		logMap.put((byte)1, (7*16)+4); // Redwood-or-whatever
+		logMap.put((byte)1, (7*16)+4); // Spruce
 		logMap.put((byte)2, (7*16)+5); // Birch
+		
+		// Textures used by saplings
+		HashMap<Byte, Integer> saplingMap = new HashMap<Byte, Integer>();
+		blockDataSpriteSheetMap.put((byte)BLOCK.SAPLING.id, saplingMap);
+		saplingMap.put((byte)0, 15); // Regular sapling
+		saplingMap.put((byte)1, (3*16)+15); // Spruce
+		saplingMap.put((byte)2, (4*16)+15); // Birch
 
 		// Textures used by wool
 		HashMap<Byte, Integer> woolMap = new HashMap<Byte, Integer>();
@@ -644,6 +651,7 @@ public class MineCraftConstants {
 		dblSlabMap.put((byte)1, (12*16)); // Sandstone
 		dblSlabMap.put((byte)2, 4); // Plank
 		dblSlabMap.put((byte)3, (1*16)); // Cobblestone
+
 	}
 	
 	/***

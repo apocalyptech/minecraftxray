@@ -756,8 +756,18 @@ public class XRay
 			decorationStats = new HashMap<Integer, TextureDecorationStats>();
 			for (BLOCK decBlock : DECORATION_BLOCKS)
 			{
-				int textureId = blockDataToSpriteSheet[decBlock.id];
-				decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+				if (blockDataSpriteSheetMap.containsKey((byte)decBlock.id))
+				{
+					for (int textureId : blockDataSpriteSheetMap.get((byte)decBlock.id).values())
+					{
+						decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+					}
+				}
+				else
+				{
+					int textureId = blockDataToSpriteSheet[decBlock.id];
+					decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+				}
 			}
 
 			// painting textures
