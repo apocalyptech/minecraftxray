@@ -1331,6 +1331,77 @@ public class Chunk {
 				break;
 		}
 	}
+
+	/**
+	 * "Simple" rails, which don't have corners.  This actually isn't as
+	 * simple as it should be, since we have a special-case for powered rails.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderSimpleRail(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		 
+		byte data = getData(xxx, yyy, zzz);
+		byte powered = data;
+		powered >>= 3;
+		if (powered > 0)
+		{
+			// This is just for powered rails, to light them up properly
+			textureId += 16;
+		}
+		data &= 7;
+ 
+		switch (data)
+		{
+			case 0x0:
+				this.renderTopDownRotate(textureId, x, y+TEX64, z, 1);
+				break;
+			case 0x1:
+				this.renderTopDown(textureId, x, y+TEX64, z);
+				break;
+			case 0x2:
+				this.renderArbitraryRect(textureId,
+						x-0.5f, y-0.5f, z+0.5f,
+						x-0.5f, y-0.5f, z-0.5f,
+						x+0.5f, y+0.5f, z+0.5f,
+						x+0.5f, y+0.5f, z-0.5f
+						);
+				break;
+			case 0x3:
+				this.renderArbitraryRect(textureId,
+						x-0.5f, y+0.5f, z+0.5f,
+						x-0.5f, y+0.5f, z-0.5f,
+						x+0.5f, y-0.5f, z+0.5f,
+						x+0.5f, y-0.5f, z-0.5f
+						);
+				break;
+			case 0x4:
+				this.renderArbitraryRect(textureId,
+						x-0.5f, y+0.5f, z-0.5f,
+						x+0.5f, y+0.5f, z-0.5f,
+						x-0.5f, y-0.5f, z+0.5f,
+						x+0.5f, y-0.5f, z+0.5f
+						);
+				break;
+			case 0x5:
+				this.renderArbitraryRect(textureId,
+						x-0.5f, y-0.5f, z-0.5f,
+						x+0.5f, y-0.5f, z-0.5f,
+						x-0.5f, y+0.5f, z+0.5f,
+						x+0.5f, y+0.5f, z+0.5f
+						);
+				break;
+			default:
+				// Just do the usual for now
+				this.renderTopDown(textureId, x, y+TEX64, z);
+				break;
+		}
+	}
 	
 	/**
 	 * Renders a pressure plate.
@@ -2152,6 +2223,7 @@ public class Chunk {
 					int textureId = blockDataToSpriteSheet[t];
 					
 					if(textureId == -1) {
+						//System.out.println("Unknown block id: " + t);
 						continue;
 					}
 
@@ -2341,6 +2413,9 @@ public class Chunk {
 								break;
 							case MINECART_TRACKS:
 								renderMinecartTracks(textureId,x,y,z);
+								break;
+							case SIMPLE_RAIL:
+								renderSimpleRail(textureId,x,y,z);
 								break;
 							case PRESSURE_PLATE:
 								renderPlate(textureId,x,y,z);

@@ -93,6 +93,7 @@ public class MineCraftConstants {
 		BUTTON,
 		PORTAL,
 		MINECART_TRACKS,
+		SIMPLE_RAIL,
 		WATER,
 		LAVA,
 		FIRE,
@@ -133,6 +134,8 @@ public class MineCraftConstants {
 		SANDSTONE (24, "Sandstone"),
 		NOTE_BLOCK (25, "Note"),
 		BED (26, "Bed"),
+		POWERED_RAIL (27, "Power Rail"),
+		DETECTOR_RAIL (28, "Detector"),
 		WOOL (35, "Wool"),
 		YELLOW_FLOWER (37, "Flower"),
 		RED_ROSE (38, "Rose"),
@@ -337,6 +340,10 @@ public class MineCraftConstants {
 		
 		// Minecart tracks
 		BLOCK_TYPE_MAP.put((byte)BLOCK.MINECART_TRACKS.id, BLOCK_TYPE.MINECART_TRACKS);
+
+		// "Simple" rails
+		BLOCK_TYPE_MAP.put((byte)BLOCK.POWERED_RAIL.id, BLOCK_TYPE.SIMPLE_RAIL);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.DETECTOR_RAIL.id, BLOCK_TYPE.SIMPLE_RAIL);
 		
 		// Pressure plates
 		BLOCK_TYPE_MAP.put((byte)BLOCK.STONE_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
@@ -433,6 +440,8 @@ public class MineCraftConstants {
 		blockColors[BLOCK.SANDSTONE.id] = blockColors[BLOCK.SAND.id];
 		blockColors[BLOCK.NOTE_BLOCK.id] = new Color(114,88,56);
 		blockColors[BLOCK.BED.id] = new Color(255,0,0);
+		blockColors[BLOCK.POWERED_RAIL.id] = new Color(120,53,28);
+		blockColors[BLOCK.DETECTOR_RAIL.id] = new Color(200,189,189);
 		blockColors[BLOCK.WOOL.id] = new Color(222,222,222); //Color(143,143,143,255); 
 		blockColors[BLOCK.YELLOW_FLOWER.id] = new Color(255,255,0);
 		blockColors[BLOCK.RED_ROSE.id] = new Color(255,0,0);
@@ -540,6 +549,8 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.SANDSTONE.id] = 12*16;
 		blockDataToSpriteSheet[BLOCK.NOTE_BLOCK.id] = (4*16) + 10;
 		blockDataToSpriteSheet[BLOCK.BED.id] = (8*16) + 7;
+		blockDataToSpriteSheet[BLOCK.POWERED_RAIL.id] = (10*16) + 3;
+		blockDataToSpriteSheet[BLOCK.DETECTOR_RAIL.id] = (12*16) + 3;
 		blockDataToSpriteSheet[BLOCK.WOOL.id] = 64;		
 		blockDataToSpriteSheet[BLOCK.YELLOW_FLOWER.id] = 13;
 		blockDataToSpriteSheet[BLOCK.RED_ROSE.id] = 12;
