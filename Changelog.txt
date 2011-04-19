@@ -1,5 +1,6 @@
 Minecraft X-Ray 2.7 Maintenance Branch 12 (2011.04.19)
 
+  * Minor improvements to OSX and Linux script launchers
   * Added support for powered and detector rails
   * Added support for birch and spruce saplings
   * Glass and mob spawners render a bit better
