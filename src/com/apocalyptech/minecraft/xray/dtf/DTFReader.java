@@ -121,10 +121,12 @@ public class DTFReader {
 			
 			return readTagData(stream);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			// TODO Auto-generated catch block"
+			System.err.println("Error reading " + f.getPath() + " -");
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.err.println("Error reading " + f.getPath() + " -");
 			e.printStackTrace();
 		}
 		return null;

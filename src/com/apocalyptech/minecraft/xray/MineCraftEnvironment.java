@@ -189,7 +189,7 @@ public class MineCraftEnvironment {
 					worlds.add(netherinfo);
 				}
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				// Nothing; guess we'll ignore it.
 			}
