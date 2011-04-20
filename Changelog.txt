@@ -1,5 +1,7 @@
   * Render the appropriate sapling sprite 100% of the time
   * Show a purple box for unknown blocks, rather than empty space
+  * Fixed the disappearing Render Details window when toggling between
+    Nether.
 
 Minecraft X-Ray 2.7 Maintenance Branch 12 (2011.04.19)
 

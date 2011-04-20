@@ -1643,6 +1643,7 @@ public class XRay
 			this.camera.processNetherWarp(camera_mult);
 			initialize();
 			this.setMinecraftWorld(newworld, cur_camera);
+			this.updateRenderDetails();
 			this.triggerChunkLoads();
 		}
 	}
