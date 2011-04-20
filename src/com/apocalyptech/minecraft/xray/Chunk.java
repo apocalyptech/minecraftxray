@@ -2367,7 +2367,19 @@ public class Chunk {
 						if (blockDataSpriteSheetMap.containsKey(t))
 						{
 							byte data = getData(x, y, z);
-							data &= 0xF;
+
+							if (t == BLOCK.SAPLING.id)
+							{
+								// Special-case here for Sapling data, since we can't trust the upper two bits
+								data &= 0x3;
+							}
+							else
+							{
+								// ... otherwise, just make sure we're dealing with the bottom four
+								data &= 0xF;
+							}
+
+							// Now try to get the new texture
 							try
 							{
 								textureId = blockDataSpriteSheetMap.get(t).get(data);
