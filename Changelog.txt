@@ -5,6 +5,8 @@
   * Handle invalid level.dat files more gracefully
   * Render mushrooms, flowers, and sugarcane as a "cross," more like
     it's done in Minecraft itself.
+  * Switched Stone Pressure Plate and Stone Button textures to use
+    the actually-correct one
 
 Minecraft X-Ray 2.7 Maintenance Branch 12 (2011.04.19)
 

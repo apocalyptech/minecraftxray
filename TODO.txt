@@ -33,3 +33,6 @@
    reformat everything to a single style (and retab the whole thing, and clean up
    formatting and style in general).  And really, I've been pretty lazy all around
    with doing things the "right way."  The code could use cleanup in general.
+ 
+ * Would be nice if the "Other..." dialog would let you select either the
+   directory or level.dat itself (right now it'll only let you select the directory)

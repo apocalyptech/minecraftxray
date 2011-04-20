@@ -582,14 +582,14 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.COBBLESTONE_STAIRS.id] = 16;
 		blockDataToSpriteSheet[BLOCK.WALL_SIGN.id] = 4;
 		blockDataToSpriteSheet[BLOCK.LEVER.id] = (6*16);
-	    blockDataToSpriteSheet[BLOCK.STONE_PRESSURE_PLATE.id] = 6;
+		blockDataToSpriteSheet[BLOCK.STONE_PRESSURE_PLATE.id] = 1;
 		blockDataToSpriteSheet[BLOCK.IRON_DOOR.id] = (6*16)+2;
 		blockDataToSpriteSheet[BLOCK.WOODEN_PRESSURE_PLATE.id] = 4;
 		blockDataToSpriteSheet[BLOCK.REDSTONE_ORE.id] = (3*16) + 3;
 		blockDataToSpriteSheet[BLOCK.GLOWING_REDSTONE_ORE.id] = 51;
 		blockDataToSpriteSheet[BLOCK.REDSTONE_TORCH_OFF.id] = (7*16)+3;
 		blockDataToSpriteSheet[BLOCK.REDSTONE_TORCH_ON.id] = (6*16)+3;
-		blockDataToSpriteSheet[BLOCK.STONE_BUTTON.id] = 6;
+		blockDataToSpriteSheet[BLOCK.STONE_BUTTON.id] = 1;
 		blockDataToSpriteSheet[BLOCK.SNOW.id] = 66;
 		blockDataToSpriteSheet[BLOCK.ICE.id] = 67;
 		blockDataToSpriteSheet[BLOCK.SNOW_BLOCK.id] = 66;
