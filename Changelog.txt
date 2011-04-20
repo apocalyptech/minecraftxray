@@ -3,6 +3,8 @@
   * Fixed the disappearing Render Details window when toggling between
     Nether.
   * Handle invalid level.dat files more gracefully
+  * Render mushrooms, flowers, and sugarcane as a "cross," more like
+    it's done in Minecraft itself.
 
 Minecraft X-Ray 2.7 Maintenance Branch 12 (2011.04.19)
 

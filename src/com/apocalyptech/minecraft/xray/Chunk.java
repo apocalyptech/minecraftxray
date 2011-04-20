@@ -896,19 +896,19 @@ public class Chunk {
 		 data &= 0xF;
 		 switch (data) {
 			 case 1:
-				 renderUprightDecoration(textureId, xxx, yyy, zzz, -30, 0f, 1f, -.6f, 0f);
+				 renderRectDecoration(textureId, xxx, yyy, zzz, -30, 0f, 1f, -.6f, 0f);
 				 return;
 			 case 2:
-				 renderUprightDecoration(textureId, xxx, yyy, zzz, 30, 0f, 1f, .6f, 0f);
+				 renderRectDecoration(textureId, xxx, yyy, zzz, 30, 0f, 1f, .6f, 0f);
 				 return;
 			 case 3:
-				 renderUprightDecoration(textureId, xxx, yyy, zzz, 30, 1f, 0f, 0f, -.6f);
+				 renderRectDecoration(textureId, xxx, yyy, zzz, 30, 1f, 0f, 0f, -.6f);
 				 return;
 			 case 4:
-				 renderUprightDecoration(textureId, xxx, yyy, zzz, -30, 1f, 0f, 0f, .6f);
+				 renderRectDecoration(textureId, xxx, yyy, zzz, -30, 1f, 0f, 0f, .6f);
 				 return;
 			 default:
-				 renderUprightDecoration(textureId, xxx, yyy, zzz);
+				 renderRectDecoration(textureId, xxx, yyy, zzz);
 				 return;
 		 }
 	}
@@ -992,22 +992,22 @@ public class Chunk {
 		{
 			switch (data) {
 				case 1:
-					renderUprightDecoration(textureId, xxx, yyy+1, zzz, -135, 0f, 1f, .6f, 0f);
+					renderRectDecoration(textureId, xxx, yyy+1, zzz, -135, 0f, 1f, .6f, 0f);
 					break;
 				case 2:
-					renderUprightDecoration(textureId, xxx, yyy+1, zzz, 135, 0f, 1f, -.6f, 0f);
+					renderRectDecoration(textureId, xxx, yyy+1, zzz, 135, 0f, 1f, -.6f, 0f);
 					break;
 				case 3:
-					renderUprightDecoration(textureId, xxx, yyy+1, zzz, 135, 1f, 0f, 0f, .6f);
+					renderRectDecoration(textureId, xxx, yyy+1, zzz, 135, 1f, 0f, 0f, .6f);
 					break;
 				case 4:
-					renderUprightDecoration(textureId, xxx, yyy+1, zzz, -135, 1f, 0f, 0f, -.6f);
+					renderRectDecoration(textureId, xxx, yyy+1, zzz, -135, 1f, 0f, 0f, -.6f);
 					break;
 				case 5:
-					renderUprightDecoration(textureId, xxx, yyy, zzz, -45, 1f, 0f, 0f, 0f);
+					renderRectDecoration(textureId, xxx, yyy, zzz, -45, 1f, 0f, 0f, 0f);
 					break;
 				case 6:
-					renderUprightDecoration(textureId, xxx, yyy, zzz, 45, 0f, 1f, 0f, 0f);
+					renderRectDecoration(textureId, xxx, yyy, zzz, 45, 0f, 1f, 0f, 0f);
 					break;
 			}
 		}
@@ -1015,38 +1015,76 @@ public class Chunk {
 		{
 			switch (data) {
 				case 1:
-					renderUprightDecoration(textureId, xxx, yyy, zzz, -45, 0f, 1f, -.6f, 0f);
+					renderRectDecoration(textureId, xxx, yyy, zzz, -45, 0f, 1f, -.6f, 0f);
 					break;
 				case 2:
-					renderUprightDecoration(textureId, xxx, yyy, zzz, 45, 0f, 1f, .6f, 0f);
+					renderRectDecoration(textureId, xxx, yyy, zzz, 45, 0f, 1f, .6f, 0f);
 					break;
 				case 3:
-					renderUprightDecoration(textureId, xxx, yyy, zzz, 45, 1f, 0f, 0f, -.6f);
+					renderRectDecoration(textureId, xxx, yyy, zzz, 45, 1f, 0f, 0f, -.6f);
 					break;
 				case 4:
-					renderUprightDecoration(textureId, xxx, yyy, zzz, -45, 1f, 0f, 0f, .6f);
+					renderRectDecoration(textureId, xxx, yyy, zzz, -45, 1f, 0f, 0f, .6f);
 					break;
 				case 5:
-					renderUprightDecoration(textureId, xxx, yyy, zzz, 45, 1f, 0f, 0f, 0f);
+					renderRectDecoration(textureId, xxx, yyy, zzz, 45, 1f, 0f, 0f, 0f);
 					break;
 				case 6:
-					renderUprightDecoration(textureId, xxx, yyy, zzz, -45, 0f, 1f, 0f, 0f);
+					renderRectDecoration(textureId, xxx, yyy, zzz, -45, 0f, 1f, 0f, 0f);
 					break;
 			}
 		}
 	}
 
 	/**
-	 * Renders an upright decoration which is just standing straight up.  This will require
-	 * an entry in XRay.decorationStats for the given textureId.
+	 * Renders a decoration which is supposed to be a "cross" in a single block.  There's
+	 * some code duplication from renderRectDecoration in here, but not too much, hopefully.
+	 * This will require an entry in XRay.decorationStats for the given textureId.
 	 */
-	public void renderUprightDecoration(int textureId, int xxx, int yyy, int zzz)
+	public void renderCrossDecoration(int textureId, int xxx, int yyy, int zzz)
 	{
-		renderUprightDecoration(textureId, xxx, yyy, zzz, 0, 0f, 0f, 0f, 0f);
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy - 0.5f;
+
+		// We do the "% 256" here because our texture ID might be in the "highlighted"
+		// range, for Explored highlighting.
+		TextureDecorationStats stats = XRay.decorationStats.get(textureId % 256);
+		if (stats == null)
+		{
+			return;
+		}
+		float tex_begin_x = precalcSpriteSheetToTextureX[textureId] + stats.getTexLeft();
+		float tex_begin_y = precalcSpriteSheetToTextureY[textureId] + stats.getTexTop();
+		float tex_width = stats.getTexWidth();
+		float tex_height = stats.getTexHeight();
+
+		float width = stats.getWidth();
+		float width_h = width/2f;
+		float height = stats.getHeight();
+		float top_tex_height;
+
+		renderNonstandardVertical(tex_begin_x, tex_begin_y, tex_width, tex_height,
+				x-width_h, y+height, z-width_h,
+				x+width_h, y, z+width_h);
+		renderNonstandardVertical(tex_begin_x, tex_begin_y, tex_width, tex_height,
+				x+width_h, y+height, z-width_h,
+				x-width_h, y, z+width_h);
 	}
 
 	/**
-	 * Renders an upright decoration.  This will require an entry in XRay.decorationStats for
+	 * Renders an rectangular decoration which is just standing straight up.  This will require
+	 * an entry in XRay.decorationStats for the given textureId.
+	 *
+	 * Currently only used for torches and levers, actually.
+	 */
+	public void renderRectDecoration(int textureId, int xxx, int yyy, int zzz)
+	{
+		renderRectDecoration(textureId, xxx, yyy, zzz, 0, 0f, 0f, 0f, 0f);
+	}
+
+	/**
+	 * Renders a rectangular decoration.  This will require an entry in XRay.decorationStats for
 	 * the given textureId.  Optionally pass in some parameters for rotation, currently used
 	 * for torches and levers.
 	 *
@@ -1060,7 +1098,7 @@ public class Chunk {
 	 * @param x_off X offset, so it's not just in the center
 	 * @param z_off Z offset, so it's not just in the center
 	 */
-	public void renderUprightDecoration(int textureId, int xxx, int yyy, int zzz,
+	public void renderRectDecoration(int textureId, int xxx, int yyy, int zzz,
 			int rotate_degrees, float rotate_x, float rotate_z, float x_off, float z_off)
 	{
 		float x = xxx + this.x*16;
@@ -1143,31 +1181,6 @@ public class Chunk {
 		{
 			GL11.glPopMatrix();
 		}
-	}
-	
-	/**
-	 * Renders a "full" decoration, like reeds.  Something that takes up the whole square
-	 * 
-	 * @param textureId
-	 * @param xxx
-	 * @param yyy
-	 * @param zzz
-	 * @param block_type
-	 */
-	public void renderDecorationFull(int textureId, int xxx, int yyy, int zzz) {
-		 float x = xxx + this.x*16 -0.5f;
-		 float z = zzz + this.z*16 -0.5f;
-		 float y = yyy - 0.5f;
-		 
-		 float bx,by;
-		 float ex,ey;
-		 
-		 bx = precalcSpriteSheetToTextureX[textureId];
-		 by = precalcSpriteSheetToTextureY[textureId];
-		 ex = bx + TEX16;
-		 ey = by + TEX32;
-
-		 renderSpecial(bx, by, ex, ey, x, y, z);
 	}
 	
 	/**
@@ -2408,11 +2421,8 @@ public class Chunk {
 							case TORCH:
 								renderTorch(textureId,x,y,z);
 								break;
-							case DECORATION_SMALL:
-								renderUprightDecoration(textureId,x,y,z);
-								break;
-							case DECORATION_FULL:
-								renderDecorationFull(textureId,x,y,z);
+							case DECORATION_CROSS:
+								renderCrossDecoration(textureId,x,y,z);
 								break;
 							case CROPS:
 								renderCrops(textureId,x,y,z);
