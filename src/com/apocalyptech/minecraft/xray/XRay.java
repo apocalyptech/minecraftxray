@@ -2391,12 +2391,20 @@ public class XRay
 		int base_x = getMinimapBaseX(z);
 		int base_y = getMinimapBaseY(x);
 
+		boolean in_nether = world.isNether();
+		boolean found_air;
+		boolean found_solid;
+		boolean drew_block;
+
 		Graphics2D g = minimapGraphics;
 		for (int zz = 0; zz < 16; zz++)
 		{
 			for (int xx = 0; xx < 16; xx++)
 			{
 				// determine the top most visible block
+				found_air = !in_nether;
+				drew_block = false;
+				found_solid = false;
 				for (int yy = 127; yy >= 0; yy--)
 				{
 					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
@@ -2404,22 +2412,38 @@ public class XRay
 
 					if (MineCraftConstants.blockDataToSpriteSheet[blockData] > -1)
 					{
-						if (blockData > -1)
+						found_solid = true;
+						if (found_air)
 						{
-							Color blockColor = MineCraftConstants.blockColors[blockData];
-							if (blockColor != null)
+							if (blockData > -1)
 							{
-								// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
-								// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
-								// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
-								// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
-								// to behave, but c'est la vie!
-								g.setColor(blockColor);
-								g.fillRect(base_x - zz, base_y + xx, 1, 1);
+								Color blockColor = MineCraftConstants.blockColors[blockData];
+								if (blockColor != null)
+								{
+									// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
+									// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
+									// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
+									// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
+									// to behave, but c'est la vie!
+									g.setColor(blockColor);
+									g.fillRect(base_x - zz, base_y + xx, 1, 1);
+								}
 							}
+							drew_block = true;
+							break;
 						}
-						break;
 					}
+					else
+					{
+						found_air = true;
+					}
+				}
+
+				// Make sure we don't have holes in our Nether minimap
+				if (in_nether && found_solid && !drew_block)
+				{
+					g.setColor(MineCraftConstants.blockColors[BLOCK.BEDROCK.id]);
+					g.fillRect(base_x - zz, base_y + xx, 1, 1);
 				}
 			}
 		}

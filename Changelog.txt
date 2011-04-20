@@ -7,6 +7,7 @@
     it's done in Minecraft itself.
   * Switched Stone Pressure Plate and Stone Button textures to use
     the actually-correct one
+  * Make the minimap slightly more useful in the Nether
 
 Minecraft X-Ray 2.7 Maintenance Branch 12 (2011.04.19)
 
