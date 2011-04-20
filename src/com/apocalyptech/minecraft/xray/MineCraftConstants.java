@@ -521,7 +521,7 @@ public class MineCraftConstants {
 		for(int i=0;i<128;i++) {
 			blockDataToSpriteSheet[i] = (15*16)+13;
 		}
-		//blockTrans[0] = -1;
+		blockDataToSpriteSheet[0] = -1;
 		blockDataToSpriteSheet[BLOCK.STONE.id] = 1;
 		blockDataToSpriteSheet[BLOCK.GRASS.id] = 0;
 		blockDataToSpriteSheet[BLOCK.DIRT.id] = 2;
