@@ -519,7 +519,7 @@ public class MineCraftConstants {
 	public static void initBlockDatatoSpriteSheetIndexTable() {
 		blockDataToSpriteSheet = new int[128];
 		for(int i=0;i<128;i++) {
-			blockDataToSpriteSheet[i] = -1;
+			blockDataToSpriteSheet[i] = (15*16)+13;
 		}
 		//blockTrans[0] = -1;
 		blockDataToSpriteSheet[BLOCK.STONE.id] = 1;

@@ -469,7 +469,8 @@ public class MineCraftEnvironment {
 	 *   3) We also copy in the water texture from misc/water.png, because many third-party
 	 *      skins don't actually have a water graphic in the same place as the default skin
 	 *   4) Then we attempt to construct a passable "fire" texture from the particles file.
-	 *   5) Lastly, we duplicate the texture with a green tint, immediately below the
+	 *   5) Then we create a "blank" texture, for use with unknown block types
+	 *   6) Lastly, we duplicate the texture with a green tint, immediately below the
 	 *      main texture group.  We do this to support our "explored" highlighting - the
 	 *      tinting can be done easily via OpenGL itself, but there were pretty severe
 	 *      performance issues when I tried that on my laptop.  If we just modify the texture
@@ -588,6 +589,17 @@ public class MineCraftEnvironment {
 				start_fire_x+(square_width/2), start_fire_y+(square_width/2), start_fire_x+square_width, start_fire_y+square_width,
 				start_flame_x, start_flame_y, start_flame_x+particle_width, start_flame_y+particle_width,
 				null);		
+
+		// Create an "empty block" graphic.  We could just leave it, probably, but
+		// some texture packs get creative with the empty space.
+		// First the fill
+		int empty_start_x = square_width*13;
+		int empty_start_y = square_width*15;
+		g2d.setColor(new Color(214,127,255));
+		g2d.fillRect(empty_start_x, empty_start_y, square_width-1, square_width-1);
+		// Then the border
+		g2d.setColor(new Color(107,63,127));
+		g2d.drawRect(empty_start_x, empty_start_y, square_width-1, square_width-1);
 		
 		// Duplicate the texture underneath, tinted for our "explored" areas
 		bi2 = new BufferedImage(bi.getWidth(), bi.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
