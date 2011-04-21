@@ -135,6 +135,7 @@ public class MineCraftConstants {
 		BED (26, "Bed"),
 		POWERED_RAIL (27, "Power Rail"),
 		DETECTOR_RAIL (28, "Detector"),
+		WEB (30, "Web"),
 		WOOL (35, "Wool"),
 		YELLOW_FLOWER (37, "Flower"),
 		RED_ROSE (38, "Rose"),
@@ -209,7 +210,8 @@ public class MineCraftConstants {
 		BLOCK.TORCH, BLOCK.REDSTONE_TORCH_ON, BLOCK.REDSTONE_TORCH_OFF,
 		BLOCK.RED_ROSE, BLOCK.YELLOW_FLOWER,
 		BLOCK.BROWN_MUSHROOM, BLOCK.RED_MUSHROOM,
-		BLOCK.LEVER, BLOCK.SAPLING, BLOCK.SUGARCANE
+		BLOCK.LEVER, BLOCK.SAPLING, BLOCK.SUGARCANE,
+		BLOCK.WEB
 	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
@@ -325,6 +327,7 @@ public class MineCraftConstants {
 		BLOCK_TYPE_MAP.put((byte)BLOCK.YELLOW_FLOWER.id, BLOCK_TYPE.DECORATION_CROSS);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SAPLING.id, BLOCK_TYPE.DECORATION_CROSS);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SUGARCANE.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.WEB.id, BLOCK_TYPE.DECORATION_CROSS);
 		
 		// Crops
 		BLOCK_TYPE_MAP.put((byte)BLOCK.CROPS.id, BLOCK_TYPE.CROPS);
@@ -439,6 +442,7 @@ public class MineCraftConstants {
 		blockColors[BLOCK.BED.id] = new Color(255,0,0);
 		blockColors[BLOCK.POWERED_RAIL.id] = new Color(120,53,28);
 		blockColors[BLOCK.DETECTOR_RAIL.id] = new Color(200,189,189);
+		blockColors[BLOCK.WEB.id] = new Color(255,255,255);
 		blockColors[BLOCK.WOOL.id] = new Color(222,222,222); //Color(143,143,143,255); 
 		blockColors[BLOCK.YELLOW_FLOWER.id] = new Color(255,255,0);
 		blockColors[BLOCK.RED_ROSE.id] = new Color(255,0,0);
@@ -548,6 +552,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.BED.id] = (8*16) + 7;
 		blockDataToSpriteSheet[BLOCK.POWERED_RAIL.id] = (10*16) + 3;
 		blockDataToSpriteSheet[BLOCK.DETECTOR_RAIL.id] = (12*16) + 3;
+		blockDataToSpriteSheet[BLOCK.WEB.id] = 11;
 		blockDataToSpriteSheet[BLOCK.WOOL.id] = 64;		
 		blockDataToSpriteSheet[BLOCK.YELLOW_FLOWER.id] = 13;
 		blockDataToSpriteSheet[BLOCK.RED_ROSE.id] = 12;

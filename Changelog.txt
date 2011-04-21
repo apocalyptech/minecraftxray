@@ -10,6 +10,7 @@
   * Make the minimap slightly more useful in the Nether
   * Handle an exception when the "saves" directory doesn't exist
   * Show exceptions in a GUI window rather than on the console
+  * Added web blocks, on the offchance that they'll be permanent
 
 Minecraft X-Ray 2.7 Maintenance Branch 12 (2011.04.19)
 
