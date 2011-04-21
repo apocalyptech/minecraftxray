@@ -1,5 +1,5 @@
 <launch4jConfig>
-        <headerType>console</headerType>
+        <headerType>gui</headerType>
         <outfile>minecraft_xray.exe</outfile>
         <dontWrapJar>true</dontWrapJar>
         <downloadUrl>http://java.com/download</downloadUrl>
@@ -16,6 +16,6 @@
             <cp>xray.jar</cp>
         </classPath>
         <jre>
-            <minVersion>1.5.0</minVersion>
+            <minVersion>1.6.0</minVersion>
         </jre>
 </launch4jConfig>
