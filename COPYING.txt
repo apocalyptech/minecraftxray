@@ -1,9 +1,10 @@
 X-Ray itself is available under the New/Modified BSD License.  LWJGL is
 also distributed under the same license, though specific details can be
-found in COPYING-lwjgl.txt.  This distribution redistributes a JSmooth
-skeleton for Windows EXE generation, which is available under the LGPL.
-See COPYING-jsmooth.txt for details and links to the JSmooth homepage,
-where the sourcecode can be found.
+found in COPYING-lwjgl.txt.  This distribution redistributes components
+of launch4j, for Windows EXE generation, which is available under a BSD
+license, and appears to include code under the MIT license, and includes
+some binaries licensed under the GPL.  See COPYING-launch4j.txt for more
+details on that.
 
 In general the sourcecode files here will list a copyright for both Vincent
 Vollers and CJ Kucera, though the actual distribution of code copyright

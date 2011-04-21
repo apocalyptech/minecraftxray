@@ -24,16 +24,17 @@ considerations first:
    files, as well.  These will be .dll if you're on Windows, and .so on
    Linux.
 
-2) If you want to build a Windows EXE, you'll also need some JSmoothGen files
-   inside the "build-lib" directory.  Specifically, you should put
-   jsmoothgen-ant.jar inside there, and the directory
-   "jsmoothgen-skeletons/autodownload-wrapper" underneath that (with the
-   three files from the JSmoothGen package inside there.
+2) If you want to build a Windows EXE (which is required for ant's "dist"
+   target), you'll also need the launch4j files contained in
+   support/launch4j-dist.  Note that the tools distributed in this archive
+   (and available through Git) will only work on Linux.
 
 At that point, if you're on the commandline, you can use Ant to build/run,
 etc.  "ant run" should be sufficient to run the app (it will compile up
 a debug version automatically).  "ant dist" will package it up as if you're
-doing a release.  See build.xml for other options.
+doing a release, though again note that right now that step will only work
+on Linux, since the Windows EXE generation oddly enough will only work on
+Linux out-of-the-box.  See build.xml for other options.
 
 If you want to use Eclipse, there's a couple of extra steps.  I feel that
 both of them really *should* have workarounds which would prevent them from

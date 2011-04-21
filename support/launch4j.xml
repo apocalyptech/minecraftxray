@@ -1,0 +1,21 @@
+<launch4jConfig>
+        <headerType>console</headerType>
+        <outfile>minecraft_xray.exe</outfile>
+        <dontWrapJar>true</dontWrapJar>
+        <downloadUrl>http://java.com/download</downloadUrl>
+        <icon>xray_icon.ico</icon>
+        <classPath>
+            <mainClass>com.apocalyptech.minecraft.xray.XRay</mainClass>
+            <cp>AppleJavaExtensions.jar</cp>
+            <cp>jinput.jar</cp>
+            <cp>lwjgl.jar</cp>
+            <cp>lwjgl_test.jar</cp>
+            <cp>lwjgl_util.jar</cp>
+            <cp>lwjgl_util_applet.jar</cp>
+            <cp>lzma.jar</cp>
+            <cp>xray.jar</cp>
+        </classPath>
+        <jre>
+            <minVersion>1.5.0</minVersion>
+        </jre>
+</launch4jConfig>
