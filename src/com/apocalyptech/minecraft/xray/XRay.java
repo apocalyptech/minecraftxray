@@ -98,7 +98,7 @@ public class XRay
 	// are we inverting the mouse
 	private boolean invertMouse = false;
 	// window title
-	private final String app_version = "2.7 Maintenance Branch 12";
+	private final String app_version = "3.0.0";
 	private final String app_name    = "Minecraft X-Ray";
 	private final String windowTitle = app_name + " " + app_version;
 
@@ -945,7 +945,7 @@ public class XRay
 					{
 						// Invalid, show an error and then re-open the main
 						// dialog.
-						JOptionPane.showMessageDialog(null, "Couldn't find a valid level.dat file for the specified directory", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Couldn't find a valid level.dat file for the specified directory", "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -987,17 +987,17 @@ public class XRay
 	{
 		if (MineCraftEnvironment.getMinecraftDirectory() == null)
 		{
-			JOptionPane.showMessageDialog(null, "OS not supported (" + System.getProperty("os.name") + "), please report.", "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "OS not supported (" + System.getProperty("os.name") + "), please report.", "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 		if (!MineCraftEnvironment.getMinecraftDirectory().exists())
 		{
-			JOptionPane.showMessageDialog(null, "Minecraft directory not found: " + MineCraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft XRAY error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Minecraft directory not found: " + MineCraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 		if (!MineCraftEnvironment.getMinecraftDirectory().canRead())
 		{
-			JOptionPane.showMessageDialog(null, "Minecraft directory not readable: " + MineCraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft XRAY error",
+			JOptionPane.showMessageDialog(null, "Minecraft directory not readable: " + MineCraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft X-Ray Error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}

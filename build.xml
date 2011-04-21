@@ -5,8 +5,8 @@
 	</description>
 
 	<!-- Project attributes -->
-	<property name="maint_branch" value="12"/>
-	<property name="export_base" value="minecraft_xray_2.7_mb_${maint_branch}"/>
+	<property name="version" value="3.0.0"/>
+	<property name="export_base" value="minecraft_xray_${version}"/>
 	
 	<!-- set global properties for this build -->
 	<property name="src" location="src"/>

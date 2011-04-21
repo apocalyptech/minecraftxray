@@ -13,9 +13,10 @@ Additionally, X-Ray is somewhat useful for taking a look at natural
 underground caves, to find out how extensive they are, or even to help
 find your way out if you're lost.
 
-The Maintenance Branch is based off of Minecraft X-Ray 2.7, by plusminus,
-who was kind enough to provide the sourcecode for that excellent
-application.  Minecraft X-Ray is released under the Modified BSD License.
+The original author of Minecraft X-Ray was plusminus, who was kind enough
+to provide the sourcecode for that excellent application.
+
+Minecraft X-Ray is released under the Modified BSD License.
 See COPYING.txt for more information, and Changelog.txt for a complete
 list of changes since X-Ray 2.7.
 
