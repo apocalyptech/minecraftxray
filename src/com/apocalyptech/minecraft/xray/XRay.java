@@ -37,7 +37,9 @@ import java.awt.image.DataBufferByte;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
@@ -339,6 +341,10 @@ public class XRay
 		{
 			// bah some error happened
 			e.printStackTrace();
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			ExceptionDialog.presentDialog("Exception Encountered!", sw.toString());
 			System.exit(0);
 		}
 	}
@@ -882,6 +888,7 @@ public class XRay
 			ResolutionDialog.iconImage = iconTexture128;
 			JumpDialog.iconImage = iconTexture128;
 			WarningDialog.iconImage = iconTexture128;
+			ExceptionDialog.iconImage = iconTexture128;
 		}
 
 		// If we're on Windows, show a warning about running at the same time as Minecraft
