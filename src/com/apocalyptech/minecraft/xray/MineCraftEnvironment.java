@@ -173,26 +173,33 @@ public class MineCraftEnvironment {
 		ArrayList<WorldInfo> worlds = new ArrayList<WorldInfo>();
 		File saveDir = new File(baseDir, "saves");
 		File[] worldDirs = saveDir.listFiles(new MCDirectoryFilter());
-	    Arrays.sort(worldDirs, new CaseInsensitiveComparator());
-		for (File worldDir : worldDirs)
+		try
 		{
-			try
+			Arrays.sort(worldDirs, new CaseInsensitiveComparator());
+			for (File worldDir : worldDirs)
 			{
-				// First snatch up the overworld
-				WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), worldDir.getName());
-				worlds.add(info);
-				
-				// Now see if there's an associated Nether world we can add.
-				WorldInfo netherinfo = info.getNetherInfo();
-				if (netherinfo != null)
+				try
 				{
-					worlds.add(netherinfo);
+					// First snatch up the overworld
+					WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), worldDir.getName());
+					worlds.add(info);
+					
+					// Now see if there's an associated Nether world we can add.
+					WorldInfo netherinfo = info.getNetherInfo();
+					if (netherinfo != null)
+					{
+						worlds.add(netherinfo);
+					}
+				}
+				catch (Exception e)
+				{
+					// Nothing; guess we'll ignore it.
 				}
 			}
-			catch (Exception e)
-			{
-				// Nothing; guess we'll ignore it.
-			}
+		}
+		catch (NullPointerException e)
+		{
+			// This happens on the Arrays.sort() call if there's no "saves" dir at all.
 		}
 		return worlds;
 	}
