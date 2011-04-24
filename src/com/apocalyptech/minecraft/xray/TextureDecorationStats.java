@@ -60,6 +60,9 @@ public class TextureDecorationStats
 		int[] pixels = new int[square_width*square_width];
 		bi.getRGB(row*square_width, col*square_width, square_width, square_width, pixels, 0, square_width);
 
+		// Alpha threshhold that we'll test against
+		int threshhold = 20;
+
 		// Now that we have the necessary pixel information, figure out what the actual
 		// bounds are.  First top
 		this.top = 0;
@@ -67,7 +70,7 @@ public class TextureDecorationStats
 		{
 			for (x=0; x<square_width; x++)
 			{
-				if (getAlpha(pixels, square_width, x, y) != 0)
+				if (getAlpha(pixels, square_width, x, y) > threshhold)
 				{
 					this.top = y;
 					break mainloop;
@@ -81,7 +84,7 @@ public class TextureDecorationStats
 		{
 			for (x=0; x<square_width; x++)
 			{
-				if (getAlpha(pixels, square_width, x, y) != 0)
+				if (getAlpha(pixels, square_width, x, y) > threshhold)
 				{
 					this.bottom = y;
 					break mainloop;
@@ -95,7 +98,7 @@ public class TextureDecorationStats
 		{
 			for (y=0; y<square_width; y++)
 			{
-				if (getAlpha(pixels, square_width, x, y) != 0)
+				if (getAlpha(pixels, square_width, x, y) > threshhold)
 				{
 					this.left = x;
 					break mainloop;
@@ -109,7 +112,7 @@ public class TextureDecorationStats
 		{
 			for (y=0; y<square_width; y++)
 			{
-				if (getAlpha(pixels, square_width, x, y) != 0)
+				if (getAlpha(pixels, square_width, x, y) > threshhold)
 				{
 					this.right = x;
 					break mainloop;
@@ -133,9 +136,12 @@ public class TextureDecorationStats
 		this.height_tex_f = (float)(this.bottom+1-this.top)/(float)bi.getHeight();
 	}
 
+	/**
+	 * Gets the alpha value for a given pixel in an array.
+	 */
 	private static int getAlpha(int[] pixels, int width, int x, int y)
 	{
-		return (pixels[y*width + x] & 0xFF000000) >> 24;
+		return pixels[y*width + x] >>> 24;
 	}
 
 	public float getTop()
