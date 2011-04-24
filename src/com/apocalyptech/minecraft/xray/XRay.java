@@ -2417,32 +2417,35 @@ public class XRay
 					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
 					byte blockData = chunkData[blockOffset];
 
-					if (MineCraftConstants.blockDataToSpriteSheet[blockData] > -1)
+					if (blockData >= 0)
 					{
-						found_solid = true;
-						if (found_air)
+						if (MineCraftConstants.blockDataToSpriteSheet[blockData] > -1)
 						{
-							if (blockData > -1)
+							found_solid = true;
+							if (found_air)
 							{
-								Color blockColor = MineCraftConstants.blockColors[blockData];
-								if (blockColor != null)
+								if (blockData > -1)
 								{
-									// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
-									// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
-									// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
-									// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
-									// to behave, but c'est la vie!
-									g.setColor(blockColor);
-									g.fillRect(base_x - zz, base_y + xx, 1, 1);
+									Color blockColor = MineCraftConstants.blockColors[blockData];
+									if (blockColor != null)
+									{
+										// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
+										// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
+										// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
+										// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
+										// to behave, but c'est la vie!
+										g.setColor(blockColor);
+										g.fillRect(base_x - zz, base_y + xx, 1, 1);
+									}
 								}
+								drew_block = true;
+								break;
 							}
-							drew_block = true;
-							break;
 						}
-					}
-					else
-					{
-						found_air = true;
+						else
+						{
+							found_air = true;
+						}
 					}
 				}
 
