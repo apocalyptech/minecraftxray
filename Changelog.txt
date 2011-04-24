@@ -1,3 +1,5 @@
+Minecraft X-Ray 3.0.1 (2011.04.24)
+
   * Fix torch rendering for non-default texture packs, under some
     circumstances.
   * Fix a potential Exception for people running mods like More
