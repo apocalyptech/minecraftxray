@@ -2074,8 +2074,6 @@ public class Chunk {
 		float z = zzz + this.z*16;
 		float y = yyy;
 		
-		this.level.portalTexture.bind();
-		
 		// Check to see where adjoining Portal spaces are, so we know which
 		// faces to draw
 		boolean drawWestEast = true;
@@ -2123,16 +2121,14 @@ public class Chunk {
 
 		if (drawWestEast)
 		{
-			this.renderVertical(0, x-0.5f, z-0.3f, x+0.5f, z-0.3f, y-0.5f, 1.0f);
-			this.renderVertical(0, x-0.5f, z+0.3f, x+0.5f, z+0.3f, y-0.5f, 1.0f);
+			this.renderVertical(textureId, x-0.5f, z-0.3f, x+0.5f, z-0.3f, y-0.5f, 1.0f);
+			this.renderVertical(textureId, x-0.5f, z+0.3f, x+0.5f, z+0.3f, y-0.5f, 1.0f);
 		}
 		else
 		{
-			this.renderVertical(0, x-0.3f, z-0.5f, x-0.3f, z+0.5f, y-0.5f, 1.0f);
-			this.renderVertical(0, x+0.3f, z-0.5f, x+0.3f, z+0.5f, y-0.5f, 1.0f);
+			this.renderVertical(textureId, x-0.3f, z-0.5f, x-0.3f, z+0.5f, y-0.5f, 1.0f);
+			this.renderVertical(textureId, x+0.3f, z-0.5f, x+0.3f, z+0.5f, y-0.5f, 1.0f);
 		}
-		
-		this.level.minecraftTexture.bind();
 	}
 	
 	public boolean checkSolid(byte block, boolean transpararency) {

@@ -477,7 +477,8 @@ public class MineCraftEnvironment {
 	 *      skins don't actually have a water graphic in the same place as the default skin
 	 *   4) Then we attempt to construct a passable "fire" texture from the particles file.
 	 *   5) Then we create a "blank" texture, for use with unknown block types
-	 *   6) Lastly, we duplicate the texture with a green tint, immediately below the
+	 *   6) Then we create a nether texture
+	 *   7) Lastly, we duplicate the texture with a green tint, immediately below the
 	 *      main texture group.  We do this to support our "explored" highlighting - the
 	 *      tinting can be done easily via OpenGL itself, but there were pretty severe
 	 *      performance issues when I tried that on my laptop.  If we just modify the texture
@@ -621,6 +622,12 @@ public class MineCraftEnvironment {
 		// Then the border
 		g2d.setColor(new Color(107,63,127));
 		g2d.drawRect(empty_start_x, empty_start_y, square_width-1, square_width-1);
+
+		// Create a nether texture
+		int nether_start_x = square_width*12;
+		int nether_start_y = square_width*15;
+		g2d.setColor(new Color(.839f, .203f, .952f, .4f));
+		g2d.fillRect(nether_start_x, nether_start_y, square_width, square_width);
 		
 		// Duplicate the texture underneath, tinted for our "explored" areas
 		bi2 = new BufferedImage(bi.getWidth(), bi.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
@@ -631,6 +638,17 @@ public class MineCraftEnvironment {
 		g2d.setComposite(AlphaComposite.SrcAtop);
 		g2d.setColor(new Color(0f, 1f, 0f, .2f));
 		g2d.fillRect(0, bi.getHeight(), bi.getWidth(), bi.getHeight());
+
+		/*
+		try {
+			ImageIO.write(bi, "PNG", new File("/home/pez/xray_terrain.png"));
+			System.out.println("Wrote texture to xray_terrain.png");
+		}
+		catch (Exception e)
+		{
+			// whatever
+		}
+		*/
 		
 		return bi2;
 	}

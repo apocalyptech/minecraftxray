@@ -64,7 +64,6 @@ public class MinecraftLevel {
 	
 	public Texture minecraftTexture;
 	public Texture paintingTexture;
-	public Texture portalTexture;
 
 	public String levelName;
 	
@@ -104,11 +103,10 @@ public class MinecraftLevel {
 	 * Create a minecraftLevel from the given world
 	 * @param world
 	 */
-	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture paintingTexture, Texture portalTexture, BLOCK[] HIGHLIGHT_ORES) {
+	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture paintingTexture, BLOCK[] HIGHLIGHT_ORES) {
 		this.world = world;
 		this.minecraftTexture = minecraftTexture;
 		this.paintingTexture = paintingTexture;
-		this.portalTexture = portalTexture;
 		this.HIGHLIGHT_ORES = HIGHLIGHT_ORES;
 		
 		this.levelData = new Chunk[LEVELDATA_SIZE][LEVELDATA_SIZE];

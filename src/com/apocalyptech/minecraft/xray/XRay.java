@@ -127,7 +127,6 @@ public class XRay
 	// the sprite sheet for all textures
 	public Texture minecraftTexture;
 	public Texture paintingTexture;
-	public Texture portalTexture;
 	public Texture loadingTextTexture;
 
 	// the textures used by the minimap
@@ -781,16 +780,6 @@ public class XRay
 			paintingTexture = TextureTool.allocateTexture(minecraftPaintingImage, GL11.GL_NEAREST);
 			paintingTexture.update();
 
-			// Nether portal texture to use for drawing those, since there's no
-			// actual texture for it
-			portalTexture = TextureTool.allocateTexture(16, 16);
-			BufferedImage bi = portalTexture.getImage();
-			Graphics2D pg = bi.createGraphics();
-			pg.setColor(new Color(.839f, .203f, .952f, .4f));
-			pg.fill(new Rectangle(0, 0, 16, 16));
-			pg.drawImage(bi, null, 0, 0);
-			portalTexture.update();
-
 			// mineral textures
 			for (int i = 0; i < HIGHLIGHT_ORES.length; i++)
 			{
@@ -1044,7 +1033,7 @@ public class XRay
 	private void setMinecraftWorld(WorldInfo world)
 	{
 		this.world = world;
-		this.level = new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture, HIGHLIGHT_ORES);
+		this.level = new MinecraftLevel(world, minecraftTexture, paintingTexture, HIGHLIGHT_ORES);
 
 		// determine which chunks are available in this world
 		mapChunksToLoad = new LinkedList<Block>();
@@ -1064,7 +1053,7 @@ public class XRay
 	private void setMinecraftWorld(WorldInfo world, FirstPersonCameraController camera)
 	{
 		this.world = world;
-		this.level = new MinecraftLevel(world, minecraftTexture, paintingTexture, portalTexture, HIGHLIGHT_ORES);
+		this.level = new MinecraftLevel(world, minecraftTexture, paintingTexture, HIGHLIGHT_ORES);
 
 		// determine which chunks are available in this world
 		mapChunksToLoad = new LinkedList<Block>();

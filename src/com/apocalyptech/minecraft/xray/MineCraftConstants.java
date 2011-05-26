@@ -621,7 +621,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.NETHERRACK.id] = (6*16)+7;
 		blockDataToSpriteSheet[BLOCK.SOUL_SAND.id] = (6*16)+8;
 		blockDataToSpriteSheet[BLOCK.GLOWSTONE.id] = (6*16)+9;
-		blockDataToSpriteSheet[BLOCK.PORTAL.id] = 16+14;
+		blockDataToSpriteSheet[BLOCK.PORTAL.id] = (15*16)+12;
 		blockDataToSpriteSheet[BLOCK.JACK_O_LANTERN.id] = (7*16)+8;
 		blockDataToSpriteSheet[BLOCK.CAKE.id] = (7*16) + 9;
 		blockDataToSpriteSheet[BLOCK.REDSTONE_REPEATER_OFF.id] = (8*16) + 3;
