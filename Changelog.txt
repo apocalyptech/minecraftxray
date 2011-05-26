@@ -1,3 +1,6 @@
+
+  * Update with new Beta 1.6 blocks (trapdoors, tall grass, shrubs)
+
 Minecraft X-Ray 3.0.1 (2011.04.24)
 
   * Fix torch rendering for non-default texture packs, under some

@@ -96,7 +96,8 @@ public class MineCraftConstants {
 		WATER,
 		LAVA,
 		FIRE,
-		SEMISOLID
+		SEMISOLID,
+		TRAPDOOR
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -136,6 +137,8 @@ public class MineCraftConstants {
 		POWERED_RAIL (27, "Power Rail"),
 		DETECTOR_RAIL (28, "Detector"),
 		WEB (30, "Web"),
+		TALL_GRASS (31, "Tall Grass"),
+		DEAD_SHRUB (32, "Dead Shrub"),
 		WOOL (35, "Wool"),
 		YELLOW_FLOWER (37, "Flower"),
 		RED_ROSE (38, "Rose"),
@@ -194,7 +197,8 @@ public class MineCraftConstants {
 		JACK_O_LANTERN (91, "Jack"),
 		CAKE (92, "Cake"),
 		REDSTONE_REPEATER_OFF (93, "Redstone Repeater (off)"),
-		REDSTONE_REPEATER_ON (94, "Redstone Repeater (on)")
+		REDSTONE_REPEATER_ON (94, "Redstone Repeater (on)"),
+		TRAPDOOR (96, "Trapdoor")
 		;
 		public final int id;
 		public final String name;
@@ -211,7 +215,7 @@ public class MineCraftConstants {
 		BLOCK.RED_ROSE, BLOCK.YELLOW_FLOWER,
 		BLOCK.BROWN_MUSHROOM, BLOCK.RED_MUSHROOM,
 		BLOCK.LEVER, BLOCK.SAPLING, BLOCK.SUGARCANE,
-		BLOCK.WEB
+		BLOCK.WEB, BLOCK.TALL_GRASS, BLOCK.DEAD_SHRUB
 	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
@@ -328,6 +332,8 @@ public class MineCraftConstants {
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SAPLING.id, BLOCK_TYPE.DECORATION_CROSS);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SUGARCANE.id, BLOCK_TYPE.DECORATION_CROSS);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.WEB.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.TALL_GRASS.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.DEAD_SHRUB.id, BLOCK_TYPE.DECORATION_CROSS);
 		
 		// Crops
 		BLOCK_TYPE_MAP.put((byte)BLOCK.CROPS.id, BLOCK_TYPE.CROPS);
@@ -401,6 +407,9 @@ public class MineCraftConstants {
 		// Mostly for rendering purposes.
 		BLOCK_TYPE_MAP.put((byte)BLOCK.GLASS.id, BLOCK_TYPE.SEMISOLID);
 		BLOCK_TYPE_MAP.put((byte)BLOCK.MOB_SPAWNER.id, BLOCK_TYPE.SEMISOLID);
+
+		// Trapdoor
+		BLOCK_TYPE_MAP.put((byte)BLOCK.TRAPDOOR.id, BLOCK_TYPE.TRAPDOOR);
 	}
 	
 	/***
@@ -443,6 +452,8 @@ public class MineCraftConstants {
 		blockColors[BLOCK.POWERED_RAIL.id] = new Color(120,53,28);
 		blockColors[BLOCK.DETECTOR_RAIL.id] = new Color(200,189,189);
 		blockColors[BLOCK.WEB.id] = new Color(255,255,255);
+		blockColors[BLOCK.TALL_GRASS.id] = new Color(117,176,73);
+		blockColors[BLOCK.DEAD_SHRUB.id] = new Color(148,100,40);
 		blockColors[BLOCK.WOOL.id] = new Color(222,222,222); //Color(143,143,143,255); 
 		blockColors[BLOCK.YELLOW_FLOWER.id] = new Color(255,255,0);
 		blockColors[BLOCK.RED_ROSE.id] = new Color(255,0,0);
@@ -502,6 +513,7 @@ public class MineCraftConstants {
 		blockColors[BLOCK.CAKE.id] = new Color(234,233,235);
 		blockColors[BLOCK.REDSTONE_REPEATER_OFF.id] = new Color(245,50,50);
 		blockColors[BLOCK.REDSTONE_REPEATER_ON.id] = new Color(245,50,50);
+		blockColors[BLOCK.TRAPDOOR.id] = new Color(143,107,53);
 	}
 	public static final int TEXTURE_COAL = (2*16) + 2;
 	public static final int TEXTURE_IRON = (2*16) + 1;
@@ -553,6 +565,8 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.POWERED_RAIL.id] = (10*16) + 3;
 		blockDataToSpriteSheet[BLOCK.DETECTOR_RAIL.id] = (12*16) + 3;
 		blockDataToSpriteSheet[BLOCK.WEB.id] = 11;
+		blockDataToSpriteSheet[BLOCK.TALL_GRASS.id] = (2*16)+7;
+		blockDataToSpriteSheet[BLOCK.DEAD_SHRUB.id] = (3*16)+7;
 		blockDataToSpriteSheet[BLOCK.WOOL.id] = 64;		
 		blockDataToSpriteSheet[BLOCK.YELLOW_FLOWER.id] = 13;
 		blockDataToSpriteSheet[BLOCK.RED_ROSE.id] = 12;
@@ -612,6 +626,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.CAKE.id] = (7*16) + 9;
 		blockDataToSpriteSheet[BLOCK.REDSTONE_REPEATER_OFF.id] = (8*16) + 3;
 		blockDataToSpriteSheet[BLOCK.REDSTONE_REPEATER_ON.id] = (9*16) + 3;
+		blockDataToSpriteSheet[BLOCK.TRAPDOOR.id] = (5*16) + 4;
 		
 		// Textures used by logs
 		HashMap<Byte, Integer> logMap = new HashMap<Byte, Integer>();
@@ -664,6 +679,13 @@ public class MineCraftConstants {
 		dblSlabMap.put((byte)1, (12*16)); // Sandstone
 		dblSlabMap.put((byte)2, 4); // Plank
 		dblSlabMap.put((byte)3, (1*16)); // Cobblestone
+
+		// Textures used by Tall Grass
+		HashMap<Byte, Integer> grassMap = new HashMap<Byte, Integer>();
+		blockDataSpriteSheetMap.put((byte)BLOCK.TALL_GRASS.id, grassMap);
+		grassMap.put((byte)0, (3*16)+7); // Dead Shrub
+		grassMap.put((byte)1, (2*16)+7); // Tall Grass
+		grassMap.put((byte)2, (3*16)+8); // Living Shrub
 
 	}
 	

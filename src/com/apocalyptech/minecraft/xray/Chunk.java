@@ -1615,6 +1615,83 @@ public class Chunk {
 	}
 	
 	/**
+	 * Renders a trapdoor
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderTrapdoor(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		float twidth = .1f;
+		//float twidth_h = twidth/2f;
+		float toff = .02f;
+		
+		byte data = getData(xxx, yyy, zzz);
+		boolean swung = false;
+		if ((data & 0x4) == 0x4)
+		{
+			swung = true;
+		}
+		int dir = (data & 0x3);
+
+		float tex_x = precalcSpriteSheetToTextureX[textureId];
+		float tex_y = precalcSpriteSheetToTextureY[textureId];
+		float tex_dx = TEX16;
+		float tex_dy = TEX32 * twidth;
+
+		// Use GL to rotate these properly
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+		if (swung)
+		{
+			if (dir == 0)
+			{
+				// West
+				GL11.glRotatef(-90f, 1f, 0f, 0f);
+			}
+			else if (dir == 1)
+			{
+				// East
+				GL11.glRotatef(90f, 1f, 0f, 0f);
+			}
+			else if (dir == 2)
+			{
+				// South
+				GL11.glRotatef(90f, 0f, 0f, 1f);
+			}
+			else
+			{
+				// North
+				GL11.glRotatef(-90f, 0f, 0f, 1f);
+			}
+		}
+		
+		// First the faces
+		//this.renderHorizontal(textureId, .5f-toff, .5f-toff, -.5f+toff, -.5f+toff, -.5f+toff);
+		this.renderHorizontal(textureId, .5f-toff, .5f-toff, -.5f+toff, -.5f+toff, -.5f+toff+twidth);
+
+		// Now the sides
+		this.renderNonstandardVertical(tex_x, tex_y, tex_dx, tex_dy,
+				.5f-toff, -.5f+toff,         .5f-toff,
+				-.5f+toff, -.5f+toff+twidth, .5f-toff);
+		this.renderNonstandardVertical(tex_x, tex_y, tex_dx, tex_dy,
+				.5f-toff, -.5f+toff,        .5f-toff,
+				.5f-toff, -.5f+toff+twidth, -.5f+toff);
+		this.renderNonstandardVertical(tex_x, tex_y, tex_dx, tex_dy,
+				-.5f+toff, -.5f+toff,        -.5f+toff,
+				-.5f+toff, -.5f+toff+twidth, .5f-toff);
+		this.renderNonstandardVertical(tex_x, tex_y, tex_dx, tex_dy,
+				-.5f+toff, -.5f+toff,       -.5f+toff,
+				.5f-toff, -.5f+toff+twidth, -.5f+toff);
+
+		GL11.glPopMatrix();
+	}
+	
+	/**
 	 * Renders stair graphics
 	 * 
 	 * @param textureId
@@ -2471,6 +2548,9 @@ public class Chunk {
 								break;
 							case BED:
 								renderBed(textureId,x,y,z);
+								break;
+							case TRAPDOOR:
+								renderTrapdoor(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								if(draw) {

@@ -533,6 +533,20 @@ public class MineCraftEnvironment {
 			g2d.setColor(Color.green);
 			g2d.fill(rect);
 			g2d.drawImage(bi, null, 0, 0);
+
+			// Now tall grass
+			rect = new Rectangle(7*square_width, 2*square_width, square_width, square_width);
+			g2d.setComposite(ac);
+			g2d.setColor(Color.green);
+			g2d.fill(rect);
+			g2d.drawImage(bi, null, 0, 0);
+
+			// Now shrubs
+			rect = new Rectangle(8*square_width, 3*square_width, square_width, square_width);
+			g2d.setComposite(ac);
+			g2d.setColor(Color.green);
+			g2d.fill(rect);
+			g2d.drawImage(bi, null, 0, 0);
 		}
 
 		// Colorize redstone wire

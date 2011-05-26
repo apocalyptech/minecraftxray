@@ -38,3 +38,8 @@
    directory or level.dat itself (right now it'll only let you select the directory)
  
  * Hotkey to re-open the "Open" dialog and load a new world
+
+ * Would be nice to maybe redistribute Minecraft's terrain.png and provide an
+   option via the GUI to override the texture pack to default, though that'd
+   be violating Notch's "do not distribute" rule probably.  Will have to see
+   if they'd be okay with that...
