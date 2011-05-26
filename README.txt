@@ -71,36 +71,37 @@ But without the "KEY_" prefix.
 You can also set which resources you want to be highlightable in the app.
 For specifying resource highlights, you should use the following names:
 
-    BED                     GRAVEL                   RED_ROSE                 
-    BEDROCK                 ICE                      SAND                     
-    BOOKSHELF               IRON_BLOCK               SANDSTONE                
-    BRICK                   IRON_DOOR                SAPLING                  
-    BROWN_MUSHROOM          IRON_ORE                 SIGNPOST                 
-    BURNING_FURNACE         JACK_O_LANTERN           SLAB                     
-    CACTUS                  JUKEBOX                  SNOW                     
-    CAKE                    LADDER                   SNOW_BLOCK               
-    CHEST                   LAPIS_LAZULI_BLOCK       SOUL_SAND                
-    CLAY                    LAPIS_LAZULI_ORE         SPONGE                   
-    COAL_ORE                LAVA                     STATIONARY_LAVA          
-    COBBLESTONE             LEAVES                   STATIONARY_WATER         
-    COBBLESTONE_STAIRS      LEVER                    STONE                    
-    CROPS                   MINECART_TRACKS          STONE_BUTTON             
-    DETECTOR_RAIL           MOB_SPAWNER              STONE_PRESSURE_PLATE     
-    DIAMOND_BLOCK           MOSSY_COBBLESTONE        SUGARCANE                
-    DIAMOND_ORE             NETHERRACK               TNT                      
-    DIRT                    NOTE_BLOCK               TORCH                    
-    DISPENSER               OBSIDIAN                 WALL_SIGN                
-    DOUBLE_SLAB             PLANK                    WATER                    
-    FARMLAND                PORTAL                   WEB                      
-    FENCE                   POWERED_RAIL             WOOD                     
-    FIRE                    PUMPKIN                  WOODEN_DOOR              
-    FURNACE                 REDSTONE_ORE             WOODEN_PRESSURE_PLATE    
-    GLASS                   REDSTONE_REPEATER_OFF    WOODEN_STAIRS            
-    GLOWING_REDSTONE_ORE    REDSTONE_REPEATER_ON     WOOL                     
-    GLOWSTONE               REDSTONE_TORCH_OFF       WORKBENCH                
-    GOLD_BLOCK              REDSTONE_TORCH_ON        YELLOW_FLOWER            
-    GOLD_ORE                REDSTONE_WIRE                                     
-    GRASS                   RED_MUSHROOM                                      
+    BED                     GRAVEL                   SAND                     
+    BEDROCK                 ICE                      SANDSTONE                
+    BOOKSHELF               IRON_BLOCK               SAPLING                  
+    BRICK                   IRON_DOOR                SIGNPOST                 
+    BROWN_MUSHROOM          IRON_ORE                 SLAB                     
+    BURNING_FURNACE         JACK_O_LANTERN           SNOW                     
+    CACTUS                  JUKEBOX                  SNOW_BLOCK               
+    CAKE                    LADDER                   SOUL_SAND                
+    CHEST                   LAPIS_LAZULI_BLOCK       SPONGE                   
+    CLAY                    LAPIS_LAZULI_ORE         STATIONARY_LAVA          
+    COAL_ORE                LAVA                     STATIONARY_WATER         
+    COBBLESTONE             LEAVES                   STONE                    
+    COBBLESTONE_STAIRS      LEVER                    STONE_BUTTON             
+    CROPS                   MINECART_TRACKS          STONE_PRESSURE_PLATE     
+    DEAD_SHRUB              MOB_SPAWNER              SUGARCANE                
+    DETECTOR_RAIL           MOSSY_COBBLESTONE        TALL_GRASS               
+    DIAMOND_BLOCK           NETHERRACK               TNT                      
+    DIAMOND_ORE             NOTE_BLOCK               TORCH                    
+    DIRT                    OBSIDIAN                 TRAPDOOR                 
+    DISPENSER               PLANK                    WALL_SIGN                
+    DOUBLE_SLAB             PORTAL                   WATER                    
+    FARMLAND                POWERED_RAIL             WEB                      
+    FENCE                   PUMPKIN                  WOOD                     
+    FIRE                    REDSTONE_ORE             WOODEN_DOOR              
+    FURNACE                 REDSTONE_REPEATER_OFF    WOODEN_PRESSURE_PLATE    
+    GLASS                   REDSTONE_REPEATER_ON     WOODEN_STAIRS            
+    GLOWING_REDSTONE_ORE    REDSTONE_TORCH_OFF       WOOL                     
+    GLOWSTONE               REDSTONE_TORCH_ON        WORKBENCH                
+    GOLD_BLOCK              REDSTONE_WIRE            YELLOW_FLOWER            
+    GOLD_ORE                RED_MUSHROOM                                      
+    GRASS                   RED_ROSE                                          
 
 Perhaps someday there'll be an actual GUI for specifying all this.
 
