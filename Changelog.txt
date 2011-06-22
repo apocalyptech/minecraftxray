@@ -1,3 +1,6 @@
+  * Support mod installations (such as TooManyItems on OSX) which replace
+    minecraft.jar with a directory
+
 Minecraft X-Ray 3.1.0 (2011.05.26)
 
   * Update with new Beta 1.6 blocks (trapdoors, tall grass, shrubs)

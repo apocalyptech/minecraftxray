@@ -663,16 +663,39 @@ public class MineCraftEnvironment {
 		if(!minecraftDataFile.exists()) {
 			return null;
 		}
-		try {
-			JarFile jf = new JarFile(minecraftDataFile);
-			ZipEntry zipEntry = jf.getEntry(fileName);
-			if(zipEntry == null) {
+
+		if (minecraftDataFile.isDirectory())
+		{
+			// Some mods (TooManyItems in particular) on some OSes (OSX in particular)
+			// end up replacing minecraft.jar with an unpacked directory containing
+			// its contents.  We may as well check for that.
+			File dataFile = new File(minecraftDataFile, fileName);
+			if (!dataFile.exists())
+			{
 				return null;
 			}
-			return jf.getInputStream(zipEntry);
-		} catch (IOException e) {
-			System.out.println(e.toString());
-			return null;
+			try
+			{
+				return new FileInputStream(dataFile);
+			}
+			catch (FileNotFoundException e)
+			{
+				return null;
+			}
+		}
+		else
+		{
+			try {
+				JarFile jf = new JarFile(minecraftDataFile);
+				ZipEntry zipEntry = jf.getEntry(fileName);
+				if(zipEntry == null) {
+					return null;
+				}
+				return jf.getInputStream(zipEntry);
+			} catch (IOException e) {
+				System.out.println(e.toString());
+				return null;
+			}
 		}
 	}
 }
