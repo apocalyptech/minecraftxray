@@ -2363,7 +2363,92 @@ public class Chunk {
 		}
 		renderVertical(textureId, -.49f, .49f, .49f, .49f, -.49f, .98f);
 
-		// Pop the matrix before
+		// Pop the matrix
+		GL11.glPopMatrix();
+	}
+	
+	/**
+	 * Renders a cake
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderCake(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+
+		byte bites_eaten = getData(xxx, yyy, zzz);
+
+		float top_tex_x = precalcSpriteSheetToTextureX[textureId]+TEX256;
+		float top_tex_y = precalcSpriteSheetToTextureY[textureId]+TEX512;
+		float bottom_tex_x = precalcSpriteSheetToTextureX[textureId+3]+TEX256;
+		float bottom_tex_y = precalcSpriteSheetToTextureY[textureId+3]+TEX512;
+		float edge_tex_x = precalcSpriteSheetToTextureX[textureId+1]+TEX256;
+		float edge_tex_y = precalcSpriteSheetToTextureY[textureId+1]+TEX64;
+		float cut_tex_x = precalcSpriteSheetToTextureX[textureId+2]+TEX256;
+		float cut_tex_y = precalcSpriteSheetToTextureY[textureId+2]+TEX64;
+
+		float far_tex_x, far_tex_y;
+		if (bites_eaten == 0)
+		{
+			far_tex_x = edge_tex_x;
+			far_tex_y = edge_tex_y;
+		}
+		else
+		{
+			far_tex_x = cut_tex_x;
+			far_tex_y = cut_tex_y;
+		}
+
+
+		float tex_full_width = TEX256*14f;
+		float tex_full_height = TEX512*14f;
+		float tex_side_height = TEX64;
+		float cake_height = .5f;
+		float cake_full_width = .875f;
+		float cake_full_width_h = .4375f;
+
+		float actual_width = (6f-(float)bites_eaten)/6f;
+
+		// Use GL to rotate these properly
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		// Note that cake will always be eaten from the North
+		// Knowing that, draw the south face, first
+		renderNonstandardVertical(edge_tex_x, edge_tex_y, tex_full_width, tex_side_height,
+				cake_full_width_h, 0f, cake_full_width_h,
+				cake_full_width_h, -.49f, -cake_full_width_h);
+
+		// Draw the far edge next
+		renderNonstandardVertical(far_tex_x, far_tex_y, tex_full_width, tex_side_height,
+				cake_full_width_h-(actual_width*cake_full_width), 0f, cake_full_width_h,
+				cake_full_width_h-(actual_width*cake_full_width), -.49f, -cake_full_width_h);
+
+		// And now the sides
+		renderNonstandardVertical(edge_tex_x, edge_tex_y, tex_full_width*actual_width, tex_side_height,
+				cake_full_width_h, 0f, cake_full_width_h,
+				cake_full_width_h-(actual_width*cake_full_width), -.49f, cake_full_width_h);
+		renderNonstandardVertical(edge_tex_x, edge_tex_y, tex_full_width*actual_width, tex_side_height,
+				cake_full_width_h, 0f, -cake_full_width_h,
+				cake_full_width_h-(actual_width*cake_full_width), -.49f, -cake_full_width_h);
+
+		// Now the bottom
+		renderNonstandardHorizontal(bottom_tex_x, bottom_tex_y, tex_full_width, tex_full_height*actual_width,
+				cake_full_width_h, cake_full_width_h,
+				cake_full_width_h-(actual_width*cake_full_width), -cake_full_width_h,
+				-.49f);
+
+		// ... and the top
+		renderNonstandardHorizontal(top_tex_x, top_tex_y, tex_full_width, tex_full_height*actual_width,
+				cake_full_width_h, cake_full_width_h,
+				cake_full_width_h-(actual_width*cake_full_width), -cake_full_width_h,
+				0f);
+
+		// Pop the matrix
 		GL11.glPopMatrix();
 	}
 	
@@ -2787,6 +2872,9 @@ public class Chunk {
 								break;
 							case PISTON_HEAD:
 								renderPistonHead(textureId,x,y,z,false,false);
+								break;
+							case CAKE:
+								renderCake(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								if(draw) {

@@ -1,5 +1,5 @@
   * Support for Pistons
-  * Better rendering for beds
+  * Better rendering for beds, cakes
 
 Minecraft X-Ray 3.1.1 (2011.06.22)
 

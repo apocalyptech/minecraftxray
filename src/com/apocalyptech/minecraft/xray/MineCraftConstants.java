@@ -52,6 +52,7 @@ public class MineCraftConstants {
 	public static final float TEX64 = 1.0f/64.0f;
 	public static final float TEX128 = 1.0f/128.0f;
 	public static final float TEX256 = 1.0f/256.0f;
+	public static final float TEX512 = 1.0f/512.0f;
 	
 	public static final int BLOCKSPERROW = 128;
 	public static final int BLOCKSPERCOLUMN = BLOCKSPERROW * 16;
@@ -81,6 +82,7 @@ public class MineCraftConstants {
 		FLOOR,
 		PRESSURE_PLATE,
 		HALFHEIGHT,
+		CAKE,
 		BED,
 		THINSLICE,
 		DOOR,
@@ -364,7 +366,9 @@ public class MineCraftConstants {
 		
 		// Half-height blocks
 		BLOCK_TYPE_MAP.put((byte)BLOCK.SLAB.id, BLOCK_TYPE.HALFHEIGHT);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.CAKE.id, BLOCK_TYPE.HALFHEIGHT);
+
+		// Cake
+		BLOCK_TYPE_MAP.put((byte)BLOCK.CAKE.id, BLOCK_TYPE.CAKE);
 
 		// Bed blocks
 		BLOCK_TYPE_MAP.put((byte)BLOCK.BED.id, BLOCK_TYPE.BED);
