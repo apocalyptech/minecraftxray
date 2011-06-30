@@ -2210,6 +2210,18 @@ public class Chunk {
 		return isSolid(block) == transpararency;
 	}
 
+	
+	/**
+	 * Renders the body of a piston.  If the piston is retracted, we'll also make a call out
+	 * to renderPistonHead to draw the actual head.  Note that we do need to have the block
+	 * type passed in, so that we can tell renderPistonHead what texture to draw.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 * @param blockType The actual block type; needed for the piston head
+	 */
 	public void renderPistonBody(int textureId, int xxx, int yyy, int zzz, byte blockType) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
@@ -2220,8 +2232,7 @@ public class Chunk {
 
 		float tex_x = precalcSpriteSheetToTextureX[textureId];
 		float tex_y = precalcSpriteSheetToTextureY[textureId]+TEX128;
-		float TEX_PISTON = TEX64*3f;
-		float TEX_PISTON_H = TEX128*3f;
+		float TEX_PISTON = TEX128*3f;
 
 		// Use GL to rotate these properly
 		GL11.glPushMatrix();
@@ -2250,10 +2261,10 @@ public class Chunk {
 		}
 
 		// First the main body bit
-		renderNonstandardHorizontal(tex_x, tex_y, TEX16, TEX_PISTON_H, -.49f, .25f, .49f, -.49f, .49f);
-		renderNonstandardHorizontal(tex_x, tex_y, TEX16, TEX_PISTON_H, -.49f, .25f, .49f, -.49f, -.49f);
-		renderNonstandardVertical(tex_x, tex_y, TEX16, TEX_PISTON_H, -.49f, .49f, .25f, -.49f, -.49f, -.49f);
-		renderNonstandardVertical(tex_x, tex_y, TEX16, TEX_PISTON_H, .49f, .49f, .25f, .49f, -.49f, -.49f);
+		renderNonstandardHorizontal(tex_x, tex_y, TEX16, TEX_PISTON, -.49f, .25f, .49f, -.49f, .49f);
+		renderNonstandardHorizontal(tex_x, tex_y, TEX16, TEX_PISTON, -.49f, .25f, .49f, -.49f, -.49f);
+		renderNonstandardVertical(tex_x, tex_y, TEX16, TEX_PISTON, -.49f, .49f, .25f, -.49f, -.49f, -.49f);
+		renderNonstandardVertical(tex_x, tex_y, TEX16, TEX_PISTON, .49f, .49f, .25f, .49f, -.49f, -.49f);
 		renderVertical(textureId+1, -.49f, -.49f, .49f, -.49f, -.49f, .98f);
 
 		// If we're extended, draw our faceplate; if not, draw the retracted face
@@ -2274,6 +2285,26 @@ public class Chunk {
 
 	}
 
+	/**
+	 * Renders the head of a piston.  This can get called from either the main loop, or from
+	 * renderPistonBody.  If called from renderPistonBody, "attached" should be set to true,
+	 * so we know not to draw the back face and post.  The override_sticky boolean should be
+	 * used (when attached is true) to specify whether to use the sticky-piston texture or
+	 * not, since the data value we read will be the Body's data value, which does not
+	 * indicate stickiness.  Fortunately, the remaining three bits (the direction) matches
+	 * up between head and body, so we should be okay just reading the body's data for
+	 * direction information.
+	 *
+	 * The textureId passed in should be the ID of the non-sticky texture; some logic here
+	 * depends on the layout of the texture information in terrain.png
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 * @param attached Are we attached to the piston body?
+	 * @param override_sticky If attached, are we a sticky piston or a regular piston?
+	 */
 	public void renderPistonHead(int textureId, int xxx, int yyy, int zzz, boolean attached, boolean override_sticky) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
