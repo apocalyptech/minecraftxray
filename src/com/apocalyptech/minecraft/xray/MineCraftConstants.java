@@ -224,6 +224,13 @@ public class MineCraftConstants {
 		BLOCK.LEVER, BLOCK.SAPLING, BLOCK.SUGARCANE,
 		BLOCK.WEB, BLOCK.TALL_GRASS, BLOCK.DEAD_SHRUB
 	};
+
+	// Block types which are solid but which have directional data for rendering
+	public static HashMap<Byte, SolidDirectional> SOLID_DIRECTIONAL_BLOCKS = new HashMap<Byte, SolidDirectional>();
+
+	// Block types which don't have directional information, but whose faces might differ depending on
+	// which face we're talking about
+	public static HashMap<Byte, SolidDirectional> SOLID_FACECHANGE_BLOCKS = new HashMap<Byte, SolidDirectional>();
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
 	public static final BLOCK[] preferred_highlight_ores = new BLOCK[] {
@@ -605,7 +612,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.FIRE.id] = 16+15;  // previously 30
 		blockDataToSpriteSheet[BLOCK.MOB_SPAWNER.id] = (4*16) + 1;
 		blockDataToSpriteSheet[BLOCK.WOODEN_STAIRS.id] = 4;  // previously 55
-		blockDataToSpriteSheet[BLOCK.CHEST.id] = 26;
+		blockDataToSpriteSheet[BLOCK.CHEST.id] = (1*16)+11;
 		blockDataToSpriteSheet[BLOCK.REDSTONE_WIRE.id] = (10*16)+4;
 		blockDataToSpriteSheet[BLOCK.DIAMOND_ORE.id] = (3*16) + 2;
 		blockDataToSpriteSheet[BLOCK.DIAMOND_BLOCK.id] = 24;
@@ -635,7 +642,7 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.CACTUS.id] = 70;
 		blockDataToSpriteSheet[BLOCK.CLAY.id] = (4*16)+8;
 		blockDataToSpriteSheet[BLOCK.SUGARCANE.id] = 73;
-		blockDataToSpriteSheet[BLOCK.JUKEBOX.id] = (4*16)+11;
+		blockDataToSpriteSheet[BLOCK.JUKEBOX.id] = (4*16)+10;
 		blockDataToSpriteSheet[BLOCK.FENCE.id] = 4;
 		blockDataToSpriteSheet[BLOCK.PUMPKIN.id] = (7*16)+7;
 		blockDataToSpriteSheet[BLOCK.NETHERRACK.id] = (6*16)+7;
@@ -707,6 +714,108 @@ public class MineCraftConstants {
 		grassMap.put((byte)1, (2*16)+7); // Tall Grass
 		grassMap.put((byte)2, (3*16)+8); // Living Shrub
 
+		// Directional Data - Furnace
+		SolidDirectional dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.FORWARD, (2*16)+12);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, (2*16)+13);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (2*16)+13);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (3*16)+14);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (3*16)+14);
+		dirdata.setData((byte)2, SolidDirectional.DIRECTION_ABS.EAST);
+		dirdata.setData((byte)3, SolidDirectional.DIRECTION_ABS.WEST);
+		dirdata.setData((byte)4, SolidDirectional.DIRECTION_ABS.NORTH);
+		dirdata.setData((byte)5, SolidDirectional.DIRECTION_ABS.SOUTH);
+		SOLID_DIRECTIONAL_BLOCKS.put((byte)BLOCK.FURNACE.id, dirdata);
+
+		// Directional Data - Burning Furnace
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.FORWARD, (3*16)+13);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, (2*16)+13);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (2*16)+13);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (3*16)+14);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (3*16)+14);
+		dirdata.setData((byte)2, SolidDirectional.DIRECTION_ABS.EAST);
+		dirdata.setData((byte)3, SolidDirectional.DIRECTION_ABS.WEST);
+		dirdata.setData((byte)4, SolidDirectional.DIRECTION_ABS.NORTH);
+		dirdata.setData((byte)5, SolidDirectional.DIRECTION_ABS.SOUTH);
+		SOLID_DIRECTIONAL_BLOCKS.put((byte)BLOCK.BURNING_FURNACE.id, dirdata);
+
+		// Directional Data - Dispenser
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.FORWARD, (2*16)+14);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, (2*16)+13);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (2*16)+13);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (3*16)+14);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (3*16)+14);
+		dirdata.setData((byte)2, SolidDirectional.DIRECTION_ABS.EAST);
+		dirdata.setData((byte)3, SolidDirectional.DIRECTION_ABS.WEST);
+		dirdata.setData((byte)4, SolidDirectional.DIRECTION_ABS.NORTH);
+		dirdata.setData((byte)5, SolidDirectional.DIRECTION_ABS.SOUTH);
+		SOLID_DIRECTIONAL_BLOCKS.put((byte)BLOCK.DISPENSER.id, dirdata);
+
+		// Directional Data - Pumpkin
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.FORWARD, (7*16)+7);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, (7*16)+6);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (7*16)+6);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (6*16)+6);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (6*16)+6);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		dirdata.setData((byte)1, SolidDirectional.DIRECTION_ABS.NORTH);
+		dirdata.setData((byte)2, SolidDirectional.DIRECTION_ABS.EAST);
+		dirdata.setData((byte)3, SolidDirectional.DIRECTION_ABS.SOUTH);
+		SOLID_DIRECTIONAL_BLOCKS.put((byte)BLOCK.PUMPKIN.id, dirdata);
+
+		// Directional Data - Jack-O-Lantern
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.FORWARD, (7*16)+8);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, (7*16)+6);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (7*16)+6);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (6*16)+6);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (6*16)+6);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		dirdata.setData((byte)1, SolidDirectional.DIRECTION_ABS.NORTH);
+		dirdata.setData((byte)2, SolidDirectional.DIRECTION_ABS.EAST);
+		dirdata.setData((byte)3, SolidDirectional.DIRECTION_ABS.SOUTH);
+		SOLID_DIRECTIONAL_BLOCKS.put((byte)BLOCK.JACK_O_LANTERN.id, dirdata);
+
+		// Face-changing Blocks - Chests
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, (1*16)+10);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (1*16)+10);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (1*16)+9);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (1*16)+9);
+		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.CHEST.id, dirdata);
+
+		// Face-changing Blocks - Workbenches
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (3*16)+11);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (2*16)+11);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 4);
+		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.WORKBENCH.id, dirdata);
+
+		// Face-changing Blocks - Jukeboxes
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (4*16)+11);
+		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.JUKEBOX.id, dirdata);
+
+		// Face-changing Blocks - TNT
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, 9);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 10);
+		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.TNT.id, dirdata);
+
+		// Face-changing Blocks - Wood
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (1*16)+5);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (1*16)+5);
+		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.WOOD.id, dirdata);
+
+		// Face-changing Blocks - Bookshelves
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, 4);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 4);
+		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.BOOKSHELF.id, dirdata);
 	}
 	
 	/***

@@ -1,5 +1,7 @@
   * Support for Pistons
-  * Better rendering for beds, cakes
+  * Better rendering for beds, cakes, furnaces, dispensers, pumpkins,
+    jack-o-lanterns, chests, workbenches, jukeboxes, TNT, wood, and
+	bookshelves
 
 Minecraft X-Ray 3.1.1 (2011.06.22)
 

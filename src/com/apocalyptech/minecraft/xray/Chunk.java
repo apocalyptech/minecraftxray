@@ -2566,6 +2566,8 @@ public class Chunk {
 		boolean right = true;
 		boolean near = true;
 		boolean far = true;
+
+		int north, south, west, east, top, bottom;
 		
 		for(int x=0;x<16;x++) {
 			int xOff = (x * 128 * 16);
@@ -2889,14 +2891,89 @@ public class Chunk {
 								}
 								break;
 							default:
-								if(!near) this.renderWestEast(textureId, worldX+x, y, worldZ+z);
-								if(!far) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1);
+								north = textureId;
+								south = textureId;
+								west = textureId;
+								east = textureId;
+								top = textureId;
+								bottom = textureId;
+								if (SOLID_DIRECTIONAL_BLOCKS.containsKey(t))
+								{
+									SolidDirectional info = SOLID_DIRECTIONAL_BLOCKS.get(t);
+									byte data = getData(x, y, z);
+									if (info.data_map.containsKey(data))
+									{
+										switch (info.data_map.get(data))
+										{
+											case NORTH:
+												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD);
+												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD);
+												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+												top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP);
+												bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM);
+												break;
+											case SOUTH:
+												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD);
+												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD);
+												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+												top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP);
+												bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM);
+												break;
+											case WEST:
+												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD);
+												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD);
+												top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP);
+												bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM);
+												break;
+											case EAST:
+												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD);
+												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD);
+												top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP);
+												bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM);
+												break;
+										}
+									}
+								}
+								else if (SOLID_FACECHANGE_BLOCKS.containsKey(t))
+								{
+									// We'll arbitrarily say this stuff is oriented to the West
+									SolidDirectional info = SOLID_FACECHANGE_BLOCKS.get(t);
+									if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.FORWARD))
+									{
+										west = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD);
+									}
+									if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.BACKWARD))
+									{
+										east = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD);
+									}
+									if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.SIDES))
+									{
+										north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+										south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES);
+									}
+									if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.TOP))
+									{
+										top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP);
+									}
+									if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.BOTTOM))
+									{
+										bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM);
+									}
+								}
+								if(!near) this.renderWestEast(east, worldX+x, y, worldZ+z);
+								if(!far) this.renderWestEast(west, worldX+x, y, worldZ+z+1);
 								
-								if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
-								if(!above) this.renderTopDown(textureId, worldX+x, y+1, worldZ+z);	
+								if(!below) this.renderTopDown(bottom, worldX+x, y, worldZ+z);
+								if(!above) this.renderTopDown(top, worldX+x, y+1, worldZ+z);	
 								
-								if(!left) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z);
-								if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z);
+								if(!left) this.renderNorthSouth(north, worldX+x, y, worldZ+z);
+								if(!right) this.renderNorthSouth(south, worldX+x+1, y, worldZ+z);
 						}					
 					}
 				}
