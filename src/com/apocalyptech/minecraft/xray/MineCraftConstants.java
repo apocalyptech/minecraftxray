@@ -97,7 +97,9 @@ public class MineCraftConstants {
 		LAVA,
 		FIRE,
 		SEMISOLID,
-		TRAPDOOR
+		TRAPDOOR,
+		PISTON_BODY,
+		PISTON_HEAD
 	}
 	
 	// This HashMap determines how we draw various block types
@@ -136,9 +138,12 @@ public class MineCraftConstants {
 		BED (26, "Bed"),
 		POWERED_RAIL (27, "Power Rail"),
 		DETECTOR_RAIL (28, "Detector"),
+		PISTON_STICKY_BODY (29, "Sticky Piston"),
 		WEB (30, "Web"),
 		TALL_GRASS (31, "Tall Grass"),
 		DEAD_SHRUB (32, "Dead Shrub"),
+		PISTON_BODY (33, "Piston"),
+		PISTON_HEAD (34, "Piston Head"),
 		WOOL (35, "Wool"),
 		YELLOW_FLOWER (37, "Flower"),
 		RED_ROSE (38, "Rose"),
@@ -410,6 +415,11 @@ public class MineCraftConstants {
 
 		// Trapdoor
 		BLOCK_TYPE_MAP.put((byte)BLOCK.TRAPDOOR.id, BLOCK_TYPE.TRAPDOOR);
+
+		// Pistons
+		BLOCK_TYPE_MAP.put((byte)BLOCK.PISTON_STICKY_BODY.id, BLOCK_TYPE.PISTON_BODY);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.PISTON_BODY.id, BLOCK_TYPE.PISTON_BODY);
+		BLOCK_TYPE_MAP.put((byte)BLOCK.PISTON_HEAD.id, BLOCK_TYPE.PISTON_HEAD);
 	}
 	
 	/***
@@ -451,9 +461,12 @@ public class MineCraftConstants {
 		blockColors[BLOCK.BED.id] = new Color(255,0,0);
 		blockColors[BLOCK.POWERED_RAIL.id] = new Color(120,53,28);
 		blockColors[BLOCK.DETECTOR_RAIL.id] = new Color(200,189,189);
+		blockColors[BLOCK.PISTON_STICKY_BODY.id] = new Color(132,132,132);
 		blockColors[BLOCK.WEB.id] = new Color(255,255,255);
 		blockColors[BLOCK.TALL_GRASS.id] = new Color(117,176,73);
 		blockColors[BLOCK.DEAD_SHRUB.id] = new Color(148,100,40);
+		blockColors[BLOCK.PISTON_BODY.id] = new Color(132,132,132);
+		blockColors[BLOCK.PISTON_HEAD.id] = new Color(119,92,53);
 		blockColors[BLOCK.WOOL.id] = new Color(222,222,222); //Color(143,143,143,255); 
 		blockColors[BLOCK.YELLOW_FLOWER.id] = new Color(255,255,0);
 		blockColors[BLOCK.RED_ROSE.id] = new Color(255,0,0);
@@ -564,9 +577,12 @@ public class MineCraftConstants {
 		blockDataToSpriteSheet[BLOCK.BED.id] = (8*16) + 7;
 		blockDataToSpriteSheet[BLOCK.POWERED_RAIL.id] = (10*16) + 3;
 		blockDataToSpriteSheet[BLOCK.DETECTOR_RAIL.id] = (12*16) + 3;
+		blockDataToSpriteSheet[BLOCK.PISTON_STICKY_BODY.id] = (6*16) + 12;
 		blockDataToSpriteSheet[BLOCK.WEB.id] = 11;
 		blockDataToSpriteSheet[BLOCK.TALL_GRASS.id] = (2*16)+7;
 		blockDataToSpriteSheet[BLOCK.DEAD_SHRUB.id] = (3*16)+7;
+		blockDataToSpriteSheet[BLOCK.PISTON_BODY.id] = (6*16)+12;
+		blockDataToSpriteSheet[BLOCK.PISTON_HEAD.id] = (6*16)+11;
 		blockDataToSpriteSheet[BLOCK.WOOL.id] = 64;		
 		blockDataToSpriteSheet[BLOCK.YELLOW_FLOWER.id] = 13;
 		blockDataToSpriteSheet[BLOCK.RED_ROSE.id] = 12;

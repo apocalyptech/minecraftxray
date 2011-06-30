@@ -324,6 +324,44 @@ public class Chunk {
 			GL11.glVertex3f(x2, y2, z2);
 		GL11.glEnd();
 	}
+	
+	/**
+	 * Renders a nonstandard vertical rectangle (nonstandard referring primarily to
+	 * the texture size (ie: when we're not pulling a single element out of a 16x16
+	 * grid).  This differs from renderVertical also in that we specify two full
+	 * (x, y, z) coordinates for the bounds, instead of passing in y and a height.
+	 * Texture coordinates are passed in as the usual float from 0 to 1.
+	 *
+	 * Additionally, this method will rotate the texture while drawing; I needed this
+	 * for Pistons, specifically - will probably come in handy elsewhere too.
+	 * 
+	 * @param tx X index within the texture
+	 * @param ty Y index within the texture
+	 * @param tdx Width of texture
+	 * @param tdy Height of texture
+	 * @param x1
+	 * @param y1
+	 * @param z1
+	 * @param x2
+	 * @param y2
+	 * @param z2
+	 */
+	public void renderNonstandardVerticalTexRotate(float tx, float ty, float tdx, float tdy, float x1, float y1, float z1, float x2, float y2, float z2)
+	{
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(tx+tdx, ty);
+			GL11.glVertex3f(x1, y1, z1);
+			
+			GL11.glTexCoord2f(tx+tdx, ty+tdy);
+			GL11.glVertex3f(x2, y1, z2);
+			
+			GL11.glTexCoord2f(tx, ty);
+			GL11.glVertex3f(x1, y2, z1);
+			
+			GL11.glTexCoord2f(tx, ty+tdy);
+			GL11.glVertex3f(x2, y2, z2);
+		GL11.glEnd();
+	}
 
 	/**
 	 * Renders a nonstandard vertical rectangle that's been rotated.
@@ -471,6 +509,40 @@ public class Chunk {
 			GL11.glVertex3f(x2, y, z1);
 	
 			GL11.glTexCoord2f(tx+tdx, ty+tdy);
+			GL11.glVertex3f(x2, y, z2);
+		GL11.glEnd();
+	}
+
+	/**
+	 * Renders a nonstandard horizontal rectangle (nonstandard referring primarily to
+	 * the texture size (ie: when we're not pulling a single element out of a 16x16
+	 * grid).
+	 *
+	 * Additionally, this method will rotate the texture while drawing; I needed this
+	 * for Pistons, specifically - will probably come in handy elsewhere too.
+	 * 
+	 * @param tx X index within the texture
+	 * @param ty Y index within the texture
+	 * @param tdx Width of texture
+	 * @param tdy Height of texture
+	 * @param x1
+	 * @param z1
+	 * @param x2
+	 * @param z2
+	 * @param y
+	 */
+	public void renderNonstandardHorizontalTexRotate(float tx, float ty, float tdx, float tdy, float x1, float z1, float x2, float z2, float y) {
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+			GL11.glTexCoord2f(tx+tdx, ty);
+			GL11.glVertex3f(x1, y, z1);
+	
+			GL11.glTexCoord2f(tx+tdx, ty+tdy);
+			GL11.glVertex3f(x1, y, z2);
+	
+			GL11.glTexCoord2f(tx, ty);
+			GL11.glVertex3f(x2, y, z1);
+	
+			GL11.glTexCoord2f(tx, ty+tdy);
 			GL11.glVertex3f(x2, y, z2);
 		GL11.glEnd();
 	}
@@ -2137,6 +2209,147 @@ public class Chunk {
 		}
 		return isSolid(block) == transpararency;
 	}
+
+	public void renderPistonBody(int textureId, int xxx, int yyy, int zzz, byte blockType) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		byte data = getData(xxx, yyy, zzz);
+		boolean extended = ((data & 0x8) == 0x8);
+		int direction = (data & 0x7);
+
+		float tex_x = precalcSpriteSheetToTextureX[textureId];
+		float tex_y = precalcSpriteSheetToTextureY[textureId]+TEX128;
+		float TEX_PISTON = TEX64*3f;
+		float TEX_PISTON_H = TEX128*3f;
+
+		// Use GL to rotate these properly
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		// This routine draws the piston facing west, which is direction value 3
+		if (direction == 1)
+		{
+			// Up
+			GL11.glRotatef(-90f, 1f, 0f, 0f);
+		}
+		else if (direction == 2)
+		{
+			// East
+			GL11.glRotatef(180f, 0f, 1f, 0f);
+		}
+		else if (direction == 4)
+		{
+			// North
+			GL11.glRotatef(-90f, 0f, 1f, 0f);
+		}
+		else if (direction == 5)
+		{
+			// South
+			GL11.glRotatef(90f, 0f, 1f, 0f);
+		}
+
+		// First the main body bit
+		renderNonstandardHorizontal(tex_x, tex_y, TEX16, TEX_PISTON_H, -.49f, .25f, .49f, -.49f, .49f);
+		renderNonstandardHorizontal(tex_x, tex_y, TEX16, TEX_PISTON_H, -.49f, .25f, .49f, -.49f, -.49f);
+		renderNonstandardVertical(tex_x, tex_y, TEX16, TEX_PISTON_H, -.49f, .49f, .25f, -.49f, -.49f, -.49f);
+		renderNonstandardVertical(tex_x, tex_y, TEX16, TEX_PISTON_H, .49f, .49f, .25f, .49f, -.49f, -.49f);
+		renderVertical(textureId+1, -.49f, -.49f, .49f, -.49f, -.49f, .98f);
+
+		// If we're extended, draw our faceplate; if not, draw the retracted face
+		if (extended)
+		{
+			renderVertical(textureId+2, -.49f, .25f, .49f, .25f, -.49f, .98f);
+
+			// Pop the matrix after
+			GL11.glPopMatrix();
+		}
+		else
+		{
+			// Pop the matrix before
+			GL11.glPopMatrix();
+
+			renderPistonHead(textureId-1, xxx, yyy, zzz, true, (blockType == 29));
+		}
+
+	}
+
+	public void renderPistonHead(int textureId, int xxx, int yyy, int zzz, boolean attached, boolean override_sticky) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		byte data = getData(xxx, yyy, zzz);
+		boolean sticky = ((data & 0x8) == 0x8);
+		int direction = (data & 0x7);
+
+		float side_tex_x = precalcSpriteSheetToTextureX[textureId+1];
+		float side_tex_y = precalcSpriteSheetToTextureY[textureId+1];
+
+		// Matrix stuff
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		// This routine draws the piston facing west, which is direction value 3
+		if (direction == 1)
+		{
+			// Up
+			GL11.glRotatef(-90f, 1f, 0f, 0f);
+		}
+		else if (direction == 2)
+		{
+			// East
+			GL11.glRotatef(180f, 0f, 1f, 0f);
+		}
+		else if (direction == 4)
+		{
+			// North
+			GL11.glRotatef(-90f, 0f, 1f, 0f);
+		}
+		else if (direction == 5)
+		{
+			// South
+			GL11.glRotatef(90f, 0f, 1f, 0f);
+		}
+
+		// Outside edges
+		renderNonstandardHorizontalTexRotate(side_tex_x, side_tex_y, TEX16, TEX128, -.49f, .25f, .49f, .49f, .49f);
+		renderNonstandardHorizontalTexRotate(side_tex_x, side_tex_y, TEX16, TEX128, -.49f, .25f, .49f, .49f, -.49f);
+		renderNonstandardVerticalTexRotate(side_tex_x, side_tex_y, TEX16, TEX128, -.49f, .49f, .25f, -.49f, -.49f, .49f);
+		renderNonstandardVerticalTexRotate(side_tex_x, side_tex_y, TEX16, TEX128, .49f, .49f, .25f, .49f, -.49f, .49f);
+
+		// Back face and post, if we're not attached
+		if (!attached)
+		{
+			// Back face first
+			renderVertical(textureId, -.49f, .25f, .49f, .25f, -.49f, .98f);
+
+			// Now the post
+			renderNonstandardHorizontal(side_tex_x, side_tex_y, TEX16, TEX128, -.125f, .25f, .125f, -.75f, .125f);
+			renderNonstandardHorizontal(side_tex_x, side_tex_y, TEX16, TEX128, -.125f, .25f, .125f, -.75f, -.125f);
+			renderNonstandardVertical(side_tex_x, side_tex_y, TEX16, TEX128, -.125f, .125f, .25f, -.125f, -.125f, -.75f);
+			renderNonstandardVertical(side_tex_x, side_tex_y, TEX16, TEX128, .125f, .125f, .25f, .125f, -.125f, -.75f);
+		}
+
+		// Front face
+		if (attached)
+		{
+			if (override_sticky)
+			{
+				textureId -= 1;
+			}
+		}
+		else
+		{
+			if (sticky)
+			{
+				textureId -= 1;
+			}
+		}
+		renderVertical(textureId, -.49f, .49f, .49f, .49f, -.49f, .98f);
+
+		// Pop the matrix before
+		GL11.glPopMatrix();
+	}
 	
 	/**
 	 * Tests if the given source block has a torch nearby.  This is, I'm willing
@@ -2312,6 +2525,11 @@ public class Chunk {
 						//System.out.println("Unknown block id: " + t);
 						continue;
 					}
+					/*
+					if(textureId == 253) {
+						System.out.println("Unknown block id: " + t);
+					}
+					*/
 
 					if (!onlySelected)
 					{
@@ -2547,6 +2765,12 @@ public class Chunk {
 								break;
 							case TRAPDOOR:
 								renderTrapdoor(textureId,x,y,z);
+								break;
+							case PISTON_BODY:
+								renderPistonBody(textureId,x,y,z,t);
+								break;
+							case PISTON_HEAD:
+								renderPistonHead(textureId,x,y,z,false,false);
 								break;
 							case HALFHEIGHT:
 								if(draw) {

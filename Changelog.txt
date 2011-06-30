@@ -1,3 +1,5 @@
+  * Support for Pistons
+
 Minecraft X-Ray 3.1.1 (2011.06.22)
 
   * Support mod installations (such as TooManyItems on OSX) which replace
