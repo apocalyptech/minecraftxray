@@ -1549,10 +1549,11 @@ public class Chunk {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
-		float side_part = 0.48f;
+		float side_part = 0.49f;
 		float side_full = 0.5f;
-		float bed_height = 0.7f;
+		float bed_height = 0.5625f;
 		float horiz_off = bed_height-0.5f;
+		float bed_tex_height = TEX256/2f*9f;
 		boolean head = true;
 
 		byte data = getData(xxx, yyy, zzz);
@@ -1563,78 +1564,62 @@ public class Chunk {
 			head = false;
 		}
 		data &= 0x3;
-		
-		// There's a fair amount of duplicated code in here, but whatever.  It
-		// feels like assigning variables to do all this would be a lot MORE work.
-		// TODO: it'd be nice to properly align the pillow texture so it looks right.
+
+		float side_tex_x = precalcSpriteSheetToTextureX[textureId+16];
+		float side_tex_y = precalcSpriteSheetToTextureY[textureId+32]-bed_tex_height;
+
+		// Use GL to rotate these properly
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		// We're drawing the bed with the head facing East (direction 2)
+		if (data == 0)
+		{
+			// Pointing West
+			GL11.glRotatef(180f, 0f, 1f, 0f);
+		}
+		else if (data == 1)
+		{
+			// Pointing North
+			GL11.glRotatef(90f, 0f, 1f, 0f);
+		}
+		else if (data == 3)
+		{
+			// Pointing South
+			GL11.glRotatef(-90f, 0f, 1f, 0f);
+		}
+
+		float end_tex_x, end_tex_y;
+		float first_z, second_z, end_z;
 		if (head)
 		{
-			switch (data)
-			{
-				case 0x0:
-					// Head is facing west
-					this.renderHorizontal(textureId, x+side_part, z+side_part, x-side_part, z-side_full, y+horiz_off);
-					this.renderVertical(textureId, x+side_part, z+side_part, x+side_part, z-side_full, y-side_part, bed_height);
-					this.renderVertical(textureId, x-side_part, z+side_part, x-side_part, z-side_full, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_part, z+side_part, x-side_part, z+side_part, y-side_part, bed_height);
-					break;
-				case 0x1:
-					// Head is facing north
-					this.renderHorizontal(textureId, x+side_full, z+side_part, x-side_part, z-side_part, y+horiz_off);
-					this.renderVertical(textureId, x-side_part, z+side_part, x-side_part, z-side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_full, z+side_part, x-side_part, z+side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_full, z-side_part, x-side_part, z-side_part, y-side_part, bed_height);
-					break;
-				case 0x2:
-					// Head is facing east
-					this.renderHorizontal(textureId, x+side_part, z+side_full, x-side_part, z-side_part, y+horiz_off);
-					this.renderVertical(textureId, x+side_part, z+side_full, x+side_part, z-side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x-side_part, z+side_full, x-side_part, z-side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_part, z-side_part, x-side_part, z-side_part, y-side_part, bed_height);
-					break;
-				case 0x3:
-					// Head is facing south
-					this.renderHorizontal(textureId, x+side_part, z+side_part, x-side_full, z-side_part, y+horiz_off);
-					this.renderVertical(textureId, x+side_part, z+side_part, x+side_part, z-side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_part, z+side_part, x-side_full, z+side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_part, z-side_part, x-side_full, z-side_part, y-side_part, bed_height);
-					break;
-			}
+			end_tex_x = precalcSpriteSheetToTextureX[textureId+17];
+			end_tex_y = precalcSpriteSheetToTextureY[textureId+33]-bed_tex_height;
+			first_z = side_full;
+			second_z = -side_part;
+			end_z = -side_part;
 		}
 		else
 		{
-			switch (data)
-			{
-				case 0x0:
-					// Head is facing west
-					this.renderHorizontal(textureId, x+side_part, z+side_full, x-side_part, z-side_part, y+horiz_off);
-					this.renderVertical(textureId, x+side_part, z+side_full, x+side_part, z-side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x-side_part, z+side_full, x-side_part, z-side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_part, z-side_part, x-side_part, z-side_part, y-side_part, bed_height);
-					break;
-				case 0x1:
-					// Head is facing north
-					this.renderHorizontal(textureId, x+side_part, z+side_part, x-side_full, z-side_part, y+horiz_off);
-					this.renderVertical(textureId, x+side_part, z+side_part, x+side_part, z-side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_part, z+side_part, x-side_full, z+side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_part, z-side_part, x-side_full, z-side_part, y-side_part, bed_height);
-					break;
-				case 0x2:
-					// Head is facing east
-					this.renderHorizontal(textureId, x+side_part, z+side_part, x-side_part, z-side_full, y+horiz_off);
-					this.renderVertical(textureId, x+side_part, z+side_part, x+side_part, z-side_full, y-side_part, bed_height);
-					this.renderVertical(textureId, x-side_part, z+side_part, x-side_part, z-side_full, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_part, z+side_part, x-side_part, z+side_part, y-side_part, bed_height);
-					break;
-				case 0x3:
-					// Head is facing south
-					this.renderHorizontal(textureId, x+side_full, z+side_part, x-side_part, z-side_part, y+horiz_off);
-					this.renderVertical(textureId, x-side_part, z+side_part, x-side_part, z-side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_full, z+side_part, x-side_part, z+side_part, y-side_part, bed_height);
-					this.renderVertical(textureId, x+side_full, z-side_part, x-side_part, z-side_part, y-side_part, bed_height);
-					break;
-			}
+			end_tex_x = precalcSpriteSheetToTextureX[textureId+15];
+			end_tex_y = precalcSpriteSheetToTextureY[textureId+31]-bed_tex_height;
+			first_z = side_part;
+			second_z = -side_full;
+			end_z = side_part;
 		}
+
+		// Top face
+		this.renderHorizontal(textureId, side_part, first_z, -side_part, second_z, horiz_off);
+
+		// Side faces
+		this.renderNonstandardVertical(side_tex_x, side_tex_y, TEX16, bed_tex_height, side_part, bed_height-side_full, first_z, side_part, -side_full, second_z);
+		this.renderNonstandardVertical(side_tex_x, side_tex_y, TEX16, bed_tex_height, -side_part, bed_height-side_full, first_z, -side_part, -side_full, second_z);
+
+		// end face (either the very foot or the very head of the bed)
+		this.renderNonstandardVertical(end_tex_x, end_tex_y, TEX16, bed_tex_height, side_part, bed_height-side_full, end_z, -side_part, -side_full, end_z);
+
+		// Pop the matrix
+		GL11.glPopMatrix();
 	}
 	
 	/**
