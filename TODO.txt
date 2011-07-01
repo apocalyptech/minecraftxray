@@ -34,9 +34,6 @@
    formatting and style in general).  And really, I've been pretty lazy all around
    with doing things the "right way."  The code could use cleanup in general.
  
- * Would be nice if the "Other..." dialog would let you select either the
-   directory or level.dat itself (right now it'll only let you select the directory)
- 
  * Hotkey to re-open the "Open" dialog and load a new world
 
  * Would be nice to maybe redistribute Minecraft's terrain.png and provide an

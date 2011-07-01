@@ -54,6 +54,7 @@ import java.util.Collections;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
@@ -250,6 +251,18 @@ public class XRay
     public boolean jump_dialog_trigger = false;
 
 	public static HashMap<Integer, TextureDecorationStats> decorationStats;
+
+	// A class to provide filename filtering on our "Other" dialog
+	private class LevelDatFileFilter extends FileFilter
+	{
+		public boolean accept(File file) {
+			return (file.isDirectory() || file.getName().equalsIgnoreCase("level.dat"));
+		}
+
+		public String getDescription() {
+			return "Minecraft Levels";
+		}
+	}
 
 	// lets start with the program
 	public static void main(String args[])
@@ -935,7 +948,9 @@ public class XRay
 			{
 				JFileChooser chooser = new JFileChooser();
 				chooser.setFileHidingEnabled(false);
-				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				chooser.setFileFilter(new LevelDatFileFilter());
+				chooser.setAcceptAllFileFilterUsed(false);
 				if (xray_properties.getProperty("LAST_WORLD") != null)
 				{
 					chooser.setCurrentDirectory(new File(xray_properties.getProperty("LAST_WORLD")));
@@ -948,7 +963,20 @@ public class XRay
 				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
 				{
 					WorldInfo customWorld = availableWorlds.get(this.selectedWorld);
-					customWorld.setBasePath(chooser.getSelectedFile().getCanonicalPath());
+					File chosenFile = chooser.getSelectedFile();
+					if (chosenFile.isFile())
+					{
+						if (chosenFile.getName().equalsIgnoreCase("level.dat"))
+						{
+							chosenFile = chosenFile.getCanonicalFile().getParentFile();
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Please choose a directory or a level.dat file", "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
+							continue;
+						}
+					}
+					customWorld.setBasePath(chosenFile.getCanonicalPath());
 					File leveldat = customWorld.getLevelDatFile();
 					if (leveldat.exists() && leveldat.canRead())
 					{
