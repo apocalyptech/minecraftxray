@@ -3,6 +3,7 @@
     jack-o-lanterns, chests, workbenches, jukeboxes, TNT, wood,
 	bookshelves, grass, and sandstone
   * Tweaked grass/leaf color a bit
+  * Toggle between new and old grass rendering with the "G" key
 
 Minecraft X-Ray 3.1.1 (2011.06.22)
 

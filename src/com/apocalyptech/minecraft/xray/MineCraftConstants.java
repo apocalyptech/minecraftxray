@@ -231,6 +231,9 @@ public class MineCraftConstants {
 	// Block types which don't have directional information, but whose faces might differ depending on
 	// which face we're talking about
 	public static HashMap<Byte, SolidDirectional> SOLID_FACECHANGE_BLOCKS = new HashMap<Byte, SolidDirectional>();
+
+	// Static SolidDirectional for grass, so we can toggle it on and off
+	public static SolidDirectional grassDirectionInfo;
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
 	public static final BLOCK[] preferred_highlight_ores = new BLOCK[] {
@@ -271,6 +274,7 @@ public class MineCraftConstants {
 		TOGGLE_POSITION_INFO (Keyboard.KEY_GRAVE),
 		TOGGLE_RENDER_DETAILS (Keyboard.KEY_R),
 		TOGGLE_BEDROCK (Keyboard.KEY_B),
+		TOGGLE_ACCURATE_GRASS (Keyboard.KEY_G),
 		TOGGLE_WATER (Keyboard.KEY_T),
 		TOGGLE_HIGHLIGHT_EXPLORED (Keyboard.KEY_E),
 		SWITCH_NETHER (Keyboard.KEY_N),
@@ -818,12 +822,12 @@ public class MineCraftConstants {
 		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.BOOKSHELF.id, dirdata);
 
 		// Face-changing Blocks - Grass
-		dirdata = new SolidDirectional();
-		dirdata.setDir(SolidDirectional.REL_DIRECTION.FORWARD, 3);
-		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, 3);
-		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, 3);
-		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 2);
-		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.GRASS.id, dirdata);
+		grassDirectionInfo = new SolidDirectional();
+		grassDirectionInfo.setDir(SolidDirectional.REL_DIRECTION.FORWARD, 3);
+		grassDirectionInfo.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, 3);
+		grassDirectionInfo.setDir(SolidDirectional.REL_DIRECTION.SIDES, 3);
+		grassDirectionInfo.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 2);
+		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.GRASS.id, grassDirectionInfo);
 
 		// Face-changing Blocks - Sandstone
 		dirdata = new SolidDirectional();

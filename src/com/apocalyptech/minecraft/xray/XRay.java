@@ -221,6 +221,9 @@ public class XRay
 	private int[] lightLevelStart = new int[] { 0, 20, 30, 40, 60 };
 	private int currentLightLevel = 2;
 
+	// Grass rendering status
+	private boolean accurateGrass = true;
+
 	// vars to keep track of our current chunk coordinates
 	private int cur_chunk_x = 0;
 	private int cur_chunk_z = 0;
@@ -676,6 +679,28 @@ public class XRay
 
 		GL11.glFogf(GL11.GL_FOG_START, min);
 		GL11.glFogf(GL11.GL_FOG_END, max);
+	}
+
+	/**
+	 * Alters our SOLID_FACECHANGE_BLOCKS to include or not include the fancier
+	 * grass rendering, in case anyone wants that behavior on occasion.
+	 */
+	private void setAccurateGrass()
+	{
+		if (accurateGrass)
+		{
+			if (!SOLID_FACECHANGE_BLOCKS.containsKey((byte)BLOCK.GRASS.id))
+			{
+				SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.GRASS.id, grassDirectionInfo);
+			}
+		}
+		else
+		{
+			if (SOLID_FACECHANGE_BLOCKS.containsKey((byte)BLOCK.GRASS.id))
+			{
+				SOLID_FACECHANGE_BLOCKS.remove((byte)BLOCK.GRASS.id);
+			}
+		}
 	}
 
 	/***
@@ -1424,6 +1449,14 @@ public class XRay
 					highlightOres = !highlightOres;
 					updateRenderDetails();
 				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ACCURATE_GRASS))
+				{
+					// Toggle the drawing of accurate grass
+					accurateGrass = !accurateGrass;
+					setAccurateGrass();
+					invalidateSelectedChunks(true);
+					updateRenderDetails();
+				}
 				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_TO_SPAWN))
 				{
 					// Move camera to spawn point
@@ -2030,6 +2063,11 @@ public class XRay
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Water: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT);
 		}
+		if (!accurateGrass)
+		{
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Grass: ", Color.BLACK, DETAILFONT, "Inaccurate", Color.RED.darker(), DETAILVALUEFONT);
+		}
 		if (camera_lock)
 		{
 			line_count++;
@@ -2486,6 +2524,7 @@ public class XRay
 		xray_properties.setBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
 		xray_properties.setBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
 		xray_properties.setBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
+		xray_properties.setBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
 		xray_properties.setIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
 		xray_properties.setIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
 		xray_properties.setIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);
@@ -2509,6 +2548,7 @@ public class XRay
 		highlightOres = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
 		levelInfoToggle = xray_properties.getBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
 		renderDetailsToggle = xray_properties.getBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
+		accurateGrass = xray_properties.getBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
 		currentChunkRange = xray_properties.getIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
 		currentHighlightDistance = xray_properties.getIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
 		currentLightLevel = xray_properties.getIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);
@@ -2516,6 +2556,9 @@ public class XRay
 		{
 			mineralToggle[i] = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_" + i, mineralToggle[i]);
 		}
+		
+		// If we have to call out to any functions because of these states, now might be a good time
+		setAccurateGrass();
 	}
 
 	/***

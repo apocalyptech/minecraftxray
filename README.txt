@@ -71,37 +71,38 @@ But without the "KEY_" prefix.
 You can also set which resources you want to be highlightable in the app.
 For specifying resource highlights, you should use the following names:
 
-    BED                     GRAVEL                   SAND                     
-    BEDROCK                 ICE                      SANDSTONE                
-    BOOKSHELF               IRON_BLOCK               SAPLING                  
-    BRICK                   IRON_DOOR                SIGNPOST                 
-    BROWN_MUSHROOM          IRON_ORE                 SLAB                     
-    BURNING_FURNACE         JACK_O_LANTERN           SNOW                     
-    CACTUS                  JUKEBOX                  SNOW_BLOCK               
-    CAKE                    LADDER                   SOUL_SAND                
-    CHEST                   LAPIS_LAZULI_BLOCK       SPONGE                   
-    CLAY                    LAPIS_LAZULI_ORE         STATIONARY_LAVA          
-    COAL_ORE                LAVA                     STATIONARY_WATER         
-    COBBLESTONE             LEAVES                   STONE                    
-    COBBLESTONE_STAIRS      LEVER                    STONE_BUTTON             
-    CROPS                   MINECART_TRACKS          STONE_PRESSURE_PLATE     
-    DEAD_SHRUB              MOB_SPAWNER              SUGARCANE                
-    DETECTOR_RAIL           MOSSY_COBBLESTONE        TALL_GRASS               
-    DIAMOND_BLOCK           NETHERRACK               TNT                      
-    DIAMOND_ORE             NOTE_BLOCK               TORCH                    
-    DIRT                    OBSIDIAN                 TRAPDOOR                 
-    DISPENSER               PLANK                    WALL_SIGN                
-    DOUBLE_SLAB             PORTAL                   WATER                    
-    FARMLAND                POWERED_RAIL             WEB                      
-    FENCE                   PUMPKIN                  WOOD                     
-    FIRE                    REDSTONE_ORE             WOODEN_DOOR              
-    FURNACE                 REDSTONE_REPEATER_OFF    WOODEN_PRESSURE_PLATE    
-    GLASS                   REDSTONE_REPEATER_ON     WOODEN_STAIRS            
-    GLOWING_REDSTONE_ORE    REDSTONE_TORCH_OFF       WOOL                     
-    GLOWSTONE               REDSTONE_TORCH_ON        WORKBENCH                
-    GOLD_BLOCK              REDSTONE_WIRE            YELLOW_FLOWER            
-    GOLD_ORE                RED_MUSHROOM                                      
-    GRASS                   RED_ROSE                                          
+    BED                     ICE                      RED_ROSE                 
+    BEDROCK                 IRON_BLOCK               SAND                     
+    BOOKSHELF               IRON_DOOR                SANDSTONE                
+    BRICK                   IRON_ORE                 SAPLING                  
+    BROWN_MUSHROOM          JACK_O_LANTERN           SIGNPOST                 
+    BURNING_FURNACE         JUKEBOX                  SLAB                     
+    CACTUS                  LADDER                   SNOW                     
+    CAKE                    LAPIS_LAZULI_BLOCK       SNOW_BLOCK               
+    CHEST                   LAPIS_LAZULI_ORE         SOUL_SAND                
+    CLAY                    LAVA                     SPONGE                   
+    COAL_ORE                LEAVES                   STATIONARY_LAVA          
+    COBBLESTONE             LEVER                    STATIONARY_WATER         
+    COBBLESTONE_STAIRS      MINECART_TRACKS          STONE                    
+    CROPS                   MOB_SPAWNER              STONE_BUTTON             
+    DEAD_SHRUB              MOSSY_COBBLESTONE        STONE_PRESSURE_PLATE     
+    DETECTOR_RAIL           NETHERRACK               SUGARCANE                
+    DIAMOND_BLOCK           NOTE_BLOCK               TALL_GRASS               
+    DIAMOND_ORE             OBSIDIAN                 TNT                      
+    DIRT                    PISTON_BODY              TORCH                    
+    DISPENSER               PISTON_HEAD              TRAPDOOR                 
+    DOUBLE_SLAB             PISTON_STICKY_BODY       WALL_SIGN                
+    FARMLAND                PLANK                    WATER                    
+    FENCE                   PORTAL                   WEB                      
+    FIRE                    POWERED_RAIL             WOOD                     
+    FURNACE                 PUMPKIN                  WOODEN_DOOR              
+    GLASS                   REDSTONE_ORE             WOODEN_PRESSURE_PLATE    
+    GLOWING_REDSTONE_ORE    REDSTONE_REPEATER_OFF    WOODEN_STAIRS            
+    GLOWSTONE               REDSTONE_REPEATER_ON     WOOL                     
+    GOLD_BLOCK              REDSTONE_TORCH_OFF       WORKBENCH                
+    GOLD_ORE                REDSTONE_TORCH_ON        YELLOW_FLOWER            
+    GRASS                   REDSTONE_WIRE                                     
+    GRAVEL                  RED_MUSHROOM                                      
 
 Perhaps someday there'll be an actual GUI for specifying all this.
 
@@ -129,16 +130,17 @@ overridden, though.  The default keybindings are as follows:
         Lock to Vertical Axis:      L
 
     Rendering
-        Highlight Ores:             F1 - F10
-        Toggle Highlight Glow:      H
-        Set Highlight distance:     1 - 7
-        Toggle Fullbright:          F
-        Toggle Bedrock:             B
-        Toggle Water:               T
-        Increase Lighting Range:    +
-        Decrease Lighting Range:    -
-        Set visibility range:       NUMPAD1 - NUMPAD6 (remember numlock)
-        Toggle "explored" areas:    E
+        Highlight Ores:              F1 - F10
+        Toggle Highlight Glow:       H
+        Set Highlight distance:      1 - 7
+        Toggle Fullbright:           F
+        Toggle Bedrock:              B
+        Toggle Water:                T
+        Increase Lighting Range:     +
+        Decrease Lighting Range:     -
+        Set visibility range:        NUMPAD1 - NUMPAD6 (remember numlock)
+        Toggle "explored" areas:     E
+        Toggle accurate grass sides: G
 
     Other
         Toggle Fullscreen:      BACKSPACE
@@ -178,13 +180,19 @@ whether to always draw water and bedrock.  Water is on by default, and
 bedrock is off by default (though it will of course show up if necessary,
 regardless of this setting).
 
-Lastly, there is an "explored" area toggle, which basically just tints
-any blocks around torches with a green color.  This makes it very easy
-to see where you've explored in underground caves (and is fairly useless
-above ground).  It does this in a 7x7x7 cube centered around the torches,
-so the highlighting can easily "bleed over" into adjacent tunnels where
-you might not have actually explored, but it's usually very easy to tell
-when that's happened.
+The "explored" area toggle, basically just tints any blocks around torches with
+a green color.  This makes it very easy to see where you've explored in
+underground caves (and is fairly useless above ground).  It does this in a
+7x7x7 cube centered around the torches, so the highlighting can easily "bleed
+over" into adjacent tunnels where you might not have actually explored, but
+it's usually very easy to tell when that's happened.
+
+The toggle for grass sides will let you toggle the accurate grass sides
+on or off.  Until version 3.2.0, Minecraft X-Ray drew grass as a solid block
+of green, which I found occasionally handy while hollowing out mountains
+and the like, to know where I could still dig out and where I was right up
+against the edge.  X-Ray will now default to the more-accurate rendering,
+but you can toggle back and forth with the "G" key.
 
 The rendering information popup can be toggled with "R" and is on by
 default.  This will let you know what these various settings are set to.
