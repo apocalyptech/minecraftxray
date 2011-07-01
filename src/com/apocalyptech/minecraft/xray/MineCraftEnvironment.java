@@ -519,7 +519,7 @@ public class MineCraftEnvironment {
 		// Now do the coloring if we have to.
 		if (grayscale)
 		{	
-			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.3f);
+			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f);
 			
 			// First greenify grass
 			Rectangle rect = new Rectangle(0, 0, square_width, square_width);
@@ -542,13 +542,28 @@ public class MineCraftEnvironment {
 			g2d.fill(rect);
 			g2d.drawImage(bi, null, 0, 0);
 
-			// Now shrubs
+			// Now ferns
 			rect = new Rectangle(8*square_width, 3*square_width, square_width, square_width);
 			g2d.setComposite(ac);
 			g2d.setColor(Color.green);
 			g2d.fill(rect);
 			g2d.drawImage(bi, null, 0, 0);
+
+			// Now the side-grass overlay
+			rect = new Rectangle(6*square_width, 2*square_width, square_width, square_width);
+			g2d.setComposite(ac);
+			g2d.setColor(Color.green);
+			g2d.fill(rect);
+			g2d.drawImage(bi, null, 0, 0);
 		}
+
+		// Overlay our custom-colorized side grass on top of the side-grass image
+		g2d.setComposite(AlphaComposite.SrcOver);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
+		g2d.drawImage(bi, 3*square_width, 0, 4*square_width, square_width,
+				6*square_width, 2*square_width, 7*square_width, 3*square_width,
+				null);
 
 		// Colorize redstone wire
 		AlphaComposite redstone_ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 1f);
@@ -639,7 +654,6 @@ public class MineCraftEnvironment {
 		g2d.setColor(new Color(0f, 1f, 0f, .2f));
 		g2d.fillRect(0, bi.getHeight(), bi.getWidth(), bi.getHeight());
 
-		/*
 		try {
 			ImageIO.write(bi, "PNG", new File("/home/pez/xray_terrain.png"));
 			System.out.println("Wrote texture to xray_terrain.png");
@@ -648,7 +662,6 @@ public class MineCraftEnvironment {
 		{
 			// whatever
 		}
-		*/
 		
 		return bi2;
 	}
