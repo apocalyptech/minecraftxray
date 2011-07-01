@@ -654,6 +654,7 @@ public class MineCraftEnvironment {
 		g2d.setColor(new Color(0f, 1f, 0f, .2f));
 		g2d.fillRect(0, bi.getHeight(), bi.getWidth(), bi.getHeight());
 
+		/*
 		try {
 			ImageIO.write(bi, "PNG", new File("/home/pez/xray_terrain.png"));
 			System.out.println("Wrote texture to xray_terrain.png");
@@ -662,6 +663,7 @@ public class MineCraftEnvironment {
 		{
 			// whatever
 		}
+		*/
 		
 		return bi2;
 	}
