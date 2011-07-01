@@ -1,7 +1,7 @@
   * Support for new Beta 1.7 block - Pistons
   * Better rendering for beds, cakes, furnaces, dispensers, pumpkins,
     jack-o-lanterns, chests, workbenches, jukeboxes, TNT, wood,
-	bookshelves, and grass
+	bookshelves, grass, and sandstone
   * Tweaked grass/leaf color a bit
 
 Minecraft X-Ray 3.1.1 (2011.06.22)

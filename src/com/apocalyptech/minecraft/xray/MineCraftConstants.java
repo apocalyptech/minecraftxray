@@ -560,7 +560,7 @@ public class MineCraftConstants {
 		}
 		blockDataToSpriteSheet[0] = -1;
 		blockDataToSpriteSheet[BLOCK.STONE.id] = 1;
-		blockDataToSpriteSheet[BLOCK.GRASS.id] = 3;
+		blockDataToSpriteSheet[BLOCK.GRASS.id] = 0;
 		blockDataToSpriteSheet[BLOCK.DIRT.id] = 2;
 		blockDataToSpriteSheet[BLOCK.COBBLESTONE.id] = 16;
 		blockDataToSpriteSheet[BLOCK.PLANK.id] = 4;
@@ -819,9 +819,17 @@ public class MineCraftConstants {
 
 		// Face-changing Blocks - Grass
 		dirdata = new SolidDirectional();
-		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, 0);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.FORWARD, 3);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, 3);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, 3);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 2);
 		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.GRASS.id, dirdata);
+
+		// Face-changing Blocks - Sandstone
+		dirdata = new SolidDirectional();
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, 11*16);
+		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 13*16);
+		SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.SANDSTONE.id, dirdata);
 	}
 	
 	/***
