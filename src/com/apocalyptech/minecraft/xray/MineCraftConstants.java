@@ -217,12 +217,8 @@ public class MineCraftConstants {
 	}
 
 	// Block types to compute decoration information for
-	public static final BLOCK[] DECORATION_BLOCKS = new BLOCK[] {
-		BLOCK.TORCH, BLOCK.REDSTONE_TORCH_ON, BLOCK.REDSTONE_TORCH_OFF,
-		BLOCK.RED_ROSE, BLOCK.YELLOW_FLOWER,
-		BLOCK.BROWN_MUSHROOM, BLOCK.RED_MUSHROOM,
-		BLOCK.LEVER, BLOCK.SAPLING, BLOCK.SUGARCANE,
-		BLOCK.WEB, BLOCK.TALL_GRASS, BLOCK.DEAD_SHRUB
+	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
+		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS
 	};
 
 	// Block types which are solid but which have directional data for rendering

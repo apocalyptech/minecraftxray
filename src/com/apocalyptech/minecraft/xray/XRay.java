@@ -44,6 +44,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -795,21 +796,35 @@ public class XRay
 			minecraftTexture = TextureTool.allocateTexture(minecraftTextureImage, GL11.GL_NEAREST);
 			minecraftTexture.update();
 
+			// Get a list of block types organized by type
+			HashMap<BLOCK_TYPE, ArrayList<Byte>> reverse_block_type_map = new HashMap<BLOCK_TYPE, ArrayList<Byte>>();
+			for (Map.Entry<Byte, BLOCK_TYPE> entry : BLOCK_TYPE_MAP.entrySet())
+			{
+				if (!reverse_block_type_map.containsKey(entry.getValue()))
+				{
+					reverse_block_type_map.put(entry.getValue(), new ArrayList<Byte>());
+				}
+				reverse_block_type_map.get(entry.getValue()).add(entry.getKey());
+			}
+
 			// Compute some information about some decorative textures
 			decorationStats = new HashMap<Integer, TextureDecorationStats>();
-			for (BLOCK decBlock : DECORATION_BLOCKS)
+			for (BLOCK_TYPE decBlockType : DECORATION_BLOCKS)
 			{
-				if (blockDataSpriteSheetMap.containsKey((byte)decBlock.id))
+				for (byte decBlock : reverse_block_type_map.get(decBlockType))
 				{
-					for (int textureId : blockDataSpriteSheetMap.get((byte)decBlock.id).values())
+					if (blockDataSpriteSheetMap.containsKey(decBlock))
 					{
+						for (int textureId : blockDataSpriteSheetMap.get(decBlock).values())
+						{
+							decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+						}
+					}
+					else
+					{
+						int textureId = blockDataToSpriteSheet[(int)decBlock];
 						decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
 					}
-				}
-				else
-				{
-					int textureId = blockDataToSpriteSheet[decBlock.id];
-					decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
 				}
 			}
 
