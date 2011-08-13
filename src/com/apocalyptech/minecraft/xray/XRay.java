@@ -1696,16 +1696,25 @@ public class XRay
 	{
 		WorldInfo newworld = null;
 		float camera_mult = 1.0f;
-		if (world.isNether() && world.hasOverworld())
+		if (!world.isOverworld() && world.hasOverworld())
 		{
 			this.cameraTextOverride = "equivalent Overworld location (approx.)";
 			newworld = world.getOverworldInfo();
 			camera_mult = 8.0f;
 		}
-		else if (!world.isNether() && world.hasNether())
+		else if (world.isOverworld() && world.hasDimension(-1))
 		{
 			this.cameraTextOverride = "equivalent Nether location (approx.)";
-			newworld = world.getNetherInfo();
+			// TODO: should just have a call to get a specific dimension
+			ArrayList<WorldInfo> worlds = world.getDimensionInfo();
+			for (WorldInfo tempworld : worlds)
+			{
+				if (tempworld.getDimension() == -1)
+				{
+					newworld = tempworld;
+					break;
+				}
+			}
 			camera_mult = 1.0f / 8.0f;
 		}
 		if (newworld != null)
@@ -2468,7 +2477,7 @@ public class XRay
 		int base_x = getMinimapBaseX(z);
 		int base_y = getMinimapBaseY(x);
 
-		boolean in_nether = world.isNether();
+		boolean in_nether = world.isDimension(-1);
 		boolean found_air;
 		boolean found_solid;
 		boolean drew_block;

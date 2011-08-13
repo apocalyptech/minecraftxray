@@ -127,7 +127,7 @@ public class MinecraftLevel {
 			
 			// Figure out what dimension the player's in.  If it matches, move our camera there.
 			IntTag playerDim = (IntTag) levelPlayerData.getTagWithName("Dimension");
-			if ((playerDim == null && !world.isNether()) || (playerDim != null && ((playerDim.value == 0 && !world.isNether()) || (playerDim.value == -1 && world.isNether()))))
+			if ((playerDim == null && world.isOverworld()) || (playerDim != null && ((playerDim.value == 0 && world.isOverworld()) || (playerDim.value == world.getDimension()))))
 			{
 				ListTag playerPos = (ListTag) levelPlayerData .getTagWithName("Pos");
 				ListTag playerRotation = (ListTag) levelPlayerData .getTagWithName("Rotation");
@@ -158,14 +158,14 @@ public class MinecraftLevel {
 				IntTag playerDim = (IntTag) mpuserData.getTagWithName("Dimension");
 				if (playerDim == null)
 				{
-					if (world.isNether())
+					if (!world.isOverworld())
 					{
 						continue;
 					}
 				}
 				else
 				{
-					if ((playerDim.value == 0 && world.isNether()) || (playerDim.value == -1 && !world.isNether()))
+					if ((playerDim.value == 0 && !world.isOverworld()) || (playerDim.value != world.getDimension()))
 					{
 						continue;
 					}
@@ -192,16 +192,16 @@ public class MinecraftLevel {
 		
 		// Set the spawn point if we're not in the Nether
 		this.spawnPoint_idx = this.playerPositions.size();
-		if (world.isNether())
-		{
-			this.playerPositions.add(new CameraPreset(this.spawnPoint_idx, "Map Center", new Block(0,-66,0), 0, 0));
-		}
-		else
+		if (world.isOverworld())
 		{
 			IntTag spawnX = (IntTag) levelDataData.getTagWithName("SpawnX");
 			IntTag spawnY = (IntTag) levelDataData.getTagWithName("SpawnY");
 			IntTag spawnZ = (IntTag) levelDataData.getTagWithName("SpawnZ");
 			this.playerPositions.add(new CameraPreset(this.spawnPoint_idx, "Spawnpoint", new Block(-spawnX.value, -spawnY.value-1, -spawnZ.value+1), 0, 0));
+		}
+		else
+		{
+			this.playerPositions.add(new CameraPreset(this.spawnPoint_idx, "Map Center", new Block(0,-66,0), 0, 0));
 		}
 
 		// Figure out where to set the "player" position, if we have no singleplayer user

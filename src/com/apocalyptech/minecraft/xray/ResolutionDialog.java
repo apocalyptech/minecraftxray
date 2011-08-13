@@ -384,13 +384,20 @@ public class ResolutionDialog extends JFrame {
 			{
 				button = new JRadioButton("Other...");				
 			}
-			else if (world.isNether())
+			else if (!world.isOverworld())
 			{
-				button = new JRadioButton(world.getDirName() + " Nether");				
+				if (world.isKnownDimension())
+				{
+					button = new JRadioButton(world.getDirName() + ": " + world.getDimensionDesc() + " Dimension");
+				}
+				else
+				{
+					button = new JRadioButton(world.getDirName() + ": " + world.getDimensionDesc());
+				}
 			}
 			else
 			{
-				if (world.getLevelName() != null)
+				if (world.getLevelName() != null && !world.getDirName().equals(world.getLevelName()))
 				{
 					button = new JRadioButton(world.getDirName() + " (" + world.getLevelName() + ")");
 				}

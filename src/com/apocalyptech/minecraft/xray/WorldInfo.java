@@ -29,7 +29,10 @@ package com.apocalyptech.minecraft.xray;
 import java.io.File;
 import java.io.IOException;
 import java.io.FilenameFilter;
+import java.lang.NumberFormatException;
+import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.ArrayList;
 
 /**
  * Class to aid in maintaining a list of possible worlds for us to use.
@@ -39,9 +42,19 @@ public class WorldInfo
 	private String basepath;
 	private String dirName;
 	private String levelName;
-	private boolean nether;
 	private boolean custom;
+	private int dimension;
 	public TreeMap<String, File> mp_players;
+
+	public static HashMap<Integer, String> known_dimensions;
+
+	// Some static initializations
+	static
+	{
+		known_dimensions = new HashMap<Integer, String>();
+		known_dimensions.put(-1, "Nether");
+		known_dimensions.put(3, "Aether (mod)");
+	}
 	
 	// Couple of variables to determine whether our chunks are stored in the new
 	// Region format introduced in Beta 1.3.  Minecraft converts chunks on the fly,
@@ -68,13 +81,13 @@ public class WorldInfo
 	 * locations.
 	 * 
 	 * @param basepath
-	 * @param isNether
+	 * @param dimension
 	 * @param custom
 	 */
-	public WorldInfo(String basepath, String dirName, boolean isNether, boolean custom)
+	public WorldInfo(String basepath, String dirName, int dimension, boolean custom)
 	{
 		this.basepath = basepath;
-		this.nether = isNether;
+		this.dimension = dimension;
 		this.custom = custom;
 		this.dirName = dirName;
 		this.populateMPPlayerList();
@@ -91,24 +104,24 @@ public class WorldInfo
 	}
 	
 	/**
-	 * Instansiate a new WorldInfo with only the path and whether it's Nether or not.
+	 * Instansiate a new WorldInfo with only the path and what dimension we are
 	 * 
 	 * @param basepath
-	 * @param isNether
+	 * @param dimension
 	 */
-	public WorldInfo(String basepath, String dirName, boolean isNether)
+	public WorldInfo(String basepath, String dirName, int dimension)
 	{
-		this(basepath, dirName, isNether, false);
+		this(basepath, dirName, dimension, false);
 	}
 	
 	/**
-	 * Instansiate a new WorldInfo given only the path (assumed to be non-Nether)
+	 * Instansiate a new WorldInfo given only the path (assumed to be overworld)
 	 * 
 	 * @param basepath
 	 */
 	public WorldInfo(String basepath, String dirName)
 	{
-		this(basepath, dirName, false, false);
+		this(basepath, dirName, 0);
 	}
 	
 	/**
@@ -119,7 +132,7 @@ public class WorldInfo
 	 */
 	public WorldInfo(boolean custom)
 	{
-		this(null, null, false, true);
+		this(null, null, 0, true);
 	}
 	
 	public void populateMPPlayerList()
@@ -151,13 +164,14 @@ public class WorldInfo
 		if (this.custom)
 		{
 			this.basepath = newpath;
-			if (this.hasOverworld() && !this.hasNether())
+			// TODO: this isn't correct anymore
+			if (this.hasOverworld() && !this.hasDimension(-1))
 			{
-				this.nether = true;
+				this.dimension = -1;
 			}
 			else
 			{
-				this.nether = false;
+				this.dimension = 0;
 			}
 		}
 		this.populateMPPlayerList();
@@ -172,28 +186,37 @@ public class WorldInfo
 	{
 		return this.basepath;
 	}
+
+	/**
+	 * Gets the base path as a File object
+	 * 
+	 */
+	public File getBaseFile()
+	{
+		return new File(this.getBasePath());
+	}
 	
 	public File getLevelDatFile()
 	{
-		if (this.isNether())
+		if (this.isOverworld())
 		{
-			return new File(this.getBasePath(), "../level.dat");
+			return new File(this.getBasePath(), "level.dat");
 		}
 		else
 		{
-			return new File(this.getBasePath(), "level.dat");
+			return new File(this.getBasePath(), "../level.dat");
 		}
 	}
 	
 	public File getPlayerListDir()
 	{
-		if (this.isNether())
+		if (this.isOverworld())
 		{
-			return new File(this.getBasePath(), "../players");
+			return new File(this.getBasePath(), "players");
 		}
 		else
 		{
-			return new File(this.getBasePath(), "players");
+			return new File(this.getBasePath(), "../players");
 		}
 	}
 	
@@ -229,30 +252,71 @@ public class WorldInfo
 	}
 	
 	/**
-	 * Are we a Nether world?  Note that custom worlds will always return false
+	 * Are we a dimension world?  Note that custom worlds will always return false
 	 * until their path is set with setBasePath()
 	 * 
 	 * @return
 	 */
-	public boolean isNether()
+	public boolean isDimension(int dimension)
 	{
-		return this.nether;
+		return (this.dimension == dimension);
+	}
+
+	/**
+	 * Return which dimension we are
+	 */
+	public int getDimension()
+	{
+		return this.dimension;
+	}
+
+	/**
+	 * Returns whether this is a dimension that we "know" about (mostly just for
+	 * the text label)
+	 */
+	public boolean isKnownDimension()
+	{
+		return (known_dimensions.containsKey(this.dimension));
+	}
+
+	/**
+	 * Returns a text description of this dimension
+	 */
+	public String getDimensionDesc()
+	{
+		if (this.isKnownDimension())
+		{
+			return (String)known_dimensions.get(this.dimension);
+		}
+		else
+		{
+			return "Dimension " + Integer.toString(this.dimension);
+		}
+	}
+
+	/**
+	 * Are we an overworld?  Note that custom worlds will always return true
+	 * until their path is set with setBasePath()
+	 */
+	public boolean isOverworld()
+	{
+		return (this.dimension == 0);
 	}
 	
 	/**
-	 * Do we have a Nether subdirectory to read?
+	 * Do we have a dimension subdirectory to read?
 	 * 
 	 * @return
 	 */
-	public boolean hasNether()
+	public boolean hasDimension(int dimension)
 	{
-		if (!this.custom && this.nether)
+		if (!this.custom && this.dimension == dimension)
 		{
 			return false;
 		}
 		else
 		{
-			File test = new File(this.getBasePath(), "DIM-1");
+			File test = new File(this.getBasePath(), "DIM" + Integer.toString(dimension));
 			return (test.exists() && test.canRead() && test.isDirectory());
 		}
 	}
@@ -264,7 +328,7 @@ public class WorldInfo
 	 */
 	public boolean hasOverworld()
 	{
-		if (!this.custom && this.nether)
+		if (!this.custom && this.dimension != 0)
 		{
 			File test = new File(this.getBasePath(), "../level.dat");
 			return (test.exists() && test.canRead());
@@ -276,29 +340,39 @@ public class WorldInfo
 	}
 	
 	/**
-	 * Returns a new WorldInfo object pointing to our associated Nether
-	 * world, if we have one.
+	 * Returns an array of new WorldInfo objects pointing to any associated
+	 * extra dimensions, if we have one.
 	 * 
-	 * @return A new WorldInfo, or null
+	 * @return A new WorldInfo array
 	 */
-	public WorldInfo getNetherInfo()
+	public ArrayList<WorldInfo> getDimensionInfo()
 	{
-		if (this.hasNether())
+		ArrayList<WorldInfo> ret_array = new ArrayList<WorldInfo>();
+
+		File dir = this.getBaseFile();
+		if (dir != null && dir.exists() && dir.isDirectory())
 		{
-			File info = new File(this.getBasePath(), "DIM-1");
-			try
+			File[] dimensions = dir.listFiles(new DimensionFilter());
+			for (File dim_dir : dimensions)
 			{
-				return new WorldInfo(info.getCanonicalPath(), this.dirName, true, this.custom);
-			}
-			catch (IOException e)
-			{
-				return null;
+				try
+				{
+					int dimension = DimensionFilter.get_dimension(dim_dir.getName());
+					ret_array.add(new WorldInfo(dim_dir.getCanonicalPath(), this.dirName, dimension, this.custom));
+				}
+				catch (DimensionFilterException e)
+				{
+					// whatever, just skip
+				}
+				catch (IOException e)
+				{
+					System.out.println("Exception attempting to read world at " + this.dirName + ": " + e.toString());
+					// whatever, just skip
+				}
 			}
 		}
-		else
-		{
-			return null;
-		}
+
+		return ret_array;
 	}
 	
 	/**
@@ -314,7 +388,7 @@ public class WorldInfo
 			File info = new File(this.getBasePath(), "..");
 			try
 			{
-				return new WorldInfo(info.getCanonicalPath(), this.dirName, false, this.custom);
+				return new WorldInfo(info.getCanonicalPath(), this.dirName, 0, this.custom);
 			}
 			catch (IOException e)
 			{

@@ -184,15 +184,19 @@ public class MineCraftEnvironment {
 					WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), worldDir.getName());
 					worlds.add(info);
 					
-					// Now see if there's an associated Nether world we can add.
-					WorldInfo netherinfo = info.getNetherInfo();
-					if (netherinfo != null)
+					// Now see if there's any associated dimensions we can add.
+					ArrayList<WorldInfo> diminfo = info.getDimensionInfo();
+					for (WorldInfo dim : diminfo)
 					{
-						worlds.add(netherinfo);
+						if (dim != null)
+						{
+							worlds.add(dim);
+						}
 					}
 				}
 				catch (Exception e)
 				{
+					System.out.println(e.toString());
 					// Nothing; guess we'll ignore it.
 				}
 			}
