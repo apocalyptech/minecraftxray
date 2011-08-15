@@ -1,3 +1,10 @@
+  * Removed redundant information from world selection dialog
+  * Added support for opening arbitrary dimensions (for mods right now,
+    will also be needed for the eventual official Sky Dimension)
+  * Added support for block IDs > 127 (for mods, primarily)
+  * Blocks which orient differently based on direction will default to
+    North now, if we see data values we don't understand
+
 Minecraft X-Ray 3.2.0 (2011.07.01)
 
   * Support for new Beta 1.7 block - Pistons

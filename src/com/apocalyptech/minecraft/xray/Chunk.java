@@ -2912,43 +2912,50 @@ public class Chunk {
 								{
 									SolidDirectional info = SOLID_DIRECTIONAL_BLOCKS.get(t);
 									byte data = getData(x, y, z);
+									SolidDirectional.DIRECTION_ABS dir;
 									if (info.data_map.containsKey(data))
 									{
-										switch (info.data_map.get(data))
-										{
-											case NORTH:
-												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
-												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
-												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
-												bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
-												break;
-											case SOUTH:
-												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
-												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
-												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
-												bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
-												break;
-											case WEST:
-												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
-												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
-												top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
-												bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
-												break;
-											case EAST:
-												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
-												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
-												top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
-												bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
-												break;
-										}
+										dir = info.data_map.get(data);
+									}
+									else
+									{
+										dir = SolidDirectional.DIRECTION_ABS.NORTH;
+									}
+
+									switch (dir)
+									{
+										case NORTH:
+											north = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
+											south = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
+											west = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+											east = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+											top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
+											bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
+											break;
+										case SOUTH:
+											north = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
+											south = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
+											west = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+											east = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+											top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
+											bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
+											break;
+										case WEST:
+											north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+											south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+											west = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
+											east = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
+											top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
+											bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
+											break;
+										case EAST:
+											north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+											south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+											west = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
+											east = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
+											top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
+											bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
+											break;
 									}
 								}
 								else if (SOLID_FACECHANGE_BLOCKS.containsKey(t))
