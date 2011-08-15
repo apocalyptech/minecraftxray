@@ -797,12 +797,12 @@ public class XRay
 			minecraftTexture.update();
 
 			// Get a list of block types organized by type
-			HashMap<BLOCK_TYPE, ArrayList<Byte>> reverse_block_type_map = new HashMap<BLOCK_TYPE, ArrayList<Byte>>();
-			for (Map.Entry<Byte, BLOCK_TYPE> entry : BLOCK_TYPE_MAP.entrySet())
+			HashMap<BLOCK_TYPE, ArrayList<Short>> reverse_block_type_map = new HashMap<BLOCK_TYPE, ArrayList<Short>>();
+			for (Map.Entry<Short, BLOCK_TYPE> entry : BLOCK_TYPE_MAP.entrySet())
 			{
 				if (!reverse_block_type_map.containsKey(entry.getValue()))
 				{
-					reverse_block_type_map.put(entry.getValue(), new ArrayList<Byte>());
+					reverse_block_type_map.put(entry.getValue(), new ArrayList<Short>());
 				}
 				reverse_block_type_map.get(entry.getValue()).add(entry.getKey());
 			}
@@ -811,7 +811,7 @@ public class XRay
 			decorationStats = new HashMap<Integer, TextureDecorationStats>();
 			for (BLOCK_TYPE decBlockType : DECORATION_BLOCKS)
 			{
-				for (byte decBlock : reverse_block_type_map.get(decBlockType))
+				for (short decBlock : reverse_block_type_map.get(decBlockType))
 				{
 					if (blockDataSpriteSheetMap.containsKey(decBlock))
 					{
@@ -2472,7 +2472,7 @@ public class XRay
 		{
 			c.isOnMinimap = true;
 		}
-		byte[] chunkData = level.getChunkData(x, z);
+		short[] chunkData = level.getChunkData(x, z);
 
 		int base_x = getMinimapBaseX(z);
 		int base_y = getMinimapBaseY(x);
@@ -2494,7 +2494,7 @@ public class XRay
 				for (int yy = 127; yy >= 0; yy--)
 				{
 					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
-					byte blockData = chunkData[blockOffset];
+					short blockData = chunkData[blockOffset];
 
 					if (blockData >= 0)
 					{

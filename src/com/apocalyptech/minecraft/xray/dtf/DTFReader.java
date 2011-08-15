@@ -36,6 +36,7 @@ import java.util.zip.GZIPInputStream;
 
 public class DTFReader {
 	public static Tag readTag(byte tagType, String name, DataInputStream stream) throws IOException {
+		short twofiftysix = 256;
 		switch(tagType) {
 			case 0: // end
 				return new EndTag();
@@ -53,12 +54,45 @@ public class DTFReader {
 				return new DoubleTag(name, stream.readDouble());
 			case 7:
 				int len = stream.readInt();
-				//System.out.println(len);
-				byte[] data = new byte[len];
-				
-				stream.readFully(data);
-				//System.out.println(ll + " van " + len);
-				return new ByteArrayTag(name, data);
+
+				// This little hack is so that we store our block types as shorts, rather than
+				// bytes, so that we can more easily support blocks with IDs greater than 127.
+				// Because of Java's lack of unsigned data types, it's either this, or doing
+				// extra processing while rendering, and I figure we can afford the extra
+				// memory footprint.  Each chunk will consume an extra 32K because of this,
+				// and if we're rendering the full 8x8 chunk range, that's still only an
+				// extra 2MB total memory.  Not too bad.
+				// 
+				// Note too that using DataInputStream.readUnsignedByte() for each value is
+				// quite noticeably slower than just using readFully(), whereas using
+				// readFully() and then doing the conversion ourself seems to be not really
+				// noticeable.
+				if (name.equals("Blocks"))
+				{
+					short[] data = new short[len];
+					byte[] bdata = new byte[len];
+					stream.readFully(bdata);
+					for (int i=0; i<len; i++)
+					{
+						//data[i] = (short)stream.readUnsignedByte();
+						if (bdata[i] < 0)
+						{
+							data[i] = (short)(256+bdata[i]);
+						}
+						else
+						{
+							data[i] = (short)bdata[i];
+						}
+					}
+					return new ShortArrayTag(name, data);
+				}
+				else
+				{
+					byte[] data = new byte[len];
+					
+					stream.readFully(data);
+					return new ByteArrayTag(name, data);
+				}
 			case 8:
 				return new StringTag(name, stream.readUTF());
 			case 9:

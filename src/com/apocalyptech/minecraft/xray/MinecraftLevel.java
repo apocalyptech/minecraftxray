@@ -329,7 +329,7 @@ public class MinecraftLevel {
 	 * @param y
 	 * @return
 	 */
-	public byte getBlockData(int x, int z, int y) {
+	public short getBlockData(int x, int z, int y) {
 		int chunkX = getChunkX(x);
 		int chunkZ = getChunkZ(z);
 		
@@ -496,10 +496,10 @@ public class MinecraftLevel {
 	 * @param chunkZ
 	 * @return
 	 */
-	public byte[] getChunkData(int chunkX, int chunkZ) {
+	public short[] getChunkData(int chunkX, int chunkZ) {
 		Chunk c = this.getChunk(chunkX, chunkZ);
 		if(c == null) {
-			return new byte[32768];
+			return new short[32768];
 		} else {
 			return c.getMapData().value;
 		}

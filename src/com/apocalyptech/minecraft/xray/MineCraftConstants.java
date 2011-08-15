@@ -105,11 +105,11 @@ public class MineCraftConstants {
 	}
 	
 	// This HashMap determines how we draw various block types
-	public static HashMap<Byte, BLOCK_TYPE> BLOCK_TYPE_MAP = new HashMap<Byte, BLOCK_TYPE>();
+	public static HashMap<Short, BLOCK_TYPE> BLOCK_TYPE_MAP = new HashMap<Short, BLOCK_TYPE>();
 	
 	// This HashMap is used to determine which texture to use for blocks whose data value determines
 	// what texture to use
-	public static HashMap<Byte, HashMap<Byte, Integer>> blockDataSpriteSheetMap = new HashMap<Byte, HashMap<Byte, Integer>>();
+	public static HashMap<Short, HashMap<Byte, Integer>> blockDataSpriteSheetMap = new HashMap<Short, HashMap<Byte, Integer>>();
 	
 	public static enum BLOCK {
 		STONE (1, "Stone"),
@@ -326,111 +326,111 @@ public class MineCraftConstants {
 	public static void initBlockTypes() {
 		// First seed the array with "normal" so we don't have to catch NullPointerExceptions
 		int i;
-		for (i=Byte.MIN_VALUE; i<=Byte.MAX_VALUE; i++)
+		for (i=Short.MIN_VALUE; i<=Short.MAX_VALUE; i++)
 		{
-			BLOCK_TYPE_MAP.put((byte)i, BLOCK_TYPE.NORMAL);
+			BLOCK_TYPE_MAP.put((short)i, BLOCK_TYPE.NORMAL);
 		}
 		
 		// Now our actual type values...
 		
 		// Torches
-		BLOCK_TYPE_MAP.put((byte)BLOCK.TORCH.id, BLOCK_TYPE.TORCH);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_TORCH_ON.id, BLOCK_TYPE.TORCH);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_TORCH_OFF.id, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((short)BLOCK.TORCH.id, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((short)BLOCK.REDSTONE_TORCH_ON.id, BLOCK_TYPE.TORCH);
+		BLOCK_TYPE_MAP.put((short)BLOCK.REDSTONE_TORCH_OFF.id, BLOCK_TYPE.TORCH);
 		
 		// Small decoration blocks
-		BLOCK_TYPE_MAP.put((byte)BLOCK.RED_MUSHROOM.id, BLOCK_TYPE.DECORATION_CROSS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.BROWN_MUSHROOM.id, BLOCK_TYPE.DECORATION_CROSS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.RED_ROSE.id, BLOCK_TYPE.DECORATION_CROSS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.YELLOW_FLOWER.id, BLOCK_TYPE.DECORATION_CROSS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.SAPLING.id, BLOCK_TYPE.DECORATION_CROSS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.SUGARCANE.id, BLOCK_TYPE.DECORATION_CROSS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.WEB.id, BLOCK_TYPE.DECORATION_CROSS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.TALL_GRASS.id, BLOCK_TYPE.DECORATION_CROSS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.DEAD_SHRUB.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.RED_MUSHROOM.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.BROWN_MUSHROOM.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.RED_ROSE.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.YELLOW_FLOWER.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.SAPLING.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.SUGARCANE.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.WEB.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.TALL_GRASS.id, BLOCK_TYPE.DECORATION_CROSS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.DEAD_SHRUB.id, BLOCK_TYPE.DECORATION_CROSS);
 		
 		// Crops
-		BLOCK_TYPE_MAP.put((byte)BLOCK.CROPS.id, BLOCK_TYPE.CROPS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.CROPS.id, BLOCK_TYPE.CROPS);
 		
 		// Ladders
-		BLOCK_TYPE_MAP.put((byte)BLOCK.LADDER.id, BLOCK_TYPE.LADDER);
+		BLOCK_TYPE_MAP.put((short)BLOCK.LADDER.id, BLOCK_TYPE.LADDER);
 		
 		// "floor" decorations
-		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_WIRE.id, BLOCK_TYPE.FLOOR);
+		BLOCK_TYPE_MAP.put((short)BLOCK.REDSTONE_WIRE.id, BLOCK_TYPE.FLOOR);
 		
 		// Minecart tracks
-		BLOCK_TYPE_MAP.put((byte)BLOCK.MINECART_TRACKS.id, BLOCK_TYPE.MINECART_TRACKS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.MINECART_TRACKS.id, BLOCK_TYPE.MINECART_TRACKS);
 
 		// "Simple" rails
-		BLOCK_TYPE_MAP.put((byte)BLOCK.POWERED_RAIL.id, BLOCK_TYPE.SIMPLE_RAIL);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.DETECTOR_RAIL.id, BLOCK_TYPE.SIMPLE_RAIL);
+		BLOCK_TYPE_MAP.put((short)BLOCK.POWERED_RAIL.id, BLOCK_TYPE.SIMPLE_RAIL);
+		BLOCK_TYPE_MAP.put((short)BLOCK.DETECTOR_RAIL.id, BLOCK_TYPE.SIMPLE_RAIL);
 		
 		// Pressure plates
-		BLOCK_TYPE_MAP.put((byte)BLOCK.STONE_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_REPEATER_ON.id, BLOCK_TYPE.PRESSURE_PLATE);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.REDSTONE_REPEATER_OFF.id, BLOCK_TYPE.PRESSURE_PLATE);
+		BLOCK_TYPE_MAP.put((short)BLOCK.STONE_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
+		BLOCK_TYPE_MAP.put((short)BLOCK.WOODEN_PRESSURE_PLATE.id, BLOCK_TYPE.PRESSURE_PLATE);
+		BLOCK_TYPE_MAP.put((short)BLOCK.REDSTONE_REPEATER_ON.id, BLOCK_TYPE.PRESSURE_PLATE);
+		BLOCK_TYPE_MAP.put((short)BLOCK.REDSTONE_REPEATER_OFF.id, BLOCK_TYPE.PRESSURE_PLATE);
 		
 		// Half-height blocks
-		BLOCK_TYPE_MAP.put((byte)BLOCK.SLAB.id, BLOCK_TYPE.HALFHEIGHT);
+		BLOCK_TYPE_MAP.put((short)BLOCK.SLAB.id, BLOCK_TYPE.HALFHEIGHT);
 
 		// Cake
-		BLOCK_TYPE_MAP.put((byte)BLOCK.CAKE.id, BLOCK_TYPE.CAKE);
+		BLOCK_TYPE_MAP.put((short)BLOCK.CAKE.id, BLOCK_TYPE.CAKE);
 
 		// Bed blocks
-		BLOCK_TYPE_MAP.put((byte)BLOCK.BED.id, BLOCK_TYPE.BED);
+		BLOCK_TYPE_MAP.put((short)BLOCK.BED.id, BLOCK_TYPE.BED);
 		
 		// Doors
-		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_DOOR.id, BLOCK_TYPE.DOOR);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.IRON_DOOR.id, BLOCK_TYPE.DOOR);
+		BLOCK_TYPE_MAP.put((short)BLOCK.WOODEN_DOOR.id, BLOCK_TYPE.DOOR);
+		BLOCK_TYPE_MAP.put((short)BLOCK.IRON_DOOR.id, BLOCK_TYPE.DOOR);
 		
 		// Stairs
-		BLOCK_TYPE_MAP.put((byte)BLOCK.WOODEN_STAIRS.id, BLOCK_TYPE.STAIRS);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.COBBLESTONE_STAIRS.id, BLOCK_TYPE.STAIRS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.WOODEN_STAIRS.id, BLOCK_TYPE.STAIRS);
+		BLOCK_TYPE_MAP.put((short)BLOCK.COBBLESTONE_STAIRS.id, BLOCK_TYPE.STAIRS);
 		
 		// Signs
-		BLOCK_TYPE_MAP.put((byte)BLOCK.SIGNPOST.id, BLOCK_TYPE.SIGNPOST);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.WALL_SIGN.id, BLOCK_TYPE.WALLSIGN);
+		BLOCK_TYPE_MAP.put((short)BLOCK.SIGNPOST.id, BLOCK_TYPE.SIGNPOST);
+		BLOCK_TYPE_MAP.put((short)BLOCK.WALL_SIGN.id, BLOCK_TYPE.WALLSIGN);
 		
 		// Fences
-		BLOCK_TYPE_MAP.put((byte)BLOCK.FENCE.id, BLOCK_TYPE.FENCE);
+		BLOCK_TYPE_MAP.put((short)BLOCK.FENCE.id, BLOCK_TYPE.FENCE);
 		
 		// Lever
-		BLOCK_TYPE_MAP.put((byte)BLOCK.LEVER.id, BLOCK_TYPE.LEVER);
+		BLOCK_TYPE_MAP.put((short)BLOCK.LEVER.id, BLOCK_TYPE.LEVER);
 		
 		// Button
-		BLOCK_TYPE_MAP.put((byte)BLOCK.STONE_BUTTON.id, BLOCK_TYPE.BUTTON);
+		BLOCK_TYPE_MAP.put((short)BLOCK.STONE_BUTTON.id, BLOCK_TYPE.BUTTON);
 		
 		// Portal
-		BLOCK_TYPE_MAP.put((byte)BLOCK.PORTAL.id, BLOCK_TYPE.PORTAL);
+		BLOCK_TYPE_MAP.put((short)BLOCK.PORTAL.id, BLOCK_TYPE.PORTAL);
 		
 		// Water
-		BLOCK_TYPE_MAP.put((byte)BLOCK.WATER.id, BLOCK_TYPE.WATER);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.STATIONARY_WATER.id, BLOCK_TYPE.WATER);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.ICE.id, BLOCK_TYPE.WATER);
+		BLOCK_TYPE_MAP.put((short)BLOCK.WATER.id, BLOCK_TYPE.WATER);
+		BLOCK_TYPE_MAP.put((short)BLOCK.STATIONARY_WATER.id, BLOCK_TYPE.WATER);
+		BLOCK_TYPE_MAP.put((short)BLOCK.ICE.id, BLOCK_TYPE.WATER);
 		
 		// Lava
-		BLOCK_TYPE_MAP.put((byte)BLOCK.LAVA.id, BLOCK_TYPE.LAVA);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.STATIONARY_LAVA.id, BLOCK_TYPE.LAVA);
+		BLOCK_TYPE_MAP.put((short)BLOCK.LAVA.id, BLOCK_TYPE.LAVA);
+		BLOCK_TYPE_MAP.put((short)BLOCK.STATIONARY_LAVA.id, BLOCK_TYPE.LAVA);
 		
 		// Fire
-		BLOCK_TYPE_MAP.put((byte)BLOCK.FIRE.id, BLOCK_TYPE.FIRE);
+		BLOCK_TYPE_MAP.put((short)BLOCK.FIRE.id, BLOCK_TYPE.FIRE);
 
 		// "Thin" slices
-		BLOCK_TYPE_MAP.put((byte)BLOCK.SNOW.id, BLOCK_TYPE.THINSLICE);
+		BLOCK_TYPE_MAP.put((short)BLOCK.SNOW.id, BLOCK_TYPE.THINSLICE);
 
 		// Solid blocks which nevertheless shouldn't be considered "normal."
 		// Mostly for rendering purposes.
-		BLOCK_TYPE_MAP.put((byte)BLOCK.GLASS.id, BLOCK_TYPE.SEMISOLID);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.MOB_SPAWNER.id, BLOCK_TYPE.SEMISOLID);
+		BLOCK_TYPE_MAP.put((short)BLOCK.GLASS.id, BLOCK_TYPE.SEMISOLID);
+		BLOCK_TYPE_MAP.put((short)BLOCK.MOB_SPAWNER.id, BLOCK_TYPE.SEMISOLID);
 
 		// Trapdoor
-		BLOCK_TYPE_MAP.put((byte)BLOCK.TRAPDOOR.id, BLOCK_TYPE.TRAPDOOR);
+		BLOCK_TYPE_MAP.put((short)BLOCK.TRAPDOOR.id, BLOCK_TYPE.TRAPDOOR);
 
 		// Pistons
-		BLOCK_TYPE_MAP.put((byte)BLOCK.PISTON_STICKY_BODY.id, BLOCK_TYPE.PISTON_BODY);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.PISTON_BODY.id, BLOCK_TYPE.PISTON_BODY);
-		BLOCK_TYPE_MAP.put((byte)BLOCK.PISTON_HEAD.id, BLOCK_TYPE.PISTON_HEAD);
+		BLOCK_TYPE_MAP.put((short)BLOCK.PISTON_STICKY_BODY.id, BLOCK_TYPE.PISTON_BODY);
+		BLOCK_TYPE_MAP.put((short)BLOCK.PISTON_BODY.id, BLOCK_TYPE.PISTON_BODY);
+		BLOCK_TYPE_MAP.put((short)BLOCK.PISTON_HEAD.id, BLOCK_TYPE.PISTON_HEAD);
 	}
 	
 	/***
@@ -438,8 +438,8 @@ public class MineCraftConstants {
      * (I took the color list from a c program which draws minecraft maps.. forgot the name)
      */
     public static void initBlockColorsTable() {
-		blockColors = new Color[128];
-		for(int i=0;i<128;i++) {
+		blockColors = new Color[256];
+		for(int i=0;i<256;i++) {
 			blockColors[i] = Color.BLACK;
 		}
 		
@@ -554,8 +554,8 @@ public class MineCraftConstants {
      * block data to sprite sheet texture index
      */
 	public static void initBlockDatatoSpriteSheetIndexTable() {
-		blockDataToSpriteSheet = new int[128];
-		for(int i=0;i<128;i++) {
+		blockDataToSpriteSheet = new int[256];
+		for(int i=0;i<256;i++) {
 			blockDataToSpriteSheet[i] = (15*16)+13;
 		}
 		blockDataToSpriteSheet[0] = -1;
@@ -657,21 +657,21 @@ public class MineCraftConstants {
 		
 		// Textures used by logs
 		HashMap<Byte, Integer> logMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK.WOOD.id, logMap);
+		blockDataSpriteSheetMap.put((short)BLOCK.WOOD.id, logMap);
 		logMap.put((byte)0, 16+4); // Regular log
 		logMap.put((byte)1, (7*16)+4); // Spruce
 		logMap.put((byte)2, (7*16)+5); // Birch
 		
 		// Textures used by saplings
 		HashMap<Byte, Integer> saplingMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK.SAPLING.id, saplingMap);
+		blockDataSpriteSheetMap.put((short)BLOCK.SAPLING.id, saplingMap);
 		saplingMap.put((byte)0, 15); // Regular sapling
 		saplingMap.put((byte)1, (3*16)+15); // Spruce
 		saplingMap.put((byte)2, (4*16)+15); // Birch
 
 		// Textures used by wool
 		HashMap<Byte, Integer> woolMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK.WOOL.id, woolMap);
+		blockDataSpriteSheetMap.put((short)BLOCK.WOOL.id, woolMap);
 		woolMap.put((byte)0, 64); // Regular wool
 		woolMap.put((byte)15, (7*16)+1); // Black
 		woolMap.put((byte)14, (8*16)+1); // Red
@@ -691,7 +691,7 @@ public class MineCraftConstants {
 
 		// Textures used by slabs
 		HashMap<Byte, Integer> slabMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK.SLAB.id, slabMap);
+		blockDataSpriteSheetMap.put((short)BLOCK.SLAB.id, slabMap);
 		slabMap.put((byte)0, 6); // Smooth stone
 		slabMap.put((byte)1, (12*16)); // Sandstone
 		slabMap.put((byte)2, 4); // Plank
@@ -701,7 +701,7 @@ public class MineCraftConstants {
 		// a separate texture for double-smoothstone which IMO is better
 		// to use, so this way it's separate between the two.
 		HashMap<Byte, Integer> dblSlabMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK.DOUBLE_SLAB.id, dblSlabMap);
+		blockDataSpriteSheetMap.put((short)BLOCK.DOUBLE_SLAB.id, dblSlabMap);
 		dblSlabMap.put((byte)0, 5); // Smooth stone
 		dblSlabMap.put((byte)1, (12*16)); // Sandstone
 		dblSlabMap.put((byte)2, 4); // Plank
@@ -709,7 +709,7 @@ public class MineCraftConstants {
 
 		// Textures used by Tall Grass
 		HashMap<Byte, Integer> grassMap = new HashMap<Byte, Integer>();
-		blockDataSpriteSheetMap.put((byte)BLOCK.TALL_GRASS.id, grassMap);
+		blockDataSpriteSheetMap.put((short)BLOCK.TALL_GRASS.id, grassMap);
 		grassMap.put((byte)0, (3*16)+7); // Dead Shrub
 		grassMap.put((byte)1, (2*16)+7); // Tall Grass
 		grassMap.put((byte)2, (3*16)+8); // Living Shrub

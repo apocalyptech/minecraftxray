@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
+import com.apocalyptech.minecraft.xray.dtf.ShortArrayTag;
 import com.apocalyptech.minecraft.xray.dtf.ByteArrayTag;
 import com.apocalyptech.minecraft.xray.dtf.CompoundTag;
 import com.apocalyptech.minecraft.xray.dtf.StringTag;
@@ -49,7 +50,7 @@ public class Chunk {
 	public boolean isSelectedDirty;
 	public boolean isOnMinimap;
 	private CompoundTag chunkData;
-	private ByteArrayTag blockData;
+	private ShortArrayTag blockData;
 	private ByteArrayTag mapData;
 	private ArrayList<PaintingEntity> paintings;
 	
@@ -82,7 +83,7 @@ public class Chunk {
 		this.x = xPosTag.value;
 		this.z = zPosTag.value;
 		
-		blockData = (ByteArrayTag) levelTag.getTagWithName("Blocks");
+		blockData = (ShortArrayTag) levelTag.getTagWithName("Blocks");
 		mapData = (ByteArrayTag) levelTag.getTagWithName("Data");
 		
 		this.isDirty = true;
@@ -100,7 +101,7 @@ public class Chunk {
 		return this.chunkData;
 	}
 	
-	public ByteArrayTag getMapData() {
+	public ShortArrayTag getMapData() {
 		return this.blockData;
 	}
 	
@@ -882,7 +883,7 @@ public class Chunk {
 		return distance < maxDistance;
 	}
 	
-	public byte getBlock(int x, int y, int z) {
+	public short getBlock(int x, int y, int z) {
 		return blockData.value[y + (z * 128) + (x * 128 * 16)];
 	}
 
@@ -896,7 +897,7 @@ public class Chunk {
 		}
 	}
 	
-	public boolean isSolid(byte i) {
+	public boolean isSolid(short i) {
 		BLOCK_TYPE block_type = BLOCK_TYPE_MAP.get(i);
 		if((i == 0) || (block_type != BLOCK_TYPE.NORMAL)) {
 			return false;
@@ -2188,7 +2189,7 @@ public class Chunk {
 		}
 	}
 	
-	public boolean checkSolid(byte block, boolean transpararency) {
+	public boolean checkSolid(short block, boolean transpararency) {
 		if(block == 0) {
 			return true;
 		}
@@ -2207,7 +2208,7 @@ public class Chunk {
 	 * @param zzz
 	 * @param blockType The actual block type; needed for the piston head
 	 */
-	public void renderPistonBody(int textureId, int xxx, int yyy, int zzz, byte blockType) {
+	public void renderPistonBody(int textureId, int xxx, int yyy, int zzz, short blockType) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -2577,7 +2578,7 @@ public class Chunk {
 				int blockOffset = zOff + xOff-1;
 				for(int y=0;y<128;y++) {
 					blockOffset++;
-					byte t = blockData.value[blockOffset];
+					short t = blockData.value[blockOffset];
 					
 					if(t < 1) {
 						continue;
