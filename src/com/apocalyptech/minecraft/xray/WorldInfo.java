@@ -53,7 +53,6 @@ public class WorldInfo
 	{
 		known_dimensions = new HashMap<Integer, String>();
 		known_dimensions.put(-1, "Nether");
-		known_dimensions.put(3, "Aether (mod)");
 	}
 	
 	// Couple of variables to determine whether our chunks are stored in the new
