@@ -448,6 +448,10 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	private static BufferedImage buildImageFromInput(InputStream i) {
+		if (i == null)
+		{
+			return null;
+		}
 		try {
 			return ImageIO.read(i);
 		} catch (IOException e) {
@@ -575,6 +579,22 @@ public class MineCraftEnvironment {
 		
 		// Load in the water texture separately and pretend it's a part of the main texture pack.
 		BufferedImage bi2 = buildImageFromInput(getMinecraftWaterData());
+		if (bi2 == null)
+		{
+			// If we don't have a water texture (some mods seem to get rid of it), construct our own
+			bi2 = new BufferedImage(square_width, square_width, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D bi2g2d = bi2.createGraphics();
+			bi2g2d.setComposite(AlphaComposite.Src);
+			bi2g2d.setColor(new Color(.14f, .36f, 1f, .52f));
+			bi2g2d.fillRect(0, 0, square_width, square_width);
+
+			// A bit of detail
+			bi2g2d.setColor(new Color(.23f, .42f, 1f, .57f));
+			bi2g2d.drawLine((int)(square_width*.1), (int)(square_width*.2), (int)(square_width*.8), (int)(square_width*.3));
+			bi2g2d.drawLine((int)(square_width*.2), (int)(square_width*.5), (int)(square_width*.7), (int)(square_width*.54));
+			bi2g2d.drawLine((int)(square_width*.05), (int)(square_width*.9), (int)(square_width*.6), (int)(square_width*.9));
+			bi2g2d.drawLine((int)(square_width*.5), (int)(square_width*.7), (int)(square_width*.9), (int)(square_width*.6));
+		}
 		int water_width = bi2.getWidth();
 		g2d.setComposite(AlphaComposite.Src);
 		if (square_width < water_width)
