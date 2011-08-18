@@ -5,6 +5,11 @@
   * Blocks which orient differently based on direction will default to
     North now, if we see data values we don't understand
 
+Minecraft X-Ray 3.2.1 (2011.08.18)
+
+  * Some mods appear to get rid of misc/water.png, which occasionally
+    causes problems.  Updated to generate our own if needed.
+
 Minecraft X-Ray 3.2.0 (2011.07.01)
 
   * Support for new Beta 1.7 block - Pistons
