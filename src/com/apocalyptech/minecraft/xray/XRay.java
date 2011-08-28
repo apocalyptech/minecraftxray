@@ -1742,20 +1742,20 @@ public class XRay
 		}
 
 		// If our change dimension is the same as our current one, do nothing.
-		if (dims.get(change_idx).getDimension() == world.getDimension())
+		WorldInfo newworld = dims.get(change_idx);
+		if (newworld.getDimension() == world.getDimension())
 		{
 			return;
 		}
 
 		// Now, do the actual change.
-		WorldInfo newworld = dims.get(change_idx);
 		float camera_mult = 1.0f;
 		if (world.isDimension(-1))
 		{
 			camera_mult = 8.0f;
 			this.cameraTextOverride = "equivalent " + newworld.getDimensionDesc() + " location (approx.)";
 		}
-		else if (dims.get(change_idx).isDimension(-1))
+		else if (newworld.isDimension(-1))
 		{
 			camera_mult = 1.0f / 8.0f;
 			this.cameraTextOverride = "equivalent " + newworld.getDimensionDesc() + " location (approx.)";
