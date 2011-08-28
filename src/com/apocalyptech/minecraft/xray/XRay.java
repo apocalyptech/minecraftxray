@@ -975,6 +975,7 @@ public class XRay
 				{
 					chooser.setCurrentDirectory(new File("."));
 				}
+				chooser.setSelectedFile(chooser.getCurrentDirectory());
 				chooser.setDialogTitle("Select a Minecraft World Directory");
 				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
 				{
@@ -992,7 +993,7 @@ public class XRay
 							continue;
 						}
 					}
-					customWorld.setBasePath(chosenFile.getCanonicalPath());
+					customWorld.finalizeWorldLocation(chosenFile);
 					File leveldat = customWorld.getLevelDatFile();
 					if (leveldat.exists() && leveldat.canRead())
 					{
@@ -1062,7 +1063,7 @@ public class XRay
 
 		availableWorlds = MineCraftEnvironment.getAvailableWorlds();
 		// Add in a custom "Other..." world
-		availableWorlds.add(new WorldInfo(true));
+		availableWorlds.add(new WorldInfo());
 
 	}
 

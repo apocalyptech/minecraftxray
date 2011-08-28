@@ -44,7 +44,7 @@ public class WorldInfo implements Comparable<WorldInfo>
 	private String basepath;
 	private String dirName;
 	private String levelName;
-	private boolean custom;
+	private boolean userChosen;
 	private int dimension;
 	public TreeMap<String, File> mp_players;
 
@@ -77,19 +77,19 @@ public class WorldInfo implements Comparable<WorldInfo>
 	}
 	
 	/**
-	 * Instansiate a new object.  "custom" refers to when the user has specified
-	 * a custom path, instead of one of the standard Minecraft singleplayer world
+	 * Instansiate a new object.  "userChosen" refers to when the user has specified
+	 * a userChosen path, instead of one of the standard Minecraft singleplayer world
 	 * locations.
 	 * 
 	 * @param basepath
 	 * @param dimension
-	 * @param custom
+	 * @param userChosen
 	 */
-	public WorldInfo(String basepath, String dirName, int dimension, boolean custom)
+	public WorldInfo(String basepath, String dirName, int dimension, boolean userChosen)
 	{
 		this.basepath = basepath;
 		this.dimension = dimension;
-		this.custom = custom;
+		this.userChosen = userChosen;
 		this.dirName = dirName;
 		this.populateMPPlayerList();
 
@@ -105,33 +105,10 @@ public class WorldInfo implements Comparable<WorldInfo>
 	}
 	
 	/**
-	 * Instansiate a new WorldInfo with only the path and what dimension we are
-	 * 
-	 * @param basepath
-	 * @param dimension
-	 */
-	public WorldInfo(String basepath, String dirName, int dimension)
-	{
-		this(basepath, dirName, dimension, false);
-	}
-	
-	/**
-	 * Instansiate a new WorldInfo given only the path (assumed to be overworld)
-	 * 
-	 * @param basepath
-	 */
-	public WorldInfo(String basepath, String dirName)
-	{
-		this(basepath, dirName, 0);
-	}
-	
-	/**
-	 * Instansiate a custom WorldInfo - path will be added later when the user
+	 * Instansiate a userChosen WorldInfo - path will be added later when the user
 	 * selects it.
-	 * 
-	 * @param custom
 	 */
-	public WorldInfo(boolean custom)
+	public WorldInfo()
 	{
 		this(null, null, 0, true);
 	}
@@ -156,24 +133,35 @@ public class WorldInfo implements Comparable<WorldInfo>
 	}
 
 	/**
-	 * Sets the base path.  Has no effect on non-custom worlds.
+	 * Finalizes the world location for a userChosen world.  This will
+	 * unset the "userChosen" attribute.
 	 * 
 	 * @param newpath
 	 */
-	public void setBasePath(String newpath)
+	public void finalizeWorldLocation(File newpath) throws Exception, NumberFormatException
 	{
-		if (this.custom)
+		if (this.userChosen)
 		{
-			this.basepath = newpath;
-			// TODO: this isn't correct anymore
-			if (this.hasOverworld() && !this.hasDimension(-1))
-			{
-				this.dimension = -1;
-			}
-			else
+			this.basepath = newpath.getCanonicalPath();
+			this.dirName = newpath.getName();
+			File test = new File(this.getBasePath(), "level.dat");
+			if (test.exists())
 			{
 				this.dimension = 0;
 			}
+			else
+			{
+				test = new File(this.getBasePath(), "../level.dat");
+				if (test.exists())
+				{
+					this.dimension = Integer.parseInt(this.getDirName().substring(3));
+				}
+				else
+				{
+					throw new Exception("We couldn't find a level.dat for world at " + this.getBasePath());
+				}
+			}
+			this.userChosen = false;
 		}
 		this.populateMPPlayerList();
 	}
@@ -222,7 +210,7 @@ public class WorldInfo implements Comparable<WorldInfo>
 	}
 	
 	/**
-	 * Returns our directory name (this value is meaningless for custom worlds)
+	 * Returns our directory name (this value is meaningless for userChosen worlds)
 	 * 
 	 * @return
 	 */
@@ -242,19 +230,19 @@ public class WorldInfo implements Comparable<WorldInfo>
 	}
 	
 	/**
-	 * A custom world is one that lives outside the usual Minecraft directory
+	 * A userChosen world is one that lives outside the usual Minecraft directory
 	 * structure.
 	 * 
 	 * @return
 	 */
 	public boolean isCustom()
 	{
-		return this.custom;
+		return this.userChosen;
 	}
 	
 	/**
-	 * Are we a dimension world?  Note that custom worlds will always return false
-	 * until their path is set with setBasePath()
+	 * Are we a dimension world?  Note that userChosen worlds will always return false
+	 * until their path is set with finalizeWorldLocation()
 	 * 
 	 * @return
 	 */
@@ -300,8 +288,8 @@ public class WorldInfo implements Comparable<WorldInfo>
 	}
 
 	/**
-	 * Are we an overworld?  Note that custom worlds will always return true
-	 * until their path is set with setBasePath()
+	 * Are we an overworld?  Note that userChosen worlds will always return true
+	 * until their path is set with finalizeWorldLocation()
 	 */
 	public boolean isOverworld()
 	{
@@ -315,7 +303,7 @@ public class WorldInfo implements Comparable<WorldInfo>
 	 */
 	public boolean hasDimension(int dimension)
 	{
-		if (!this.custom && this.dimension == dimension)
+		if (!this.userChosen && this.dimension == dimension)
 		{
 			return false;
 		}
@@ -333,7 +321,7 @@ public class WorldInfo implements Comparable<WorldInfo>
 	 */
 	public boolean hasOverworld()
 	{
-		if (!this.custom && this.dimension != 0)
+		if (!this.userChosen && this.dimension != 0)
 		{
 			File test = new File(this.getBasePath(), "../level.dat");
 			return (test.exists() && test.canRead());
@@ -363,7 +351,7 @@ public class WorldInfo implements Comparable<WorldInfo>
 				try
 				{
 					int dimension = DimensionFilter.get_dimension(dim_dir.getName());
-					ret_array.add(new WorldInfo(dim_dir.getCanonicalPath(), this.dirName, dimension, this.custom));
+					ret_array.add(new WorldInfo(dim_dir.getCanonicalPath(), this.dirName, dimension, this.userChosen));
 				}
 				catch (DimensionFilterException e)
 				{
@@ -394,7 +382,7 @@ public class WorldInfo implements Comparable<WorldInfo>
 			File info = new File(this.getBasePath(), "..");
 			try
 			{
-				return new WorldInfo(info.getCanonicalPath(), this.dirName, 0, this.custom);
+				return new WorldInfo(info.getCanonicalPath(), this.dirName, 0, this.userChosen);
 			}
 			catch (IOException e)
 			{

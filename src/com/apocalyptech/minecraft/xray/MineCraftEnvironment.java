@@ -181,7 +181,7 @@ public class MineCraftEnvironment {
 				try
 				{
 					// First snatch up the overworld
-					WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), worldDir.getName());
+					WorldInfo info = new WorldInfo(worldDir.getCanonicalPath(), worldDir.getName(), 0, false);
 					worlds.add(info);
 					
 					// Now see if there's any associated dimensions we can add.
