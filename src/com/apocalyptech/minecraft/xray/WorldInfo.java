@@ -29,15 +29,17 @@ package com.apocalyptech.minecraft.xray;
 import java.io.File;
 import java.io.IOException;
 import java.io.FilenameFilter;
+import java.lang.Comparable;
 import java.lang.NumberFormatException;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Class to aid in maintaining a list of possible worlds for us to use.
  */
-public class WorldInfo
+public class WorldInfo implements Comparable<WorldInfo>
 {
 	private String basepath;
 	private String dirName;
@@ -287,6 +289,10 @@ public class WorldInfo
 		{
 			return (String)known_dimensions.get(this.dimension);
 		}
+		else if (this.isDimension(0))
+		{
+			return "Overworld";
+		}
 		else
 		{
 			return "Dimension " + Integer.toString(this.dimension);
@@ -371,6 +377,7 @@ public class WorldInfo
 			}
 		}
 
+		Collections.sort(ret_array);
 		return ret_array;
 	}
 	
@@ -398,5 +405,34 @@ public class WorldInfo
 		{
 			return null;
 		}
+	}
+
+	/**
+	 * Method for Comparable interface, so we can sort based on dimension.
+	 */
+	public int compareTo(WorldInfo anotherInstance)
+	{
+		return this.getDimension() - anotherInstance.getDimension();
+	}
+
+	/**
+	 * Gets an ordered list of all dimensions for this world, including the one
+	 * we're on, and the overworld, etc.
+	 */
+	public ArrayList<WorldInfo> getAllDimensions()
+	{
+		ArrayList<WorldInfo> dims;
+		if (this.isOverworld())
+		{
+			dims = this.getDimensionInfo();
+			dims.add(this);
+		}
+		else
+		{
+			dims = this.getOverworldInfo().getDimensionInfo();
+			dims.add(this.getOverworldInfo());
+		}
+		Collections.sort(dims);
+		return dims;
 	}
 }

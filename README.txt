@@ -126,7 +126,8 @@ overridden, though.  The default keybindings are as follows:
         Cycle Up through Presets:   INS
         Cycle Down through Presets: DEL
         Jump to Arbitrary Position: J
-        Toggle Nether/Overworld:    N
+        Jump to next dimension:     N
+        Jump to previous dimension: P
         Lock to Vertical Axis:      L
 
     Rendering

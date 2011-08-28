@@ -355,11 +355,12 @@ public class XRay
 		}
 		catch (Exception e)
 		{
-			// bah some error happened
+			// bah, some error happened
 			e.printStackTrace();
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
+			Mouse.setGrabbed(false);
 			ExceptionDialog.presentDialog("Exception Encountered!", sw.toString());
 			System.exit(0);
 		}
@@ -1574,10 +1575,15 @@ public class XRay
 					camera_lock = !camera_lock;
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.SWITCH_NETHER))
+				else if (key == key_mapping.get(KEY_ACTIONS.DIMENSION_NEXT))
 				{
-					// Toggle between Nether and Overworld
-					switchNether();
+					// Toggle between dimenaions
+					switchDimension();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.DIMENSION_PREV))
+				{
+					// Toggle between dimenaions
+					switchDimension(-1);
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.RELEASE_MOUSE))
 				{
@@ -1686,47 +1692,86 @@ public class XRay
 	}
 
 	/**
-	 * If we can, switches to/from nether. This will attempt to do an
-	 * approximate translation of your position, though that hasn't been tested
-	 * much, and won't totally line up with what Minecraft does. Note that
+	 * Switch between dimensions (going "up")
+	 */
+	private void switchDimension()
+	{
+		this.switchDimension(1);
+	}
+
+	/**
+	 * If we can, switch between dimensions.  This will attempt to do an
+	 * approximate translation of your position,  when going to/from the Nether,
+	 * though it won't totally line up with what Minecraft does. Note that
 	 * height is unaffected by this, so the adjacent portal might show up higher
 	 * or lower, depending on the local terrain.
+	 *
+	 * Any unknown dimension will be assumed to be at overworld scale
+	 *
+	 * @param count How many dimensions to switch; should really just be -1 or 1
 	 */
-	private void switchNether()
+	private void switchDimension(int count)
 	{
-		WorldInfo newworld = null;
-		float camera_mult = 1.0f;
-		if (!world.isOverworld() && world.hasOverworld())
+		// First get our list of dimensions and find out what
+		// some important indexes are
+		ArrayList<WorldInfo> dims = world.getAllDimensions();
+		int cur_dim_idx = -1;
+		int overworld_idx = -1;
+		int change_idx = -1;
+		for (int i=0; i<dims.size(); i++)
 		{
-			this.cameraTextOverride = "equivalent Overworld location (approx.)";
-			newworld = world.getOverworldInfo();
-			camera_mult = 8.0f;
-		}
-		else if (world.isOverworld() && world.hasDimension(-1))
-		{
-			this.cameraTextOverride = "equivalent Nether location (approx.)";
-			// TODO: should just have a call to get a specific dimension
-			ArrayList<WorldInfo> worlds = world.getDimensionInfo();
-			for (WorldInfo tempworld : worlds)
+			if (dims.get(i).getDimension() == world.getDimension())
 			{
-				if (tempworld.getDimension() == -1)
-				{
-					newworld = tempworld;
-					break;
-				}
+				cur_dim_idx = i;
 			}
-			camera_mult = 1.0f / 8.0f;
+			if (dims.get(i).getDimension() == 0)
+			{
+				overworld_idx = i;
+			}
 		}
-		if (newworld != null)
+
+		// Increment by one, or default to overworld if our current
+		// dimension couldn't be found.
+		if (cur_dim_idx == -1)
 		{
-			// A full reinitialization is kind of overkill, but whatever.
-			FirstPersonCameraController cur_camera = this.camera;
-			this.camera.processNetherWarp(camera_mult);
-			initialize();
-			this.setMinecraftWorld(newworld, cur_camera);
-			this.updateRenderDetails();
-			this.triggerChunkLoads();
+			change_idx = overworld_idx;
 		}
+		else
+		{
+			change_idx = (cur_dim_idx + dims.size() + count) % dims.size();
+		}
+
+		// If our change dimension is the same as our current one, do nothing.
+		if (dims.get(change_idx).getDimension() == world.getDimension())
+		{
+			return;
+		}
+
+		// Now, do the actual change.
+		WorldInfo newworld = dims.get(change_idx);
+		float camera_mult = 1.0f;
+		if (world.isDimension(-1))
+		{
+			camera_mult = 8.0f;
+			this.cameraTextOverride = "equivalent " + newworld.getDimensionDesc() + " location (approx.)";
+		}
+		else if (dims.get(change_idx).isDimension(-1))
+		{
+			camera_mult = 1.0f / 8.0f;
+			this.cameraTextOverride = "equivalent " + newworld.getDimensionDesc() + " location (approx.)";
+		}
+		else
+		{
+			this.cameraTextOverride = newworld.getDimensionDesc() + " (same location)";
+		}
+
+		// A full reinitialization is kind of overkill, but whatever.
+		FirstPersonCameraController cur_camera = this.camera;
+		this.camera.processNetherWarp(camera_mult);
+		initialize();
+		this.setMinecraftWorld(newworld, cur_camera);
+		this.updateRenderDetails();
+		this.triggerChunkLoads();
 	}
 
 	private void invalidateSelectedChunks()
