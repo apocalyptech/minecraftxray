@@ -703,16 +703,16 @@ public class XRay
 	{
 		if (accurateGrass)
 		{
-			if (!SOLID_FACECHANGE_BLOCKS.containsKey((byte)BLOCK.GRASS.id))
+			if (!SOLID_FACECHANGE_BLOCKS.containsKey((short)BLOCK.GRASS.id))
 			{
-				SOLID_FACECHANGE_BLOCKS.put((byte)BLOCK.GRASS.id, grassDirectionInfo);
+				SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.GRASS.id, grassDirectionInfo);
 			}
 		}
 		else
 		{
-			if (SOLID_FACECHANGE_BLOCKS.containsKey((byte)BLOCK.GRASS.id))
+			if (SOLID_FACECHANGE_BLOCKS.containsKey((short)BLOCK.GRASS.id))
 			{
-				SOLID_FACECHANGE_BLOCKS.remove((byte)BLOCK.GRASS.id);
+				SOLID_FACECHANGE_BLOCKS.remove((short)BLOCK.GRASS.id);
 			}
 		}
 	}
