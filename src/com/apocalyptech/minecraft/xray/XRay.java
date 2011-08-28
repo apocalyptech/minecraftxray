@@ -697,23 +697,23 @@ public class XRay
 	}
 
 	/**
-	 * Alters our SOLID_FACECHANGE_BLOCKS to include or not include the fancier
+	 * Alters our SOLID_DIRECTIONAL_BLOCKS to include or not include the fancier
 	 * grass rendering, in case anyone wants that behavior on occasion.
 	 */
 	private void setAccurateGrass()
 	{
 		if (accurateGrass)
 		{
-			if (!SOLID_FACECHANGE_BLOCKS.containsKey((short)BLOCK.GRASS.id))
+			if (!SOLID_DIRECTIONAL_BLOCKS.containsKey((short)BLOCK.GRASS.id))
 			{
-				SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.GRASS.id, grassDirectionInfo);
+				SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.GRASS.id, grassDirectionInfo);
 			}
 		}
 		else
 		{
-			if (SOLID_FACECHANGE_BLOCKS.containsKey((short)BLOCK.GRASS.id))
+			if (SOLID_DIRECTIONAL_BLOCKS.containsKey((short)BLOCK.GRASS.id))
 			{
-				SOLID_FACECHANGE_BLOCKS.remove((short)BLOCK.GRASS.id);
+				SOLID_DIRECTIONAL_BLOCKS.remove((short)BLOCK.GRASS.id);
 			}
 		}
 	}

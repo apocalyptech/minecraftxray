@@ -224,10 +224,6 @@ public class MineCraftConstants {
 	// Block types which are solid but which have directional data for rendering
 	public static HashMap<Short, SolidDirectional> SOLID_DIRECTIONAL_BLOCKS = new HashMap<Short, SolidDirectional>();
 
-	// Block types which don't have directional information, but whose faces might differ depending on
-	// which face we're talking about
-	public static HashMap<Short, SolidDirectional> SOLID_FACECHANGE_BLOCKS = new HashMap<Short, SolidDirectional>();
-
 	// Static SolidDirectional for grass, so we can toggle it on and off
 	public static SolidDirectional grassDirectionInfo;
 	
@@ -780,43 +776,59 @@ public class MineCraftConstants {
 		dirdata.setData((byte)3, SolidDirectional.DIRECTION_ABS.SOUTH);
 		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.JACK_O_LANTERN.id, dirdata);
 
+		//
+		// The following SOLID_DIRECTIONAL_BLOCKS blocks don't actually use
+		// their data value to determine orientation.  Rather, in Minecraft,
+		// that's either determined dynamically by the game engine (chests,
+		// for instance), or by some hardcoded orientation (TNT, for instance).
+		// We're not going to bother figuring out the dynamic-orientation
+		// stuff, preferring instead to put a single data value in there
+		// which will be defaulted-to
+		//
+
 		// Face-changing Blocks - Chests
 		dirdata = new SolidDirectional();
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, (1*16)+10);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (1*16)+10);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (1*16)+9);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (1*16)+9);
-		SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.CHEST.id, dirdata);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.CHEST.id, dirdata);
 
 		// Face-changing Blocks - Workbenches
 		dirdata = new SolidDirectional();
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.SIDES, (3*16)+11);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (2*16)+11);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 4);
-		SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.WORKBENCH.id, dirdata);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.WORKBENCH.id, dirdata);
 
 		// Face-changing Blocks - Jukeboxes
 		dirdata = new SolidDirectional();
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (4*16)+11);
-		SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.JUKEBOX.id, dirdata);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.JUKEBOX.id, dirdata);
 
 		// Face-changing Blocks - TNT
 		dirdata = new SolidDirectional();
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, 9);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 10);
-		SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.TNT.id, dirdata);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.TNT.id, dirdata);
 
 		// Face-changing Blocks - Wood
 		dirdata = new SolidDirectional();
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, (1*16)+5);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, (1*16)+5);
-		SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.WOOD.id, dirdata);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.WOOD.id, dirdata);
 
 		// Face-changing Blocks - Bookshelves
 		dirdata = new SolidDirectional();
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, 4);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 4);
-		SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.BOOKSHELF.id, dirdata);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.BOOKSHELF.id, dirdata);
 
 		// Face-changing Blocks - Grass
 		grassDirectionInfo = new SolidDirectional();
@@ -824,13 +836,15 @@ public class MineCraftConstants {
 		grassDirectionInfo.setDir(SolidDirectional.REL_DIRECTION.BACKWARD, 3);
 		grassDirectionInfo.setDir(SolidDirectional.REL_DIRECTION.SIDES, 3);
 		grassDirectionInfo.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 2);
-		SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.GRASS.id, grassDirectionInfo);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.GRASS.id, grassDirectionInfo);
 
 		// Face-changing Blocks - Sandstone
 		dirdata = new SolidDirectional();
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.TOP, 11*16);
 		dirdata.setDir(SolidDirectional.REL_DIRECTION.BOTTOM, 13*16);
-		SOLID_FACECHANGE_BLOCKS.put((short)BLOCK.SANDSTONE.id, dirdata);
+		dirdata.setData((byte)0, SolidDirectional.DIRECTION_ABS.WEST);
+		SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.SANDSTONE.id, dirdata);
 	}
 	
 	/***
