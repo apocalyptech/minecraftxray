@@ -1,0 +1,824 @@
+---
+#
+# YAML Definition for the base Minecraft block types
+#
+# The library we're using apparently only supports YAML 1.1
+# See http://en.wikipedia.org/wiki/YAML or http://yaml.org/spec/1.1/
+#
+# Required fields for each block: id, idStr, name, mapcolor, tex
+#
+# Brief descriptions of the individual block fields:
+#
+#   id: The numeric ID of the block
+#
+#   idStr: A String ID of the block.  This is what you will use to
+#          identify the block types in xray.properties, for instance,
+#          to tell X-Ray which resources you're highlighting.  Most
+#          of these are arbitrary and could be changed at will, but
+#          a few are looked for specifically in the X-Ray code, and
+#          so shouldn't be changed.  A hopefully-complete list of
+#          the ones that shouldn't be changed are:
+#
+#               COBBLESTONE (the LEVER renderer uses it)
+#               FENCE (currently the FENCE renderer uses it; can change that though)
+#               PORTAL (currently the PORTAL renderer uses it; can change that though)
+#               TORCH (the "explored" highlight uses it)
+#               BEDROCK (the "bedrock" toggle uses it)
+#               GRASS (the "grass rendering" toggle uses it)
+#               SAPLING (some special data handling is needed)
+#               (preferred_highlight_ores, in Constants?)
+#
+#   name: The name that will show up in X-Ray if you're using it
+#         as one of your highlights (unimportant otherwise)
+#
+#   mapcolor: RGB values for the minimap, 0-255
+#
+#   tex: (X, Y) coordinates in terrain.png, starting from the
+#        upper left.  Note that these start at 0 and go up to
+#        15.  The grass texture is 0,0 - the bookshelf is 3,2,
+#        etc.
+#
+#   tex_data: Sometimes blocks will change their texture based on
+#        its data value; this will let you specify that.  For
+#        examples, see Wood or Saplings.
+#
+#   tex_direction: Sometimes blocks have different textures on
+#         different faces.  If some faces aren't specified, the
+#         default "tex" will be used.  Note that "tex" is always
+#         required, even if all directions are overridden.  Valid 
+#         values are:
+#             FORWARD
+#             BACKWARD
+#             SIDES
+#             TOP
+#             BOTTOM
+#
+#   tex_direction_data: By default, X-Ray will render "FORWARD"
+#         as if it's facing North.  Sometimes the data value of
+#         a block will determine which way it faces, though, and
+#         this is where you can specify that.  For example, the
+#         Dispenser's definition is:
+#             {2: EAST, 3: WEST, 4: NORTH, 5: SOUTH}
+#
+#         Note that currently only NORTH, SOUTH, WEST, and EAST are
+#         supported.  Presumably I should add in UP and DOWN as
+#         well, but that's a feature for another day.
+#
+#   type: This determines how X-Ray will render the block.  The
+#         default type is "NORMAL" which doesn't need to be specified.
+#         Valid types are currently:
+#
+#             BED
+#             BUTTON
+#             CAKE
+#             CROPS
+#             DECORATION_CROSS
+#             DOOR
+#             FENCE
+#             FLOOR
+#             HALFHEIGHT
+#             LADDER
+#             LEVER
+#             MINECART_TRACKS
+#             NORMAL
+#             PISTON_BODY
+#             PISTON_HEAD
+#             PORTAL
+#             PRESSURE_PLATE
+#             SEMISOLID
+#             SIGNPOST
+#             SIMPLE_RAIL
+#             STAIRS
+#             THINSLICE
+#             TORCH
+#             TRAPDOOR
+#             WALLSIGN
+#             WATER
+#
+#         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
+#         be considered fully solid by X-Ray's rendering engine.  Examples
+#         are glass, lava, fire, and mob spawners.
+#
+#         "FLOOR" is currently only used for redstone wire, and might go
+#         away once I actually get redstone wire rendering done.
+#
+#         "THINSLICE" is currently only used for snow, and I may eventually
+#         change that to "SNOW" instead, and clean up that rendering.
+#
+name: Vanilla Minecraft Block Types
+blocks:
+  
+  - id: 1
+    idStr: STONE
+    name: Stone
+    mapcolor: [120, 120, 120]
+    tex: [1, 0]
+  
+  - id: 2
+    idStr: GRASS
+    name: Grass
+    mapcolor: [117, 176, 73]
+    tex: [0, 0]
+    tex_direction:
+      FORWARD: [3, 0]
+      SIDES: [3, 0]
+      BACKWARD: [3, 0]
+      BOTTOM: [2, 0]
+  
+  - id: 3
+    idStr: DIRT
+    name: Dirt
+    mapcolor: [134, 96, 67]
+    tex: [2, 0]
+  
+  - id: 4
+    idStr: COBBLESTONE
+    name: Cobbles
+    mapcolor: [115, 115, 115]
+    tex: [0, 1]
+  
+  - id: 5
+    idStr: PLANK
+    name: Plank
+    mapcolor: [157, 128, 79]
+    tex: [4, 0]
+  
+  - id: 6
+    idStr: SAPLING
+    name: Sapling
+    mapcolor: [120, 120, 120]
+    tex: [15, 0]
+    tex_data:
+      0: [15, 0]
+      1: [15, 3]
+      2: [15, 4]
+    type: DECORATION_CROSS
+  
+  - id: 7
+    idStr: BEDROCK
+    name: Bedrock
+    mapcolor: [84, 84, 84]
+    tex: [1, 1]
+  
+  - id: 8
+    idStr: WATER
+    name: Water
+    mapcolor: [38, 92, 255]
+    tex: [15, 12]
+    type: WATER
+  
+  - id: 9
+    idStr: STATIONARY_WATER
+    name: Water
+    mapcolor: [38, 92, 255]
+    tex: [15, 12]
+    type: WATER
+  
+  - id: 10
+    idStr: LAVA
+    name: Lava
+    mapcolor: [255, 90, 0]
+    tex: [15, 14]
+    type: SEMISOLID
+  
+  - id: 11
+    idStr: STATIONARY_LAVA
+    name: Lava
+    mapcolor: [255, 90, 0]
+    tex: [15, 14]
+    type: SEMISOLID
+  
+  - id: 12
+    idStr: SAND
+    name: Sand
+    mapcolor: [218, 210, 158]
+    tex: [2, 1]
+  
+  - id: 13
+    idStr: GRAVEL
+    name: Gravel
+    mapcolor: [136, 126, 126]
+    tex: [3, 1]
+  
+  - id: 14
+    idStr: GOLD_ORE
+    name: Gold
+    mapcolor: [143, 140, 125]
+    tex: [0, 2]
+  
+  - id: 15
+    idStr: IRON_ORE
+    name: Iron
+    mapcolor: [136, 130, 127]
+    tex: [1, 2]
+  
+  - id: 16
+    idStr: COAL_ORE
+    name: Coal
+    mapcolor: [115, 115, 115]
+    tex: [2, 2]
+  
+  - id: 17
+    idStr: WOOD
+    name: Wood
+    mapcolor: [102, 81, 51]
+    tex: [4, 1]
+    tex_data:
+      0: [4, 1]
+      1: [4, 7]
+      2: [5, 7]
+    tex_direction:
+      TOP: [5, 1]
+      BOTTOM: [5, 1]
+  
+  - id: 18
+    idStr: LEAVES
+    name: Leaves
+    mapcolor: [60, 192, 41]
+    tex: [5, 3]
+  
+  - id: 19
+    idStr: SPONGE
+    name: Sponge
+    mapcolor: [193, 193, 57]
+    tex: [0, 3]
+  
+  - id: 20
+    idStr: GLASS
+    name: Glass
+    mapcolor: [255, 255, 255]
+    tex: [1, 3]
+    type: SEMISOLID
+  
+  - id: 21
+    idStr: LAPIS_LAZULI_ORE
+    name: Lapis
+    mapcolor: [27, 70, 161]
+    tex: [0, 10]
+  
+  - id: 22
+    idStr: LAPIS_LAZULI_BLOCK
+    name: Lapis
+    mapcolor: [0, 0, 0]
+    tex: [0, 9]
+  
+  - id: 23
+    idStr: DISPENSER
+    name: Dispenser
+    mapcolor: [96, 96, 96]
+    tex: [14, 2]
+    tex_direction:
+      FORWARD: [14, 2]
+      SIDES: [13, 2]
+      BACKWARD: [13, 2]
+      TOP: [14, 3]
+      BOTTOM: [14, 3]
+    tex_direction_data: {2: EAST, 3: WEST, 4: NORTH, 5: SOUTH}
+  
+  - id: 24
+    idStr: SANDSTONE
+    name: Sandstone
+    mapcolor: [218, 210, 158]
+    tex: [0, 12]
+    tex_direction:
+      TOP: [0, 11]
+      BOTTOM: [0, 13]
+  
+  - id: 25
+    idStr: NOTE_BLOCK
+    name: Note
+    mapcolor: [114, 88, 56]
+    tex: [10, 4]
+  
+  - id: 26
+    idStr: BED
+    name: Bed
+    mapcolor: [255, 0, 0]
+    tex: [7, 8]
+    type: BED
+  
+  - id: 27
+    idStr: POWERED_RAIL
+    name: Power Rail
+    mapcolor: [120, 53, 28]
+    tex: [3, 10]
+    type: SIMPLE_RAIL
+  
+  - id: 28
+    idStr: DETECTOR_RAIL
+    name: Detector
+    mapcolor: [200, 189, 189]
+    tex: [3, 12]
+    type: SIMPLE_RAIL
+  
+  - id: 29
+    idStr: PISTON_STICKY_BODY
+    name: Sticky Piston
+    mapcolor: [132, 132, 132]
+    tex: [12, 6]
+    type: PISTON_BODY
+  
+  - id: 30
+    idStr: WEB
+    name: Web
+    mapcolor: [255, 255, 255]
+    tex: [11, 0]
+    type: DECORATION_CROSS
+  
+  - id: 31
+    idStr: TALL_GRASS
+    name: Tall Grass
+    mapcolor: [117, 176, 73]
+    tex: [7, 2]
+    tex_data:
+      0: [7, 3]
+      1: [7, 2]
+      2: [8, 3]
+    type: DECORATION_CROSS
+  
+  - id: 32
+    idStr: DEAD_SHRUB
+    name: Dead Shrub
+    mapcolor: [148, 100, 40]
+    tex: [7, 3]
+    type: DECORATION_CROSS
+  
+  - id: 33
+    idStr: PISTON_BODY
+    name: Piston
+    mapcolor: [132, 132, 132]
+    tex: [12, 6]
+    type: PISTON_BODY
+  
+  - id: 34
+    idStr: PISTON_HEAD
+    name: Piston Head
+    mapcolor: [119, 92, 53]
+    tex: [11, 6]
+    type: PISTON_HEAD
+  
+  - id: 35
+    idStr: WOOL
+    name: Wool
+    mapcolor: [222, 222, 222]
+    tex: [0, 4]
+    tex_data:
+      0: [0, 4]
+      1: [2, 13]
+      2: [2, 12]
+      3: [2, 11]
+      4: [2, 10]
+      5: [2, 9]
+      6: [2, 8]
+      7: [2, 7]
+      8: [1, 14]
+      9: [1, 13]
+      10: [1, 12]
+      11: [1, 11]
+      12: [1, 10]
+      13: [1, 9]
+      14: [1, 8]
+      15: [1, 7]
+  
+  - id: 37
+    idStr: YELLOW_FLOWER
+    name: Flower
+    mapcolor: [255, 255, 0]
+    tex: [13, 0]
+    type: DECORATION_CROSS
+  
+  - id: 38
+    idStr: RED_ROSE
+    name: Rose
+    mapcolor: [255, 0, 0]
+    tex: [12, 0]
+    type: DECORATION_CROSS
+  
+  - id: 39
+    idStr: BROWN_MUSHROOM
+    name: Mushroom
+    mapcolor: [145, 109, 85]
+    tex: [13, 1]
+    type: DECORATION_CROSS
+  
+  - id: 40
+    idStr: RED_MUSHROOM
+    name: Mushroom
+    mapcolor: [226, 18, 18]
+    tex: [12, 1]
+    type: DECORATION_CROSS
+  
+  - id: 41
+    idStr: GOLD_BLOCK
+    name: Gold
+    mapcolor: [231, 165, 45]
+    tex: [7, 1]
+  
+  - id: 42
+    idStr: IRON_BLOCK
+    name: Iron
+    mapcolor: [191, 191, 191]
+    tex: [6, 1]
+  
+  - id: 43
+    idStr: DOUBLE_SLAB
+    name: Slab
+    mapcolor: [200, 200, 200]
+    tex: [5, 0]
+    tex_data:
+      0: [5, 0]
+      1: [0, 12]
+      2: [4, 0]
+      3: [0, 1]
+  
+  - id: 44
+    idStr: SLAB
+    name: Slab
+    mapcolor: [200, 200, 200]
+    tex: [6, 0]
+    tex_data:
+      0: [6, 0]
+      1: [0, 12]
+      2: [4, 0]
+      3: [0, 1]
+    type: HALFHEIGHT
+  
+  - id: 45
+    idStr: BRICK
+    name: Brick
+    mapcolor: [170, 86, 62]
+    tex: [7, 0]
+  
+  - id: 46
+    idStr: TNT
+    name: TNT
+    mapcolor: [160, 83, 65]
+    tex: [8, 0]
+    tex_direction:
+      TOP: [9, 0]
+      BOTTOM: [10, 0]
+  
+  - id: 47
+    idStr: BOOKSHELF
+    name: Bookshelf
+    mapcolor: [188, 152, 98]
+    tex: [3, 2]
+    tex_direction:
+      TOP: [4, 0]
+      BOTTOM: [4, 0]
+  
+  - id: 48
+    idStr: MOSSY_COBBLESTONE
+    name: Moss
+    mapcolor: [115, 169, 115]
+    tex: [4, 2]
+  
+  - id: 49
+    idStr: OBSIDIAN
+    name: Obsidian
+    mapcolor: [26, 11, 43]
+    tex: [5, 2]
+  
+  - id: 50
+    idStr: TORCH
+    name: Torch
+    mapcolor: [245, 220, 50]
+    tex: [0, 5]
+    type: TORCH
+  
+  - id: 51
+    idStr: FIRE
+    name: Fire
+    mapcolor: [255, 170, 30]
+    tex: [15, 1]
+    type: SEMISOLID
+  
+  - id: 52
+    idStr: MOB_SPAWNER
+    name: Spawner
+    mapcolor: [25, 82, 122]
+    tex: [1, 4]
+    type: SEMISOLID
+  
+  - id: 53
+    idStr: WOODEN_STAIRS
+    name: Stairs
+    mapcolor: [157, 128, 79]
+    tex: [4, 0]
+    type: STAIRS
+  
+  - id: 54
+    idStr: CHEST
+    name: Chest
+    mapcolor: [125, 91, 38]
+    tex: [11, 1]
+    tex_direction:
+      SIDES: [10, 1]
+      BACKWARD: [10, 1]
+      TOP: [9, 1]
+      BOTTOM: [9, 1]
+  
+  - id: 55
+    idStr: REDSTONE_WIRE
+    name: Wire
+    mapcolor: [245, 50, 50]
+    tex: [4, 10]
+    type: FLOOR
+  
+  - id: 56
+    idStr: DIAMOND_ORE
+    name: Diamond
+    mapcolor: [129, 140, 143]
+    tex: [2, 3]
+  
+  - id: 57
+    idStr: DIAMOND_BLOCK
+    name: Diamond
+    mapcolor: [45, 166, 152]
+    tex: [8, 1]
+  
+  - id: 58
+    idStr: WORKBENCH
+    name: Bench
+    mapcolor: [114, 88, 56]
+    tex: [12, 3]
+    tex_direction:
+      SIDES: [11, 3]
+      TOP: [11, 2]
+      BOTTOM: [4, 0]
+  
+  - id: 59
+    idStr: CROPS
+    name: Crops
+    mapcolor: [146, 192, 0]
+    tex: [15, 5]
+    type: CROPS
+  
+  - id: 60
+    idStr: FARMLAND
+    name: Farmland
+    mapcolor: [95, 58, 30]
+    tex: [6, 5]
+  
+  - id: 61
+    idStr: FURNACE
+    name: Furnace
+    mapcolor: [96, 96, 96]
+    tex: [12, 2]
+    tex_direction:
+      FORWARD: [12, 2]
+      SIDES: [13, 2]
+      BACKWARD: [13, 2]
+      TOP: [14, 3]
+      BOTTOM: [14, 3]
+    tex_direction_data: {2: EAST, 3: WEST, 4: NORTH, 5: SOUTH}
+  
+  - id: 62
+    idStr: BURNING_FURNACE
+    name: Furnace
+    mapcolor: [96, 96, 96]
+    tex: [13, 3]
+    tex_direction:
+      FORWARD: [13, 3]
+      SIDES: [13, 2]
+      BACKWARD: [13, 2]
+      TOP: [14, 3]
+      BOTTOM: [14, 3]
+    tex_direction_data: {2: EAST, 3: WEST, 4: NORTH, 5: SOUTH}
+  
+  - id: 63
+    idStr: SIGNPOST
+    name: Sign
+    mapcolor: [111, 91, 54]
+    tex: [4, 0]
+    type: SIGNPOST
+  
+  - id: 64
+    idStr: WOODEN_DOOR
+    name: Door
+    mapcolor: [136, 109, 67]
+    tex: [1, 6]
+    type: DOOR
+  
+  - id: 65
+    idStr: LADDER
+    name: Ladder
+    mapcolor: [181, 140, 64]
+    tex: [3, 5]
+    type: LADDER
+  
+  - id: 66
+    idStr: MINECART_TRACKS
+    name: Tracks
+    mapcolor: [150, 134, 102]
+    tex: [0, 8]
+    type: MINECART_TRACKS
+  
+  - id: 67
+    idStr: COBBLESTONE_STAIRS
+    name: Stairs
+    mapcolor: [115, 115, 115]
+    tex: [0, 1]
+    type: STAIRS
+  
+  - id: 68
+    idStr: WALL_SIGN
+    name: Sign
+    mapcolor: [111, 91, 54]
+    tex: [4, 0]
+    type: WALLSIGN
+  
+  - id: 69
+    idStr: LEVER
+    name: Lever
+    mapcolor: [124, 98, 62]
+    tex: [0, 6]
+    type: LEVER
+  
+  - id: 70
+    idStr: STONE_PRESSURE_PLATE
+    name: Plate
+    mapcolor: [120, 120, 120]
+    tex: [1, 0]
+    type: PRESSURE_PLATE
+  
+  - id: 71
+    idStr: IRON_DOOR
+    name: Door
+    mapcolor: [191, 191, 191]
+    tex: [2, 6]
+    type: DOOR
+  
+  - id: 72
+    idStr: WOODEN_PRESSURE_PLATE
+    name: Plate
+    mapcolor: [157, 128, 79]
+    tex: [4, 0]
+    type: PRESSURE_PLATE
+  
+  - id: 73
+    idStr: REDSTONE_ORE
+    name: Redstone
+    mapcolor: [131, 107, 107]
+    tex: [3, 3]
+  
+  - id: 74
+    idStr: GLOWING_REDSTONE_ORE
+    name: Redstone
+    mapcolor: [131, 107, 107]
+    tex: [3, 3]
+  
+  - id: 75
+    idStr: REDSTONE_TORCH_OFF
+    name: Torch
+    mapcolor: [181, 140, 64]
+    tex: [3, 7]
+    type: TORCH
+  
+  - id: 76
+    idStr: REDSTONE_TORCH_ON
+    name: Torch
+    mapcolor: [255, 0, 0]
+    tex: [3, 6]
+    type: TORCH
+  
+  - id: 77
+    idStr: STONE_BUTTON
+    name: Button
+    mapcolor: [120, 120, 120]
+    tex: [1, 0]
+    type: BUTTON
+  
+  - id: 78
+    idStr: SNOW
+    name: Snow
+    mapcolor: [255, 255, 255]
+    tex: [2, 4]
+    type: THINSLICE
+  
+  - id: 79
+    idStr: ICE
+    name: Ice
+    mapcolor: [83, 113, 163]
+    tex: [3, 4]
+    type: WATER
+  
+  - id: 80
+    idStr: SNOW_BLOCK
+    name: Snow
+    mapcolor: [250, 250, 250]
+    tex: [2, 4]
+  
+  - id: 81
+    idStr: CACTUS
+    name: Cactus
+    mapcolor: [25, 120, 25]
+    tex: [6, 4]
+  
+  - id: 82
+    idStr: CLAY
+    name: Clay
+    mapcolor: [151, 157, 169]
+    tex: [8, 4]
+  
+  - id: 83
+    idStr: SUGARCANE
+    name: Sugarcane
+    mapcolor: [100, 67, 50]
+    tex: [9, 4]
+    type: DECORATION_CROSS
+  
+  - id: 84
+    idStr: JUKEBOX
+    name: Jukebox
+    mapcolor: [114, 88, 56]
+    tex: [10, 4]
+    tex_direction:
+      TOP: [11, 4]
+  
+  - id: 85
+    idStr: FENCE
+    name: Fence
+    mapcolor: [157, 128, 79]
+    tex: [4, 0]
+    type: FENCE
+  
+  - id: 86
+    idStr: PUMPKIN
+    name: Pumpkin
+    mapcolor: [227, 144, 29]
+    tex: [7, 7]
+    tex_direction:
+      FORWARD: [7, 7]
+      SIDES: [6, 7]
+      BACKWARD: [6, 7]
+      TOP: [6, 6]
+      BOTTOM: [6, 6]
+    tex_direction_data: {0: WEST, 1: NORTH, 2: EAST, 3: SOUTH}
+  
+  - id: 87
+    idStr: NETHERRACK
+    name: Netherrack
+    mapcolor: [104, 8, 8]
+    tex: [7, 6]
+  
+  - id: 88
+    idStr: SOUL_SAND
+    name: Soul Sand
+    mapcolor: [106, 82, 68]
+    tex: [8, 6]
+  
+  - id: 89
+    idStr: GLOWSTONE
+    name: Glowstone
+    mapcolor: [249, 212, 156]
+    tex: [9, 6]
+  
+  - id: 90
+    idStr: PORTAL
+    name: Portal
+    mapcolor: [214, 127, 255]
+    tex: [12, 15]
+    type: PORTAL
+  
+  - id: 91
+    idStr: JACK_O_LANTERN
+    name: Jack
+    mapcolor: [249, 255, 58]
+    tex: [8, 7]
+    tex_direction:
+      FORWARD: [8, 7]
+      SIDES: [6, 7]
+      BACKWARD: [6, 7]
+      TOP: [6, 6]
+      BOTTOM: [6, 6]
+    tex_direction_data: {0: WEST, 1: NORTH, 2: EAST, 3: SOUTH}
+  
+  - id: 92
+    idStr: CAKE
+    name: Cake
+    mapcolor: [234, 233, 235]
+    tex: [9, 7]
+    type: CAKE
+  
+  - id: 93
+    idStr: REDSTONE_REPEATER_OFF
+    name: Repeater (off)
+    mapcolor: [245, 50, 50]
+    tex: [3, 8]
+    type: PRESSURE_PLATE
+  
+  - id: 94
+    idStr: REDSTONE_REPEATER_ON
+    name: Repeater (on)
+    mapcolor: [245, 50, 50]
+    tex: [3, 9]
+    type: PRESSURE_PLATE
+  
+  - id: 96
+    idStr: TRAPDOOR
+    name: Trapdoor
+    mapcolor: [143, 107, 53]
+    tex: [4, 5]
+    type: TRAPDOOR
+...

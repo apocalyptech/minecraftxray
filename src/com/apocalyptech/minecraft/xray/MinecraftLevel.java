@@ -41,8 +41,6 @@ import com.apocalyptech.minecraft.xray.dtf.ListTag;
 import com.apocalyptech.minecraft.xray.dtf.StringTag;
 import com.apocalyptech.minecraft.xray.dtf.Tag;
 
-import com.apocalyptech.minecraft.xray.MineCraftConstants.BLOCK;
-
 /***
  * A Minecraft level 
  * @author Vincent
@@ -60,7 +58,7 @@ public class MinecraftLevel {
 	private ArrayList<CameraPreset> playerPositions;
 	private int playerPos_idx;
 	private int spawnPoint_idx;
-	public BLOCK[] HIGHLIGHT_ORES;
+	public short[] HIGHLIGHT_ORES;
 	
 	public Texture minecraftTexture;
 	public Texture paintingTexture;
@@ -103,7 +101,7 @@ public class MinecraftLevel {
 	 * Create a minecraftLevel from the given world
 	 * @param world
 	 */
-	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture paintingTexture, BLOCK[] HIGHLIGHT_ORES) {
+	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture paintingTexture, short[] HIGHLIGHT_ORES) {
 		this.world = world;
 		this.minecraftTexture = minecraftTexture;
 		this.paintingTexture = paintingTexture;

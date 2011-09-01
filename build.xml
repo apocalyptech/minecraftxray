@@ -58,13 +58,9 @@
         <java fork="true" classname="com.apocalyptech.minecraft.xray.XRay">
             <classpath>
                 <pathelement path="${build}" />
-                <pathelement location="lib/AppleJavaExtensions.jar" />
-                <pathelement location="lib/jinput.jar" />
-                <pathelement location="lib/lwjgl.jar" />
-                <pathelement location="lib/lwjgl_test.jar" />
-                <pathelement location="lib/lwjgl_util.jar" />
-                <pathelement location="lib/lwjgl_util_applet.jar" />
-                <pathelement location="lib/lzma.jar" />
+				<fileset dir="lib">
+					<include name="*.jar" />
+				</fileset>
             </classpath>
             <jvmarg value="-Xms256m" />
             <jvmarg value="-Xmx1024m" />

@@ -85,7 +85,7 @@ public class XRay
 	private int currentHighlightDistance = 1;
 
 	// ore highlight vars
-	private static BLOCK[] HIGHLIGHT_ORES = new BLOCK[preferred_highlight_ores.length];
+	private static short[] HIGHLIGHT_ORES = new short[preferred_highlight_ores.length];
 	private static final int[] HIGHLIGHT_ORE_KEYS = new int[preferred_highlight_ores.length];
 
 	// By default we'll keep 20x20 chunks in our cache, which should hopefully let
@@ -444,13 +444,13 @@ public class XRay
 			prefs_highlight = xray_properties.getProperty(prefs_highlight_key);
 			try
 			{
-				HIGHLIGHT_ORES[i] = BLOCK.valueOf(prefs_highlight);
+				HIGHLIGHT_ORES[i] = BLOCK.get(prefs_highlight).getId();
 			}
 			catch (Exception e)
 			{
 				// no worries, just populate with our default
 			}
-			xray_properties.put(prefs_highlight_key, HIGHLIGHT_ORES[i].toString());
+			xray_properties.put(prefs_highlight_key, BLOCK_ID.get(HIGHLIGHT_ORES[i]).getIdStr());
 		}
 
 		// Read in our saved option states, if we have 'em
@@ -493,7 +493,7 @@ public class XRay
 		// Then populate our highlight blocks
 		for (int i = 0; i < preferred_highlight_ores.length; i++)
 		{
-			XRay.HIGHLIGHT_ORES[i] = preferred_highlight_ores[i];
+			XRay.HIGHLIGHT_ORES[i] = BLOCK.get(preferred_highlight_ores[i]).getId();
 		}
 	}
 
@@ -704,16 +704,16 @@ public class XRay
 	{
 		if (accurateGrass)
 		{
-			if (!SOLID_DIRECTIONAL_BLOCKS.containsKey((short)BLOCK.GRASS.id))
+			if (!SOLID_DIRECTIONAL_BLOCKS.containsKey((short)BLOCK.get("GRASS").getId()))
 			{
-				SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.GRASS.id, grassDirectionInfo);
+				SOLID_DIRECTIONAL_BLOCKS.put((short)BLOCK.get("GRASS").getId(), grassDirectionInfo);
 			}
 		}
 		else
 		{
-			if (SOLID_DIRECTIONAL_BLOCKS.containsKey((short)BLOCK.GRASS.id))
+			if (SOLID_DIRECTIONAL_BLOCKS.containsKey((short)BLOCK.get("GRASS").getId()))
 			{
-				SOLID_DIRECTIONAL_BLOCKS.remove((short)BLOCK.GRASS.id);
+				SOLID_DIRECTIONAL_BLOCKS.remove((short)BLOCK.get("GRASS").getId());
 			}
 		}
 	}
@@ -841,7 +841,7 @@ public class XRay
 				Graphics2D g = mineralToggleTextures[i].getImage().createGraphics();
 				g.setFont(ARIALFONT);
 				g.setColor(Color.white);
-				g.drawString("[F" + (i + 1) + "] " + HIGHLIGHT_ORES[i].name, 10, 16);
+				g.drawString("[F" + (i + 1) + "] " + BLOCK_ID.get(HIGHLIGHT_ORES[i]).getName(), 10, 16);
 				mineralToggleTextures[i].update();
 			}
 
@@ -2240,10 +2240,10 @@ public class XRay
 			{
 				GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
-				SpriteTool.drawCurrentSprite(curX - 2, curY - 2, 36, 36, MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
-						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
-						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]] + TEX16,
-						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]] + TEX32);
+				SpriteTool.drawCurrentSprite(curX - 2, curY - 2, 36, 36, MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]],
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]],
+						MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]] + TEX16,
+						MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]] + TEX32);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 			}
 			else
@@ -2251,10 +2251,10 @@ public class XRay
 				GL11.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 			}
 			minecraftTexture.bind();
-			SpriteTool.drawCurrentSprite(curX, curY, 32, 32, MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
-					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]],
-					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]] + TEX16,
-					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i].id]] + TEX32);
+			SpriteTool.drawCurrentSprite(curX, curY, 32, 32, MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]],
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]],
+					MineCraftConstants.precalcSpriteSheetToTextureX[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]] + TEX16,
+					MineCraftConstants.precalcSpriteSheetToTextureY[blockDataToSpriteSheet[HIGHLIGHT_ORES[i]]] + TEX32);
 
 			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i], curX + 32 + 10, curY + 7);
 			curX += barWidth;
@@ -2577,7 +2577,7 @@ public class XRay
 				// Make sure we don't have holes in our Nether minimap
 				if (in_nether && found_solid && !drew_block)
 				{
-					g.setColor(MineCraftConstants.blockColors[BLOCK.BEDROCK.id]);
+					g.setColor(MineCraftConstants.blockColors[BLOCK.get("BEDROCK").getId()]);
 					g.fillRect(base_x - zz, base_y + xx, 1, 1);
 				}
 			}

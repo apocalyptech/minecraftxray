@@ -1007,7 +1007,7 @@ public class Chunk {
 		//System.out.println("Data: " + data);
 		 
 		// First draw the cobblestoney box
-		int cobble_tex = blockDataToSpriteSheet[BLOCK.COBBLESTONE.id];
+		int cobble_tex = blockDataToSpriteSheet[BLOCK.get("COBBLESTONE").getId()];
 		float box_height = .15f;
 		float box_length = .2f;
 		float box_width = .15f;
@@ -1993,7 +1993,7 @@ public class Chunk {
 		boolean have_adj = false;
 		if (xxx>0)
 		{
-			if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.FENCE.id)
+			if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.get("FENCE").getId())
 			{
 				have_adj = true;
 			}
@@ -2001,7 +2001,7 @@ public class Chunk {
 		else
 		{
 			Chunk otherChunk = level.getChunk(this.x-1, this.z);
-			if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK.FENCE.id)
+			if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK.get("FENCE").getId())
 			{
 				have_adj  = true;
 			}
@@ -2025,7 +2025,7 @@ public class Chunk {
 		have_adj = false;
 		if(zzz>0)
 		{
-			if (blockData.value[blockOffset-BLOCKSPERROW] == MineCraftConstants.BLOCK.FENCE.id)
+			if (blockData.value[blockOffset-BLOCKSPERROW] == MineCraftConstants.BLOCK.get("FENCE").getId())
 			{
 				have_adj = true;
 			}
@@ -2033,7 +2033,7 @@ public class Chunk {
 		else
 		{
 			Chunk otherChunk = level.getChunk(this.x,this.z-1);
-			if(otherChunk != null && otherChunk.getBlock(xxx, yyy, 15) == MineCraftConstants.BLOCK.FENCE.id) {
+			if(otherChunk != null && otherChunk.getBlock(xxx, yyy, 15) == MineCraftConstants.BLOCK.get("FENCE").getId()) {
 				have_adj = true;
 			}
 		}
@@ -2142,7 +2142,7 @@ public class Chunk {
 		{
 			if (xxx>0)
 			{
-				if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.PORTAL.id)
+				if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.get("PORTAL").getId())
 				{
 					break;
 				}
@@ -2150,7 +2150,7 @@ public class Chunk {
 			else
 			{
 				Chunk otherChunk = level.getChunk(this.x-1, this.z);
-				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK.PORTAL.id)
+				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK.get("PORTAL").getId())
 				{
 					break;
 				}
@@ -2158,7 +2158,7 @@ public class Chunk {
 			
 			if (xxx<15)
 			{
-				if (blockData.value[blockOffset+BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.PORTAL.id)
+				if (blockData.value[blockOffset+BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.get("PORTAL").getId())
 				{
 					break;
 				}
@@ -2166,7 +2166,7 @@ public class Chunk {
 			else
 			{
 				Chunk otherChunk = level.getChunk(this.x+1, this.z);
-				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == MineCraftConstants.BLOCK.PORTAL.id)
+				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == MineCraftConstants.BLOCK.get("PORTAL").getId())
 				{
 					break;
 				}
@@ -2526,14 +2526,14 @@ public class Chunk {
 						{
 							continue;
 						}
-						else if (otherChunk.blockData.value[(tz*128)+(tx*128*16)+y] == BLOCK.TORCH.id)
+						else if (otherChunk.blockData.value[(tz*128)+(tx*128*16)+y] == BLOCK.get("TORCH").getId())
 						{
 							return true;
 						}
 					}
 					else
 					{
-						if (blockData.value[(z*128)+(x*128*16)+y] == BLOCK.TORCH.id)
+						if (blockData.value[(z*128)+(x*128*16)+y] == BLOCK.get("TORCH").getId())
 						{
 							return true;
 						}
@@ -2588,7 +2588,7 @@ public class Chunk {
 					{
 						draw = false;
 						for(int i=0;i<selectedMap.length;i++) {
-							if(selectedMap[i] && level.HIGHLIGHT_ORES[i].id == t) {
+							if(selectedMap[i] && level.HIGHLIGHT_ORES[i] == t) {
 								// TODO: should maybe check our boundaries for similar ores, like we do for regular blocks
 								draw = true;
 								above = false;
@@ -2638,67 +2638,67 @@ public class Chunk {
 
 					if (!onlySelected)
 					{
-						if (render_bedrock && t == MineCraftConstants.BLOCK.BEDROCK.id)
+						if (render_bedrock && t == MineCraftConstants.BLOCK.get("BEDROCK").getId())
 						{
 							// This block of code was more or less copied/modified directly from the "else" block
 							// below - should see if there's a way we can abstract this instead.  Also, I suspect
 							// that this is where we'd fix water rendering...
 							
 							// check above
-							if(y<127 && blockData.value[blockOffset+1] != MineCraftConstants.BLOCK.BEDROCK.id) {
+							if(y<127 && blockData.value[blockOffset+1] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 								draw = true;
 								above = false;
 							}
 							
 							// check below
-							if(y>0 && blockData.value[blockOffset-1] != MineCraftConstants.BLOCK.BEDROCK.id) {
+							if(y>0 && blockData.value[blockOffset-1] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 								draw = true;
 								below = false;
 							}
 							
 							// check left;
-							if(x>0 && blockData.value[blockOffset-BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK.BEDROCK.id) {
+							if(x>0 && blockData.value[blockOffset-BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 								draw = true;
 								left = false;
 							} else if(x==0) {
 								Chunk leftChunk = level.getChunk(this.x-1, this.z);
-								if(leftChunk != null && leftChunk.getBlock(15, y, z) != MineCraftConstants.BLOCK.BEDROCK.id) {
+								if(leftChunk != null && leftChunk.getBlock(15, y, z) != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 									draw = true;
 									left = false;
 								}
 							}
 						
 							// check right
-							if(x<15 && blockData.value[blockOffset+BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK.BEDROCK.id) {
+							if(x<15 && blockData.value[blockOffset+BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 								draw = true;
 								right = false;
 							} else if(x==15) {
 								Chunk rightChunk = level.getChunk(this.x+1,this.z);
-								if(rightChunk != null && rightChunk.getBlock(0, y, z) != MineCraftConstants.BLOCK.BEDROCK.id) {
+								if(rightChunk != null && rightChunk.getBlock(0, y, z) != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 									draw = true;
 									right = false;
 								}
 							}
 							
 							// check near
-							if(z>0 && blockData.value[blockOffset-BLOCKSPERROW] != MineCraftConstants.BLOCK.BEDROCK.id) {
+							if(z>0 && blockData.value[blockOffset-BLOCKSPERROW] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 								draw = true;
 								near = false;
 							} else if(z==0) {
 								Chunk nearChunk = level.getChunk(this.x,this.z-1);
-								if(nearChunk != null && nearChunk.getBlock(x, y, 15) != MineCraftConstants.BLOCK.BEDROCK.id) {
+								if(nearChunk != null && nearChunk.getBlock(x, y, 15) != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 									draw = true;
 									near = false;
 								}
 							}
 							
 							// check far
-							if(z<15 && blockData.value[blockOffset+BLOCKSPERROW] != MineCraftConstants.BLOCK.BEDROCK.id) {
+							if(z<15 && blockData.value[blockOffset+BLOCKSPERROW] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 								draw = true;
 								far = false;
 							} else if(z==15) {
 								Chunk farChunk = level.getChunk(this.x,this.z+1);
-								if(farChunk != null && farChunk.getBlock(x, y, 0) != MineCraftConstants.BLOCK.BEDROCK.id) {
+								if(farChunk != null && farChunk.getBlock(x, y, 0) != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
 									draw = true;
 									far = false;
 								}
@@ -2777,7 +2777,7 @@ public class Chunk {
 						{
 							byte data = getData(x, y, z);
 
-							if (t == BLOCK.SAPLING.id)
+							if (t == BLOCK.get("SAPLING").getId())
 							{
 								// Special-case here for Sapling data, since we can't trust the upper two bits
 								data &= 0x3;
