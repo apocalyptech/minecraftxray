@@ -149,9 +149,9 @@ blocks:
     mapcolor: [120, 120, 120]
     tex: [15, 0]
     tex_data:
-      0: [15, 0]
-      1: [15, 3]
-      2: [15, 4]
+      0: [15, 0]  # Regular sapling
+      1: [15, 3]  # Spruce
+      2: [15, 4]  # Birch
     type: DECORATION_CROSS
   
   - id: 7
@@ -224,9 +224,9 @@ blocks:
     mapcolor: [102, 81, 51]
     tex: [4, 1]
     tex_data:
-      0: [4, 1]
-      1: [4, 7]
-      2: [5, 7]
+      0: [4, 1]   # Regular Log
+      1: [4, 7]   # Spruce
+      2: [5, 7]   # Birch
     tex_direction:
       TOP: [5, 1]
       BOTTOM: [5, 1]
@@ -235,7 +235,8 @@ blocks:
     idStr: LEAVES
     name: Leaves
     mapcolor: [60, 192, 41]
-    tex: [5, 3]
+    tex: [5, 3] # The "correct" one is actually [4, 3] but with the current
+                # transparency rendering issues, this one looks better.
   
   - id: 19
     idStr: SPONGE
@@ -331,9 +332,9 @@ blocks:
     mapcolor: [117, 176, 73]
     tex: [7, 2]
     tex_data:
-      0: [7, 3]
-      1: [7, 2]
-      2: [8, 3]
+      0: [7, 3]  # Dead Shrub
+      1: [7, 2]  # Tall Grass
+      2: [8, 3]  # Fern
     type: DECORATION_CROSS
   
   - id: 32
@@ -363,22 +364,22 @@ blocks:
     mapcolor: [222, 222, 222]
     tex: [0, 4]
     tex_data:
-      0: [0, 4]
-      1: [2, 13]
-      2: [2, 12]
-      3: [2, 11]
-      4: [2, 10]
-      5: [2, 9]
-      6: [2, 8]
-      7: [2, 7]
-      8: [1, 14]
-      9: [1, 13]
-      10: [1, 12]
-      11: [1, 11]
-      12: [1, 10]
-      13: [1, 9]
-      14: [1, 8]
-      15: [1, 7]
+      0: [0, 4]    # Regular Wool
+      1: [2, 13]   # Orange
+      2: [2, 12]   # Magenta
+      3: [2, 11]   # Light Blue
+      4: [2, 10]   # Yellow
+      5: [2, 9]    # Light Green
+      6: [2, 8]    # Pink
+      7: [2, 7]    # Dark Grey
+      8: [1, 14]   # Grey
+      9: [1, 13]   # Cyan
+      10: [1, 12]  # Purple
+      11: [1, 11]  # Blue
+      12: [1, 10]  # Brown
+      13: [1, 9]   # Dark Green
+      14: [1, 8]   # Red
+      15: [1, 7]   # Black
   
   - id: 37
     idStr: YELLOW_FLOWER
@@ -426,10 +427,10 @@ blocks:
     mapcolor: [200, 200, 200]
     tex: [5, 0]
     tex_data:
-      0: [5, 0]
-      1: [0, 12]
-      2: [4, 0]
-      3: [0, 1]
+      0: [5, 0]   # Smooth stone
+      1: [0, 12]  # Sandstone
+      2: [4, 0]   # Plank
+      3: [0, 1]   # Cobblestone
   
   - id: 44
     idStr: SLAB
@@ -437,10 +438,10 @@ blocks:
     mapcolor: [200, 200, 200]
     tex: [6, 0]
     tex_data:
-      0: [6, 0]
-      1: [0, 12]
-      2: [4, 0]
-      3: [0, 1]
+      0: [6, 0]   # Smooth stone
+      1: [0, 12]  # Sandstone
+      2: [4, 0]   # Plank
+      3: [0, 1]   # Cobblestone
     type: HALFHEIGHT
   
   - id: 45

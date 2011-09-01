@@ -61,3 +61,9 @@
  
  * Alter Fence and Portal renderers to not depend on info from BLOCK (how about let's
    pass the block info into the renderers, in addition to the texture to use)
+
+ * Figure out a more noticeable highlighting for things like Clay and Obsidian
+   (anything very dark, or very light, really)
+ 
+ * Technically the minimap colors for a few block types should vary based on the
+   data value.
