@@ -6,6 +6,9 @@ license, and appears to include code under the MIT license, and includes
 some binaries licensed under the GPL.  See COPYING-launch4j.txt for more
 details on that.
 
+X-Ray redistributes SnakeYAML, which is available under the Apache License
+2.0.  See COPYING-snakeyaml.txt for more details on that.
+
 In general the sourcecode files here will list a copyright for both Vincent
 Vollers and CJ Kucera, though the actual distribution of code copyright
 would probably be more complicated than that.  Please forgive any instances
