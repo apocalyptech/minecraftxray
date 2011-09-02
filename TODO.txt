@@ -42,8 +42,6 @@
    if they'd be okay with that...
  
  * Visualization for slime spawning
-
- * Hammer out reasonable error reporting for the Yaml-loading stuff
  
  * And, of course, completing the mod support - UI to select extra mod files,
    extra YAML attributes required to read things in.  "reserved" to mark additional

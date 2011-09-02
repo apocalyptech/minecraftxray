@@ -93,6 +93,9 @@ public class ExceptionDialog extends JFrame {
 	
 	public static Image iconImage;
 
+	private static String extraStatus1;
+	private static String extraStatus2;
+
 	/***
 	 * Centers this dialog on the screen
 	 */
@@ -125,6 +128,20 @@ public class ExceptionDialog extends JFrame {
 		JLabel reportLabel = new JLabel("If you report this error, please be sure to include the full text of this exception.");
 		reportLabel.setFont(new Font("Arial", Font.PLAIN, 12));
 
+		JLabel extraStatusLabel1 = null;
+		if (extraStatus1 != null)
+		{
+			extraStatusLabel1 = new JLabel(extraStatus1);
+			extraStatusLabel1.setFont(new Font("Arial", Font.PLAIN, 12));
+		}
+
+		JLabel extraStatusLabel2 = null;
+		if (extraStatus2 != null)
+		{
+			extraStatusLabel2 = new JLabel(extraStatus2);
+			extraStatusLabel2.setFont(new Font("Arial", Font.PLAIN, 12));
+		}
+
 		int current_grid_y = 0;
 		
 		c.insets = new Insets(5,5,5,5);
@@ -137,9 +154,29 @@ public class ExceptionDialog extends JFrame {
 		c.weightx = 1f;
 		c.weighty = 0f;
 		c.anchor = GridBagConstraints.CENTER;
+
+		// Header
 		current_grid_y++;
 		c.gridy = current_grid_y;
 		addComponent(basicPanel, headerLabel, c);
+
+		// Extra Status Label 1
+		if (extraStatusLabel1 != null)
+		{
+			current_grid_y++;
+			c.gridy = current_grid_y;
+			addComponent(basicPanel, extraStatusLabel1, c);
+		}
+
+		// Extra Status Label 2
+		if (extraStatusLabel2 != null)
+		{
+			current_grid_y++;
+			c.gridy = current_grid_y;
+			addComponent(basicPanel, extraStatusLabel2, c);
+		}
+
+		// the main exception pane
 		current_grid_y++;
 		c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.NORTHWEST;
@@ -235,6 +272,48 @@ public class ExceptionDialog extends JFrame {
 		}
 	}
 	
+	/**
+	 * We have a couple of extra strings to keep track of status information.
+	 * this method clears them out.
+	 */
+	public static void clearExtraStatus()
+	{
+		clearExtraStatus1();
+		clearExtraStatus2();
+	}
+
+	/**
+	 * Sets our first extra-status string.
+	 */
+	public static void setExtraStatus1(String newStatus)
+	{
+		extraStatus1 = newStatus;
+	}
+
+	/**
+	 * Clears out our first extra-status string.
+	 */
+	public static void clearExtraStatus1()
+	{
+		extraStatus1 = null;
+	}
+
+	/**
+	 * Sets our second extra-status string.
+	 */
+	public static void setExtraStatus2(String newStatus)
+	{
+		extraStatus2 = newStatus;
+	}
+
+	/**
+	 * Clears out our second extra-status string.
+	 */
+	public static void clearExtraStatus2()
+	{
+		extraStatus2 = null;
+	}
+
 	/***
 	 * Creates a new ExceptionDialog
 	 * @param windowName the title of the dialog

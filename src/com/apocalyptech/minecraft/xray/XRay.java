@@ -368,6 +368,7 @@ public class XRay
 		{
 			// bah, some error happened
 			Mouse.setGrabbed(false);
+			ExceptionDialog.clearExtraStatus();
 			ExceptionDialog.presentDialog("Exception Encountered!", e);
 			System.exit(0);
 		}

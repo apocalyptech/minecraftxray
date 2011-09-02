@@ -220,6 +220,7 @@ public class MineCraftConstants {
 
 	/**
 	 * Reads in our default, base Minecraft texture data
+	 * TODO: should this (and the other) be in MineCraftEnvironment, maybe?
 	 */
 	public static void loadBlocks()
 		throws BlockTypeLoadException
@@ -235,6 +236,9 @@ public class MineCraftConstants {
 	public static void loadBlocks(String filename, boolean importData)
 		throws BlockTypeLoadException
 	{
+		ExceptionDialog.clearExtraStatus();
+		ExceptionDialog.setExtraStatus1("Loading blocks from " + filename);
+
 		// First load the actual YAML
 		BlockTypeCollection blockinfo;
 		try
@@ -249,9 +253,11 @@ public class MineCraftConstants {
 		// Now loop through blocks, normalize, and do some sanity checks
 		for (BlockType block : blockinfo.getBlocks())
 		{
+			ExceptionDialog.setExtraStatus2("Looking at block ID " + block.id + ": " + block.idStr);
 			block.normalizeData();
 			blockCollection.addBlockType(block, importData);
 		}
+		ExceptionDialog.clearExtraStatus2();
 
 		// A number of blocks that we require be present
 		BLOCK_BEDROCK = blockCollection.getByName("BEDROCK");
@@ -305,6 +311,9 @@ public class MineCraftConstants {
 
 		// Set our blockArray
 		blockArray = blockCollection.blockArray;
+
+		// Clean up.
+		ExceptionDialog.clearExtraStatus();
 	}
 	
 	/***
