@@ -26,7 +26,6 @@
  */
 package com.apocalyptech.minecraft.xray;
 
-import java.io.FileReader;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Map;
@@ -36,20 +35,12 @@ import java.lang.Integer;
 
 import org.lwjgl.input.Keyboard;
 
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.constructor.Constructor;
 
 /***
  * Precalcs and the like
  * @author Vincent
  */
 public class MineCraftConstants {
-	 // translation table for colors for the minimap
-    public static Color[] blockColors;
-    
-    // translation table from block data to sprite sheet index
-    public static int[] blockDataToSpriteSheet;
     
     // translation table (precalc) from sprite sheet index to texture coordinates
 	public static float[] precalcSpriteSheetToTextureX;
@@ -110,27 +101,32 @@ public class MineCraftConstants {
 		PISTON_HEAD
 	}
 	
-	// This HashMap determines how we draw various block types
-	public static HashMap<Short, BLOCK_TYPE> BLOCK_TYPE_MAP = new HashMap<Short, BLOCK_TYPE>();
-	
-	// This HashMap is used to determine which texture to use for blocks whose data value determines
-	// what texture to use
-	public static HashMap<Short, HashMap<Byte, Integer>> blockDataSpriteSheetMap = new HashMap<Short, HashMap<Byte, Integer>>();
-	
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
-	public static HashMap<String, YamlBlockType> BLOCK = new HashMap<String, YamlBlockType>();
-	public static HashMap<Short, YamlBlockType> BLOCK_ID = new HashMap<Short, YamlBlockType>();
+	public static BlockTypeCollection blockCollection = new BlockTypeCollection();
+
+	// Just to omit one extra level of lookups, we'll also keep a reference to our
+	// block collection's ID-based array
+	public static BlockType[] blockArray;
+
+	// There are a few blocks that we know we need references to.
+	public static BlockType BLOCK_BEDROCK;
+	public static BlockType BLOCK_GRASS;
+	public static BlockType BLOCK_COBBLESTONE;
+	public static BlockType BLOCK_FENCE;
+	public static BlockType BLOCK_PORTAL;
+	public static BlockType BLOCK_TORCH;
+	public static BlockType BLOCK_SAPLING;
+
+	// A meta-block to use for unknown block types
+	public static BlockType BLOCK_UNKNOWN;
+
+	// Some data to save for grass
+	public static HashMap<BlockType.DIRECTION_REL, Integer> grassDirectionMap;
 
 	// Block types to compute decoration information for
 	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
 		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS
 	};
-
-	// Block types which are solid but which have directional data for rendering
-	public static HashMap<Short, SolidDirectional> SOLID_DIRECTIONAL_BLOCKS = new HashMap<Short, SolidDirectional>();
-
-	// Static SolidDirectional for grass, so we can toggle it on and off
-	public static SolidDirectional grassDirectionInfo;
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
 	public static final String[] preferred_highlight_ores = new String[] {
@@ -214,110 +210,101 @@ public class MineCraftConstants {
 	public static HashMap<String, PaintingInfo> paintings;
 	public static PaintingInfo paintingback;
 	
-	static {
-		initBlockStructs();
+	static void initialize()
+		throws BlockTypeLoadException
+	{
 		loadBlocks();
 		initSpriteSheetToTextureTable();
 		initPaintings();
 	}
 
 	/**
-	 * Initializes any block structures that need initializing.
-	 * Arguably we should just be doing this inside a single Block object, will see.
-	 */
-	public static void initBlockStructs()
-	{
-		blockColors = new Color[256];
-		// TODO: int?
-		blockDataToSpriteSheet = new int[256];
-		for(int i=0;i<256;i++) {
-			blockColors[i] = Color.BLACK;
-			// TODO: find a better way to do this
-			blockDataToSpriteSheet[i] = (15*16)+13;
-			BLOCK_TYPE_MAP.put((short)i, BLOCK_TYPE.NORMAL);
-		}
-		blockDataToSpriteSheet[0] = -1;
-	}
-
-	/**
 	 * Reads in our default, base Minecraft texture data
 	 */
 	public static void loadBlocks()
+		throws BlockTypeLoadException
 	{
-		loadBlocks("blockdefs/minecraft.yaml");
+		loadBlocks("blockdefs/minecraft.yaml", true);
 	}
 
 	/**
-	 * Reads in block information from a YAML file and 
+	 * Reads in block information from a YAML file.  If importData is
+	 * false, the data is only verified and checked, not actually loaded
+	 * into our data structures.
 	 */
-	public static void loadBlocks(String filename)
+	public static void loadBlocks(String filename, boolean importData)
+		throws BlockTypeLoadException
 	{
-		Constructor constructor = new Constructor(YamlBlocks.class);
-		TypeDescription blockDesc = new TypeDescription(YamlBlocks.class);
-		blockDesc.putListPropertyType("blocks", YamlBlockType.class);
-		Yaml yaml = new Yaml(constructor);
-
-		YamlBlocks blockinfo;
+		// First load the actual YAML
+		BlockTypeCollection blockinfo;
 		try
 		{
-			blockinfo = (YamlBlocks) yaml.load(new FileReader(filename));
+			blockinfo = BlockTypeCollection.loadFromYaml(filename);
 		}
 		catch (Exception e)
 		{
-			// TODO:  ... yeah.
-			System.out.println("WARNING: Could not load " + filename + ": " + e.toString());
-			return;
+			throw new BlockTypeLoadException("Could not load " + filename + ": " + e.toString(), e);
 		}
 
-		for (YamlBlockType block : blockinfo.getBlocks())
+		// Now loop through blocks, normalize, and do some sanity checks
+		for (BlockType block : blockinfo.getBlocks())
 		{
-			BLOCK.put(block.getIdStr(), block);
-			BLOCK_ID.put(block.getId(), block);
-			blockColors[block.getId()] = block.getColor();
-			blockDataToSpriteSheet[block.getId()] = block.getTexReal();
-			/*
-			if (block.getType() != null && block.getType().length() > 0)
-			{
-				BLOCK_TYPE type = BLOCK_TYPE.valueOf(block.getType());
-				BLOCK_TYPE_MAP.put(block.getId(), type);
-			}
-			*/
-			if (block.getType() != null)
-			{
-				BLOCK_TYPE_MAP.put(block.getId(), block.getType());
-			}
-			if (block.getTex_data() != null && block.getTex_data().size() > 0)
-			{
-				HashMap<Byte, Integer> dataMap = new HashMap<Byte, Integer>();
-				for (Map.Entry<Integer, ArrayList<Integer>> entry : block.getTex_data().entrySet())
-				{
-					dataMap.put(entry.getKey().byteValue(), YamlBlockType.getTexReal(entry.getValue()));
-				}
-				blockDataSpriteSheetMap.put(block.getId(), dataMap);
-			}
-			if ((block.getTex_direction() != null && block.getTex_direction().size() > 0) ||
-					(block.getTex_direction_data() != null && block.getTex_direction_data().size() > 0))
-			{
-				SolidDirectional dirData = new SolidDirectional();
-				if (block.getTex_direction() != null)
-				{
-					for (Map.Entry<String, ArrayList<Integer>> entry: block.getTex_direction().entrySet())
-					{
-						SolidDirectional.REL_DIRECTION dir = SolidDirectional.REL_DIRECTION.valueOf(entry.getKey());
-						dirData.setDir(dir, YamlBlockType.getTexReal(entry.getValue()));
-					}
-				}
-				if (block.getTex_direction_data() != null)
-				{
-					for (Map.Entry<Integer, String> entry : block.getTex_direction_data().entrySet())
-					{
-						SolidDirectional.DIRECTION_ABS dir = SolidDirectional.DIRECTION_ABS.valueOf(entry.getValue());
-						dirData.setData(entry.getKey().byteValue(), dir);
-					}
-				}
-				SOLID_DIRECTIONAL_BLOCKS.put(block.getId(), dirData);
-			}
+			block.normalizeData();
+			blockCollection.addBlockType(block, importData);
 		}
+
+		// A number of blocks that we require be present
+		BLOCK_BEDROCK = blockCollection.getByName("BEDROCK");
+		if (BLOCK_BEDROCK == null)
+		{
+			throw new BlockTypeLoadException("BEDROCK block definition not found");
+		}
+		BLOCK_GRASS = blockCollection.getByName("GRASS");
+		if (BLOCK_GRASS == null)
+		{
+			throw new BlockTypeLoadException("GRASS block definition not found");
+		}
+		BLOCK_COBBLESTONE = blockCollection.getByName("COBBLESTONE");
+		if (BLOCK_COBBLESTONE == null)
+		{
+			throw new BlockTypeLoadException("COBBLESTONE block definition not found");
+		}
+		BLOCK_FENCE = blockCollection.getByName("FENCE");
+		if (BLOCK_FENCE == null)
+		{
+			throw new BlockTypeLoadException("FENCE block definition not found");
+		}
+		BLOCK_PORTAL = blockCollection.getByName("PORTAL");
+		if (BLOCK_PORTAL == null)
+		{
+			throw new BlockTypeLoadException("PORTAL block definition not found");
+		}
+		BLOCK_TORCH = blockCollection.getByName("TORCH");
+		if (BLOCK_TORCH == null)
+		{
+			throw new BlockTypeLoadException("TORCH block definition not found");
+		}
+		BLOCK_SAPLING = blockCollection.getByName("SAPLING");
+		if (BLOCK_SAPLING == null)
+		{
+			throw new BlockTypeLoadException("SAPLING block definition not found");
+		}
+
+		// We also define a "special" block for unknown block types, so that instead
+		// of empty space, they'll show up as purple blocks.
+		BLOCK_UNKNOWN = new BlockType();
+		BLOCK_UNKNOWN.setIdStr("SPECIAL_UNKNOWN");
+		BLOCK_UNKNOWN.setName("Internal Special Unknown Block");
+		BLOCK_UNKNOWN.color = new Color(255, 255, 255);
+		BLOCK_UNKNOWN.setTexIdxCoords(13, 15);
+		BLOCK_UNKNOWN.setType(BLOCK_TYPE.NORMAL);
+
+		// For grass, in particular, for its rendering toggle, we'll save some info
+		// that we can later tear out if need be.
+		grassDirectionMap = BLOCK_GRASS.texture_dir_map;
+
+		// Set our blockArray
+		blockArray = blockCollection.blockArray;
 	}
 	
 	/***

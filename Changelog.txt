@@ -5,6 +5,7 @@
   * Added support for block IDs > 127 (for mods, primarily)
   * Blocks which orient differently based on direction will default to
     North now, if we see data values we don't understand
+  * Block definitions are loaded from a YAML file, instead of hard-coded
 
 Minecraft X-Ray 3.2.1 (2011.08.18)
 

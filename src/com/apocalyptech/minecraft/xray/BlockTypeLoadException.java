@@ -26,42 +26,24 @@
  */
 package com.apocalyptech.minecraft.xray;
 
-import java.util.HashMap;
-
-public class SolidDirectional
-{
-
-	public static enum REL_DIRECTION {
-		FORWARD,
-		BACKWARD,
-		SIDES,
-		TOP,
-		BOTTOM
-	}
-
-	public static enum DIRECTION_ABS {
-		NORTH,
-		SOUTH,
-		EAST,
-		WEST
-	}
-
-	public HashMap<REL_DIRECTION, Integer> texture_map;
-	public HashMap<Byte, DIRECTION_ABS> data_map;
-
-	public SolidDirectional()
+public class BlockTypeLoadException extends Exception {
+	private Exception origException;
+	public BlockTypeLoadException()
 	{
-		this.texture_map = new HashMap<REL_DIRECTION, Integer>();
-		this.data_map = new HashMap<Byte, DIRECTION_ABS>();
+		this.origException = null;
 	}
-
-	public void setDir(REL_DIRECTION dir, int texture)
+	public BlockTypeLoadException(String message)
 	{
-		texture_map.put(dir, texture);
+		super(message);
+		this.origException = null;
 	}
-
-	public void setData(byte data, DIRECTION_ABS dir)
+	public BlockTypeLoadException(String message, Exception origException)
 	{
-		data_map.put(data, dir);
+		super(message);
+		this.origException = origException;
+	}
+	public Exception getOrigException()
+	{
+		return this.origException;
 	}
 }

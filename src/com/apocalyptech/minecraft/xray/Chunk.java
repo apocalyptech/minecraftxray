@@ -897,15 +897,6 @@ public class Chunk {
 		}
 	}
 	
-	public boolean isSolid(short i) {
-		BLOCK_TYPE block_type = BLOCK_TYPE_MAP.get(i);
-		if((i == 0) || (block_type != BLOCK_TYPE.NORMAL)) {
-			return false;
-		}
-		
-		return true;
-	}
-	
 	/**
 	 * Renders a "special" block; AKA something that's not just an ordinary cube.
 	 * Basically it draws four "faces" of the object, which creates a plus sign of
@@ -1007,7 +998,7 @@ public class Chunk {
 		//System.out.println("Data: " + data);
 		 
 		// First draw the cobblestoney box
-		int cobble_tex = blockDataToSpriteSheet[BLOCK.get("COBBLESTONE").getId()];
+		int cobble_tex = BLOCK_COBBLESTONE.tex_idx;
 		float box_height = .15f;
 		float box_length = .2f;
 		float box_width = .15f;
@@ -1993,7 +1984,7 @@ public class Chunk {
 		boolean have_adj = false;
 		if (xxx>0)
 		{
-			if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.get("FENCE").getId())
+			if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == BLOCK_FENCE.id)
 			{
 				have_adj = true;
 			}
@@ -2001,7 +1992,7 @@ public class Chunk {
 		else
 		{
 			Chunk otherChunk = level.getChunk(this.x-1, this.z);
-			if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK.get("FENCE").getId())
+			if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == BLOCK_FENCE.id)
 			{
 				have_adj  = true;
 			}
@@ -2025,7 +2016,7 @@ public class Chunk {
 		have_adj = false;
 		if(zzz>0)
 		{
-			if (blockData.value[blockOffset-BLOCKSPERROW] == MineCraftConstants.BLOCK.get("FENCE").getId())
+			if (blockData.value[blockOffset-BLOCKSPERROW] == BLOCK_FENCE.id)
 			{
 				have_adj = true;
 			}
@@ -2033,7 +2024,7 @@ public class Chunk {
 		else
 		{
 			Chunk otherChunk = level.getChunk(this.x,this.z-1);
-			if(otherChunk != null && otherChunk.getBlock(xxx, yyy, 15) == MineCraftConstants.BLOCK.get("FENCE").getId()) {
+			if(otherChunk != null && otherChunk.getBlock(xxx, yyy, 15) == BLOCK_FENCE.id) {
 				have_adj = true;
 			}
 		}
@@ -2142,7 +2133,7 @@ public class Chunk {
 		{
 			if (xxx>0)
 			{
-				if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.get("PORTAL").getId())
+				if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == BLOCK_PORTAL.id)
 				{
 					break;
 				}
@@ -2150,7 +2141,7 @@ public class Chunk {
 			else
 			{
 				Chunk otherChunk = level.getChunk(this.x-1, this.z);
-				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == MineCraftConstants.BLOCK.get("PORTAL").getId())
+				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == BLOCK_PORTAL.id)
 				{
 					break;
 				}
@@ -2158,7 +2149,7 @@ public class Chunk {
 			
 			if (xxx<15)
 			{
-				if (blockData.value[blockOffset+BLOCKSPERCOLUMN] == MineCraftConstants.BLOCK.get("PORTAL").getId())
+				if (blockData.value[blockOffset+BLOCKSPERCOLUMN] == BLOCK_PORTAL.id)
 				{
 					break;
 				}
@@ -2166,7 +2157,7 @@ public class Chunk {
 			else
 			{
 				Chunk otherChunk = level.getChunk(this.x+1, this.z);
-				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == MineCraftConstants.BLOCK.get("PORTAL").getId())
+				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == BLOCK_PORTAL.id)
 				{
 					break;
 				}
@@ -2189,11 +2180,15 @@ public class Chunk {
 		}
 	}
 	
-	public boolean checkSolid(short block, boolean transpararency) {
+	public boolean checkSolid(short block, boolean transparency) {
 		if(block == 0) {
 			return true;
 		}
-		return isSolid(block) == transpararency;
+		if (blockArray[block] == null)
+		{
+			return transparency;
+		}
+		return blockArray[block].isSolid() == transparency;
 	}
 
 	
@@ -2526,14 +2521,14 @@ public class Chunk {
 						{
 							continue;
 						}
-						else if (otherChunk.blockData.value[(tz*128)+(tx*128*16)+y] == BLOCK.get("TORCH").getId())
+						else if (otherChunk.blockData.value[(tz*128)+(tx*128*16)+y] == BLOCK_TORCH.id)
 						{
 							return true;
 						}
 					}
 					else
 					{
-						if (blockData.value[(z*128)+(x*128*16)+y] == BLOCK.get("TORCH").getId())
+						if (blockData.value[(z*128)+(x*128*16)+y] == BLOCK_TORCH.id)
 						{
 							return true;
 						}
@@ -2568,6 +2563,7 @@ public class Chunk {
 		boolean near = true;
 		boolean far = true;
 		int tex_offset = 0;
+		BlockType block;
 
 		int north, south, west, east, top, bottom;
 		
@@ -2582,6 +2578,12 @@ public class Chunk {
 					
 					if(t < 1) {
 						continue;
+					}
+
+					block = blockArray[t];
+					if (block == null)
+					{
+						block = BLOCK_UNKNOWN;
 					}
 					
 					if (onlySelected)
@@ -2603,10 +2605,10 @@ public class Chunk {
 					}
 					else
 					{
-						if(transparency && isSolid(t)) {
+						if(transparency && block.isSolid()) {
 							continue;
 						}
-						if(!transparency && !isSolid(t)) {
+						if(!transparency && !block.isSolid()) {
 							continue;
 						}
 						
@@ -2619,12 +2621,12 @@ public class Chunk {
 						far = true;
 					}
 					
-					if (!render_water && BLOCK_TYPE_MAP.get(t) == BLOCK_TYPE.WATER)
+					if (!render_water && block.type == BLOCK_TYPE.WATER)
 					{
 						continue;
 					}
 					
-					int textureId = blockDataToSpriteSheet[t];
+					int textureId = block.tex_idx;
 					
 					if(textureId == -1) {
 						//System.out.println("Unknown block id: " + t);
@@ -2638,67 +2640,67 @@ public class Chunk {
 
 					if (!onlySelected)
 					{
-						if (render_bedrock && t == MineCraftConstants.BLOCK.get("BEDROCK").getId())
+						if (render_bedrock && t == BLOCK_BEDROCK.id)
 						{
 							// This block of code was more or less copied/modified directly from the "else" block
 							// below - should see if there's a way we can abstract this instead.  Also, I suspect
 							// that this is where we'd fix water rendering...
 							
 							// check above
-							if(y<127 && blockData.value[blockOffset+1] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+							if(y<127 && blockData.value[blockOffset+1] != BLOCK_BEDROCK.id) {
 								draw = true;
 								above = false;
 							}
 							
 							// check below
-							if(y>0 && blockData.value[blockOffset-1] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+							if(y>0 && blockData.value[blockOffset-1] != BLOCK_BEDROCK.id) {
 								draw = true;
 								below = false;
 							}
 							
 							// check left;
-							if(x>0 && blockData.value[blockOffset-BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+							if(x>0 && blockData.value[blockOffset-BLOCKSPERCOLUMN] != BLOCK_BEDROCK.id) {
 								draw = true;
 								left = false;
 							} else if(x==0) {
 								Chunk leftChunk = level.getChunk(this.x-1, this.z);
-								if(leftChunk != null && leftChunk.getBlock(15, y, z) != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+								if(leftChunk != null && leftChunk.getBlock(15, y, z) != BLOCK_BEDROCK.id) {
 									draw = true;
 									left = false;
 								}
 							}
 						
 							// check right
-							if(x<15 && blockData.value[blockOffset+BLOCKSPERCOLUMN] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+							if(x<15 && blockData.value[blockOffset+BLOCKSPERCOLUMN] != BLOCK_BEDROCK.id) {
 								draw = true;
 								right = false;
 							} else if(x==15) {
 								Chunk rightChunk = level.getChunk(this.x+1,this.z);
-								if(rightChunk != null && rightChunk.getBlock(0, y, z) != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+								if(rightChunk != null && rightChunk.getBlock(0, y, z) != BLOCK_BEDROCK.id) {
 									draw = true;
 									right = false;
 								}
 							}
 							
 							// check near
-							if(z>0 && blockData.value[blockOffset-BLOCKSPERROW] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+							if(z>0 && blockData.value[blockOffset-BLOCKSPERROW] != BLOCK_BEDROCK.id) {
 								draw = true;
 								near = false;
 							} else if(z==0) {
 								Chunk nearChunk = level.getChunk(this.x,this.z-1);
-								if(nearChunk != null && nearChunk.getBlock(x, y, 15) != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+								if(nearChunk != null && nearChunk.getBlock(x, y, 15) != BLOCK_BEDROCK.id) {
 									draw = true;
 									near = false;
 								}
 							}
 							
 							// check far
-							if(z<15 && blockData.value[blockOffset+BLOCKSPERROW] != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+							if(z<15 && blockData.value[blockOffset+BLOCKSPERROW] != BLOCK_BEDROCK.id) {
 								draw = true;
 								far = false;
 							} else if(z==15) {
 								Chunk farChunk = level.getChunk(this.x,this.z+1);
-								if(farChunk != null && farChunk.getBlock(x, y, 0) != MineCraftConstants.BLOCK.get("BEDROCK").getId()) {
+								if(farChunk != null && farChunk.getBlock(x, y, 0) != BLOCK_BEDROCK.id) {
 									draw = true;
 									far = false;
 								}
@@ -2773,11 +2775,11 @@ public class Chunk {
 					{
 						// Check to see if this block type has a texture ID which changes depending
 						// on the block's data value
-						if (blockDataSpriteSheetMap.containsKey(t))
+						if (block.texture_data_map != null)
 						{
 							byte data = getData(x, y, z);
 
-							if (t == BLOCK.get("SAPLING").getId())
+							if (t == BLOCK_SAPLING.id)
 							{
 								// Special-case here for Sapling data, since we can't trust the upper two bits
 								data &= 0x3;
@@ -2791,7 +2793,7 @@ public class Chunk {
 							// Now try to get the new texture
 							try
 							{
-								textureId = blockDataSpriteSheetMap.get(t).get(data);
+								textureId = block.texture_data_map.get(data);
 							}
 							catch (NullPointerException e)
 							{
@@ -2821,7 +2823,7 @@ public class Chunk {
 						}
 
 						// Now process the actual drawing
-						switch(BLOCK_TYPE_MAP.get(t))
+						switch(block.type)
 						{
 							case TORCH:
 								renderTorch(textureId,x,y,z);
@@ -2908,80 +2910,79 @@ public class Chunk {
 								east = textureId;
 								top = textureId;
 								bottom = textureId;
-								if (SOLID_DIRECTIONAL_BLOCKS.containsKey(t))
+								if (block.texture_dir_map != null)
 								{
-									SolidDirectional info = SOLID_DIRECTIONAL_BLOCKS.get(t);
 									byte data = getData(x, y, z);
-									SolidDirectional.DIRECTION_ABS dir;
-									if (info.data_map.containsKey(data))
+									BlockType.DIRECTION_ABS dir;
+									if (block.texture_dir_data_map != null && block.texture_dir_data_map.containsKey(data))
 									{
-										dir = info.data_map.get(data);
+										dir = block.texture_dir_data_map.get(data);
 									}
 									else
 									{
-										dir = SolidDirectional.DIRECTION_ABS.NORTH;
+										dir = BlockType.DIRECTION_ABS.NORTH;
 									}
 
 									switch (dir)
 									{
 										case NORTH:
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.FORWARD))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 											{
-												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
+												north = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 											}
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.BACKWARD))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 											{
-												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
+												south = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 											}
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.SIDES))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 											{
-												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+												west = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												east = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 											}
 											break;
 										case SOUTH:
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.BACKWARD))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 											{
-												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
+												north = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 											}
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.FORWARD))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 											{
-												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
+												south = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 											}
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.SIDES))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 											{
-												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+												west = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												east = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 											}
 											break;
 										case WEST:
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.SIDES))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 											{
-												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+												north = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												south = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 											}
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.FORWARD))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 											{
-												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
+												west = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 											}
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.BACKWARD))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 											{
-												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
+												east = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 											}
 											break;
 										case EAST:
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.SIDES))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 											{
-												north = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
-												south = info.texture_map.get(SolidDirectional.REL_DIRECTION.SIDES) + tex_offset;
+												north = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												south = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 											}
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.BACKWARD))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 											{
-												west = info.texture_map.get(SolidDirectional.REL_DIRECTION.BACKWARD) + tex_offset;
+												west = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 											}
-											if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.FORWARD))
+											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 											{
-												east = info.texture_map.get(SolidDirectional.REL_DIRECTION.FORWARD) + tex_offset;
+												east = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 											}
 											break;
 									}
@@ -2989,13 +2990,13 @@ public class Chunk {
 									// Top/Bottom doesn't depend on orientation, at least for anything currently in Minecraft.
 									// If Minecraft starts adding blocks that can be oriented Up or Down, we'll have to move
 									// this back into the case statement above
-									if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.TOP))
+									if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.TOP))
 									{
-										top = info.texture_map.get(SolidDirectional.REL_DIRECTION.TOP) + tex_offset;
+										top = block.texture_dir_map.get(BlockType.DIRECTION_REL.TOP) + tex_offset;
 									}
-									if (info.texture_map.containsKey(SolidDirectional.REL_DIRECTION.BOTTOM))
+									if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BOTTOM))
 									{
-										bottom = info.texture_map.get(SolidDirectional.REL_DIRECTION.BOTTOM) + tex_offset;
+										bottom = block.texture_dir_map.get(BlockType.DIRECTION_REL.BOTTOM) + tex_offset;
 									}
 								}
 

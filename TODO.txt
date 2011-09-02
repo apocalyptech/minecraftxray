@@ -43,21 +43,13 @@
  
  * Visualization for slime spawning
 
- * Doublecheck hashmaps for data types, specifically our use of short for block IDs
-
  * Hammer out reasonable error reporting for the Yaml-loading stuff
-
- * Look into using objects for the blocks instead of four (or whatever) unrelated
-   arrays.
  
  * And, of course, completing the mod support - UI to select extra mod files,
    extra YAML attributes required to read things in.  "reserved" to mark additional
    textures that the renderer pulls in, "secondary" perhaps, for portal (so that
    Aetherfolk can have their portals key off Glowstone properly)  "override" to
    explicitly override a previously-defined blocktype (also: CHECK FOR THAT).
- 
- * Look into using some constants for the block types that we hardcode (instead of
-   doing .get()s on the BLOCK HashMap
  
  * Alter Fence and Portal renderers to not depend on info from BLOCK (how about let's
    pass the block info into the renderers, in addition to the texture to use)
