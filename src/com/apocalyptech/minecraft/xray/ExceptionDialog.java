@@ -26,6 +26,8 @@
  */
 package com.apocalyptech.minecraft.xray;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -110,14 +112,14 @@ public class ExceptionDialog extends JFrame {
 	/***
 	 * Layouts all the controls and labels on the dialog using a gridbaglayout
 	 */
-	private void layoutControlsOnDialog() {
+	private void layoutControlsOnDialog(String windowName) {
 		basicPanel = new JPanel();
 		
 		this.getContentPane().setLayout(gridBagLayoutManager);
 		basicPanel.setLayout(gridBagLayoutManager);
 		GridBagConstraints c = new GridBagConstraints();
 		
-		JLabel headerLabel = new JLabel("Exception Encountered");
+		JLabel headerLabel = new JLabel(windowName);
 		headerLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
 		JLabel reportLabel = new JLabel("If you report this error, please be sure to include the full text of this exception.");
@@ -251,7 +253,7 @@ public class ExceptionDialog extends JFrame {
 		centerDialogOnScreen();
 	
 		buildButtons(warningText);
-		layoutControlsOnDialog();
+		layoutControlsOnDialog(windowName);
 		
 		validate();
 		
@@ -276,5 +278,18 @@ public class ExceptionDialog extends JFrame {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	/***
+	 * Pops up the dialog window, given an exception
+	 * @param windowName the title of the dialog
+	 */
+	public static void presentDialog(String windowName, Exception e)
+	{
+		e.printStackTrace();
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		presentDialog(windowName, sw.toString());
 	}
 }
