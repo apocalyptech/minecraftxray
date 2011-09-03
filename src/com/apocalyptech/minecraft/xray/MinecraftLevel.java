@@ -383,7 +383,7 @@ public class MinecraftLevel {
 	}
 	
 	public Tag loadChunk(int x, int z) {
-		DataInputStream chunkInputStream = MineCraftEnvironment.getChunkInputStream(world, x,z);
+		DataInputStream chunkInputStream = MinecraftEnvironment.getChunkInputStream(world, x,z);
 		if(chunkInputStream == null) {
 			return null;
 		}

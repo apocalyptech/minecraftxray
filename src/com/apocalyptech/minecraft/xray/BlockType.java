@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.awt.Color;
 
-import static com.apocalyptech.minecraft.xray.MineCraftConstants.*;
+import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 /**
  * Data about block types, intended to be read in from a YAML file (this will

@@ -60,7 +60,7 @@ import javax.imageio.ImageIO;
  * files of the current minecraft installation
  * @author Vincent Vollers
  */
-public class MineCraftEnvironment {
+public class MinecraftEnvironment {
 	public static enum OS {XP, Vista, MacOS, Linux, NotSupported};
 	public static OS os; 
 	public static File baseDir;
@@ -127,12 +127,12 @@ public class MineCraftEnvironment {
 		osData.put("Windows Vista", OS.Vista);
 		
 		if(!osData.containsKey(os)) {
-			MineCraftEnvironment.os = OS.NotSupported;
+			MinecraftEnvironment.os = OS.NotSupported;
 		} else {
-			MineCraftEnvironment.os = osData.get(os);
+			MinecraftEnvironment.os = osData.get(os);
 		}
 		
-		switch(MineCraftEnvironment.os) {
+		switch(MinecraftEnvironment.os) {
 			case Vista:
 			case XP:
 				String basedir = System.getenv("APPDATA");
@@ -140,29 +140,29 @@ public class MineCraftEnvironment {
 				{
 					basedir = System.getProperty("user.home");
 				}
-				MineCraftEnvironment.baseDir = new File(basedir, ".minecraft");
-				MineCraftEnvironment.xrayBaseDir = new File(basedir, ".minecraft_xray");
+				MinecraftEnvironment.baseDir = new File(basedir, ".minecraft");
+				MinecraftEnvironment.xrayBaseDir = new File(basedir, ".minecraft_xray");
 				break;
 			case Linux:
-				MineCraftEnvironment.baseDir = new File(System.getProperty("user.home"), ".minecraft");
-				MineCraftEnvironment.xrayBaseDir = new File(System.getProperty("user.home"), ".minecraft_xray");
+				MinecraftEnvironment.baseDir = new File(System.getProperty("user.home"), ".minecraft");
+				MinecraftEnvironment.xrayBaseDir = new File(System.getProperty("user.home"), ".minecraft_xray");
 				break;
 			case MacOS:
 				// damn macs ;p
 				File dotMinecraftEnv = new File(System.getProperty("user.home"), "Library/Application Support/.minecraft");
 				if(dotMinecraftEnv.exists()) {
-					MineCraftEnvironment.baseDir = dotMinecraftEnv;
-					MineCraftEnvironment.xrayBaseDir = new File(System.getProperty("user.home"), "Library/Application Support/.minecraft_xray");
+					MinecraftEnvironment.baseDir = dotMinecraftEnv;
+					MinecraftEnvironment.xrayBaseDir = new File(System.getProperty("user.home"), "Library/Application Support/.minecraft_xray");
 				} else {
-					MineCraftEnvironment.baseDir = new File(System.getProperty("user.home"), "Library/Application Support/minecraft"); // untested
-					MineCraftEnvironment.xrayBaseDir = new File(System.getProperty("user.home"), "Library/Application Support/minecraft_xray"); // untested
+					MinecraftEnvironment.baseDir = new File(System.getProperty("user.home"), "Library/Application Support/minecraft"); // untested
+					MinecraftEnvironment.xrayBaseDir = new File(System.getProperty("user.home"), "Library/Application Support/minecraft_xray"); // untested
 				}
 				break;
 			default:
-				MineCraftEnvironment.baseDir = null;
-				MineCraftEnvironment.xrayBaseDir = null;
+				MinecraftEnvironment.baseDir = null;
+				MinecraftEnvironment.xrayBaseDir = null;
 		}
-		System.out.println(MineCraftEnvironment.baseDir.getAbsolutePath());
+		System.out.println(MinecraftEnvironment.baseDir.getAbsolutePath());
 	}
 	
 	/***
@@ -265,7 +265,7 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	public static File getMinecraftDirectory() {
-		return MineCraftEnvironment.baseDir;
+		return MinecraftEnvironment.baseDir;
 	}
 	
 	/**
@@ -273,7 +273,7 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	public static File getXrayDirectory() {
-		return MineCraftEnvironment.xrayBaseDir;
+		return MinecraftEnvironment.xrayBaseDir;
 	}
 	
 	/**
@@ -282,21 +282,21 @@ public class MineCraftEnvironment {
 	 * @return
 	 */
 	public static File getXrayConfigFile() {
-		if (MineCraftEnvironment.xrayBaseDir.exists())
+		if (MinecraftEnvironment.xrayBaseDir.exists())
 		{
-			if (!MineCraftEnvironment.xrayBaseDir.isDirectory())
+			if (!MinecraftEnvironment.xrayBaseDir.isDirectory())
 			{
 				return null;
 			}
 		}
 		else
 		{
-			if (!MineCraftEnvironment.xrayBaseDir.mkdir())
+			if (!MinecraftEnvironment.xrayBaseDir.mkdir())
 			{
 				return null;
 			}
 		}
-		return new File(MineCraftEnvironment.xrayBaseDir, "xray.properties");
+		return new File(MinecraftEnvironment.xrayBaseDir, "xray.properties");
 	}
 	
 	/***

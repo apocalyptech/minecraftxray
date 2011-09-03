@@ -38,7 +38,7 @@ import com.apocalyptech.minecraft.xray.dtf.ListTag;
 import com.apocalyptech.minecraft.xray.dtf.IntTag;
 import com.apocalyptech.minecraft.xray.dtf.Tag;
 
-import static com.apocalyptech.minecraft.xray.MineCraftConstants.*;
+import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 public class Chunk {
 	private int displayListNum;
@@ -1194,7 +1194,7 @@ public class Chunk {
 	
 	/**
 	 * Renders crops.  We still take the fully-grown textureId in the function so that everything
-	 * remains defined in MineCraftConstants
+	 * remains defined in MinecraftConstants
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -1224,7 +1224,7 @@ public class Chunk {
     
 	/**
 	 * Renders a ladder, given its attached-side data.  We still take in textureId just so
-	 * that everything's still defined in MineCraftConstants
+	 * that everything's still defined in MinecraftConstants
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -2976,7 +2976,7 @@ public class Chunk {
 		float dZ;
 		for (PaintingEntity painting : this.paintings)
 		{
-			info = MineCraftConstants.paintings.get(painting.name.toLowerCase());
+			info = MinecraftConstants.paintings.get(painting.name.toLowerCase());
 			if (info == null)
 			{
 				System.out.println("Unknown painting name: " + painting.name);
@@ -3030,7 +3030,7 @@ public class Chunk {
 					start_x, start_y, start_z,
 					start_x + (dX*info.sizex), start_y-info.sizey, start_z + (dZ*info.sizex));
 			
-			PaintingInfo backinfo = MineCraftConstants.paintingback;
+			PaintingInfo backinfo = MinecraftConstants.paintingback;
 
 			// Back
 			renderNonstandardVertical(backinfo.offsetx, backinfo.offsety, info.sizex_tex, info.sizey_tex,

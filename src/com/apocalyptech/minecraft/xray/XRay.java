@@ -65,7 +65,7 @@ import org.lwjgl.input.Mouse;
 
 import com.apocalyptech.minecraft.xray.Block;
 import com.apocalyptech.minecraft.xray.WorldInfo;
-import static com.apocalyptech.minecraft.xray.MineCraftConstants.*;
+import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 public class XRay
 {
@@ -272,12 +272,12 @@ public class XRay
 	// go
 	public void run()
 	{
-		// First up: initialize our static datastructures in MineCraftConstants.
+		// First up: initialize our static datastructures in MinecraftConstants.
 		// This used to happen in a static {} block, but that makes some things
 		// difficult.
 		try
 		{
-			MineCraftConstants.initialize();
+			MinecraftConstants.initialize();
 		}
 		catch (BlockTypeLoadException e)
 		{
@@ -389,7 +389,7 @@ public class XRay
 		}
 
 		// Here's where we would load from our prefs file
-		File prefs = MineCraftEnvironment.getXrayConfigFile();
+		File prefs = MinecraftEnvironment.getXrayConfigFile();
 		if (prefs.exists() && prefs.canRead())
 		{
 			try
@@ -473,7 +473,7 @@ public class XRay
 	 */
 	public void savePreferences()
 	{
-		File prefs = MineCraftEnvironment.getXrayConfigFile();
+		File prefs = MinecraftEnvironment.getXrayConfigFile();
 		try
 		{
 			xray_properties.store(new FileOutputStream(prefs),
@@ -801,7 +801,7 @@ public class XRay
 			createMinimapSprites();
 
 			// minecraft textures
-			BufferedImage minecraftTextureImage = MineCraftEnvironment.getMinecraftTexture();
+			BufferedImage minecraftTextureImage = MinecraftEnvironment.getMinecraftTexture();
 			minecraftTexture = TextureTool.allocateTexture(minecraftTextureImage, GL11.GL_NEAREST);
 			minecraftTexture.update();
 
@@ -838,7 +838,7 @@ public class XRay
 			}
 
 			// painting textures
-			BufferedImage minecraftPaintingImage = MineCraftEnvironment.getMinecraftPaintings();
+			BufferedImage minecraftPaintingImage = MinecraftEnvironment.getMinecraftPaintings();
 			paintingTexture = TextureTool.allocateTexture(minecraftPaintingImage, GL11.GL_NEAREST);
 			paintingTexture.update();
 
@@ -943,9 +943,9 @@ public class XRay
 		}
 
 		// If we're on Windows, show a warning about running at the same time as Minecraft
-		//if (MineCraftEnvironment.os == MineCraftEnvironment.OS.Linux)
-		if (MineCraftEnvironment.os == MineCraftEnvironment.OS.XP ||
-				MineCraftEnvironment.os == MineCraftEnvironment.OS.Vista)
+		//if (MinecraftEnvironment.os == MinecraftEnvironment.OS.Linux)
+		if (MinecraftEnvironment.os == MinecraftEnvironment.OS.XP ||
+				MinecraftEnvironment.os == MinecraftEnvironment.OS.Vista)
 		{
 			if (xray_properties.getBooleanProperty("SHOW_WINDOWS_WARNING", true))
 			{
@@ -1052,24 +1052,24 @@ public class XRay
 	 */
 	private void checkMinecraftFiles()
 	{
-		if (MineCraftEnvironment.getMinecraftDirectory() == null)
+		if (MinecraftEnvironment.getMinecraftDirectory() == null)
 		{
 			JOptionPane.showMessageDialog(null, "OS not supported (" + System.getProperty("os.name") + "), please report.", "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		if (!MineCraftEnvironment.getMinecraftDirectory().exists())
+		if (!MinecraftEnvironment.getMinecraftDirectory().exists())
 		{
-			JOptionPane.showMessageDialog(null, "Minecraft directory not found: " + MineCraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Minecraft directory not found: " + MinecraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		if (!MineCraftEnvironment.getMinecraftDirectory().canRead())
+		if (!MinecraftEnvironment.getMinecraftDirectory().canRead())
 		{
-			JOptionPane.showMessageDialog(null, "Minecraft directory not readable: " + MineCraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft X-Ray Error",
+			JOptionPane.showMessageDialog(null, "Minecraft directory not readable: " + MinecraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft X-Ray Error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 
-		availableWorlds = MineCraftEnvironment.getAvailableWorlds();
+		availableWorlds = MinecraftEnvironment.getAvailableWorlds();
 		// Add in a custom "Other..." world
 		availableWorlds.add(new WorldInfo());
 
@@ -2248,10 +2248,10 @@ public class XRay
 			{
 				GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
-				SpriteTool.drawCurrentSprite(curX - 2, curY - 2, 36, 36, MineCraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
-						MineCraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
-						MineCraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX16,
-						MineCraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX32);
+				SpriteTool.drawCurrentSprite(curX - 2, curY - 2, 36, 36, MinecraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
+						MinecraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
+						MinecraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX16,
+						MinecraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX32);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 			}
 			else
@@ -2259,10 +2259,10 @@ public class XRay
 				GL11.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 			}
 			minecraftTexture.bind();
-			SpriteTool.drawCurrentSprite(curX, curY, 32, 32, MineCraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
-					MineCraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
-					MineCraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX16,
-					MineCraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX32);
+			SpriteTool.drawCurrentSprite(curX, curY, 32, 32, MinecraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
+					MinecraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
+					MinecraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX16,
+					MinecraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX32);
 
 			SpriteTool.drawSpriteAbsoluteXY(mineralToggleTextures[i], curX + 32 + 10, curY + 7);
 			curX += barWidth;
@@ -2552,14 +2552,14 @@ public class XRay
 
 					if (blockData >= 0)
 					{
-						if (MineCraftConstants.blockArray[blockData] != null)
+						if (MinecraftConstants.blockArray[blockData] != null)
 						{
 							found_solid = true;
 							if (found_air)
 							{
 								if (blockData > -1)
 								{
-									Color blockColor = MineCraftConstants.blockArray[blockData].color;
+									Color blockColor = MinecraftConstants.blockArray[blockData].color;
 									if (blockColor != null)
 									{
 										// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
@@ -2585,7 +2585,7 @@ public class XRay
 				// Make sure we don't have holes in our Nether minimap
 				if (in_nether && found_solid && !drew_block)
 				{
-					g.setColor(MineCraftConstants.BLOCK_BEDROCK.color);
+					g.setColor(MinecraftConstants.BLOCK_BEDROCK.color);
 					g.fillRect(base_x - zz, base_y + xx, 1, 1);
 				}
 			}

@@ -40,7 +40,7 @@ import org.lwjgl.input.Keyboard;
  * Precalcs and the like
  * @author Vincent
  */
-public class MineCraftConstants {
+public class MinecraftConstants {
     
     // translation table (precalc) from sprite sheet index to texture coordinates
 	public static float[] precalcSpriteSheetToTextureX;
@@ -237,7 +237,7 @@ public class MineCraftConstants {
 
 	/**
 	 * Reads in our default, base Minecraft texture data
-	 * TODO: should this (and the other) be in MineCraftEnvironment, maybe?
+	 * TODO: should this (and the other) be in MinecraftEnvironment, maybe?
 	 */
 	public static void loadBlocks()
 		throws BlockTypeLoadException
