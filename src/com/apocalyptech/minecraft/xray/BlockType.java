@@ -68,7 +68,8 @@ import static com.apocalyptech.minecraft.xray.MineCraftConstants.*;
  * import the Yaml directly into the structures I actually care about, but for
  * now we'll just go with this slightly crazy and un-OOesque way of doing things.
  *
- * TODO: test new block IDs (not in our db yet), make sure they fail properly
+ * The getUsedTextures() call will only provide meaningful information after
+ * normalization.
  */
 public class BlockType
 {
@@ -252,10 +253,6 @@ public class BlockType
 	/**
 	 * Normalizes our data from what we get from YAML, to a format that's
 	 * easier to deal with in X-Ray.
-	 *
-	 * TODO: Errors here should be actually descriptive and helpful
-	 * TODO: I wonder if we should handle the BLOCK_TYPE enum ourselves, instead
-	 * of relying on snakeyaml to do it.  As we're doing for the other two enums.
 	 */
 	public void normalizeData()
 		throws BlockTypeLoadException
@@ -340,7 +337,43 @@ public class BlockType
 				this.texture_dir_data_map.put(entry.getKey().byteValue(), dir);
 			}
 		}
-		
+	}
+
+	/**
+	 * Returns a list of all textures that this block type uses
+	 */
+	public ArrayList<Integer> getUsedTextures()
+	{
+		HashMap<Integer, Boolean> tempMap = new HashMap<Integer, Boolean>();
+		tempMap.put(this.tex_idx, true);
+		if (this.texture_data_map != null)
+		{
+			for (Integer tex : this.texture_data_map.values())
+			{
+				if (!tempMap.containsKey(tex))
+				{
+					tempMap.put(tex, true);
+				}
+			}
+		}
+		if (this.texture_dir_map != null)
+		{
+			for (Integer tex : this.texture_dir_map.values())
+			{
+				if (!tempMap.containsKey(tex))
+				{
+					tempMap.put(tex, true);
+				}
+			}
+		}
+
+		// Now convert to a list
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		for (Integer tex : tempMap.keySet())
+		{
+			list.add(tex);
+		}
+		return list;
 	}
 
 }

@@ -60,6 +60,9 @@ import org.yaml.snakeyaml.constructor.Constructor;
  * a group of BlockTypes).  I've got similar reasoning for why I'm not
  * using two different BlockType classes; one for Yaml-loading and one for
  * runtime.
+ *
+ * Likewise, the texture reservation system only takes into account types
+ * added via addBlockType()
  */
 public class BlockTypeCollection
 {
@@ -68,12 +71,18 @@ public class BlockTypeCollection
 	private ArrayList<BlockType> blocks;
 	private HashMap<String, BlockType> blocksByName;
 	public BlockType[] blockArray;
+	private boolean[] usedTextures;
 
 	public BlockTypeCollection()
 	{
 		this.blocks = new ArrayList<BlockType>();
 		this.blocksByName = new HashMap<String, BlockType>();
 		this.blockArray = new BlockType[256];
+		this.usedTextures = new boolean[256];
+		for (int i=0; i<256; i++)
+		{
+			this.usedTextures[i] = false;
+		}
 	}
 
 	public void setName(String name)
@@ -164,6 +173,12 @@ public class BlockTypeCollection
 		this.blocks.add(newBlockType);
 		this.blocksByName.put(newBlockType.getIdStr(), newBlockType);
 		this.blockArray[newBlockType.getId()] = newBlockType;
+
+		// Mark our textures as "used"
+		for (Integer tex : newBlockType.getUsedTextures())
+		{
+			this.useTexture(tex);
+		}
 	}
 
 	public BlockType getByName(String name)
@@ -176,6 +191,51 @@ public class BlockTypeCollection
 		{
 			return null;
 		}
+	}
+
+	/**
+	 * Marks a specific texture as "used"
+	 */
+	public void useTexture(int texture)
+	{
+		if (texture > 255 || texture < 0)
+		{
+			return;
+		}
+		this.usedTextures[texture] = true;
+	}
+
+	/**
+	 * Reserves an unused texture, and returns the texture ID.
+	 * Returns -1 if there are no unused texture slots
+	 */
+	public int reserveTexture()
+	{
+		for (int i=0; i<256; i++)
+		{
+			if (!this.usedTextures[i])
+			{
+				this.useTexture(i);
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Returns the total number of unused textures.
+	 */
+	public int unusedTextureCount()
+	{
+		int count = 0;
+		for (int i=0; i<256; i++)
+		{
+			if (!this.usedTextures[i])
+			{
+				count++;
+			}
+		}
+		return count;
 	}
 
 	/**
