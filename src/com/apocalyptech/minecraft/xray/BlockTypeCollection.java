@@ -179,6 +179,8 @@ public class BlockTypeCollection
 		{
 			this.useTexture(tex);
 		}
+		//System.out.println("Textures used by " + newBlockType.idStr + ": " + newBlockType.getUsedTextures().toString());
+		//System.out.println(this.usedTextureCount() + " textures used, " + this.unusedTextureCount() + " textures free.");
 	}
 
 	public BlockType getByName(String name)
@@ -231,6 +233,22 @@ public class BlockTypeCollection
 		for (int i=0; i<256; i++)
 		{
 			if (!this.usedTextures[i])
+			{
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * Returns the total number of used textures.
+	 */
+	public int usedTextureCount()
+	{
+		int count = 0;
+		for (int i=0; i<256; i++)
+		{
+			if (this.usedTextures[i])
 			{
 				count++;
 			}

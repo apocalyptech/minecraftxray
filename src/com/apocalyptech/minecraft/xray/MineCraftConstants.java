@@ -100,7 +100,24 @@ public class MineCraftConstants {
 		PISTON_BODY,
 		PISTON_HEAD
 	}
-	
+
+	// Some block types' renderers automatically use other textures that we don't
+	// specify manually.  Here are the offsets from the texture specified in the Yaml
+	// file.
+	public static HashMap<BLOCK_TYPE, Integer[]> blockTypeExtraTextures =
+		new HashMap<BLOCK_TYPE, Integer[]>();
+	static
+	{
+		blockTypeExtraTextures.put(BLOCK_TYPE.CROPS, new Integer[] {-1, -2, -3, -4, -5, -6, -7});
+		blockTypeExtraTextures.put(BLOCK_TYPE.CAKE, new Integer[] {1, 2, 3});
+		blockTypeExtraTextures.put(BLOCK_TYPE.BED, new Integer[] {-1, 14, 15, 16, 17});
+		blockTypeExtraTextures.put(BLOCK_TYPE.DOOR, new Integer[] {-16});
+		blockTypeExtraTextures.put(BLOCK_TYPE.MINECART_TRACKS, new Integer[] {-16});
+		blockTypeExtraTextures.put(BLOCK_TYPE.SIMPLE_RAIL, new Integer[] {16}); // actually just for powered rails, but whatever
+		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_BODY, new Integer[] {-2, -1, 1, 2});
+		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_HEAD, new Integer[] {-1, 1, 2, 3});
+	}
+
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
 	public static BlockTypeCollection blockCollection = new BlockTypeCollection();
 

@@ -363,61 +363,6 @@ public class Chunk {
 			GL11.glVertex3f(x2, y2, z2);
 		GL11.glEnd();
 	}
-
-	/**
-	 * Renders a nonstandard vertical rectangle that's been rotated.
-	 * 
-	 * @param tx X index within the texture
-	 * @param ty Y index within the texture
-	 * @param tdx Width of texture
-	 * @param tdy Height of texture
-	 * @param x_width The width of the rectangle in the X axis
-	 * @param z_width The width of the rectangle in the Z axis
-	 * @param radius Distance from the center point to draw each point
-	 * @param x1 Center X Coord
-	 * @param y1 Center Y Coord
-	 * @param z1 Center Z Coord
-	 * @param rotate_x Degrees to rotate on the X axis
-	 */
-	public void renderNonstandardVerticalRotatedX(float tx, float ty, float tdx, float tdy,
-			float x_width_h, float radius,
-			float x1, float y1, float z1,
-			double rotate_x)
-	{
-		/*
-		double radians = Math.toRadians(rotate_x);
-		float cosine = (float)Math.cos(radians);
-		float sine = (float)Math.sin(radians);
-
-		float x1a = x - x_width_h + radius * cosine;
-		float y1a = y - z_width_h + radius * sine;
-		float x1b = x + x_width_h + radius * cosine;
-		float y1b = y + z_width_h + radius * sine;
-
-		radians = Math.toRadians(rotate_x + 180);
-		cosine = (float)Math.cos(radians);
-		sine = (float)Math.sin(radians);
-
-		float x2a = x - x_width_h + radius * cosine;
-		float z2a = z - z_width_h + radius * sine;
-		float x2b = x + x_width_h + radius * cosine;
-		float z2b = z + z_width_h + radius * sine;
-
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(tx, ty);
-			GL11.glVertex3f(x1, y1, z1);
-			
-			GL11.glTexCoord2f(tx+tdx, ty);
-			GL11.glVertex3f(x2, y1, z2);
-			
-			GL11.glTexCoord2f(tx, ty+tdy);
-			GL11.glVertex3f(x1, y2, z1);
-			
-			GL11.glTexCoord2f(tx+tdx, ty+tdy);
-			GL11.glVertex3f(x2, y2, z2);
-		GL11.glEnd();
-		*/
-	}
 	
 	/**
 	 * Renders an arbitrary horizontal rectangle (will be orthogonal)

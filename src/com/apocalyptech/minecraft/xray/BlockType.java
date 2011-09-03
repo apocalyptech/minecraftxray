@@ -367,6 +367,18 @@ public class BlockType
 			}
 		}
 
+		// Be sure to include extra implicitly-used blocks
+		if (blockTypeExtraTextures.containsKey(this.type))
+		{
+			for (int tex_offset : blockTypeExtraTextures.get(this.type))
+			{
+				if (!tempMap.containsKey(this.tex_idx + tex_offset))
+				{
+					tempMap.put(this.tex_idx + tex_offset, true);
+				}
+			}
+		}
+
 		// Now convert to a list
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for (Integer tex : tempMap.keySet())
