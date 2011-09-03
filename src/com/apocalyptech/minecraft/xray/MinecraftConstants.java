@@ -133,6 +133,9 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_PORTAL;
 	public static BlockType BLOCK_TORCH;
 	public static BlockType BLOCK_SAPLING;
+	public static BlockType BLOCK_FIRE;
+	public static BlockType BLOCK_WATER;
+	public static BlockType BLOCK_STATIONARY_WATER;
 
 	// A meta-block to use for unknown block types
 	public static BlockType BLOCK_UNKNOWN;
@@ -312,6 +315,21 @@ public class MinecraftConstants {
 		{
 			throw new BlockTypeLoadException("SAPLING block definition not found");
 		}
+		BLOCK_FIRE = blockCollection.getByName("FIRE");
+		if (BLOCK_FIRE == null)
+		{
+			throw new BlockTypeLoadException("FIRE block definition not found");
+		}
+		BLOCK_WATER = blockCollection.getByName("WATER");
+		if (BLOCK_WATER == null)
+		{
+			throw new BlockTypeLoadException("WATER block definition not found");
+		}
+		BLOCK_STATIONARY_WATER = blockCollection.getByName("STATIONARY_WATER");
+		if (BLOCK_STATIONARY_WATER == null)
+		{
+			throw new BlockTypeLoadException("STATIONARY_WATER block definition not found");
+		}
 
 		// We also define a "special" block for unknown block types, so that instead
 		// of empty space, they'll show up as purple blocks.
@@ -319,7 +337,7 @@ public class MinecraftConstants {
 		BLOCK_UNKNOWN.setIdStr("SPECIAL_UNKNOWN");
 		BLOCK_UNKNOWN.setName("Internal Special Unknown Block");
 		BLOCK_UNKNOWN.color = new Color(255, 255, 255);
-		BLOCK_UNKNOWN.setTexIdxCoords(13, 15);
+		//BLOCK_UNKNOWN.setTexIdxCoords(13, 15);
 		BLOCK_UNKNOWN.setType(BLOCK_TYPE.NORMAL);
 
 		// For grass, in particular, for its rendering toggle, we'll save some info

@@ -27,6 +27,7 @@
 package com.apocalyptech.minecraft.xray;
 
 import com.apocalyptech.minecraft.xray.WorldInfo;
+import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -485,7 +486,7 @@ public class MinecraftEnvironment {
 	 *      skins don't actually have a water graphic in the same place as the default skin
 	 *   4) Then we attempt to construct a passable "fire" texture from the particles file.
 	 *   5) Then we create a "blank" texture, for use with unknown block types
-	 *   6) Then we create a nether texture
+	 *   6) Then we create a nether (portal) texture
 	 *   7) Lastly, we duplicate the texture with a green tint, immediately below the
 	 *      main texture group.  We do this to support our "explored" highlighting - the
 	 *      tinting can be done easily via OpenGL itself, but there were pretty severe
@@ -495,6 +496,10 @@ public class MinecraftEnvironment {
 	 *      we can no longer think of the textures as perfectly "square."  The Y offsets must
 	 *      be half of what we're used to.  Perhaps it would make sense to double the X axis
 	 *      here as well, so that we could avoid some confusion; for now I'll leave it though.
+	 *
+	 * TODO: it would be good to use the data values loaded from YAML to figure out where
+	 * to colorize, rather than hardcoding them here.
+	 *
 	 * @return
 	 */
 	public static BufferedImage getMinecraftTexture() {
@@ -580,8 +585,11 @@ public class MinecraftEnvironment {
 		g2d.setColor(Color.red);
 		g2d.fill(redstone_rect);
 		g2d.drawImage(bi, null, 0, 0);
-		
+
 		// Load in the water texture separately and pretend it's a part of the main texture pack.
+		BLOCK_WATER.setTexIdx(blockCollection.reserveTexture());
+		int[] water_tex = BLOCK_WATER.getTexCoordsArr();
+		BLOCK_STATIONARY_WATER.setTexIdxCoords(water_tex[0], water_tex[1]);
 		BufferedImage bi2 = buildImageFromInput(getMinecraftWaterData());
 		if (bi2 == null)
 		{
@@ -611,13 +619,15 @@ public class MinecraftEnvironment {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
 		}
-		g2d.drawImage(bi2, 15*square_width, 12*square_width, square_width, square_width, null);
-		
+		g2d.drawImage(bi2, water_tex[0]*square_width, water_tex[1]*square_width, square_width, square_width, null);
+
 		// Also create a fake sort of "fire" graphic to use
+		BLOCK_FIRE.setTexIdx(blockCollection.reserveTexture());
+		int[] fire_tex = BLOCK_FIRE.getTexCoordsArr();
 		bi2 = buildImageFromInput(getMinecraftParticleData());
 		int particle_width = bi2.getWidth()/16;
-		int fire_x = 15;
-		int fire_y = 1;
+		int fire_x = fire_tex[0];
+		int fire_y = fire_tex[1];
 		int flame_x = 0;
 		int flame_y = 3;
 		int start_fire_x = fire_x*square_width;
@@ -654,17 +664,21 @@ public class MinecraftEnvironment {
 		// Create an "empty block" graphic.  We could just leave it, probably, but
 		// some texture packs get creative with the empty space.
 		// First the fill
-		int empty_start_x = square_width*13;
-		int empty_start_y = square_width*15;
+		BLOCK_UNKNOWN.setTexIdx(blockCollection.reserveTexture());
+		int[] unknown_tex = BLOCK_UNKNOWN.getTexCoordsArr();
+		int empty_start_x = square_width*unknown_tex[0];
+		int empty_start_y = square_width*unknown_tex[1];
 		g2d.setColor(new Color(214,127,255));
 		g2d.fillRect(empty_start_x, empty_start_y, square_width-1, square_width-1);
 		// Then the border
 		g2d.setColor(new Color(107,63,127));
 		g2d.drawRect(empty_start_x, empty_start_y, square_width-1, square_width-1);
 
-		// Create a nether texture
-		int nether_start_x = square_width*12;
-		int nether_start_y = square_width*15;
+		// Create a nether portal texture
+		BLOCK_PORTAL.setTexIdx(blockCollection.reserveTexture());
+		int[] portal_tex = BLOCK_PORTAL.getTexCoordsArr();
+		int nether_start_x = square_width*portal_tex[0];
+		int nether_start_y = square_width*portal_tex[1];
 		g2d.setColor(new Color(.839f, .203f, .952f, .4f));
 		g2d.fillRect(nether_start_x, nether_start_y, square_width, square_width);
 		
@@ -680,8 +694,8 @@ public class MinecraftEnvironment {
 
 		/*
 		try {
-			ImageIO.write(bi, "PNG", new File("/home/pez/xray_terrain.png"));
-			System.out.println("Wrote texture to xray_terrain.png");
+			ImageIO.write(bi, "PNG", new File(System.getProperty("user.home"), "xray_terrain.png"));
+			System.out.println("Wrote texture to ~/xray_terrain.png");
 		}
 		catch (Exception e)
 		{

@@ -108,9 +108,13 @@ public class BlockType
 	public HashMap<DIRECTION_REL, Integer> texture_dir_map;
 	public HashMap<Byte, DIRECTION_ABS> texture_dir_data_map;
 
+	// Other attributes
+	private boolean generated_texture;
+
 	public BlockType()
 	{
 		this.override = false;
+		this.generated_texture = false;
 		this.id = -1;
 	}
 
@@ -169,6 +173,11 @@ public class BlockType
 		this.setTex(BlockType.getTexCoords(tex));
 	}
 
+	public void setTexIdx(int tex)
+	{
+		this.tex_idx = tex;
+	}
+
 	public void setTexIdxCoords(int x, int y)
 	{
 		ArrayList<Integer> coords = new ArrayList<Integer>();
@@ -189,10 +198,24 @@ public class BlockType
 
 	public static ArrayList<Integer> getTexCoords(int tex)
 	{
+		int[] tex_coords_arr = getTexCoordsArr(tex);
 		ArrayList<Integer> tex_coords = new ArrayList<Integer>();
-		tex_coords.add(tex%16);
-		tex_coords.add(tex/16);
+		tex_coords.add(tex_coords_arr[0]);
+		tex_coords.add(tex_coords_arr[1]);
 		return tex_coords;
+	}
+
+	public static int[] getTexCoordsArr(int tex)
+	{
+		int[] tex_coords = new int[2];
+		tex_coords[0] = tex%16;
+		tex_coords[1] = tex/16;
+		return tex_coords;
+	}
+
+	public int[] getTexCoordsArr()
+	{
+		return getTexCoordsArr(this.tex_idx);
 	}
 
 	public void setTex_data(HashMap<Integer, ArrayList<Integer>> tex_data)
@@ -266,6 +289,14 @@ public class BlockType
 		{
 			throw new BlockTypeLoadException("idStr is a required attribute");
 		}
+		if (this.idStr.equals("UNKNOWN"))
+		{
+			// This isn't actually 100% accurate; our "special" UNKNOWN block
+			// never gets officially added to blockCollection, so there would
+			// never be any actual conflicts.  It could get confusing, though,
+			// so I'll just pretend it's fully reserved.
+			throw new BlockTypeLoadException("UNKNOWN is a reserved idStr");
+		}
 		if (this.name == null)
 		{
 			throw new BlockTypeLoadException("name is a required attribute");
@@ -280,16 +311,27 @@ public class BlockType
 		}
 		if (this.tex == null)
 		{
-			throw new BlockTypeLoadException("tex is a required attribute");
+			if (this.idStr.equals("WATER") || this.idStr.equals("STATIONARY_WATER") ||
+					this.idStr.equals("FIRE") || this.idStr.equals("PORTAL"))
+			{
+				this.generated_texture = true;
+			}
+			else
+			{
+				throw new BlockTypeLoadException("tex is a required attribute");
+			}
 		}
-		if (this.tex.size() != 2)
+		else if (this.tex.size() != 2)
 		{
 			throw new BlockTypeLoadException("tex coordinates require two elements (X, Y)");
 		}
 
 		// Now do the actual normalizing
 		this.color = new Color(this.mapcolor.get(0), this.mapcolor.get(1), this.mapcolor.get(2));
-		this.tex_idx = this.getTexReal();
+		if (!this.generated_texture)
+		{
+			this.tex_idx = this.getTexReal();
+		}
 		if (this.getType() == null)
 		{
 			this.setType(BLOCK_TYPE.NORMAL);
