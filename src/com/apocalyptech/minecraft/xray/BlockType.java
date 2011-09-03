@@ -99,7 +99,7 @@ public class BlockType
 	private HashMap<Integer, ArrayList<Integer>> tex_data;
 	private HashMap<String, ArrayList<Integer>> tex_direction;
 	private HashMap<Integer, String> tex_direction_data;
-	private boolean override;
+	private boolean override; // This is not at all tested yet
 
 	// Computed Attributes
 	public Color color;

@@ -116,8 +116,6 @@ public class BlockTypeCollection
 
 	/**
 	 * Adds a new block type to this collection.
-	 *
-	 * TODO: Errors should be more informative
 	 */
 	public void addBlockType(BlockType newBlockType, boolean importData)
 		throws BlockTypeLoadException
@@ -268,5 +266,38 @@ public class BlockTypeCollection
 		Yaml yaml = new Yaml(constructor);
 
 		return (BlockTypeCollection) yaml.load(new FileReader(filename));
+	}
+
+	/**
+	 * Normalizes all YAML-read blocks.
+	 *
+	 * TODO: set a "normalized" flag
+	 */
+	public void normalizeBlocks()
+		throws BlockTypeLoadException
+	{
+		for (BlockType block : this.getBlocks())
+		{
+			ExceptionDialog.setExtraStatus2("Looking at block ID " + block.id + ": " + block.idStr);
+			block.normalizeData();
+		}
+		ExceptionDialog.clearExtraStatus2();
+	}
+
+	/**
+	 * Imports blocktypes from another otherCollection.  The blocks in otherCollection
+	 * should be already-normalized.
+	 *
+	 * TODO: set a "normalized" flag in there, and check for it.
+	 */
+	public void importFrom(BlockTypeCollection otherCollection, boolean importData)
+		throws BlockTypeLoadException
+	{
+		for (BlockType block : otherCollection.getBlocks())
+		{
+			ExceptionDialog.setExtraStatus2("Looking at block ID " + block.id + ": " + block.idStr);
+			this.addBlockType(block, importData);
+		}
+		ExceptionDialog.clearExtraStatus2();
 	}
 }

@@ -57,3 +57,6 @@
  
  * Technically the minimap colors for a few block types should vary based on the
    data value.
+ 
+ * There's attributes in BlockType which use ArrayList, and I think I'd rather they
+   just be arrays.  Should look into that.

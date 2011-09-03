@@ -233,51 +233,25 @@ public class MinecraftConstants {
 	static void initialize()
 		throws BlockTypeLoadException
 	{
-		loadBlocks();
+		loadMainBlocks();
 		initSpriteSheetToTextureTable();
 		initPaintings();
 	}
 
 	/**
-	 * Reads in our default, base Minecraft texture data
-	 * TODO: should this (and the other) be in MinecraftEnvironment, maybe?
+	 * Reads in our default, base Minecraft texture data, and run a number of
+	 * sanity checks on the data that we get.
+	 *
+	 * TODO: should this (or maybe just loadBlocks()) be in MinecraftEnvironment, maybe?
 	 */
-	public static void loadBlocks()
+	public static void loadMainBlocks()
 		throws BlockTypeLoadException
 	{
-		loadBlocks("blockdefs/minecraft.yaml", true);
-	}
+		// First load the blocks
+		BlockTypeCollection blockinfo = loadBlocks("blockdefs/minecraft.yaml");
 
-	/**
-	 * Reads in block information from a YAML file.  If importData is
-	 * false, the data is only verified and checked, not actually loaded
-	 * into our data structures.
-	 */
-	public static void loadBlocks(String filename, boolean importData)
-		throws BlockTypeLoadException
-	{
-		ExceptionDialog.clearExtraStatus();
-		ExceptionDialog.setExtraStatus1("Loading blocks from " + filename);
-
-		// First load the actual YAML
-		BlockTypeCollection blockinfo;
-		try
-		{
-			blockinfo = BlockTypeCollection.loadFromYaml(filename);
-		}
-		catch (Exception e)
-		{
-			throw new BlockTypeLoadException("Could not load " + filename + ": " + e.toString(), e);
-		}
-
-		// Now loop through blocks, normalize, and do some sanity checks
-		for (BlockType block : blockinfo.getBlocks())
-		{
-			ExceptionDialog.setExtraStatus2("Looking at block ID " + block.id + ": " + block.idStr);
-			block.normalizeData();
-			blockCollection.addBlockType(block, importData);
-		}
-		ExceptionDialog.clearExtraStatus2();
+		// Import into blockCollection
+		blockCollection.importFrom(blockinfo, true);
 
 		// A number of blocks that we require be present
 		BLOCK_BEDROCK = blockCollection.getByName("BEDROCK");
@@ -337,7 +311,6 @@ public class MinecraftConstants {
 		BLOCK_UNKNOWN.setIdStr("SPECIAL_UNKNOWN");
 		BLOCK_UNKNOWN.setName("Internal Special Unknown Block");
 		BLOCK_UNKNOWN.color = new Color(255, 255, 255);
-		//BLOCK_UNKNOWN.setTexIdxCoords(13, 15);
 		BLOCK_UNKNOWN.setType(BLOCK_TYPE.NORMAL);
 
 		// For grass, in particular, for its rendering toggle, we'll save some info
@@ -349,6 +322,33 @@ public class MinecraftConstants {
 
 		// Clean up.
 		ExceptionDialog.clearExtraStatus();
+	}
+
+	/**
+	 * Reads in block information from a YAML file.
+	 */
+	public static BlockTypeCollection loadBlocks(String filename)
+		throws BlockTypeLoadException
+	{
+		ExceptionDialog.clearExtraStatus();
+		ExceptionDialog.setExtraStatus1("Loading blocks from " + filename);
+
+		// First load the actual YAML
+		BlockTypeCollection blockinfo;
+		try
+		{
+			blockinfo = BlockTypeCollection.loadFromYaml(filename);
+		}
+		catch (Exception e)
+		{
+			throw new BlockTypeLoadException("Could not load " + filename + ": " + e.toString(), e);
+		}
+
+		// Run through and normalize everything
+		blockinfo.normalizeBlocks();
+
+		// Return the blocks that we read
+		return blockinfo;
 	}
 	
 	/***
