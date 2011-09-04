@@ -68,6 +68,7 @@ public class BlockTypeCollection
 {
 
 	private String name;
+	private String basetexpath;
 	private ArrayList<BlockType> blocks;
 	private HashMap<String, BlockType> blocksByName;
 	public BlockType[] blockArray;
@@ -93,6 +94,16 @@ public class BlockTypeCollection
 	public String getName()
 	{
 		return this.name;
+	}
+
+	public void setBasetexpath(String basetexpath)
+	{
+		this.basetexpath = basetexpath;
+	}
+
+	public String getBasetexpath()
+	{
+		return this.basetexpath;
 	}
 
 	public void setBlocks(ArrayList<BlockType> blocks)
@@ -255,6 +266,23 @@ public class BlockTypeCollection
 	}
 
 	/**
+	 * Returns a list of blocks which need to have their textures read from
+	 * filenames.
+	 */
+	public ArrayList<BlockType> getFilenameTextureBlocks()
+	{
+		ArrayList<BlockType> list = new ArrayList<BlockType>();
+		for (BlockType type : this.blocks)
+		{
+			if (type.isFilenameTexture())
+			{
+				list.add(type);
+			}
+		}
+		return list;
+	}
+
+	/**
 	 * Loads from a Yaml document.
 	 */
 	public static BlockTypeCollection loadFromYaml(String filename)
@@ -265,7 +293,12 @@ public class BlockTypeCollection
 		blockDesc.putListPropertyType("blocks", BlockType.class);
 		Yaml yaml = new Yaml(constructor);
 
-		return (BlockTypeCollection) yaml.load(new FileReader(filename));
+		BlockTypeCollection collection = (BlockTypeCollection) yaml.load(new FileReader(filename));
+		for (BlockType type : collection.getBlocks())
+		{
+			type.basetexpath = collection.getBasetexpath();
+		}
+		return collection;
 	}
 
 	/**

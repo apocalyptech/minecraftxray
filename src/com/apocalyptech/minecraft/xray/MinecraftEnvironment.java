@@ -502,7 +502,9 @@ public class MinecraftEnvironment {
 	 *
 	 * @return
 	 */
-	public static BufferedImage getMinecraftTexture() {
+	public static BufferedImage getMinecraftTexture()
+		throws BlockTypeLoadException
+	{
 		BufferedImage bi = buildImageFromInput(getMinecraftTextureData());
 		Graphics2D g2d = bi.createGraphics();
 		
@@ -681,6 +683,31 @@ public class MinecraftEnvironment {
 		int nether_start_y = square_width*portal_tex[1];
 		g2d.setColor(new Color(.839f, .203f, .952f, .4f));
 		g2d.fillRect(nether_start_x, nether_start_y, square_width, square_width);
+
+		// Load in filename textures, if needed
+		for (BlockType block : blockCollection.getFilenameTextureBlocks())
+		{
+			block.setTexIdx(blockCollection.reserveTexture());
+			int[] new_tex = block.getTexCoordsArr();
+			bi2 = buildImageFromInput(getMinecraftTexturepackData(block.basetexpath + "/" + block.getTexpath()));
+			if (bi2 == null)
+			{
+				throw new BlockTypeLoadException("File " + block.basetexpath + "/" + block.getTexpath() + " is not found");
+			}
+			int new_width = bi2.getWidth();
+			g2d.setComposite(AlphaComposite.Src);
+			if (square_width < new_width)
+			{
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			}
+			else
+			{
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
+			}
+			g2d.drawImage(bi2, new_tex[0]*square_width, new_tex[1]*square_width, square_width, square_width, null);
+		}
 		
 		// Duplicate the texture underneath, tinted for our "explored" areas
 		bi2 = new BufferedImage(bi.getWidth(), bi.getHeight()*2, BufferedImage.TYPE_INT_ARGB);

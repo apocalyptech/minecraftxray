@@ -309,7 +309,15 @@ public class XRay
 			initGL();
 
 			// init our program
-			initialize();
+			try
+			{
+				initialize();
+			}
+			catch (BlockTypeLoadException e)
+			{
+				ExceptionDialog.presentDialog("Error reading Minecraft block data", e);
+				return;
+			}
 
 			// And now load our world
 			this.setMinecraftWorld(availableWorlds.get(this.selectedWorld));
@@ -773,6 +781,7 @@ public class XRay
 	 * variables
 	 */
 	private void initialize()
+		throws BlockTypeLoadException
 	{
 		// init the precalc tables
 
@@ -1777,7 +1786,15 @@ public class XRay
 		// A full reinitialization is kind of overkill, but whatever.
 		FirstPersonCameraController cur_camera = this.camera;
 		this.camera.processNetherWarp(camera_mult);
-		initialize();
+		try
+		{
+			initialize();
+		}
+		catch (BlockTypeLoadException e)
+		{
+			ExceptionDialog.presentDialog("Error reading Minecraft block data", e);
+			System.exit(0);
+		}
 		this.setMinecraftWorld(newworld, cur_camera);
 		this.updateRenderDetails();
 		this.triggerChunkLoads();

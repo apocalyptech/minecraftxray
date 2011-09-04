@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.awt.Color;
+import java.io.InputStream;
+import java.io.IOException;
 
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
@@ -96,6 +98,7 @@ public class BlockType
 	public BLOCK_TYPE type;
 	private ArrayList<Integer> mapcolor;
 	private ArrayList<Integer> tex;
+	private String texpath;
 	private HashMap<Integer, ArrayList<Integer>> tex_data;
 	private HashMap<String, ArrayList<Integer>> tex_direction;
 	private HashMap<Integer, String> tex_direction_data;
@@ -110,11 +113,16 @@ public class BlockType
 
 	// Other attributes
 	private boolean generated_texture;
+	private boolean filename_texture;
+
+	// Attributes brought over from BlockTypeCollection
+	public String basetexpath;
 
 	public BlockType()
 	{
 		this.override = false;
 		this.generated_texture = false;
+		this.filename_texture = false;
 		this.id = -1;
 	}
 
@@ -218,6 +226,16 @@ public class BlockType
 		return getTexCoordsArr(this.tex_idx);
 	}
 
+	public void setTexpath(String texpath)
+	{
+		this.texpath = texpath;
+	}
+
+	public String getTexpath()
+	{
+		return this.texpath;
+	}
+
 	public void setTex_data(HashMap<Integer, ArrayList<Integer>> tex_data)
 	{
 		this.tex_data = tex_data;
@@ -272,6 +290,11 @@ public class BlockType
 	{
 		return (this.type == BLOCK_TYPE.NORMAL);
 	}
+	
+	public boolean isFilenameTexture()
+	{
+		return this.filename_texture;
+	}
 
 	/**
 	 * Normalizes our data from what we get from YAML, to a format that's
@@ -316,6 +339,23 @@ public class BlockType
 			{
 				this.generated_texture = true;
 			}
+			else if (this.texpath != null && !this.texpath.equals(""))
+			{
+				try
+				{
+					InputStream stream = MinecraftEnvironment.getMinecraftTexturepackData(this.basetexpath + "/" + this.texpath);
+					if (stream == null)
+					{
+						throw new BlockTypeLoadException("File " + this.basetexpath + "/" + this.texpath + " is not found");
+					}
+					stream.close();
+				}
+				catch (IOException e)
+				{
+					throw new BlockTypeLoadException("Error while opening " + this.basetexpath + "/" + this.texpath + ": " + e.toString(), e);
+				}
+				this.filename_texture = true;
+			}
 			else
 			{
 				throw new BlockTypeLoadException("tex is a required attribute");
@@ -328,7 +368,7 @@ public class BlockType
 
 		// Now do the actual normalizing
 		this.color = new Color(this.mapcolor.get(0), this.mapcolor.get(1), this.mapcolor.get(2));
-		if (!this.generated_texture)
+		if (!this.generated_texture && !this.filename_texture)
 		{
 			this.tex_idx = this.getTexReal();
 		}
