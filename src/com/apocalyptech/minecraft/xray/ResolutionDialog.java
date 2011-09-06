@@ -32,6 +32,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
 import java.util.List;
@@ -266,26 +267,43 @@ public class ResolutionDialog extends JFrame {
 		JLabel refreshRateLabel = new JLabel("Refresh Rate: ");
 		JLabel fullScreenLabel  = new JLabel("Full Screen: ");
 		JLabel invertMouseLabel  = new JLabel("Invert Mouselook: ");
+		JLabel xrayTitleLabel  = new JLabel(XRay.windowTitle);
+		xrayTitleLabel.setFont(new Font("Arial", Font.BOLD, 16));
 		
-		float flabel = 0.1f;
+		float flabel = 0f;
 		float flist = 1.9f;
 
 		int current_grid_y = 0;
+
+		Insets labelInsets = new Insets(0, 5, 0, 0);
+		Insets inputInsets = new Insets(5, 5, 5, 5);
+		Insets checkboxInsets = new Insets(5, 0, 5, 0);
 		
 		c.insets = new Insets(5,5,5,5);
 		c.weighty = 0f;
+
+		// Title
+		c.gridx = 0; c.gridy = current_grid_y;
+		c.anchor = GridBagConstraints.CENTER;
+		c.fill = GridBagConstraints.NONE;
+		c.gridwidth = 2;
+		addComponent(basicPanel, xrayTitleLabel, c);
+		c.gridwidth = 1;
 		
 		// Add the resolution label
+		current_grid_y++;
 		c.weightx = flabel; 
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.NONE;
+		c.insets = labelInsets;
 		addComponent(basicPanel, resolutionsLabel,c);
 		
 		// Add the resolution list
 		c.weightx = flist; 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1; c.gridy = current_grid_y;
+		c.insets = inputInsets;
 		addComponent(basicPanel, resolutionsList,c);
 		
 		// Add the bit depth label
@@ -294,12 +312,14 @@ public class ResolutionDialog extends JFrame {
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
+		c.insets = labelInsets;
 		addComponent(basicPanel, bitDepthLabel,c);
 		
 		// Add the bit depth list
 		c.weightx = flist;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1; c.gridy = current_grid_y;
+		c.insets = inputInsets;
 		addComponent(basicPanel, bitDepthList,c);
 		
 		// Add the refresh rate label
@@ -308,12 +328,14 @@ public class ResolutionDialog extends JFrame {
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
+		c.insets = labelInsets;
 		addComponent(basicPanel, refreshRateLabel,c);
 		
 		// Add the refresh rate list
 		c.weightx = flist;  
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1; c.gridy = current_grid_y;
+		c.insets = inputInsets;
 		addComponent(basicPanel, refreshRateList,c);
 		
 		// Add the fullscreen label
@@ -322,17 +344,18 @@ public class ResolutionDialog extends JFrame {
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
+		c.insets = labelInsets;
 		addComponent(basicPanel, fullScreenLabel,c);
 
 		// Set up the fullscreen checkbox
 		fullScreenCheckBox = new JCheckBox();
-		c.insets = new Insets(5,0,5,0);
 		fullScreenCheckBox.setSelected(this.preferredFullScreenValue);
 		
 		// Add the fullscreen checkbox
 		c.weightx = flist;  
 		c.gridx = 1; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = checkboxInsets;
 		addComponent(basicPanel, fullScreenCheckBox,c);
 		
 		// Add the invert mouse label
@@ -341,17 +364,18 @@ public class ResolutionDialog extends JFrame {
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.EAST;
+		c.insets = labelInsets;
 		addComponent(basicPanel, invertMouseLabel,c);
 
 		// Set up the invert mouse checkbox
 		invertMouseCheckBox = new JCheckBox();
-		c.insets = new Insets(5,0,5,0);
 		invertMouseCheckBox.setSelected(this.preferredInvertMouseValue);
 		
 		// Add the invert mouse checkbox
 		c.weightx = flist;  
 		c.gridx = 1; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = checkboxInsets;
 		addComponent(basicPanel, invertMouseCheckBox,c);
 		
 		// Separator
