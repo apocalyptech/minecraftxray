@@ -7,6 +7,16 @@
     North now, if we see data values we don't understand
   * Block definitions are loaded from a YAML file, instead of hard-coded
 
+Minecraft X-Ray 3.2.2 (2011.09.05)
+
+  * Repackaged due to apparent data corruption in jinput.jar
+    Checksums of good jinput.jar:
+        md5sum: d62ff8cd9539a32dac094c00e820e9e6
+        sha1sum: 2d5a40f2a25f8b4ec1ea35f3e5ca79119ed5d027
+    Checksums of bad jinput.jar:
+        md5sum: bfdffede315be2fcbad6d9df631d18d8
+        sha1sum: 69daa7178d22bc371433678a845231e96d760cd6
+
 Minecraft X-Ray 3.2.1 (2011.08.18)
 
   * Some mods appear to get rid of misc/water.png, which occasionally
