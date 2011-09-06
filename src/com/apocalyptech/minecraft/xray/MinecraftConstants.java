@@ -314,7 +314,7 @@ public class MinecraftConstants {
 		BLOCK_UNKNOWN = new BlockType();
 		BLOCK_UNKNOWN.setIdStr("SPECIAL_UNKNOWN");
 		BLOCK_UNKNOWN.setName("Internal Special Unknown Block");
-		BLOCK_UNKNOWN.color = new Color(255, 255, 255);
+		BLOCK_UNKNOWN.color = new Color(214, 127, 255);
 		BLOCK_UNKNOWN.setType(BLOCK_TYPE.NORMAL);
 
 		// For grass, in particular, for its rendering toggle, we'll save some info

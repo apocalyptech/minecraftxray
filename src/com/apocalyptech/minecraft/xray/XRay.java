@@ -2553,6 +2553,8 @@ public class XRay
 		boolean found_solid;
 		boolean drew_block;
 
+		Color blockColor;
+
 		Graphics2D g = minimapGraphics;
 		for (int zz = 0; zz < 16; zz++)
 		{
@@ -2567,35 +2569,40 @@ public class XRay
 					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
 					short blockData = chunkData[blockOffset];
 
-					if (blockData >= 0)
+					if (blockData > 0)
 					{
-						if (MinecraftConstants.blockArray[blockData] != null)
+						if (in_nether && !found_solid)
 						{
-							found_solid = true;
-							if (found_air)
+							found_air = false;
+						}
+						found_solid = true;
+						if (found_air)
+						{
+							if (MinecraftConstants.blockArray[blockData] == null)
 							{
-								if (blockData > -1)
-								{
-									Color blockColor = MinecraftConstants.blockArray[blockData].color;
-									if (blockColor != null)
-									{
-										// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
-										// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
-										// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
-										// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
-										// to behave, but c'est la vie!
-										g.setColor(blockColor);
-										g.fillRect(base_x - zz, base_y + xx, 1, 1);
-									}
-								}
-								drew_block = true;
-								break;
+								blockColor = BLOCK_UNKNOWN.color;
 							}
+							else
+							{
+								blockColor = MinecraftConstants.blockArray[blockData].color;
+							}
+							if (blockColor != null)
+							{
+								// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
+								// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
+								// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
+								// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
+								// to behave, but c'est la vie!
+								g.setColor(blockColor);
+								g.fillRect(base_x - zz, base_y + xx, 1, 1);
+							}
+							drew_block = true;
+							break;
 						}
-						else
-						{
-							found_air = true;
-						}
+					}
+					else
+					{
+						found_air = true;
 					}
 				}
 
