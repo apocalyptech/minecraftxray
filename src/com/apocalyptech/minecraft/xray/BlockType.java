@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.awt.Color;
-import java.io.InputStream;
-import java.io.IOException;
 
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
@@ -97,10 +95,7 @@ public class BlockType
 	public String name;
 	public BLOCK_TYPE type;
 	private ArrayList<Integer> mapcolor;
-	private ArrayList<Integer> tex;
 	private String texpath;
-	private HashMap<Integer, ArrayList<Integer>> tex_data;
-	private HashMap<String, ArrayList<Integer>> tex_direction;
 	private HashMap<Integer, String> tex_direction_data;
 	private boolean override; // This is not at all tested yet
 
@@ -111,18 +106,9 @@ public class BlockType
 	public HashMap<DIRECTION_REL, Integer> texture_dir_map;
 	public HashMap<Byte, DIRECTION_ABS> texture_dir_data_map;
 
-	// Other attributes
-	private boolean generated_texture;
-	private boolean filename_texture;
-
-	// Attributes brought over from BlockTypeCollection
-	public String basetexpath;
-
 	public BlockType()
 	{
 		this.override = false;
-		this.generated_texture = false;
-		this.filename_texture = false;
 		this.id = -1;
 	}
 
@@ -166,21 +152,6 @@ public class BlockType
 		return this.mapcolor;
 	}
 
-	public void setTex(ArrayList<Integer> tex)
-	{
-		this.tex = tex;
-	}
-
-	public ArrayList<Integer> getTex()
-	{
-		return this.tex;
-	}
-
-	public void setTexReal(int tex)
-	{
-		this.setTex(BlockType.getTexCoords(tex));
-	}
-
 	public void setTexIdx(int tex)
 	{
 		this.tex_idx = tex;
@@ -197,11 +168,6 @@ public class BlockType
 	public static int getTexReal(ArrayList<Integer> coords)
 	{
 		return coords.get(0) + (16 * coords.get(1));
-	}
-
-	public int getTexReal()
-	{
-		return getTexReal(this.getTex());
 	}
 
 	public static ArrayList<Integer> getTexCoords(int tex)
@@ -224,36 +190,6 @@ public class BlockType
 	public int[] getTexCoordsArr()
 	{
 		return getTexCoordsArr(this.tex_idx);
-	}
-
-	public void setTexpath(String texpath)
-	{
-		this.texpath = texpath;
-	}
-
-	public String getTexpath()
-	{
-		return this.texpath;
-	}
-
-	public void setTex_data(HashMap<Integer, ArrayList<Integer>> tex_data)
-	{
-		this.tex_data = tex_data;
-	}
-
-	public HashMap<Integer, ArrayList<Integer>> getTex_data()
-	{
-		return this.tex_data;
-	}
-
-	public void setTex_direction(HashMap<String, ArrayList<Integer>> tex_direction)
-	{
-		this.tex_direction = tex_direction;
-	}
-
-	public HashMap<String, ArrayList<Integer>> getTex_direction()
-	{
-		return this.tex_direction;
 	}
 
 	public void setTex_direction_data(HashMap<Integer, String> tex_direction_data)
@@ -290,10 +226,15 @@ public class BlockType
 	{
 		return (this.type == BLOCK_TYPE.NORMAL);
 	}
-	
-	public boolean isFilenameTexture()
+
+	/**
+	 * A function to pull any necessary data from the Collection object
+	 * itself.  BlockTypeFilename, for instance, needs to grab the
+	 * Collection's texpath.  This implementation does nothing with it,
+	 * so need not be overridden if the implementing class needs nothing.
+	 */
+	public void pullDataFromCollection(BlockTypeCollection collection)
 	{
-		return this.filename_texture;
 	}
 
 	/**
@@ -332,75 +273,12 @@ public class BlockType
 		{
 			throw new BlockTypeLoadException("mapcolor requires three elements (RGB)");
 		}
-		if (this.tex == null)
-		{
-			if (this.idStr.equals("WATER") || this.idStr.equals("STATIONARY_WATER") ||
-					this.idStr.equals("FIRE") || this.idStr.equals("PORTAL"))
-			{
-				this.generated_texture = true;
-			}
-			else if (this.texpath != null && !this.texpath.equals(""))
-			{
-				try
-				{
-					InputStream stream = MinecraftEnvironment.getMinecraftTexturepackData(this.basetexpath + "/" + this.texpath);
-					if (stream == null)
-					{
-						throw new BlockTypeLoadException("File " + this.basetexpath + "/" + this.texpath + " is not found");
-					}
-					stream.close();
-				}
-				catch (IOException e)
-				{
-					throw new BlockTypeLoadException("Error while opening " + this.basetexpath + "/" + this.texpath + ": " + e.toString(), e);
-				}
-				this.filename_texture = true;
-			}
-			else
-			{
-				throw new BlockTypeLoadException("tex is a required attribute");
-			}
-		}
-		else if (this.tex.size() != 2)
-		{
-			throw new BlockTypeLoadException("tex coordinates require two elements (X, Y)");
-		}
 
 		// Now do the actual normalizing
 		this.color = new Color(this.mapcolor.get(0), this.mapcolor.get(1), this.mapcolor.get(2));
-		if (!this.generated_texture && !this.filename_texture)
-		{
-			this.tex_idx = this.getTexReal();
-		}
 		if (this.getType() == null)
 		{
 			this.setType(BLOCK_TYPE.NORMAL);
-		}
-
-		if (this.tex_data != null && this.tex_data.size() > 0)
-		{
-			this.texture_data_map = new HashMap<Byte, Integer>();
-			for (Map.Entry<Integer, ArrayList<Integer>> entry : this.tex_data.entrySet())
-			{
-				this.texture_data_map.put(entry.getKey().byteValue(), BlockType.getTexReal(entry.getValue()));
-			}
-		}
-		if (this.tex_direction != null)
-		{
-			this.texture_dir_map = new HashMap<DIRECTION_REL, Integer>();
-			for (Map.Entry<String, ArrayList<Integer>> entry: this.tex_direction.entrySet())
-			{
-				DIRECTION_REL dir;
-				try
-				{
-					dir = DIRECTION_REL.valueOf(entry.getKey());
-				}
-				catch (IllegalArgumentException e)
-				{
-					throw new BlockTypeLoadException("Invalid relative direction: " + entry.getKey());
-				}
-				this.texture_dir_map.put(dir, BlockType.getTexReal(entry.getValue()));
-			}
 		}
 		if (this.tex_direction_data != null)
 		{
@@ -419,6 +297,27 @@ public class BlockType
 				this.texture_dir_data_map.put(entry.getKey().byteValue(), dir);
 			}
 		}
+	}
+
+	/**
+	 * Returns a list of the filenames of all the textures in-use by this BlockType.
+	 * This only really makes sense for BlockTypeFilename, but this way the rest of
+	 * the app doesn't have to know about the different types of BlockTypes.  Note
+	 * that we don't actually care if there are duplicates or not.
+	 */
+	public ArrayList<String> getTextureFilenames()
+	{
+		return new ArrayList<String>();
+	}
+
+	/**
+	 * Sets our "real" texture information based on the hashmap passed in (after
+	 * doing the actual texture reservations that we need).  Once again, for
+	 * "regular" blocktypes, this is meaningless.
+	 */
+	public void setTextureFilenameMapping(HashMap<String, Integer> texmap)
+		throws BlockTypeLoadException
+	{
 	}
 
 	/**

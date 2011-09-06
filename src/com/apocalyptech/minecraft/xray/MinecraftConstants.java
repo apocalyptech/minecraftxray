@@ -236,6 +236,10 @@ public class MinecraftConstants {
 		loadMainBlocks();
 		initSpriteSheetToTextureTable();
 		initPaintings();
+
+		// For now...
+		//BlockTypeCollection blockinfo = loadBlocks("blockdefs/aether.yaml");
+		//blockCollection.importFrom(blockinfo, true);
 	}
 
 	/**

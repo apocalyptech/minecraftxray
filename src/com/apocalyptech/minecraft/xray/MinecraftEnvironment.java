@@ -44,6 +44,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileFilter;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -685,14 +686,14 @@ public class MinecraftEnvironment {
 		g2d.fillRect(nether_start_x, nether_start_y, square_width, square_width);
 
 		// Load in filename textures, if needed
-		for (BlockType block : blockCollection.getFilenameTextureBlocks())
+		// TODO: Exception error reporting
+		for (Map.Entry<String, Integer> entry : blockCollection.getFilenameTextureBlocks().entrySet())
 		{
-			block.setTexIdx(blockCollection.reserveTexture());
-			int[] new_tex = block.getTexCoordsArr();
-			bi2 = buildImageFromInput(getMinecraftTexturepackData(block.basetexpath + "/" + block.getTexpath()));
+			int[] new_tex = BlockType.getTexCoordsArr(entry.getValue());
+			bi2 = buildImageFromInput(getMinecraftTexturepackData(entry.getKey()));
 			if (bi2 == null)
 			{
-				throw new BlockTypeLoadException("File " + block.basetexpath + "/" + block.getTexpath() + " is not found");
+				throw new BlockTypeLoadException("File " + entry.getKey() + " is not found");
 			}
 			int new_width = bi2.getWidth();
 			g2d.setComposite(AlphaComposite.Src);

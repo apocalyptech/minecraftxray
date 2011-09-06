@@ -816,7 +816,7 @@ public class XRay
 
 			// Get a list of block types organized by type
 			HashMap<BLOCK_TYPE, ArrayList<BlockType>> reverse_block_type_map = new HashMap<BLOCK_TYPE, ArrayList<BlockType>>();
-			for (BlockType block : blockCollection.getBlocks())
+			for (BlockType block : blockCollection.getBlocksFull())
 			{
 				if (!reverse_block_type_map.containsKey(block.type))
 				{

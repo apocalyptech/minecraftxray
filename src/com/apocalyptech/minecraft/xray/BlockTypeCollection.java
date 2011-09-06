@@ -27,6 +27,7 @@
 package com.apocalyptech.minecraft.xray;
 
 import java.io.FileReader;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -68,15 +69,19 @@ public class BlockTypeCollection
 {
 
 	private String name;
-	private String basetexpath;
-	private ArrayList<BlockType> blocks;
+	private String texpath;
+	private ArrayList<BlockTypeRegular> blocks;
+	private ArrayList<BlockTypeFilename> mlblocks;
+	private ArrayList<BlockType> blocks_composite;
 	private HashMap<String, BlockType> blocksByName;
 	public BlockType[] blockArray;
 	private boolean[] usedTextures;
 
 	public BlockTypeCollection()
 	{
-		this.blocks = new ArrayList<BlockType>();
+		this.blocks = new ArrayList<BlockTypeRegular>();
+		this.mlblocks = new ArrayList<BlockTypeFilename>();
+		this.blocks_composite = new ArrayList<BlockType>();
 		this.blocksByName = new HashMap<String, BlockType>();
 		this.blockArray = new BlockType[256];
 		this.usedTextures = new boolean[256];
@@ -96,24 +101,52 @@ public class BlockTypeCollection
 		return this.name;
 	}
 
-	public void setBasetexpath(String basetexpath)
+	public void setTexpath(String texpath)
 	{
-		this.basetexpath = basetexpath;
+		this.texpath = texpath;
 	}
 
-	public String getBasetexpath()
+	public String getTexpath()
 	{
-		return this.basetexpath;
+		return this.texpath;
 	}
 
-	public void setBlocks(ArrayList<BlockType> blocks)
+	public void setBlocks(ArrayList<BlockTypeRegular> blocks)
 	{
 		this.blocks = blocks;
 	}
 
-	public ArrayList<BlockType> getBlocks()
+	public ArrayList<BlockTypeRegular> getBlocks()
 	{
 		return this.blocks;
+	}
+
+	public void setMlblocks(ArrayList<BlockTypeFilename> mlblocks)
+	{
+		this.mlblocks = mlblocks;
+	}
+
+	public ArrayList<BlockTypeFilename> getMlblocks()
+	{
+		return this.mlblocks;
+	}
+
+	public ArrayList<BlockType> getBlocksFull()
+	{
+		ArrayList<BlockType> blocks = new ArrayList<BlockType>();
+		for (BlockTypeRegular block : this.blocks)
+		{
+			blocks.add((BlockType)block);
+		}
+		for (BlockTypeFilename block : this.mlblocks)
+		{
+			blocks.add((BlockType)block);
+		}
+		for (BlockType block : this.blocks_composite)
+		{
+			blocks.add((BlockType)block);
+		}
+		return blocks;
 	}
 
 	/**
@@ -169,17 +202,17 @@ public class BlockTypeCollection
 		// If we get here, our block was set to override, so clear out old records first
 		if (exists_id)
 		{
-			this.blocks.remove(blockArray[id]);
+			this.blocks_composite.remove(blockArray[id]);
 			blockArray[id] = null;
 		}
 		if (exists_name)
 		{
-			this.blocks.remove(this.blocksByName.get(name));
+			this.blocks_composite.remove(this.blocksByName.get(name));
 			this.blocksByName.remove(name);
 		}
 
 		// Now add the new one
-		this.blocks.add(newBlockType);
+		this.blocks_composite.add(newBlockType);
 		this.blocksByName.put(newBlockType.getIdStr(), newBlockType);
 		this.blockArray[newBlockType.getId()] = newBlockType;
 
@@ -266,23 +299,6 @@ public class BlockTypeCollection
 	}
 
 	/**
-	 * Returns a list of blocks which need to have their textures read from
-	 * filenames.
-	 */
-	public ArrayList<BlockType> getFilenameTextureBlocks()
-	{
-		ArrayList<BlockType> list = new ArrayList<BlockType>();
-		for (BlockType type : this.blocks)
-		{
-			if (type.isFilenameTexture())
-			{
-				list.add(type);
-			}
-		}
-		return list;
-	}
-
-	/**
 	 * Loads from a Yaml document.
 	 */
 	public static BlockTypeCollection loadFromYaml(String filename)
@@ -290,13 +306,14 @@ public class BlockTypeCollection
 	{
 		Constructor constructor = new Constructor(BlockTypeCollection.class);
 		TypeDescription blockDesc = new TypeDescription(BlockTypeCollection.class);
-		blockDesc.putListPropertyType("blocks", BlockType.class);
+		blockDesc.putListPropertyType("blocks", BlockTypeRegular.class);
+		blockDesc.putListPropertyType("mlblocks", BlockTypeFilename.class);
 		Yaml yaml = new Yaml(constructor);
 
 		BlockTypeCollection collection = (BlockTypeCollection) yaml.load(new FileReader(filename));
-		for (BlockType type : collection.getBlocks())
+		for (BlockType type : collection.getBlocksFull())
 		{
-			type.basetexpath = collection.getBasetexpath();
+			type.pullDataFromCollection(collection);
 		}
 		return collection;
 	}
@@ -309,7 +326,7 @@ public class BlockTypeCollection
 	public void normalizeBlocks()
 		throws BlockTypeLoadException
 	{
-		for (BlockType block : this.getBlocks())
+		for (BlockType block : this.getBlocksFull())
 		{
 			ExceptionDialog.setExtraStatus2("Looking at block ID " + block.id + ": " + block.idStr);
 			block.normalizeData();
@@ -326,11 +343,49 @@ public class BlockTypeCollection
 	public void importFrom(BlockTypeCollection otherCollection, boolean importData)
 		throws BlockTypeLoadException
 	{
-		for (BlockType block : otherCollection.getBlocks())
+		for (BlockType block : otherCollection.getBlocksFull())
 		{
 			ExceptionDialog.setExtraStatus2("Looking at block ID " + block.id + ": " + block.idStr);
 			this.addBlockType(block, importData);
 		}
 		ExceptionDialog.clearExtraStatus2();
+	}
+
+	/**
+	 * Loops through all our blocks to get a list of filenames which should be loaded into
+	 * textures, update those blocks once the textures have been reserved, and then return
+	 * the information so that those blocks can get actually loaded.
+	 */
+	public HashMap<String, Integer> getFilenameTextureBlocks()
+		throws BlockTypeLoadException
+	{
+		HashMap<String, Integer> list = new HashMap<String, Integer>();
+
+		// First construct the list of all textures to load
+		for (BlockType block : this.getBlocksFull())
+		{
+			for (String filename : block.getTextureFilenames())
+			{
+				if (!list.containsKey(filename))
+				{
+					list.put(filename, null);
+				}
+			}
+		}
+
+		// Now reserve a texture for each one
+		for (Map.Entry<String, Integer> entry : list.entrySet())
+		{
+			entry.setValue(this.reserveTexture());
+		}
+
+		// Update our blocks with the fresh texture location information
+		for (BlockType block : this.getBlocksFull())
+		{
+			block.setTextureFilenameMapping(list);
+		}
+
+		// ... and return this list, so the files can actually be loaded.
+		return list;
 	}
 }
