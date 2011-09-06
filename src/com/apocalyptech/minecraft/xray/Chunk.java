@@ -2743,7 +2743,7 @@ public class Chunk {
 							catch (NullPointerException e)
 							{
 								// Just report and continue
-								System.out.println("Unknown data value for block type " + t + ": " + data);
+								System.out.println("Unknown data value for block " + block.idStr + ": " + data);
 							}
 						}
 
