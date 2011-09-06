@@ -110,6 +110,7 @@ public class BlockType
 	{
 		this.override = false;
 		this.id = -1;
+		this.tex_idx = -1;
 	}
 
 	public void setId(short id)
@@ -326,7 +327,10 @@ public class BlockType
 	public ArrayList<Integer> getUsedTextures()
 	{
 		HashMap<Integer, Boolean> tempMap = new HashMap<Integer, Boolean>();
-		tempMap.put(this.tex_idx, true);
+		if (this.tex_idx >= 0)
+		{
+			tempMap.put(this.tex_idx, true);
+		}
 		if (this.texture_data_map != null)
 		{
 			for (Integer tex : this.texture_data_map.values())

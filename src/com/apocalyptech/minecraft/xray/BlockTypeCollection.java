@@ -76,6 +76,7 @@ public class BlockTypeCollection
 	private HashMap<String, BlockType> blocksByName;
 	public BlockType[] blockArray;
 	private boolean[] usedTextures;
+	private int reserved_texture_count;
 
 	public BlockTypeCollection()
 	{
@@ -85,6 +86,7 @@ public class BlockTypeCollection
 		this.blocksByName = new HashMap<String, BlockType>();
 		this.blockArray = new BlockType[256];
 		this.usedTextures = new boolean[256];
+		this.reserved_texture_count = 0;
 		for (int i=0; i<256; i++)
 		{
 			this.usedTextures[i] = false;
@@ -251,7 +253,11 @@ public class BlockTypeCollection
 
 	/**
 	 * Reserves an unused texture, and returns the texture ID.
-	 * Returns -1 if there are no unused texture slots
+	 * Returns -1 if there are no unused texture slots.  Also,
+	 * for now we're assuming that this is being used on
+	 * blocks that use filenames for textures, so we're going
+	 * to increment that count to use as an offset, even though
+	 * probably that'll never actually come into play.
 	 */
 	public int reserveTexture()
 	{
@@ -260,6 +266,7 @@ public class BlockTypeCollection
 			if (!this.usedTextures[i])
 			{
 				this.useTexture(i);
+				this.reserved_texture_count++;
 				return i;
 			}
 		}
@@ -279,6 +286,8 @@ public class BlockTypeCollection
 				count++;
 			}
 		}
+		count -= this.getFilenameTextureCount();
+		count += this.reserved_texture_count;
 		return count;
 	}
 
@@ -295,6 +304,8 @@ public class BlockTypeCollection
 				count++;
 			}
 		}
+		count += this.getFilenameTextureCount();
+		count -= this.reserved_texture_count;
 		return count;
 	}
 
@@ -352,6 +363,39 @@ public class BlockTypeCollection
 	}
 
 	/**
+	 * Returns a list of all texture filenames that this collection is using.
+	 */
+	private ArrayList<String> getFilenameTextureList()
+	{
+		HashMap<String, Integer> tempMap = new HashMap<String, Integer>();
+		ArrayList<String> list = new ArrayList<String>();
+
+		// Grab all the textures
+		for (BlockType block : this.getBlocksFull())
+		{
+			for (String filename : block.getTextureFilenames())
+			{
+				if (!tempMap.containsKey(filename))
+				{
+					tempMap.put(filename, null);
+					list.add(filename);
+				}
+			}
+		}
+
+		// Return
+		return list;
+	}
+
+	/**
+	 * Returns a count of all the filename textures we have in the collection.
+	 */
+	public int getFilenameTextureCount()
+	{
+		return this.getFilenameTextureList().size();
+	}
+
+	/**
 	 * Loops through all our blocks to get a list of filenames which should be loaded into
 	 * textures, update those blocks once the textures have been reserved, and then return
 	 * the information so that those blocks can get actually loaded.
@@ -361,22 +405,10 @@ public class BlockTypeCollection
 	{
 		HashMap<String, Integer> list = new HashMap<String, Integer>();
 
-		// First construct the list of all textures to load
-		for (BlockType block : this.getBlocksFull())
+		// Load in our list of textures and reserve a texture for each
+		for (String filename : this.getFilenameTextureList())
 		{
-			for (String filename : block.getTextureFilenames())
-			{
-				if (!list.containsKey(filename))
-				{
-					list.put(filename, null);
-				}
-			}
-		}
-
-		// Now reserve a texture for each one
-		for (Map.Entry<String, Integer> entry : list.entrySet())
-		{
-			entry.setValue(this.reserveTexture());
+			list.put(filename, this.reserveTexture());
 		}
 
 		// Update our blocks with the fresh texture location information
