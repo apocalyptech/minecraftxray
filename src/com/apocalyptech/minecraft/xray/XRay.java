@@ -99,7 +99,7 @@ public class XRay
 	// are we inverting the mouse
 	private boolean invertMouse = false;
 	// window title
-	private final String app_version = "3.2.1";
+	private final String app_version = "3.2.2";
 	private final String app_name    = "Minecraft X-Ray";
 	private final String windowTitle = app_name + " " + app_version;
 
