@@ -41,12 +41,11 @@
 #          shouldn't be changed are:
 #
 #               COBBLESTONE (the LEVER renderer uses it)
-#               FENCE (currently the FENCE renderer uses it; can change that though)
-#               PORTAL (currently the PORTAL renderer uses it; can change that though)
 #               TORCH (the "explored" highlight uses it)
 #               BEDROCK (the "bedrock" toggle uses it)
 #               GRASS (the "grass rendering" toggle uses it)
 #               SAPLING (some special data handling is needed)
+#               PORTAL (we generate the texture to use for this one)
 #               FIRE (we generate the texture to use for this one)
 #               WATER (we do extra processing on the texture)
 #               STATIONARY_WATER (we do extra processing on the texture)

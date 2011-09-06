@@ -129,7 +129,6 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_BEDROCK;
 	public static BlockType BLOCK_GRASS;
 	public static BlockType BLOCK_COBBLESTONE;
-	public static BlockType BLOCK_FENCE;
 	public static BlockType BLOCK_PORTAL;
 	public static BlockType BLOCK_TORCH;
 	public static BlockType BLOCK_SAPLING;
@@ -272,11 +271,6 @@ public class MinecraftConstants {
 		if (BLOCK_COBBLESTONE == null)
 		{
 			throw new BlockTypeLoadException("COBBLESTONE block definition not found");
-		}
-		BLOCK_FENCE = blockCollection.getByName("FENCE");
-		if (BLOCK_FENCE == null)
-		{
-			throw new BlockTypeLoadException("FENCE block definition not found");
 		}
 		BLOCK_PORTAL = blockCollection.getByName("PORTAL");
 		if (BLOCK_PORTAL == null)

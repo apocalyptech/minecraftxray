@@ -1908,7 +1908,7 @@ public class Chunk {
 	 * @param zzz
 	 * @param blockOffset Should be passed in from our main draw loop so we don't have to recalculate
 	 */
-	public void renderFence(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
+	public void renderFence(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -1929,7 +1929,7 @@ public class Chunk {
 		boolean have_adj = false;
 		if (xxx>0)
 		{
-			if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == BLOCK_FENCE.id)
+			if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == blockId)
 			{
 				have_adj = true;
 			}
@@ -1937,7 +1937,7 @@ public class Chunk {
 		else
 		{
 			Chunk otherChunk = level.getChunk(this.x-1, this.z);
-			if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == BLOCK_FENCE.id)
+			if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == blockId)
 			{
 				have_adj  = true;
 			}
@@ -1961,7 +1961,7 @@ public class Chunk {
 		have_adj = false;
 		if(zzz>0)
 		{
-			if (blockData.value[blockOffset-BLOCKSPERROW] == BLOCK_FENCE.id)
+			if (blockData.value[blockOffset-BLOCKSPERROW] == blockId)
 			{
 				have_adj = true;
 			}
@@ -1969,7 +1969,7 @@ public class Chunk {
 		else
 		{
 			Chunk otherChunk = level.getChunk(this.x,this.z-1);
-			if(otherChunk != null && otherChunk.getBlock(xxx, yyy, 15) == BLOCK_FENCE.id) {
+			if(otherChunk != null && otherChunk.getBlock(xxx, yyy, 15) == blockId) {
 				have_adj = true;
 			}
 		}
@@ -2063,7 +2063,7 @@ public class Chunk {
 	 * @param zzz
 	 * @param blockOffset Should be passed in from our main draw loop so we don't have to recalculate
 	 */
-	public void renderPortal(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
+	public void renderPortal(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -2078,7 +2078,7 @@ public class Chunk {
 		{
 			if (xxx>0)
 			{
-				if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == BLOCK_PORTAL.id)
+				if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == blockId)
 				{
 					break;
 				}
@@ -2086,7 +2086,7 @@ public class Chunk {
 			else
 			{
 				Chunk otherChunk = level.getChunk(this.x-1, this.z);
-				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == BLOCK_PORTAL.id)
+				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == blockId)
 				{
 					break;
 				}
@@ -2094,7 +2094,7 @@ public class Chunk {
 			
 			if (xxx<15)
 			{
-				if (blockData.value[blockOffset+BLOCKSPERCOLUMN] == BLOCK_PORTAL.id)
+				if (blockData.value[blockOffset+BLOCKSPERCOLUMN] == blockId)
 				{
 					break;
 				}
@@ -2102,7 +2102,7 @@ public class Chunk {
 			else
 			{
 				Chunk otherChunk = level.getChunk(this.x+1, this.z);
-				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == BLOCK_PORTAL.id)
+				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == blockId)
 				{
 					break;
 				}
@@ -2807,7 +2807,7 @@ public class Chunk {
 								renderWallSign(textureId,x,y,z);
 								break;
 							case FENCE:
-								renderFence(textureId,x,y,z,blockOffset);
+								renderFence(textureId,x,y,z,blockOffset,t);
 								break;
 							case LEVER:
 								renderLever(textureId,x,y,z);
@@ -2816,7 +2816,7 @@ public class Chunk {
 								renderButton(textureId,x,y,z);
 								break;
 							case PORTAL:
-								renderPortal(textureId,x,y,z,blockOffset);
+								renderPortal(textureId,x,y,z,blockOffset,t);
 								break;
 							case THINSLICE:
 								renderThinslice(textureId,x,y,z);
