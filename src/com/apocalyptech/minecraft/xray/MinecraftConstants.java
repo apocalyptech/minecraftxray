@@ -239,6 +239,23 @@ public class MinecraftConstants {
 		// For now...
 		//BlockTypeCollection blockinfo = loadBlocks("blockdefs/aether.yaml");
 		//blockCollection.importFrom(blockinfo, true);
+		//TODO: Exceptions generated should really be saving our static state information (for later reporting)
+		for (BlockTypeCollection coll : MinecraftEnvironment.getBlockTypeCollectionFiles())
+		{
+			String g = "user";
+			if (coll.getGlobal())
+			{
+				g = "built-in";
+			}
+			if (coll.getException() == null)
+			{
+				System.out.println("Got " + g + " modinfo " + coll.getName() + " (" + coll.getFile().getName() + "), " + coll.usedTextureCount() + " textures.");
+			}
+			else
+			{
+				System.out.println("Error in " + g + " modinfo at " + coll.getFile().getName() + ": " + coll.getException().toString());
+			}
+		}
 	}
 
 	/**
@@ -251,7 +268,7 @@ public class MinecraftConstants {
 		throws BlockTypeLoadException
 	{
 		// First load the blocks
-		BlockTypeCollection blockinfo = loadBlocks("blockdefs/minecraft.yaml");
+		BlockTypeCollection blockinfo = loadBlocks("blockdefs/minecraft.yaml", true);
 
 		// Import into blockCollection
 		blockCollection.importFrom(blockinfo, true);
@@ -324,8 +341,9 @@ public class MinecraftConstants {
 
 	/**
 	 * Reads in block information from a YAML file.
+	 * TODO: should probably go elsewhere
 	 */
-	public static BlockTypeCollection loadBlocks(String filename)
+	public static BlockTypeCollection loadBlocks(String filename, boolean global)
 		throws BlockTypeLoadException
 	{
 		ExceptionDialog.clearExtraStatus();
@@ -335,7 +353,7 @@ public class MinecraftConstants {
 		BlockTypeCollection blockinfo;
 		try
 		{
-			blockinfo = BlockTypeCollection.loadFromYaml(filename);
+			blockinfo = BlockTypeCollection.loadFromYaml(filename, global);
 		}
 		catch (Exception e)
 		{

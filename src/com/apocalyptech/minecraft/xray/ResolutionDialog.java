@@ -136,6 +136,7 @@ public class ResolutionDialog extends JFrame {
 	private JPanel basicPanel;
 	private JCheckBox fullScreenCheckBox;
 	private JCheckBox invertMouseCheckBox;
+	private JButton modOptionsButton;
 	private ButtonGroup worldButtonGroup;
 	JRadioButton[] worldButtons;
 	
@@ -267,6 +268,7 @@ public class ResolutionDialog extends JFrame {
 		JLabel refreshRateLabel = new JLabel("Refresh Rate: ");
 		JLabel fullScreenLabel  = new JLabel("Full Screen: ");
 		JLabel invertMouseLabel  = new JLabel("Invert Mouselook: ");
+		JLabel modOptionsLabel = new JLabel("Mod Options: ");
 		JLabel xrayTitleLabel  = new JLabel(XRay.windowTitle);
 		xrayTitleLabel.setFont(new Font("Arial", Font.BOLD, 16));
 		
@@ -377,6 +379,24 @@ public class ResolutionDialog extends JFrame {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = checkboxInsets;
 		addComponent(basicPanel, invertMouseCheckBox,c);
+
+		// Mod Options label
+		current_grid_y++;
+		c.weightx = flabel; 
+		c.gridx = 0; c.gridy = current_grid_y;
+		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.EAST;
+		c.insets = labelInsets;
+		addComponent(basicPanel, modOptionsLabel,c);
+
+		// Mod Options Button
+		modOptionsButton = new JButton("Open Mod Options");
+		c.weightx = flist;  
+		c.gridx = 1; c.gridy = current_grid_y;
+		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.WEST;
+		c.insets = checkboxInsets;
+		addComponent(basicPanel, modOptionsButton, c);
 		
 		// Separator
 		current_grid_y++;

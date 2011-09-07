@@ -37,6 +37,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
 import java.io.LineNumberReader;
@@ -83,6 +84,21 @@ public class MinecraftEnvironment {
 			return false;
         }
     }
+
+	private static class BlockdefFilter implements FilenameFilter
+	{
+		public BlockdefFilter() {
+			// Nothing, really
+		}
+
+		public boolean accept(File pathname, String filename) {
+			File tempFile = new File(pathname, filename);
+			return (tempFile.isFile() &&
+					tempFile.canRead() &&
+					!filename.equalsIgnoreCase("minecraft.yaml") &&
+					filename.endsWith(".yaml"));
+		}
+	}
 
 	private static class CaseInsensitiveComparator implements Comparator<File>
 	{
@@ -299,6 +315,45 @@ public class MinecraftEnvironment {
 			}
 		}
 		return new File(MinecraftEnvironment.xrayBaseDir, "xray.properties");
+	}
+
+	/**
+	 * Get a list of BlockTypeCollections from the given directory
+	 */
+	public static ArrayList<BlockTypeCollection> getBlockTypeCollectionFilesFromDir(File dir, boolean global)
+	{
+		ArrayList<BlockTypeCollection> list = new ArrayList<BlockTypeCollection>();
+		BlockTypeCollection tempcollection;
+		String fullFilename;
+		if (dir.exists() && dir.isDirectory() && dir.canRead())
+		{
+			for (String filename : dir.list(new BlockdefFilter()))
+			{
+				fullFilename = dir.getPath() + "/" + filename;
+				try
+				{
+					tempcollection = MinecraftConstants.loadBlocks(fullFilename, global);
+				}
+				catch (BlockTypeLoadException e)
+				{
+					tempcollection = new BlockTypeCollection(new File(fullFilename), global, e);
+				}
+				list.add(tempcollection);
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * Returns a list of available BlockType files, both from our global directory,
+	 * and the user xrayBaseDir
+	 */
+	public static ArrayList<BlockTypeCollection> getBlockTypeCollectionFiles()
+	{
+		ArrayList<BlockTypeCollection> list = new ArrayList<BlockTypeCollection>();
+		list.addAll(getBlockTypeCollectionFilesFromDir(new File("blockdefs"), true));
+		list.addAll(getBlockTypeCollectionFilesFromDir(new File(xrayBaseDir, "blockdefs"), false));
+		return list;
 	}
 	
 	/***

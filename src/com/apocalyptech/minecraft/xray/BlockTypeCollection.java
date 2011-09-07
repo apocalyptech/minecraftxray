@@ -26,6 +26,7 @@
  */
 package com.apocalyptech.minecraft.xray;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.Map;
 import java.util.HashMap;
@@ -77,6 +78,9 @@ public class BlockTypeCollection
 	public BlockType[] blockArray;
 	private boolean[] usedTextures;
 	private int reserved_texture_count;
+	private File file;
+	private boolean global;
+	private BlockTypeLoadException exception;
 
 	public BlockTypeCollection()
 	{
@@ -87,10 +91,23 @@ public class BlockTypeCollection
 		this.blockArray = new BlockType[256];
 		this.usedTextures = new boolean[256];
 		this.reserved_texture_count = 0;
+		this.global = false;
+		this.exception = null;
 		for (int i=0; i<256; i++)
 		{
 			this.usedTextures[i] = false;
 		}
+	}
+
+	/**
+	 * Constructor to use when we're using this as a record of a failed load.
+	 */
+	public BlockTypeCollection(File file, boolean global, BlockTypeLoadException exception)
+	{
+		this();
+		this.setFile(file);
+		this.setGlobal(global);
+		this.setException(exception);
 	}
 
 	public void setName(String name)
@@ -131,6 +148,36 @@ public class BlockTypeCollection
 	public ArrayList<BlockTypeFilename> getMlblocks()
 	{
 		return this.mlblocks;
+	}
+
+	public void setFile(File file)
+	{
+		this.file = file;
+	}
+
+	public File getFile()
+	{
+		return this.file;
+	}
+
+	public void setGlobal(boolean global)
+	{
+		this.global = global;
+	}
+
+	public boolean getGlobal()
+	{
+		return this.global;
+	}
+
+	public void setException(BlockTypeLoadException exception)
+	{
+		this.exception = exception;
+	}
+
+	public BlockTypeLoadException getException()
+	{
+		return this.exception;
 	}
 
 	public ArrayList<BlockType> getBlocksFull()
@@ -312,7 +359,7 @@ public class BlockTypeCollection
 	/**
 	 * Loads from a Yaml document.
 	 */
-	public static BlockTypeCollection loadFromYaml(String filename)
+	public static BlockTypeCollection loadFromYaml(String filename, boolean global)
 		throws java.io.FileNotFoundException
 	{
 		Constructor constructor = new Constructor(BlockTypeCollection.class);
@@ -326,6 +373,8 @@ public class BlockTypeCollection
 		{
 			type.pullDataFromCollection(collection);
 		}
+		collection.setFile(new File(filename));
+		collection.setGlobal(global);
 		return collection;
 	}
 
@@ -341,6 +390,10 @@ public class BlockTypeCollection
 		{
 			ExceptionDialog.setExtraStatus2("Looking at block ID " + block.id + ": " + block.idStr);
 			block.normalizeData();
+			for (int tex_idx : block.getUsedTextures())
+			{
+				this.useTexture(tex_idx);
+			}
 		}
 		ExceptionDialog.clearExtraStatus2();
 	}
