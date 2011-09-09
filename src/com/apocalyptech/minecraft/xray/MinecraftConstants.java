@@ -239,6 +239,7 @@ public class MinecraftConstants {
 		// For now...
 		//BlockTypeCollection blockinfo = loadBlocks("blockdefs/aether.yaml");
 		//blockCollection.importFrom(blockinfo, true);
+
 		//TODO: Exceptions generated should really be saving our static state information (for later reporting)
 		for (BlockTypeCollection coll : MinecraftEnvironment.getBlockTypeCollectionFiles())
 		{
@@ -250,6 +251,10 @@ public class MinecraftConstants {
 			if (coll.getException() == null)
 			{
 				System.out.println("Got " + g + " modinfo " + coll.getName() + " (" + coll.getFile().getName() + "), " + coll.usedTextureCount() + " textures.");
+
+				// Temporarily import this, in case someone wants to fully X-Ray on 1.8-pre
+				// before I have a chance to actually put in Proper support for this
+				blockCollection.importFrom(coll, true);
 			}
 			else
 			{
