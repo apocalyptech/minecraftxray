@@ -380,6 +380,8 @@ public class ResolutionDialog extends JFrame {
 		c.insets = checkboxInsets;
 		addComponent(basicPanel, invertMouseCheckBox,c);
 
+		/* Temporarily disabling since I've made this kind of "public"
+		 * and the button currently does nothing.
 		// Mod Options label
 		current_grid_y++;
 		c.weightx = flabel; 
@@ -397,6 +399,7 @@ public class ResolutionDialog extends JFrame {
 		c.anchor = GridBagConstraints.WEST;
 		c.insets = checkboxInsets;
 		addComponent(basicPanel, modOptionsButton, c);
+		*/
 		
 		// Separator
 		current_grid_y++;
