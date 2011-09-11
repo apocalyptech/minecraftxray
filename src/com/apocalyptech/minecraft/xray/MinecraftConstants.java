@@ -99,7 +99,8 @@ public class MinecraftConstants {
 		TRAPDOOR,
 		PISTON_BODY,
 		PISTON_HEAD,
-		VINE
+		VINE,
+		HUGE_MUSHROOM
 	}
 
 	// Some block types' renderers automatically use other textures that we don't
@@ -118,6 +119,14 @@ public class MinecraftConstants {
 		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_BODY, new Integer[] {-2, -1, 1, 2});
 		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_HEAD, new Integer[] {-1, 1, 2, 3});
 	}
+
+	// ... aand, because Huge Mushrooms are ridiculous, some hardcoded textures to reserve
+	public static int TEX_HUGE_MUSHROOM_STEM = 13+(16*8);
+	public static int TEX_HUGE_MUSHROOM_PORES = 14+(16*8);
+	public static int[] blockTypeAbsoluteTextures = new int[] {
+		TEX_HUGE_MUSHROOM_STEM,
+		TEX_HUGE_MUSHROOM_PORES
+	};
 
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
 	public static BlockTypeCollection blockCollection = new BlockTypeCollection();
@@ -340,6 +349,12 @@ public class MinecraftConstants {
 
 		// Set our blockArray
 		blockArray = blockCollection.blockArray;
+
+		// Make sure we're reserving some hardcoded, absolute textures.
+		for (int tex : blockTypeAbsoluteTextures)
+		{
+			blockCollection.useTexture(tex);
+		}
 
 		// Clean up.
 		ExceptionDialog.clearExtraStatus();

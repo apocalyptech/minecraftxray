@@ -838,7 +838,9 @@ public class Chunk {
 		if(offset % 2 == 0) {
 			return (byte) (mapData.value[halfOffset] & 0xF);
 		} else {
-			return (byte) (mapData.value[halfOffset] >> 4);
+			// We shouldn't have to &0xF here, but if we don't the value
+			// returned could be negative, even though that would be silly.
+			return (byte) ((mapData.value[halfOffset] >> 4) & 0xF);
 		}
 	}
 	
@@ -1274,7 +1276,6 @@ public class Chunk {
 		 float y = yyy;
 		 
 		 byte data = getData(xxx, yyy, zzz);
-		 data &= 0xF;
 		 switch(data)
 		 {
 			case 0:
@@ -2900,6 +2901,88 @@ public class Chunk {
 								east = textureId;
 								top = textureId;
 								bottom = textureId;
+								if (block.type == BLOCK_TYPE.HUGE_MUSHROOM)
+								{
+									byte data = getData(x, y, z);
+									switch (data)
+									{
+										case 0:
+											north = TEX_HUGE_MUSHROOM_PORES;
+											south = TEX_HUGE_MUSHROOM_PORES;
+											west = TEX_HUGE_MUSHROOM_PORES;
+											east = TEX_HUGE_MUSHROOM_PORES;
+											top = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+									    case 1:
+											south = TEX_HUGE_MUSHROOM_PORES;
+											west = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 2:
+											north = TEX_HUGE_MUSHROOM_PORES;
+											south = TEX_HUGE_MUSHROOM_PORES;
+											west = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 3:
+											north = TEX_HUGE_MUSHROOM_PORES;
+											west = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 4:
+											south = TEX_HUGE_MUSHROOM_PORES;
+											west = TEX_HUGE_MUSHROOM_PORES;
+											east = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 5:
+											north = TEX_HUGE_MUSHROOM_PORES;
+											south = TEX_HUGE_MUSHROOM_PORES;
+											west = TEX_HUGE_MUSHROOM_PORES;
+											east = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 6:
+											north = TEX_HUGE_MUSHROOM_PORES;
+											west = TEX_HUGE_MUSHROOM_PORES;
+											east = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 7:
+											south = TEX_HUGE_MUSHROOM_PORES;
+											east = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 8:
+											north = TEX_HUGE_MUSHROOM_PORES;
+											south = TEX_HUGE_MUSHROOM_PORES;
+											east = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 9:
+											north = TEX_HUGE_MUSHROOM_PORES;
+											east = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										case 10:
+											north = TEX_HUGE_MUSHROOM_STEM;
+											south = TEX_HUGE_MUSHROOM_STEM;
+											west = TEX_HUGE_MUSHROOM_STEM;
+											east = TEX_HUGE_MUSHROOM_STEM;
+											top = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+										default:
+											north = TEX_HUGE_MUSHROOM_PORES;
+											south = TEX_HUGE_MUSHROOM_PORES;
+											west = TEX_HUGE_MUSHROOM_PORES;
+											east = TEX_HUGE_MUSHROOM_PORES;
+											top = TEX_HUGE_MUSHROOM_PORES;
+											bottom = TEX_HUGE_MUSHROOM_PORES;
+											break;
+									}
+								}
 								if (block.texture_dir_map != null)
 								{
 									byte data = getData(x, y, z);

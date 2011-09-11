@@ -225,7 +225,9 @@ public class BlockType
 
 	public boolean isSolid()
 	{
-		return (this.type == BLOCK_TYPE.NORMAL);
+		// TODO: define some kind of "solid_render_type" or something in YAML, so that we
+		// can continue to just test for NORMAL here.
+		return (this.type == BLOCK_TYPE.NORMAL || this.type == BLOCK_TYPE.HUGE_MUSHROOM);
 	}
 
 	/**

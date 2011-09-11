@@ -118,6 +118,7 @@
 #             WALLSIGN
 #             WATER
 #             VINE
+#             HUGE_MUSHROOM
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -873,12 +874,14 @@ blocks:
     name: Mushroom
     mapcolor: [145, 109, 85]
     tex: [14, 7]
+    type: HUGE_MUSHROOM
 
   - id: 100
     idStr: HUGE_RED_MUSHROOM
     name: Mushroom
     mapcolor: [181, 29, 27]
     tex: [13, 7]
+    type: HUGE_MUSHROOM
 
   - id: 101
     idStr: IRON_BARS
