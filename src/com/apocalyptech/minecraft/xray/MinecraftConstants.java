@@ -98,7 +98,8 @@ public class MinecraftConstants {
 		SEMISOLID,
 		TRAPDOOR,
 		PISTON_BODY,
-		PISTON_HEAD
+		PISTON_HEAD,
+		VINE
 	}
 
 	// Some block types' renderers automatically use other textures that we don't

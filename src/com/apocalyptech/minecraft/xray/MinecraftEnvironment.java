@@ -588,6 +588,8 @@ public class MinecraftEnvironment {
 		}
 		
 		// Now do the coloring if we have to.
+		// TODO: would be nice to read the coordinates from the values given in the YAML, rather
+		// than hardcoding in here
 		if (grayscale)
 		{	
 			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f);
@@ -622,6 +624,20 @@ public class MinecraftEnvironment {
 
 			// Now the side-grass overlay
 			rect = new Rectangle(6*square_width, 2*square_width, square_width, square_width);
+			g2d.setComposite(ac);
+			g2d.setColor(Color.green);
+			g2d.fill(rect);
+			g2d.drawImage(bi, null, 0, 0);
+
+			// Now vines
+			rect = new Rectangle(15*square_width, 8*square_width, square_width, square_width);
+			g2d.setComposite(ac);
+			g2d.setColor(Color.green);
+			g2d.fill(rect);
+			g2d.drawImage(bi, null, 0, 0);
+
+			// Now stems
+			rect = new Rectangle(15*square_width, 6*square_width, square_width, square_width);
 			g2d.setComposite(ac);
 			g2d.setColor(Color.green);
 			g2d.fill(rect);

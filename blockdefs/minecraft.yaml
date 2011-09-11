@@ -117,6 +117,7 @@
 #             TRAPDOOR
 #             WALLSIGN
 #             WATER
+#             VINE
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -452,6 +453,9 @@ blocks:
       1: [0, 12]  # Sandstone
       2: [4, 0]   # Plank
       3: [0, 1]   # Cobblestone
+      4: [7, 0]   # Brick
+      5: [6, 3]   # Stone Brick
+      6: [5, 0]   # Smooth stone again, apparently
   
   - id: 44
     idStr: SLAB
@@ -463,6 +467,9 @@ blocks:
       1: [0, 12]  # Sandstone
       2: [4, 0]   # Plank
       3: [0, 1]   # Cobblestone
+      4: [7, 0]   # Brick
+      5: [6, 3]   # Stone Brick
+      6: [5, 0]   # Smooth stone again, apparently
     type: HALFHEIGHT
   
   - id: 45
@@ -735,6 +742,9 @@ blocks:
     name: Cactus
     mapcolor: [25, 120, 25]
     tex: [6, 4]
+    tex_direction:
+      TOP: [5, 4]
+      BOTTOM: [5, 4]
   
   - id: 82
     idStr: CLAY
@@ -841,4 +851,95 @@ blocks:
     mapcolor: [143, 107, 53]
     tex: [4, 5]
     type: TRAPDOOR
+
+  - id: 97
+    idStr: STONE_SILVERFISH
+    name: Silverfish Stone
+    mapcolor: [120, 120, 120]
+    tex: [1, 0]
+
+  - id: 98
+    idStr: STONE_BRICK
+    name: Stone Brick
+    mapcolor: [120, 120, 120]
+    tex: [6, 3]
+    tex_data:
+      0: [6, 3]  # Regular
+      1: [4, 6]  # Mossy
+      2: [5, 6]  # Cracked
+
+  - id: 99
+    idStr: HUGE_BROWN_MUSHROOM
+    name: Mushroom
+    mapcolor: [145, 109, 85]
+    tex: [14, 7]
+
+  - id: 100
+    idStr: HUGE_RED_MUSHROOM
+    name: Mushroom
+    mapcolor: [181, 29, 27]
+    tex: [13, 7]
+
+  - id: 101
+    idStr: IRON_BARS
+    name: Iron Bars
+    mapcolor: [77, 77, 78]
+    tex: [5, 5]
+
+  - id: 102
+    idStr: GLASS_PANE
+    name: Glass Pane
+    mapcolor: [255, 255, 255]
+    tex: [1, 3]
+  
+  - id: 103
+    idStr: MELON
+    name: Melon
+    mapcolor: [190, 184, 41]
+    tex: [9, 8]
+    tex_direction:
+      FORWARD: [8, 8]
+      SIDES: [8, 8]
+      BACKWARD: [8, 8]
+
+  - id: 104
+    idStr: PUMPKIN_STEM
+    name: Pumpkin Stem
+    mapcolor: [227, 144, 29]
+    tex: [15, 6]
+    type: DECORATION_CROSS
+
+  - id: 105
+    idStr: MELON_STEM
+    name: Melon Stem
+    mapcolor: [190, 184, 41]
+    tex: [15, 6]
+    type: DECORATION_CROSS
+
+  - id: 106
+    idStr: VINE
+    name: Vine
+    mapcolor: [117, 176, 73]
+    tex: [15, 8]
+    type: VINE
+
+  - id: 107
+    idStr: FENCE_GATE
+    name: Gate
+    mapcolor: [157, 128, 79]
+    tex: [4, 0]
+ 
+  - id: 108
+    idStr: BRICK_STAIRS
+    name: Stairs
+    mapcolor: [170, 86, 62]
+    tex: [7, 0]
+    type: STAIRS
+
+  - id: 109
+    idStr: STONE_BRICK_STAIRS
+    name: Stairs
+    mapcolor: [120, 120, 120]
+    tex: [6, 3]
+    type: STAIRS
 ...

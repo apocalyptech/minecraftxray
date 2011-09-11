@@ -1258,6 +1258,48 @@ public class Chunk {
 	 			break;
 		 }
 	}
+    
+	/**
+	 * Renders a vine, given its attached-side data.  Pretty much identical
+	 * to renderLadder, except that there's different data values.  Alas!
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderVine(int textureId, int xxx, int yyy, int zzz) {
+		 float x = xxx + this.x*16;
+		 float z = zzz + this.z*16;
+		 float y = yyy;
+		 
+		 byte data = getData(xxx, yyy, zzz);
+		 data &= 0xF;
+		 switch(data)
+		 {
+			case 0:
+				// Top
+				this.renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.45f);
+				break;
+		 	case 1:
+		 		// West
+		 		this.renderWestEast(textureId, x, y, z+1.0f-TEX64);
+		 		break;
+		 	case 2:
+	 			// North
+				this.renderNorthSouth(textureId, x+TEX64, y, z);
+	 			break;
+		 	case 4:
+		 		// East
+		 		this.renderWestEast(textureId, x, y, z+TEX64);
+		 		break;
+		 	case 8:
+			default:
+		 		// South
+		 		this.renderNorthSouth(textureId, x+1.0f-TEX64, y, z);
+		 		break;
+		 }
+	}
 
 	/**
 	 * This is actually used for rendering "decoration" type things which are on
@@ -2835,6 +2877,9 @@ public class Chunk {
 								break;
 							case CAKE:
 								renderCake(textureId,x,y,z);
+								break;
+							case VINE:
+								renderVine(textureId,x,y,z);
 								break;
 							case HALFHEIGHT:
 								if(draw) {
