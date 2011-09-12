@@ -71,38 +71,42 @@ But without the "KEY_" prefix.
 You can also set which resources you want to be highlightable in the app.
 For specifying resource highlights, you should use the following names:
 
-    BED                     ICE                      RED_ROSE                 
-    BEDROCK                 IRON_BLOCK               SAND                     
-    BOOKSHELF               IRON_DOOR                SANDSTONE                
-    BRICK                   IRON_ORE                 SAPLING                  
-    BROWN_MUSHROOM          JACK_O_LANTERN           SIGNPOST                 
-    BURNING_FURNACE         JUKEBOX                  SLAB                     
-    CACTUS                  LADDER                   SNOW                     
-    CAKE                    LAPIS_LAZULI_BLOCK       SNOW_BLOCK               
-    CHEST                   LAPIS_LAZULI_ORE         SOUL_SAND                
-    CLAY                    LAVA                     SPONGE                   
-    COAL_ORE                LEAVES                   STATIONARY_LAVA          
-    COBBLESTONE             LEVER                    STATIONARY_WATER         
-    COBBLESTONE_STAIRS      MINECART_TRACKS          STONE                    
-    CROPS                   MOB_SPAWNER              STONE_BUTTON             
-    DEAD_SHRUB              MOSSY_COBBLESTONE        STONE_PRESSURE_PLATE     
-    DETECTOR_RAIL           NETHERRACK               SUGARCANE                
-    DIAMOND_BLOCK           NOTE_BLOCK               TALL_GRASS               
-    DIAMOND_ORE             OBSIDIAN                 TNT                      
-    DIRT                    PISTON_BODY              TORCH                    
-    DISPENSER               PISTON_HEAD              TRAPDOOR                 
-    DOUBLE_SLAB             PISTON_STICKY_BODY       WALL_SIGN                
-    FARMLAND                PLANK                    WATER                    
-    FENCE                   PORTAL                   WEB                      
-    FIRE                    POWERED_RAIL             WOOD                     
-    FURNACE                 PUMPKIN                  WOODEN_DOOR              
-    GLASS                   REDSTONE_ORE             WOODEN_PRESSURE_PLATE    
-    GLOWING_REDSTONE_ORE    REDSTONE_REPEATER_OFF    WOODEN_STAIRS            
-    GLOWSTONE               REDSTONE_REPEATER_ON     WOOL                     
-    GOLD_BLOCK              REDSTONE_TORCH_OFF       WORKBENCH                
-    GOLD_ORE                REDSTONE_TORCH_ON        YELLOW_FLOWER            
-    GRASS                   REDSTONE_WIRE                                     
-    GRAVEL                  RED_MUSHROOM                                      
+    BED                     HUGE_RED_MUSHROOM        RED_MUSHROOM
+    BEDROCK                 ICE                      RED_ROSE
+    BOOKSHELF               IRON_BARS                SAND
+    BRICK                   IRON_BLOCK               SANDSTONE
+    BRICK_STAIRS            IRON_DOOR                SAPLING
+    BROWN_MUSHROOM          IRON_ORE                 SIGNPOST
+    BURNING_FURNACE         JACK_O_LANTERN           SLAB
+    CACTUS                  JUKEBOX                  SNOW
+    CAKE                    LADDER                   SNOW_BLOCK
+    CHEST                   LAPIS_LAZULI_BLOCK       SOUL_SAND
+    CLAY                    LAPIS_LAZULI_ORE         SPONGE
+    COAL_ORE                LAVA                     STATIONARY_LAVA
+    COBBLESTONE             LEAVES                   STATIONARY_WATER
+    COBBLESTONE_STAIRS      LEVER                    STONE
+    CROPS                   MELON                    STONE_BRICK
+    DEAD_SHRUB              MELON_STEM               STONE_BRICK_STAIRS
+    DETECTOR_RAIL           MINECART_TRACKS          STONE_BUTTON
+    DIAMOND_BLOCK           MOB_SPAWNER              STONE_PRESSURE_PLATE
+    DIAMOND_ORE             MOSSY_COBBLESTONE        STONE_SILVERFISH
+    DIRT                    NETHERRACK               SUGARCANE
+    DISPENSER               NOTE_BLOCK               TALL_GRASS
+    DOUBLE_SLAB             OBSIDIAN                 TNT
+    FARMLAND                PISTON_BODY              TORCH
+    FENCE                   PISTON_HEAD              TRAPDOOR
+    FENCE_GATE              PISTON_STICKY_BODY       VINE
+    FIRE                    PLANK                    WALL_SIGN
+    FURNACE                 PORTAL                   WATER
+    GLASS                   POWERED_RAIL             WEB
+    GLASS_PANE              PUMPKIN                  WOOD
+    GLOWING_REDSTONE_ORE    PUMPKIN_STEM             WOODEN_DOOR
+    GLOWSTONE               REDSTONE_ORE             WOODEN_PRESSURE_PLATE
+    GOLD_BLOCK              REDSTONE_REPEATER_OFF    WOODEN_STAIRS
+    GOLD_ORE                REDSTONE_REPEATER_ON     WOOL
+    GRASS                   REDSTONE_TORCH_OFF       WORKBENCH
+    GRAVEL                  REDSTONE_TORCH_ON        YELLOW_FLOWER
+    HUGE_BROWN_MUSHROOM     REDSTONE_WIRE
 
 Perhaps someday there'll be an actual GUI for specifying all this.
 
