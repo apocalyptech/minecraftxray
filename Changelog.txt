@@ -7,7 +7,7 @@
     North now, if we see data values we don't understand
   * Block definitions are loaded from a YAML file, instead of hard-coded
   * Unknown blocks will show up purple in the minimap
-  * Cactus tops render with the proper texture
+  * Improvements to the rendering of cacti, fences
 
 Minecraft X-Ray 3.2.2 (2011.09.05)
 

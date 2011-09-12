@@ -89,6 +89,7 @@ public class MinecraftConstants {
 		SIGNPOST,
 		WALLSIGN,
 		FENCE,
+		FENCE_GATE,
 		LEVER,
 		BUTTON,
 		PORTAL,
@@ -145,6 +146,8 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_FIRE;
 	public static BlockType BLOCK_WATER;
 	public static BlockType BLOCK_STATIONARY_WATER;
+	public static BlockType BLOCK_FENCE;
+	public static BlockType BLOCK_FENCE_GATE;
 
 	// A meta-block to use for unknown block types
 	public static BlockType BLOCK_UNKNOWN;
@@ -333,6 +336,16 @@ public class MinecraftConstants {
 		if (BLOCK_STATIONARY_WATER == null)
 		{
 			throw new BlockTypeLoadException("STATIONARY_WATER block definition not found");
+		}
+		BLOCK_FENCE = blockCollection.getByName("FENCE");
+		if (BLOCK_FENCE == null)
+		{
+			throw new BlockTypeLoadException("FENCE block definition not found");
+		}
+		BLOCK_FENCE_GATE = blockCollection.getByName("FENCE_GATE");
+		if (BLOCK_FENCE_GATE == null)
+		{
+			throw new BlockTypeLoadException("FENCE_GATE block definition not found");
 		}
 
 		// We also define a "special" block for unknown block types, so that instead

@@ -41,6 +41,7 @@
 #          shouldn't be changed are:
 #
 #               COBBLESTONE (the LEVER renderer uses it)
+#               FENCE / FENCE_GATE (their respective renderers use it)
 #               TORCH (the "explored" highlight uses it)
 #               BEDROCK (the "bedrock" toggle uses it)
 #               GRASS (the "grass rendering" toggle uses it)
@@ -931,6 +932,7 @@ blocks:
     name: Gate
     mapcolor: [157, 128, 79]
     tex: [4, 0]
+    type: FENCE_GATE
  
   - id: 108
     idStr: BRICK_STAIRS
