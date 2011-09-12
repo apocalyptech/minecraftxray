@@ -120,6 +120,11 @@ public class Chunk {
 		return this.blockData;
 	}
 
+	/**
+	 * Gets the Block ID of the block immediately to the north.  This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
 	private short getAdjNorthBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (x > 0)
@@ -140,6 +145,11 @@ public class Chunk {
 		}
 	}
 
+	/**
+	 * Gets the Block ID of the block immediately to the south.  This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
 	private short getAdjSouthBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (x < 15)
@@ -160,6 +170,11 @@ public class Chunk {
 		}
 	}
 
+	/**
+	 * Gets the Block ID of the block immediately to the east.  This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
 	private short getAdjEastBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (z > 0)
@@ -180,6 +195,11 @@ public class Chunk {
 		}
 	}
 
+	/**
+	 * Gets the Block ID of the block immediately to the west.  This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
 	private short getAdjWestBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (z < 15)
@@ -200,6 +220,9 @@ public class Chunk {
 		}
 	}
 	
+	/**
+	 * Render something which is a North/South face.
+	 */
 	public void renderNorthSouth(int t, float x, float y, float z) {
 		this.renderNorthSouth(t, x, y, z, 0.5f, 0.5f);
 	}
@@ -294,6 +317,9 @@ public class Chunk {
 		
 	}
 	
+	/**
+	 * Render the top or bottom of a block, depending on how we're looking at it.
+	 */
 	public void renderTopDown(int t, float x, float y, float z) {
 		this.renderTopDown(t, x, y, z, 0.5f);
 	}
@@ -324,6 +350,9 @@ public class Chunk {
 	}
 	
 
+	/**
+	 * Renders something which is a West/East face.
+	 */
 	public void renderWestEast(int t, float x, float y, float z) {
 		this.renderWestEast(t, x, y, z, 0.5f, 0.5f);
 	}
@@ -941,17 +970,17 @@ public class Chunk {
 		GL11.glEnd();
 	}
 	
-	public boolean isInRange(float x, float y, float maxDistance) {
-		float realX = this.x*16;
-		float realY = this.z*16;
-		double distance = Math.sqrt(((x-realX) * (x-realX)) + ((y-realY) * (y-realY)));
-		return distance < maxDistance;
-	}
-	
+	/**
+	 * Gets the block ID at the specified coordinate in the chunk.  This is
+	 * only really used in the getAdj*BlockId() methods.
+	 */
 	public short getBlock(int x, int y, int z) {
 		return blockData.value[y + (z * 128) + (x * 128 * 16)];
 	}
 
+	/**
+	 * Gets the block data at the specified coordinates.
+	 */
 	public byte getData(int x, int y, int z) {
 		int offset = y + (z * 128) + (x * 128 * 16);
 		int halfOffset = offset / 2;
@@ -1421,7 +1450,7 @@ public class Chunk {
 			this.renderNorthSouth(textureId, x+1.0f-TEX64, y, z);
 			rendered = true;
 		 }
-		 if (data == 0 || (rendered && yyy < 127 && !this.checkSolid(blockData.value[blockOffset+1], false)))
+		 if (data == 0 || (rendered && yyy < 127 && isSolid(blockData.value[blockOffset+1])))
 		 {
 			// Top
 			this.renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.45f);
@@ -2316,6 +2345,9 @@ public class Chunk {
 		GL11.glPopMatrix();
 	}
 
+	/**
+	 * Renders a button.
+	 */
 	public void renderButton(int textureId, int xxx, int yyy, int zzz) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
@@ -2416,6 +2448,12 @@ public class Chunk {
 		}
 	}
 	
+	/**
+	 * This is a bizarre little method, and should probably be both renamed and refactored
+	 * into some functions that make more sense.  It's used in a few places to determine
+	 * which faces of a block we're supposed to actually render.  "transparency" is whether
+	 * or not we're currently rendering transparent objects.
+	 */
 	public boolean checkSolid(short block, boolean transparency) {
 		if(block <= 0) {
 			return true;
@@ -2427,6 +2465,21 @@ public class Chunk {
 		return blockArray[block].isSolid() == transparency;
 	}
 
+	/**
+	 * This method, on the other hand, is a bit more clear.  We'll return true if the
+	 * block ID is solid.
+	 */
+	public boolean isSolid(short block)
+	{
+		if(block <= 0) {
+			return false;
+		}
+		if (blockArray[block] == null)
+		{
+			return false;
+		}
+		return blockArray[block].isSolid();
+	}
 	
 	/**
 	 * Renders the body of a piston.  If the piston is retracted, we'll also make a call out
@@ -2713,22 +2766,22 @@ public class Chunk {
 
 		short temp_id;
 		temp_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
-		if (temp_id == blockId || !this.checkSolid(temp_id, false))
+		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_north = true;
 		}
 		temp_id = this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
-		if (temp_id == blockId || !this.checkSolid(temp_id, false))
+		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_south = true;
 		}
 		temp_id = this.getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
-		if (temp_id == blockId || !this.checkSolid(temp_id, false))
+		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_west = true;
 		}
 		temp_id = this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
-		if (temp_id == blockId || !this.checkSolid(temp_id, false))
+		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_east = true;
 		}
