@@ -291,6 +291,14 @@ public class ExceptionDialog extends JFrame {
 	}
 
 	/**
+	 * Gets our first extra-status string.
+	 */
+	public static String getExtraStatus1()
+	{
+		return extraStatus1;
+	}
+
+	/**
 	 * Clears out our first extra-status string.
 	 */
 	public static void clearExtraStatus1()
@@ -304,6 +312,14 @@ public class ExceptionDialog extends JFrame {
 	public static void setExtraStatus2(String newStatus)
 	{
 		extraStatus2 = newStatus;
+	}
+
+	/**
+	 * Gets our second extra-status string.
+	 */
+	public static String getExtraStatus2()
+	{
+		return extraStatus2;
 	}
 
 	/**

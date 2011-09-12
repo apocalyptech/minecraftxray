@@ -267,9 +267,28 @@ public class MinecraftConstants {
 			{
 				System.out.println("Got " + g + " modinfo " + coll.getName() + " (" + coll.getFile().getName() + "), " + coll.usedTextureCount() + " textures.");
 
-				// Temporarily import this, in case someone wants to fully X-Ray on 1.8-pre
-				// before I have a chance to actually put in Proper support for this
-				blockCollection.importFrom(coll, true);
+				// I think I will actually keep this the way it is, rather than create a GUI for
+				// loading these.  As I noticed during the 1.8 prerelease stuff, as I had been
+				// testing Aethermod things, people using mods might be fairly likely to shuffle
+				// their minecraft.jar file around quite a bit.  If I had gone forward with my
+				// previous plans, this would mean that whenever folks switched from, say, Aethermod
+				// to 1.8 (assuming here that Aethermod might take a little while to get updated
+				// to the 1.8 codebase), our stuff would disable Aether, and users would have to
+				// continually be going into that dialog to re-enable stuff.
+				//
+				// If we just auto-load everything all the time, then it should hopefully error
+				// out harmlessly on the ones that didn't load, and pick them up again once they
+				// can.  Of course, this DOES open ourselves up to issues if two mods use the same
+				// block ID, and a user is switching back and forth between them.  I feel okay
+				// requiring the user to manually swap out some blockdef files in that case, though.
+				try
+				{
+					blockCollection.importFrom(coll, true);
+				}
+				catch (BlockTypeLoadException e)
+				{
+					System.out.println("Error loading " + g + " modinfo at " + coll.getFile().getName() + ": " + e.toString());
+				}
 			}
 			else
 			{
