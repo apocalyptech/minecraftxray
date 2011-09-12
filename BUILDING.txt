@@ -1,14 +1,9 @@
-You should be able to develop (or just use) the source either from
-the commandline or Eclipse.  The tool was originally developed in
-Eclipse, but EGit (Eclipse's Git interface) turned out to be kind of
-annoying, which was all the urging I needed to abandon the crutch of
-handy autocompletion for the warm comforts of my beloved vim (which,
-yes, I know, can do autocompletes if you coerce it into doing so).
+You're best off checking out the project from Git, rather than
+using the bundled sourcecode in the release .zip and .tbz2 archives.
+If you do want to use the bundled source rather than checking out the
+project, you'll have to do some file copying:
 
-Anyway, either way you want to do it, there's a couple of path/file
-considerations first:
-
-1) The build expects the LWJGL libraries and a few other Jar files in
+   The build expects the LWJGL libraries and a few other Jar files in
    the "lib" directory.  Specifically it's looking for:
    
        AppleJavaExtensions.jar (presumably just for OSX)
@@ -24,17 +19,21 @@ considerations first:
    files, as well.  These will be .dll if you're on Windows, and .so on
    Linux.
 
-2) If you want to build a Windows EXE (which is required for ant's "dist"
-   target), you'll also need the launch4j files contained in
-   support/launch4j-dist.  Note that the tools distributed in this archive
-   (and available through Git) will only work on Linux.
+At that point, you should theoretically be good to go.
 
-At that point, if you're on the commandline, you can use Ant to build/run,
+You should be able to develop (or just use) the source either from
+the commandline or Eclipse.  The tool was originally developed in
+Eclipse, but EGit (Eclipse's Git interface) turned out to be kind of
+annoying, which was all the urging I needed to abandon the crutch of
+handy autocompletion for the warm comforts of my beloved vim (which,
+yes, I know, can do autocompletes if you coerce it into doing so).
+
+If you're on the commandline, you can use Ant to build/run,
 etc.  "ant run" should be sufficient to run the app (it will compile up
 a debug version automatically).  "ant dist" will package it up as if you're
-doing a release, though again note that right now that step will only work
-on Linux, since the Windows EXE generation oddly enough will only work on
-Linux out-of-the-box.  See build.xml for other options.
+doing a release, though note that right now that step will only work
+on Linux.  I've never taken the time to figure out how to get launch4j to
+work on other platforms.  See build.xml for other ant targets.
 
 If you want to use Eclipse, there's a couple of extra steps.  I feel that
 both of them really *should* have workarounds which would prevent them from
