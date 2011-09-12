@@ -64,6 +64,12 @@ public class Chunk {
 	private ArrayList<PaintingEntity> paintings;
 	
 	private MinecraftLevel level;
+
+	private final float fence_postsize = .125f;
+	private final float fence_postsize_h = fence_postsize/2f;
+	private final float fence_slat_height = .1875f;
+	private final float fence_top_slat_offset = .375f;
+	private final float fence_slat_start_offset = -.125f;
 	
 	public Chunk(MinecraftLevel level, Tag data) {
 		
@@ -112,6 +118,86 @@ public class Chunk {
 	
 	public ShortArrayTag getMapData() {
 		return this.blockData;
+	}
+
+	private short getAdjNorthBlockId(int x, int y, int z, int blockOffset)
+	{
+		if (x > 0)
+		{
+			return blockData.value[blockOffset-BLOCKSPERCOLUMN];
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x-1, this.z);
+			if (otherChunk == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return otherChunk.getBlock(15, y, z);
+			}
+		}
+	}
+
+	private short getAdjSouthBlockId(int x, int y, int z, int blockOffset)
+	{
+		if (x < 15)
+		{
+			return blockData.value[blockOffset+BLOCKSPERCOLUMN];
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x+1, this.z);
+			if (otherChunk == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return otherChunk.getBlock(0, y, z);
+			}
+		}
+	}
+
+	private short getAdjEastBlockId(int x, int y, int z, int blockOffset)
+	{
+		if (z > 0)
+		{
+			return blockData.value[blockOffset-BLOCKSPERROW];
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x, this.z-1);
+			if (otherChunk == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return otherChunk.getBlock(x, y, 15);
+			}
+		}
+	}
+
+	private short getAdjWestBlockId(int x, int y, int z, int blockOffset)
+	{
+		if (z < 15)
+		{
+			return blockData.value[blockOffset+BLOCKSPERROW];
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x, this.z+1);
+			if (otherChunk == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return otherChunk.getBlock(x, y, 0);
+			}
+		}
 	}
 	
 	public void renderNorthSouth(int t, float x, float y, float z) {
@@ -273,7 +359,7 @@ public class Chunk {
 	 * Renders a vertical texture with a full square texture.
 	 */
 	public void renderVertical(int t, float x1, float z1, float x2, float z2, float y, float height) {
-		renderVertical(t, x1, z2, x2, z2, y, height, 16, 16, 0, 0);
+		renderVertical(t, x1, z1, x2, z2, y, height, 16, 16, 0, 0);
 	}
 
 	/**
@@ -1987,86 +2073,51 @@ public class Chunk {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
-		float postsize = .1f;
-		float postsize_h = postsize/2f;
-		float slat_height = .1875f;
-		float top_slat_offset = .3f;
-		float slat_start = y-.1f;
+		float slat_start = y+fence_slat_start_offset;
 		
 		// First the fencepost
-		this.renderVertical(textureId, x+postsize, z+postsize, x+postsize, z-postsize, y-0.5f, 1f, 4, 16, 6, 0);
-		this.renderVertical(textureId, x+postsize, z-postsize, x-postsize, z-postsize, y-0.5f, 1f, 4, 16, 6, 0);
-		this.renderVertical(textureId, x-postsize, z-postsize, x-postsize, z+postsize, y-0.5f, 1f, 4, 16, 6, 0);
-		this.renderVertical(textureId, x-postsize, z+postsize, x+postsize, z+postsize, y-0.5f, 1f, 4, 16, 6, 0);
-		this.renderHorizontal(textureId, x+postsize, z+postsize, x-postsize, z-postsize, y+0.5f, 4, 4, 6, 6, false);
+		this.renderVertical(textureId, x+fence_postsize, z+fence_postsize, x+fence_postsize, z-fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
+		this.renderVertical(textureId, x+fence_postsize, z-fence_postsize, x-fence_postsize, z-fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
+		this.renderVertical(textureId, x-fence_postsize, z-fence_postsize, x-fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
+		this.renderVertical(textureId, x-fence_postsize, z+fence_postsize, x+fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
+		this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize, x-fence_postsize, z-fence_postsize, y+0.5f, 4, 4, 6, 6, false);
 
 		// Check for adjacent fences in the -x direction
-		boolean have_adj = false;
-		if (xxx>0)
-		{
-			if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == BLOCK_FENCE.id)
-			{
-				have_adj = true;
-			}
-		}
-		else
-		{
-			Chunk otherChunk = level.getChunk(this.x-1, this.z);
-			if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == BLOCK_FENCE.id)
-			{
-				have_adj  = true;
-			}
-		}
-		if (have_adj)
+		if (this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
 		{
 			// Bottom slat
-			this.renderVertical(textureId, x-postsize, z+postsize_h, x-1f+postsize, z+postsize_h, slat_start, slat_height, 16, 3, 0, 5);
-			this.renderVertical(textureId, x-postsize, z-postsize_h, x-1f+postsize, z-postsize_h, slat_start, slat_height, 16, 3, 0, 5);
-			this.renderHorizontal(textureId, x-postsize, z+postsize_h, x-1f+postsize, z-postsize_h, slat_start, 2, 16, 14, 0, false);
-			this.renderHorizontal(textureId, x-postsize, z+postsize_h, x-1f+postsize, z-postsize_h, slat_start+slat_height, 2, 16, 14, 0, false);
+			this.renderVertical(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z+fence_postsize_h, slat_start, fence_slat_height, 16, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize, z-fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start, fence_slat_height, 16, 3, 0, 5);
+			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start, 2, 16, 14, 0, false);
+			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_slat_height, 2, 16, 14, 0, false);
 
 			// Top slat
-			this.renderVertical(textureId, x-postsize, z+postsize_h, x-1f+postsize, z+postsize_h, slat_start+top_slat_offset, slat_height, 16, 3, 0, 5);
-			this.renderVertical(textureId, x-postsize, z-postsize_h, x-1f+postsize, z-postsize_h, slat_start+top_slat_offset, slat_height, 16, 3, 0, 5);
-			this.renderHorizontal(textureId, x-postsize, z+postsize_h, x-1f+postsize, z-postsize_h, slat_start+top_slat_offset, 2, 16, 14, 0, false);
-			this.renderHorizontal(textureId, x-postsize, z+postsize_h, x-1f+postsize, z-postsize_h, slat_start+top_slat_offset+slat_height, 2, 16, 14, 0, false);
+			this.renderVertical(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z+fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 16, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize, z-fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 16, 3, 0, 5);
+			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_top_slat_offset, 2, 16, 14, 0, false);
+			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_top_slat_offset+fence_slat_height, 2, 16, 14, 0, false);
 		}
 		
 		// Check for adjacent fences in the -z direction
-		have_adj = false;
-		if(zzz>0)
-		{
-			if (blockData.value[blockOffset-BLOCKSPERROW] == BLOCK_FENCE.id)
-			{
-				have_adj = true;
-			}
-		}
-		else
-		{
-			Chunk otherChunk = level.getChunk(this.x,this.z-1);
-			if(otherChunk != null && otherChunk.getBlock(xxx, yyy, 15) == BLOCK_FENCE.id)
-			{
-				have_adj = true;
-			}
-		}
-		if (have_adj)
+		if (this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
 		{
 			// Bottom slat
-			this.renderVertical(textureId, x+postsize_h, z-postsize, x+postsize_h, z-1f+postsize, slat_start, slat_height, 16, 3, 0, 5);
-			this.renderVertical(textureId, x-postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start, slat_height, 16, 3, 0, 5);
-			this.renderHorizontal(textureId, x+postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start, 2, 16, 14, 0, true);
-			this.renderHorizontal(textureId, x+postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start+slat_height, 2, 16, 14, 0, true);
+			this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-1f+fence_postsize, slat_start, fence_slat_height, 16, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start, fence_slat_height, 16, 3, 0, 5);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start, 2, 16, 14, 0, true);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_slat_height, 2, 16, 14, 0, true);
 
 			// Top slat
-			this.renderVertical(textureId, x+postsize_h, z-postsize, x+postsize_h, z-1f+postsize, slat_start+top_slat_offset, slat_height, 16, 3, 0, 5);
-			this.renderVertical(textureId, x-postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start+top_slat_offset, slat_height, 16, 3, 0, 5);
-			this.renderHorizontal(textureId, x+postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start+top_slat_offset, 2, 16, 14, 0, true);
-			this.renderHorizontal(textureId, x+postsize_h, z-postsize, x-postsize_h, z-1f+postsize, slat_start+top_slat_offset+slat_height, 2, 16, 14, 0, true);
+			this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset, fence_slat_height, 16, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset, fence_slat_height, 16, 3, 0, 5);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset, 2, 16, 14, 0, true);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset+fence_slat_height, 2, 16, 14, 0, true);
 		}
 	}
 	
 	/**
-	 * Renders a fence gate.
+	 * Renders a fence gate.  Good lord, this is a heck of a function.   I continually feel like I'm
+	 * going about these things in the wrong way.  Ah, well - it works.
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -2075,6 +2126,188 @@ public class Chunk {
 	 * @param blockOffset Should be passed in from our main draw loop so we don't have to recalculate
 	 */
 	public void renderFenceGate(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+
+		float post_x1 = .375f;
+		float post_x2 = .5f;
+		float post_z = .0625f;
+		float post_y_start = -.1875f;
+		float post_h = .6875f;
+		float middle_w = .125f;
+		float middle_y = fence_slat_start_offset + fence_slat_height;
+		float middle_h = fence_slat_start_offset + fence_top_slat_offset - middle_y;
+		float middle_width = .0625f;
+
+		byte data = getData(xxx, yyy, zzz);
+		boolean open = ((data & 0x4) == 0x4);
+		int dir = (data & 0x3);
+
+		boolean have_fence_1 = false;
+		boolean have_fence_2 = false;
+
+		// GL stuff; only draw one way
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+		switch (dir)
+		{
+			case 1:
+				GL11.glRotatef(270f, 0f, 1f, 0f);
+				if (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+				{
+					have_fence_1 = true;
+				}
+				if (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+				{
+					have_fence_2 = true;
+				}
+				break;
+			case 2:
+				GL11.glRotatef(180f, 0f, 1f, 0f);
+				if (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+				{
+					have_fence_1 = true;
+				}
+				if (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+				{
+					have_fence_2 = true;
+				}
+				break;
+			case 3:
+				GL11.glRotatef(90f, 0f, 1f, 0f);
+				if (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+				{
+					have_fence_1 = true;
+				}
+				if (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+				{
+					have_fence_2 = true;
+				}
+				break;
+			case 0:
+			default:
+				if (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+				{
+					have_fence_1 = true;
+				}
+				if (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+				{
+					have_fence_2 = true;
+				}
+				break;
+		}
+
+		// One side post
+		this.renderVertical(textureId, post_x1, post_z, post_x2, post_z, post_y_start, post_h, 2, 11, 7, 0);
+		this.renderVertical(textureId, post_x1, -post_z, post_x2, -post_z, post_y_start, post_h, 2, 11, 7, 0);
+		this.renderVertical(textureId, post_x1, post_z, post_x1, -post_z, post_y_start, post_h, 2, 11, 7, 0);
+		this.renderVertical(textureId, post_x2, post_z, post_x2, -post_z, post_y_start, post_h, 2, 11, 7, 0);
+		this.renderHorizontal(textureId, post_x1, post_z, post_x2, -post_z, post_y_start, 2, 2, 7, 7, false);
+		this.renderHorizontal(textureId, post_x1, post_z, post_x2, -post_z, post_y_start+post_h, 2, 2, 7, 7, false);
+		
+		// ... and its connecting fence post, if it exists
+		if (have_fence_1)
+		{
+			// Bottom
+			this.renderVertical(textureId, post_x2, post_z, post_x2+.5f-fence_postsize, post_z, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, post_x2, -post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, post_x2, post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, post_x2, post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, true);
+
+			// Top
+			this.renderVertical(textureId, post_x2, post_z, post_x2+.5f-fence_postsize, post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, post_x2, -post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, post_x2, post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, post_x2, post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, true);
+		}
+
+		// The other side post
+		this.renderVertical(textureId, -post_x1, post_z, -post_x2, post_z, post_y_start, post_h, 2, 11, 7, 0);
+		this.renderVertical(textureId, -post_x1, -post_z, -post_x2, -post_z, post_y_start, post_h, 2, 11, 7, 0);
+		this.renderVertical(textureId, -post_x1, post_z, -post_x1, -post_z, post_y_start, post_h, 2, 11, 7, 0);
+		this.renderVertical(textureId, -post_x2, post_z, -post_x2, -post_z, post_y_start, post_h, 2, 11, 7, 0);
+		this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, -post_z, post_y_start, 2, 2, 7, 7, false);
+		this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, -post_z, post_y_start+post_h, 2, 2, 7, 7, false);
+		
+		// ... and its connecting fence post, if it exists
+		if (have_fence_2)
+		{
+			// Bottom
+			this.renderVertical(textureId, -post_x2, post_z, -post_x2-.5f+fence_postsize, post_z, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, -post_x2, -post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, -post_x2, post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, -post_x2, post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, true);
+
+			// Top
+			this.renderVertical(textureId, -post_x2, post_z, -post_x2-.5f+fence_postsize, post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, -post_x2, -post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, -post_x2, post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, -post_x2, post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, true);
+		}
+
+		// Now the gate itself
+		if (open)
+		{
+			// One side, bottom slat
+			this.renderVertical(textureId, post_x1, post_z, post_x1, .5f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, post_x2, post_z, post_x2, .5f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .5f, fence_slat_start_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .5f, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, false);
+
+			// One side, top slat
+			this.renderVertical(textureId, post_x1, post_z, post_x1, .5f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, post_x2, post_z, post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, false);
+
+			// One side, middle bit
+			this.renderVertical(textureId, post_x1, .5f, post_x1, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, post_x2, .5f, post_x2, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, post_x1, .5f-middle_w, post_x2, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, post_x1, .5f, post_x2, .5f, fence_slat_start_offset, fence_slat_height+fence_top_slat_offset, 2, 9, 7, 0);
+
+			// Other side, bottom slat
+			this.renderVertical(textureId, -post_x1, post_z, -post_x1, .5f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, -post_x2, post_z, -post_x2, .5f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .5f, fence_slat_start_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .5f, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, false);
+
+			// Other side, top slat
+			this.renderVertical(textureId, -post_x1, post_z, -post_x1, .5f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, -post_x2, post_z, -post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, false);
+
+			// Other side, middle bit
+			this.renderVertical(textureId, -post_x1, .5f, -post_x1, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, -post_x2, .5f, -post_x2, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, -post_x1, .5f-middle_w, -post_x2, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, -post_x1, .5f, -post_x2, .5f, fence_slat_start_offset, fence_slat_height+fence_top_slat_offset, 2, 9, 7, 0);
+		}
+		else
+		{
+			// Bottom bar
+			this.renderVertical(textureId, post_x1, post_z, -post_x1, post_z, fence_slat_start_offset, fence_slat_height, 12, 3, 2, 7);
+			this.renderVertical(textureId, post_x1, -post_z, -post_x1, -post_z, fence_slat_start_offset, fence_slat_height, 12, 3, 2, 7);
+			this.renderHorizontal(textureId, post_x1, post_z, -post_x1, -post_z, fence_slat_start_offset, 12, 2, 2, 3, true);
+			this.renderHorizontal(textureId, post_x1, post_z, -post_x1, -post_z, fence_slat_start_offset+fence_slat_height, 12, 2, 2, 3, true);
+
+			// Top bar
+			this.renderVertical(textureId, post_x1, post_z, -post_x1, post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 12, 3, 2, 7);
+			this.renderVertical(textureId, post_x1, -post_z, -post_x1, -post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 12, 3, 2, 7);
+			this.renderHorizontal(textureId, post_x1, post_z, -post_x1, -post_z, fence_slat_start_offset+fence_top_slat_offset, 12, 2, 2, 3, true);
+			this.renderHorizontal(textureId, post_x1, post_z, -post_x1, -post_z, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 12, 2, 2, 3, true);
+
+			// Middle bit
+			this.renderVertical(textureId, middle_w, post_z, -middle_w, post_z, middle_y, middle_h, 4, 3, 6, 5);
+			this.renderVertical(textureId, middle_w, -post_z, -middle_w, -post_z, middle_y, middle_h, 4, 3, 6, 5);
+			this.renderVertical(textureId, middle_w, middle_width, middle_w, -middle_width, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, -middle_w, middle_width, -middle_w, -middle_width, middle_y, middle_h, 2, 3, 7, 5);
+		}
+
+		// aaand pop our GL matrix
+		GL11.glPopMatrix();
 	}
 
 	public void renderButton(int textureId, int xxx, int yyy, int zzz) {
@@ -2159,62 +2392,26 @@ public class Chunk {
 		// Check to see where adjoining Portal spaces are, so we know which
 		// faces to draw
 		boolean drawWestEast = true;
-		
-		// Doing this in a for loop just so we can break out more
-		// easily once we find something
-		for (int i=0; i<1; i++)
+		if (this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == blockId ||
+				this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == blockId)
 		{
-			if (xxx>0)
-			{
-				if (blockData.value[blockOffset-BLOCKSPERCOLUMN] == blockId)
-				{
-					break;
-				}
-			}
-			else
-			{
-				Chunk otherChunk = level.getChunk(this.x-1, this.z);
-				if (otherChunk != null && otherChunk.getBlock(15, yyy, zzz) == blockId)
-				{
-					break;
-				}
-			}
-			
-			if (xxx<15)
-			{
-				if (blockData.value[blockOffset+BLOCKSPERCOLUMN] == blockId)
-				{
-					break;
-				}
-			}
-			else
-			{
-				Chunk otherChunk = level.getChunk(this.x+1, this.z);
-				if (otherChunk != null && otherChunk.getBlock(0, yyy, zzz) == blockId)
-				{
-					break;
-				}
-			}
-			
-			// If we've gotten here without finding a Portal space, we'll just assume that we're going in
-			// the other direction.
 			drawWestEast = false;
 		}
 
 		if (drawWestEast)
 		{
-			this.renderVertical(textureId, x-0.5f, z-0.3f, x+0.5f, z-0.3f, y-0.5f, 1.0f);
-			this.renderVertical(textureId, x-0.5f, z+0.3f, x+0.5f, z+0.3f, y-0.5f, 1.0f);
+			this.renderVertical(textureId, x-0.3f, z-0.5f, x-0.3f, z+0.5f, y-0.5f, 1.0f);
+			this.renderVertical(textureId, x+0.3f, z-0.5f, x+0.3f, z+0.5f, y-0.5f, 1.0f);
 		}
 		else
 		{
-			this.renderVertical(textureId, x-0.3f, z-0.5f, x-0.3f, z+0.5f, y-0.5f, 1.0f);
-			this.renderVertical(textureId, x+0.3f, z-0.5f, x+0.3f, z+0.5f, y-0.5f, 1.0f);
+			this.renderVertical(textureId, x-0.5f, z-0.3f, x+0.5f, z-0.3f, y-0.5f, 1.0f);
+			this.renderVertical(textureId, x-0.5f, z+0.3f, x+0.5f, z+0.3f, y-0.5f, 1.0f);
 		}
 	}
 	
 	public boolean checkSolid(short block, boolean transparency) {
-		if(block == 0) {
+		if(block <= 0) {
 			return true;
 		}
 		if (blockArray[block] == null)
@@ -2692,51 +2889,27 @@ public class Chunk {
 							}
 							
 							// check left;
-							if(x>0 && blockData.value[blockOffset-BLOCKSPERCOLUMN] != BLOCK_BEDROCK.id) {
+							if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 								draw = true;
 								left = false;
-							} else if(x==0) {
-								Chunk leftChunk = level.getChunk(this.x-1, this.z);
-								if(leftChunk != null && leftChunk.getBlock(15, y, z) != BLOCK_BEDROCK.id) {
-									draw = true;
-									left = false;
-								}
 							}
 						
 							// check right
-							if(x<15 && blockData.value[blockOffset+BLOCKSPERCOLUMN] != BLOCK_BEDROCK.id) {
+							if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 								draw = true;
 								right = false;
-							} else if(x==15) {
-								Chunk rightChunk = level.getChunk(this.x+1,this.z);
-								if(rightChunk != null && rightChunk.getBlock(0, y, z) != BLOCK_BEDROCK.id) {
-									draw = true;
-									right = false;
-								}
 							}
 							
 							// check near
-							if(z>0 && blockData.value[blockOffset-BLOCKSPERROW] != BLOCK_BEDROCK.id) {
+							if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 								draw = true;
 								near = false;
-							} else if(z==0) {
-								Chunk nearChunk = level.getChunk(this.x,this.z-1);
-								if(nearChunk != null && nearChunk.getBlock(x, y, 15) != BLOCK_BEDROCK.id) {
-									draw = true;
-									near = false;
-								}
 							}
 							
 							// check far
-							if(z<15 && blockData.value[blockOffset+BLOCKSPERROW] != BLOCK_BEDROCK.id) {
+							if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 								draw = true;
 								far = false;
-							} else if(z==15) {
-								Chunk farChunk = level.getChunk(this.x,this.z+1);
-								if(farChunk != null && farChunk.getBlock(x, y, 0) != BLOCK_BEDROCK.id) {
-									draw = true;
-									far = false;
-								}
 							}
 						}
 						else
@@ -2754,51 +2927,27 @@ public class Chunk {
 							}
 							
 							// check left;
-							if(x>0 && checkSolid(blockData.value[blockOffset-BLOCKSPERCOLUMN], transparency)) {
+							if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset), transparency)) {
 								draw = true;
 								left = false;
-							} else if(x==0) {
-								Chunk leftChunk = level.getChunk(this.x-1, this.z);
-								if(leftChunk != null && checkSolid(leftChunk.getBlock(15, y, z), transparency)) {
-									draw = true;
-									left = false;
-								}
 							}
 						
 							// check right
-							if(x<15 && checkSolid(blockData.value[blockOffset+BLOCKSPERCOLUMN], transparency)) {
+							if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset), transparency)) {
 								draw = true;
 								right = false;
-							} else if(x==15) {
-								Chunk rightChunk = level.getChunk(this.x+1,this.z);
-								if(rightChunk != null && checkSolid(rightChunk.getBlock(0, y, z), transparency)) {
-									draw = true;
-									right = false;
-								}
 							}
 							
 							// check near
-							if(z>0 && checkSolid(blockData.value[blockOffset-BLOCKSPERROW], transparency)) {
+							if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset), transparency)) {
 								draw = true;
 								near = false;
-							} else if(z==0) {
-								Chunk nearChunk = level.getChunk(this.x,this.z-1);
-								if(nearChunk != null && checkSolid(nearChunk.getBlock(x, y, 15), transparency)) {
-									draw = true;
-									near = false;
-								}
 							}
 							
 							// check far
-							if(z<15 && checkSolid(blockData.value[blockOffset+BLOCKSPERROW], transparency)) {
+							if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset), transparency)) {
 								draw = true;
 								far = false;
-							} else if(z==15) {
-								Chunk farChunk = level.getChunk(this.x,this.z+1);
-								if(farChunk != null && checkSolid(farChunk.getBlock(x, y, 0), transparency)) {
-									draw = true;
-									far = false;
-								}
 							}
 						}
 					}
