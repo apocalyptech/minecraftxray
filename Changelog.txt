@@ -11,6 +11,7 @@ Minecraft X-Ray 3.3.0 (2011.09.12)
   * Unknown blocks will show up purple in the minimap
   * Improvements to the rendering of cacti and fences
   * All new Beta 1.8 blocks supported
+  * (internal) Updated to LWJGL 2.7.1
 
 Minecraft X-Ray 3.2.2 (2011.09.05)
 

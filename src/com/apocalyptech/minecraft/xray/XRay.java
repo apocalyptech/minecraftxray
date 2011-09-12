@@ -269,6 +269,8 @@ public class XRay
 	{
 		Date now = new Date();
 		System.out.println("Starting " + windowTitle + " at " + now.toString());
+		System.out.println("LWJGL version " + Sys.getVersion());
+		System.out.println("JVM version " + System.getProperty("java.version"));
 		System.out.println();
 		new XRay().run();
 	}
