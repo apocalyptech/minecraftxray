@@ -14,6 +14,7 @@
             <cp>lwjgl_util_applet.jar</cp>
             <cp>lzma.jar</cp>
             <cp>xray.jar</cp>
+            <cp>snakeyaml-1.9.jar</cp>
         </classPath>
         <jre>
             <minVersion>1.6.0</minVersion>

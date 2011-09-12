@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Map;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -266,6 +267,9 @@ public class XRay
 	// lets start with the program
 	public static void main(String args[])
 	{
+		Date now = new Date();
+		System.out.println("Starting " + windowTitle + " at " + now.toString());
+		System.out.println();
 		new XRay().run();
 	}
 

@@ -97,6 +97,14 @@
 				<include name="COPYING-jsmooth.txt" />
 			</fileset>
 		</copy>
+
+		<!-- Block Definitions -->
+		<mkdir dir="${dist}/blockdefs"/>
+		<copy todir="${dist}/blockdefs">
+			<fileset dir="blockdefs">
+				<include name="*.*" />
+			</fileset>
+		</copy>
 		
 		<!-- Mark the UNIXy ones as executable -->
 		<chmod perm="a+x">

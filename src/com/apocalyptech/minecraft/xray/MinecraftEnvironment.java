@@ -180,7 +180,7 @@ public class MinecraftEnvironment {
 				MinecraftEnvironment.baseDir = null;
 				MinecraftEnvironment.xrayBaseDir = null;
 		}
-		System.out.println(MinecraftEnvironment.baseDir.getAbsolutePath());
+		//System.out.println(MinecraftEnvironment.baseDir.getAbsolutePath());
 	}
 	
 	/***
