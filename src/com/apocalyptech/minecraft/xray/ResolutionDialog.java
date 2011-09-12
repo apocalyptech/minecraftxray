@@ -49,6 +49,7 @@ import java.util.TreeSet;
 import java.util.HashMap;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -71,6 +72,8 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+
+import static com.apocalyptech.minecraft.xray.MinecraftConstants.blockCollection;
 
 /***
  * Static popup screen which enables the user to set values such as
@@ -109,8 +112,8 @@ import org.lwjgl.opengl.DisplayMode;
  */
 public class ResolutionDialog extends JFrame {
 	private static final long serialVersionUID = -1496486770452508286L;
-	private static final int FRAMEWIDTH = 400;
-	private static final int FRAMEHEIGHT = 400;
+	private static final int FRAMEWIDTH = 450;
+	private static final int FRAMEHEIGHT = 600;
 	private static final int[][] defaultPreferredResolutions = 
 		new int[][] {{1920,1080},{1600,900},{1280,720},{1024, 768}, {800, 600}, {666, 666}, {1280,1024}};
 	// fallbackResolutions defines resolutions that we'll offer in the dropdown regardless of whether or not
@@ -268,9 +271,11 @@ public class ResolutionDialog extends JFrame {
 		JLabel refreshRateLabel = new JLabel("Refresh Rate: ");
 		JLabel fullScreenLabel  = new JLabel("Full Screen: ");
 		JLabel invertMouseLabel  = new JLabel("Invert Mouselook: ");
-		JLabel modOptionsLabel = new JLabel("Mod Options: ");
+		JLabel blockdefInfoLabel = new JLabel("Loaded Blockdefs: ");
 		JLabel xrayTitleLabel  = new JLabel(XRay.windowTitle);
 		xrayTitleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+
+		ArrayList<BlockTypeCollection> loadedCollections = blockCollection.getLoadedCollections();
 		
 		float flabel = 0f;
 		float flist = 1.9f;
@@ -380,26 +385,33 @@ public class ResolutionDialog extends JFrame {
 		c.insets = checkboxInsets;
 		addComponent(basicPanel, invertMouseCheckBox,c);
 
-		/* Temporarily disabling since I've made this kind of "public"
-		 * and the button currently does nothing.
-		// Mod Options label
-		current_grid_y++;
-		c.weightx = flabel; 
-		c.gridx = 0; c.gridy = current_grid_y;
-		c.fill = GridBagConstraints.NONE;
-		c.anchor = GridBagConstraints.EAST;
-		c.insets = labelInsets;
-		addComponent(basicPanel, modOptionsLabel,c);
+		// Information about loaded collections
+		if (loadedCollections.size() > 0)
+		{
+			// Label
+			current_grid_y++;
+			c.weightx = flabel; 
+			c.gridx = 0; c.gridy = current_grid_y;
+			c.fill = GridBagConstraints.NONE;
+			c.anchor = GridBagConstraints.NORTHEAST;
+			c.insets = labelInsets;
+			addComponent(basicPanel, blockdefInfoLabel,c);
 
-		// Mod Options Button
-		modOptionsButton = new JButton("Open Mod Options");
-		c.weightx = flist;  
-		c.gridx = 1; c.gridy = current_grid_y;
-		c.fill = GridBagConstraints.NONE;
-		c.anchor = GridBagConstraints.WEST;
-		c.insets = checkboxInsets;
-		addComponent(basicPanel, modOptionsButton, c);
-		*/
+			// The list
+			JPanel collPanel = new JPanel();
+			collPanel.setLayout(new BoxLayout(collPanel, BoxLayout.Y_AXIS));
+			for (BlockTypeCollection coll : loadedCollections)
+			{
+				collPanel.add(new JLabel(coll.getFile().getName() + " - " + coll.getName()));
+			}
+
+			// Add the list...
+			c.weightx = flist;  
+			c.gridx = 1; c.gridy = current_grid_y;
+			c.fill = GridBagConstraints.NONE;
+			c.anchor = GridBagConstraints.NORTHWEST;
+			addComponent(basicPanel, collPanel, c);
+		}
 		
 		// Separator
 		current_grid_y++;

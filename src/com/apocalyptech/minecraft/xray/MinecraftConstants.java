@@ -265,8 +265,6 @@ public class MinecraftConstants {
 			}
 			if (coll.getException() == null)
 			{
-				System.out.println("Got " + g + " modinfo " + coll.getName() + " (" + coll.getFile().getName() + "), " + coll.usedTextureCount() + " textures.");
-
 				// I think I will actually keep this the way it is, rather than create a GUI for
 				// loading these.  As I noticed during the 1.8 prerelease stuff, as I had been
 				// testing Aethermod things, people using mods might be fairly likely to shuffle
@@ -283,7 +281,11 @@ public class MinecraftConstants {
 				// requiring the user to manually swap out some blockdef files in that case, though.
 				try
 				{
+					// Do it without importing first.  If there are some obvious errors then we'd catch
+					// them before potentially polluting our blockCollection with partial blockdef files
+					blockCollection.importFrom(coll, false);
 					blockCollection.importFrom(coll, true);
+					System.out.println("Got " + g + " modinfo " + coll.getName() + " (" + coll.getFile().getName() + "), " + coll.usedTextureCount() + " textures.");
 				}
 				catch (BlockTypeLoadException e)
 				{

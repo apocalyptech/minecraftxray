@@ -81,6 +81,7 @@ public class BlockTypeCollection
 	private File file;
 	private boolean global;
 	private BlockTypeLoadException exception;
+	private ArrayList<BlockTypeCollection> loadedCollections;
 
 	public BlockTypeCollection()
 	{
@@ -88,6 +89,7 @@ public class BlockTypeCollection
 		this.mlblocks = new ArrayList<BlockTypeFilename>();
 		this.blocks_composite = new ArrayList<BlockType>();
 		this.blocksByName = new HashMap<String, BlockType>();
+		this.loadedCollections = new ArrayList<BlockTypeCollection>();
 		this.blockArray = new BlockType[256];
 		this.usedTextures = new boolean[256];
 		this.reserved_texture_count = 0;
@@ -413,6 +415,20 @@ public class BlockTypeCollection
 			this.addBlockType(block, importData);
 		}
 		ExceptionDialog.clearExtraStatus2();
+
+		// If we've gotten here, add the collection to our added-collections list
+		if (importData && !otherCollection.getFile().getName().equals("minecraft.yaml"))
+		{
+			this.loadedCollections.add(otherCollection);
+		}
+	}
+
+	/**
+	 * Gets our list of loaded collections
+	 */
+	public ArrayList<BlockTypeCollection> getLoadedCollections()
+	{
+		return this.loadedCollections;
 	}
 
 	/**
