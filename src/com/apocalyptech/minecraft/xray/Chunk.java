@@ -1390,35 +1390,41 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderVine(int textureId, int xxx, int yyy, int zzz) {
+	public void renderVine(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
 		 float x = xxx + this.x*16;
 		 float z = zzz + this.z*16;
 		 float y = yyy;
 		 
 		 byte data = getData(xxx, yyy, zzz);
-		 switch(data)
+		 boolean rendered = false;
+		 if ((data & 1) == 1)
 		 {
-			case 0:
-				// Top
-				this.renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.45f);
-				break;
-		 	case 1:
-		 		// West
-		 		this.renderWestEast(textureId, x, y, z+1.0f-TEX64);
-		 		break;
-		 	case 2:
-	 			// North
-				this.renderNorthSouth(textureId, x+TEX64, y, z);
-	 			break;
-		 	case 4:
-		 		// East
-		 		this.renderWestEast(textureId, x, y, z+TEX64);
-		 		break;
-		 	case 8:
-			default:
-		 		// South
-		 		this.renderNorthSouth(textureId, x+1.0f-TEX64, y, z);
-		 		break;
+			// West
+			this.renderWestEast(textureId, x, y, z+1.0f-TEX64);
+			rendered = true;
+		 }
+		 if ((data & 2) == 2)
+		 {
+			// North
+			this.renderNorthSouth(textureId, x+TEX64, y, z);
+			rendered = true;
+		 }
+		 if ((data & 4) == 4)
+		 {
+			// East
+			this.renderWestEast(textureId, x, y, z+TEX64);
+			rendered = true;
+		 }
+		 if ((data & 8) == 8)
+		 {
+			// South
+			this.renderNorthSouth(textureId, x+1.0f-TEX64, y, z);
+			rendered = true;
+		 }
+		 if (data == 0 || (rendered && yyy < 127 && !this.checkSolid(blockData.value[blockOffset+1], false)))
+		 {
+			// Top
+			this.renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.45f);
 		 }
 	}
 
@@ -3192,7 +3198,7 @@ public class Chunk {
 								renderCake(textureId,x,y,z);
 								break;
 							case VINE:
-								renderVine(textureId,x,y,z);
+								renderVine(textureId,x,y,z,blockOffset);
 								break;
 							case SOLID_PANE:
 								renderSolidPane(textureId,x,y,z,blockOffset,t);
