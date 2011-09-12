@@ -74,18 +74,13 @@
 		<mkdir dir="${dist}"/>
 		
 		<!-- Put everything in ${build} into xray.jar file -->
-		<jar jarfile="${dist}/xray.jar" basedir="${build}"/>
+		<jar jarfile="${dist}/xray.jar" basedir="${build}" manifest="META-INF/MANIFEST.MF" />
 		
 		<!-- Dump all our support libraries, launchers, etc in the distdir -->
 		<copy todir="${dist}">
-			<fileset dir="lib">
-				<include name="*.jar" />
-			</fileset>
-			<fileset dir="lib/native">
-				<include name="*.*" />
-			</fileset>
 			<fileset dir="support">
-				<include name="*.*" />
+				<exclude name="launch4j*" />
+				<exclude name="launch4j-dist/**" />
 			</fileset>
 			<fileset dir=".">
 				<include name="Changelog.txt" />
@@ -98,13 +93,11 @@
 				<include name="COPYING-snakeyaml.txt" />
 			</fileset>
 		</copy>
-
-		<!-- Block Definitions -->
-		<mkdir dir="${dist}/blockdefs"/>
+		<copy todir="${dist}/lib">
+			<fileset dir="lib" />
+		</copy>
 		<copy todir="${dist}/blockdefs">
-			<fileset dir="blockdefs">
-				<include name="*.*" />
-			</fileset>
+			<fileset dir="blockdefs" />
 		</copy>
 		
 		<!-- Mark the UNIXy ones as executable -->

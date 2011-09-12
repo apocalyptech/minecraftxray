@@ -1,22 +1,12 @@
 <launch4jConfig>
         <headerType>gui</headerType>
         <outfile>minecraft_xray.exe</outfile>
+        <jar>xray.jar</jar>
         <dontWrapJar>true</dontWrapJar>
         <downloadUrl>http://java.com/download</downloadUrl>
         <icon>xray_icon.ico</icon>
-        <classPath>
-            <mainClass>com.apocalyptech.minecraft.xray.XRay</mainClass>
-            <cp>AppleJavaExtensions.jar</cp>
-            <cp>jinput.jar</cp>
-            <cp>lwjgl.jar</cp>
-            <cp>lwjgl_test.jar</cp>
-            <cp>lwjgl_util.jar</cp>
-            <cp>lwjgl_util_applet.jar</cp>
-            <cp>lzma.jar</cp>
-            <cp>xray.jar</cp>
-            <cp>snakeyaml-1.9.jar</cp>
-        </classPath>
         <jre>
             <minVersion>1.6.0</minVersion>
+            <opt>-Djava.library.path=lib\\native</opt>
         </jre>
 </launch4jConfig>

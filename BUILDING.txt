@@ -13,6 +13,7 @@ project, you'll have to do some file copying:
        lwjgl_util.jar
        lwjgl.jar
        lzma.jar
+       snakeyaml-1.9.jar
    
    ... Possibly some of those are optional, but you may as well leave them
    in.  Inside lib/native, make sure that you've got the "native" LWJGL
