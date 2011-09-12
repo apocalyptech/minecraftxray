@@ -57,7 +57,7 @@ alongside the ".minecraft" directory that Minecraft itself uses.
 
 File locations:
 
-    Windows: %appdata%/.minecraft_xray/xray.properties
+    Windows: %appdata%\.minecraft_xray\xray.properties
     OSX: ~/Library/Application Support/.minecraft_xray/xray.properties
     Linux: ~/.minecraft_xray/xray.properties 
 
@@ -155,7 +155,40 @@ overridden, though.  The default keybindings are as follows:
         Show large map:         TAB
         Release Mouse:          ESC
         Quit:                   CTRL-Q
-		
+
+EXTRA BLOCK DEFINITIONS
+-----------------------
+
+As of version 3.3.0, X-Ray includes a mechanism to allow the user to
+define custom block types.  X-Ray will read any block definition file
+found inside the "blockdefs" directory inside .minecraft_xray.  This
+is located at:
+
+    Windows: %appdata%\.minecraft_xray\blockdefs\
+    OSX: ~/Library/Application Support/.minecraft_xray/blockdefs/
+    Linux: ~/.minecraft_xray/blockdefs/
+
+Each file must have a ".yaml" extension, and X-Ray won't read any file
+named "minecraft.yaml".  It would be best practice to name the file
+after the mod you're intending to support, such as "aether.yaml".  The
+file format is in YAML 1.1.  There should be some very detailed docs
+contained inside the global "minecraft.yaml" file (you can find this
+in X-Ray's own "blockdefs" directory, where you unpacked it).  Examples
+(and a copy of the global minecraft.yaml file) can be found here:
+
+    http://apocalyptech.com/minecraft/xray/modsupport.php
+
+As mentioned above, X-Ray will automatically attempt to load any YAML
+file it finds in the blockdefs directory, and it will display which ones
+it was able to load on the opening dialog.  If your file doesn't show up
+in the list, there's probably an error in it - you should be able to
+find that error in the file minecraft_xray_output_log.txt in the root
+X-Ray directory, unless you launched X-Ray from the EXE version.  To
+get the error report on Windows, launch X-Ray using the .BAT instead.
+Linux and OSX users will see the errors on the console X-Ray was launched
+from, as well.
+
+
 RENDERING DETAILS
 -----------------
 
@@ -229,3 +262,37 @@ you're looking at, including up/down.  If you want to "lock" the camera to
 the vertical axis, you can do so with "L," at which time moving forward/back
 will only move the camera horizontally.  You can still move the camera up
 and down manually, of course.
+
+OVERRIDING TEXTURES
+-------------------
+
+In general, X-Ray will attempt to use the same texture pack that Minecraft is
+using, but there may be some circumstances where you want X-Ray to use a
+particular texture.
+
+X-Ray will look in three locations for the texture information to load, in this
+order:
+
+  1) Inside the following directory, as an override:
+
+        Windows: %appdata%\.minecraft_xray\textures\
+        OSX: ~/Library/Application Support/.minecraft_xray/textures/
+        Linux: ~/.minecraft_xray/textures/
+
+  2) From the texture pack that Minecraft itself is set to use
+
+  3) Finally, from the builtin texture that Minecraft itself uses. This might
+     be a custom texture pack if you've patched the Minecraft JAR file directly
+     with a texture pack, with xau's mcpatcher or the like.
+
+The override texture directory mirrors the internal structure of the
+texturepacks, but should not be a zipfile. Right now there's really only two
+files that X-Ray will end up reading from this directory: terrain.png and
+misc/water.png. So, rather than packing those inside a zipfile, just put them
+inside the "textures" directory and restart X-Ray, if you wanted to manually
+override a texture.
+
+Note that this *will* work for files specified in custom block definition
+files (as described above).  For instance, if you're using Aethermod and want
+to override the "Icestone.png" file, you'd put your own Icestone.png file into
+.minecraft_xray/textures/aether/blocks/Icestone.png.

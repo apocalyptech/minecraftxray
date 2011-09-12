@@ -296,7 +296,8 @@ public class MinecraftEnvironment {
 	
 	/**
 	 * Returns a file handle to our config file; will create the
-	 * directory if needed.
+	 * directory if needed.  This will also create some other
+	 * subdirectories if needed.
 	 * @return
 	 */
 	public static File getXrayConfigFile() {
@@ -313,6 +314,16 @@ public class MinecraftEnvironment {
 			{
 				return null;
 			}
+		}
+		File texDir = new File(MinecraftEnvironment.xrayBaseDir, "textures");
+		if (!texDir.exists())
+		{
+			texDir.mkdir();
+		}
+		File blockdefDir = new File(MinecraftEnvironment.xrayBaseDir, "blockdefs");
+		if (!blockdefDir.exists())
+		{
+			blockdefDir.mkdir();
 		}
 		return new File(MinecraftEnvironment.xrayBaseDir, "xray.properties");
 	}
