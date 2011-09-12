@@ -39,13 +39,10 @@ RUNNING
 There isn't an installer for this currently.  Perhaps one day...
 
 Windows users should be able to run the program by just doubleclicking on
-minecraft_xray.exe.
+minecraft_xray.exe or minecraft_xray.bat.
 
-OSX users should be able to doubleclick on minecraft_xray_osx.command or
-minecraft_xray.sh.
-
-Linux users can run minecraft_xray.sh (actually minecraft_xray_osx.command
-should work as well, come to that).
+Linux and OSX users should be able to doubleclick on either minecraft_xray.sh
+or minecraft_xray_osx.command (the files are actually identical).
 
 PROPERTIES FILE
 ---------------
