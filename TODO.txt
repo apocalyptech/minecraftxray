@@ -19,8 +19,6 @@
    "in range" and might even have those chunks cached.  Should fix that.
    
  * Minimap effective size has been cut quite a bit, would like to increase that
-   
- * Figure out some kind of useful minimap when in the Nether
  
  * Would be nice to have a check when warping between Nether and Overworld
    to make sure you don't end up off-map
@@ -48,9 +46,6 @@
    textures that the renderer pulls in, "secondary" perhaps, for portal (so that
    Aetherfolk can have their portals key off Glowstone properly)  "override" to
    explicitly override a previously-defined blocktype (also: CHECK FOR THAT).
- 
- * Alter Fence and Portal renderers to not depend on info from BLOCK (how about let's
-   pass the block info into the renderers, in addition to the texture to use)
 
  * Figure out a more noticeable highlighting for things like Clay and Obsidian
    (anything very dark, or very light, really)
