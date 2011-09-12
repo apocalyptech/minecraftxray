@@ -7,7 +7,8 @@
     North now, if we see data values we don't understand
   * Block definitions are loaded from a YAML file, instead of hard-coded
   * Unknown blocks will show up purple in the minimap
-  * Improvements to the rendering of cacti, fences
+  * Improvements to the rendering of cacti and fences
+  * All new Beta 1.8 blocks supported
 
 Minecraft X-Ray 3.2.2 (2011.09.05)
 

@@ -101,7 +101,8 @@ public class MinecraftConstants {
 		PISTON_BODY,
 		PISTON_HEAD,
 		VINE,
-		HUGE_MUSHROOM
+		HUGE_MUSHROOM,
+		SOLID_PANE
 	}
 
 	// Some block types' renderers automatically use other textures that we don't
@@ -148,6 +149,7 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_STATIONARY_WATER;
 	public static BlockType BLOCK_FENCE;
 	public static BlockType BLOCK_FENCE_GATE;
+	public static BlockType BLOCK_IRON_BARS;
 
 	// A meta-block to use for unknown block types
 	public static BlockType BLOCK_UNKNOWN;
@@ -346,6 +348,11 @@ public class MinecraftConstants {
 		if (BLOCK_FENCE_GATE == null)
 		{
 			throw new BlockTypeLoadException("FENCE_GATE block definition not found");
+		}
+		BLOCK_IRON_BARS = blockCollection.getByName("IRON_BARS");
+		if (BLOCK_IRON_BARS == null)
+		{
+			throw new BlockTypeLoadException("IRON_BARS block definition not found");
 		}
 
 		// We also define a "special" block for unknown block types, so that instead

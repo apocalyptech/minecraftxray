@@ -42,6 +42,7 @@
 #
 #               COBBLESTONE (the LEVER renderer uses it)
 #               FENCE / FENCE_GATE (their respective renderers use it)
+#               IRON_BARS (the "solid pane" renderer uses it)
 #               TORCH (the "explored" highlight uses it)
 #               BEDROCK (the "bedrock" toggle uses it)
 #               GRASS (the "grass rendering" toggle uses it)
@@ -120,6 +121,7 @@
 #             WATER
 #             VINE
 #             HUGE_MUSHROOM
+#             SOLID_PANE
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -889,12 +891,14 @@ blocks:
     name: Iron Bars
     mapcolor: [77, 77, 78]
     tex: [5, 5]
+    type: SOLID_PANE
 
   - id: 102
     idStr: GLASS_PANE
     name: Glass Pane
     mapcolor: [255, 255, 255]
     tex: [1, 3]
+    type: SOLID_PANE
   
   - id: 103
     idStr: MELON

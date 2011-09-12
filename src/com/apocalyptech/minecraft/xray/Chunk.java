@@ -2679,6 +2679,121 @@ public class Chunk {
 	}
 	
 	/**
+	 * Renders a sold pane-like object (glass pane, iron bars, etc)
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderSolidPane(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+
+		boolean has_north = false;
+		boolean has_south = false;
+		boolean has_west = false;
+		boolean has_east = false;
+
+		float top_width = .0625f;
+		int top_row_1 = 0;
+		int top_row_2 = 15;
+		if (blockId == BLOCK_IRON_BARS.id)
+		{
+			top_row_1 = 2;
+			top_row_2 = 3;
+		}
+
+		short temp_id;
+		temp_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		if (temp_id == blockId || !this.checkSolid(temp_id, false))
+		{
+			has_north = true;
+		}
+		temp_id = this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		if (temp_id == blockId || !this.checkSolid(temp_id, false))
+		{
+			has_south = true;
+		}
+		temp_id = this.getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		if (temp_id == blockId || !this.checkSolid(temp_id, false))
+		{
+			has_west = true;
+		}
+		temp_id = this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		if (temp_id == blockId || !this.checkSolid(temp_id, false))
+		{
+			has_east = true;
+		}
+
+		if (!has_north && !has_south && !has_west && !has_east)
+		{
+			has_north = true;
+			has_south = true;
+			has_west = true;
+			has_east = true;
+		}
+
+		// Now we should be able to actually draw stuff
+		if (has_north && has_south)
+		{
+			this.renderVertical(textureId, x-.5f, z, x+.5f, z, y-.5f, 1f);
+		}
+		else
+		{
+			if (has_north)
+			{
+				this.renderVertical(textureId, x, z, x-.5f, z, y-.5f, 1f, 8, 16, 8, 0);
+			}
+			if (has_south)
+			{
+				this.renderVertical(textureId, x, z, x+.5f, z, y-.5f, 1f, 8, 16, 8, 0);
+			}
+		}
+		if (has_north)
+		{
+			this.renderHorizontal(textureId, x-.5f, z+top_width, x-top_width, z, y+.5f, 1, 7, top_row_1, 0, false);
+			this.renderHorizontal(textureId, x-.5f, z-top_width, x-top_width, z, y+.5f, 1, 7, top_row_2, 0, false);
+		}
+		if (has_south)
+		{
+			this.renderHorizontal(textureId, x+.5f, z+top_width, x+top_width, z, y+.5f, 1, 7, top_row_1, 0, false);
+			this.renderHorizontal(textureId, x+.5f, z-top_width, x+top_width, z, y+.5f, 1, 7, top_row_2, 0, false);
+		}
+
+		if (has_west && has_east)
+		{
+			this.renderVertical(textureId, x, z-.5f, x, z+.5f, y-.5f, 1f);
+		}
+		else
+		{
+			if (has_west)
+			{
+				this.renderVertical(textureId, x, z, x, z+.5f, y-.5f, 1f, 8, 16, 8, 0);
+			}
+			if (has_east)
+			{
+				this.renderVertical(textureId, x, z, x, z-.5f, y-.5f, 1f, 8, 16, 8, 0);
+			}
+		}
+		if (has_west)
+		{
+			this.renderHorizontal(textureId, x+top_width, z+.5f, x, z+top_width, y+.5f, 1, 7, top_row_1, 0, true);
+			this.renderHorizontal(textureId, x-top_width, z+.5f, x, z+top_width, y+.5f, 1, 7, top_row_2, 0, true);
+		}
+		if (has_east)
+		{
+			this.renderHorizontal(textureId, x+top_width, z-.5f, x, z-top_width, y+.5f, 1, 7, top_row_1, 0, true);
+			this.renderHorizontal(textureId, x-top_width, z-.5f, x, z-top_width, y+.5f, 1, 7, top_row_2, 0, true);
+		}
+
+		// Finally, the center top square.  Technically we shouldn't draw past the edge, but whatever.
+		this.renderHorizontal(textureId, x+top_width, z+top_width, x-top_width, z, y+.5f, 1, 2, top_row_1, 7, false);
+		this.renderHorizontal(textureId, x+top_width, z-top_width, x-top_width, z, y+.5f, 1, 2, top_row_2, 7, false);
+	}
+	
+	/**
 	 * Tests if the given source block has a torch nearby.  This is, I'm willing
 	 * to bet, the least efficient way possible of doing this.  It turns out that
 	 * despite that, it doesn't really have a noticeable impact on performance,
@@ -3078,6 +3193,9 @@ public class Chunk {
 								break;
 							case VINE:
 								renderVine(textureId,x,y,z);
+								break;
+							case SOLID_PANE:
+								renderSolidPane(textureId,x,y,z,blockOffset,t);
 								break;
 							case HALFHEIGHT:
 								if(draw) {
