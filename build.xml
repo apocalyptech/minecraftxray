@@ -95,6 +95,7 @@
 				<include name="COPYING.txt" />
 				<include name="COPYING-lwjgl.txt" />
 				<include name="COPYING-jsmooth.txt" />
+				<include name="COPYING-snakeyaml.txt" />
 			</fileset>
 		</copy>
 
