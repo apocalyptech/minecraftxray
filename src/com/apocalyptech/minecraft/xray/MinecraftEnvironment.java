@@ -64,7 +64,7 @@ import javax.imageio.ImageIO;
  * @author Vincent Vollers
  */
 public class MinecraftEnvironment {
-	public static enum OS {Windows, MacOS, Linux, NotSupported};
+	public static enum OS {Windows, MacOS, Linux};
 	public static OS os; 
 	public static File baseDir;
 	public static File xrayBaseDir;
@@ -138,7 +138,9 @@ public class MinecraftEnvironment {
 				MinecraftEnvironment.xrayBaseDir = new File(System.getProperty("user.home"), ".minecraft_xray");
 				break;
 			case MacOS:
-				// damn macs ;p
+				// TODO: we should really be using "minecraft_xray" without a dot; perhaps have something to convert that.
+				// Apparently the minecraft directory itself doesn't use a dot here, so we're being weird by doing it
+				// ourselves.
 				File dotMinecraftEnv = new File(System.getProperty("user.home"), "Library/Application Support/.minecraft");
 				if(dotMinecraftEnv.exists()) {
 					MinecraftEnvironment.baseDir = dotMinecraftEnv;
