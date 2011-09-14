@@ -99,7 +99,7 @@ public class XRay
 	// are we inverting the mouse
 	private boolean invertMouse = false;
 	// window title
-	public static String app_version = "3.3.0";
+	public static String app_version = "3.3.1";
 	public static String app_name    = "Minecraft X-Ray";
 	public static String windowTitle = app_name + " " + app_version;
 
@@ -271,6 +271,7 @@ public class XRay
 		System.out.println("Starting " + windowTitle + " at " + now.toString());
 		System.out.println("LWJGL version " + Sys.getVersion());
 		System.out.println("JVM version " + System.getProperty("java.version"));
+		System.out.println("Detected OS " + MinecraftEnvironment.os.toString());
 		System.out.println();
 		new XRay().run();
 	}
@@ -958,9 +959,7 @@ public class XRay
 		}
 
 		// If we're on Windows, show a warning about running at the same time as Minecraft
-		//if (MinecraftEnvironment.os == MinecraftEnvironment.OS.Linux)
-		if (MinecraftEnvironment.os == MinecraftEnvironment.OS.XP ||
-				MinecraftEnvironment.os == MinecraftEnvironment.OS.Vista)
+		if (MinecraftEnvironment.os == MinecraftEnvironment.OS.Windows)
 		{
 			if (xray_properties.getBooleanProperty("SHOW_WINDOWS_WARNING", true))
 			{

@@ -64,7 +64,7 @@ import javax.imageio.ImageIO;
  * @author Vincent Vollers
  */
 public class MinecraftEnvironment {
-	public static enum OS {XP, Vista, MacOS, Linux, NotSupported};
+	public static enum OS {Windows, MacOS, Linux, NotSupported};
 	public static OS os; 
 	public static File baseDir;
 	public static File xrayBaseDir;
@@ -110,49 +110,21 @@ public class MinecraftEnvironment {
 	
 	static {
 		String os = System.getProperty( "os.name" );
-		HashMap<String,OS> osData = new HashMap<String,OS>();
-		/*  Full list of os.name strings
-		    AIX
-			Digital Unix
-			FreeBSD
-			HP UX
-			Irix
-			Linux
-			Mac OS
-			Mac OS X
-			MPE/iX
-			Netware 4.11
-			OS/2
-			Solaris
-			Windows 2000
-			Windows 7
-			Windows 95
-			Windows 98
-			Windows NT
-			Windows Vista
-			Windows XP
-		 */
-		osData.put("FreeBSD", 	OS.Linux);
-		osData.put("HP UX", 	OS.Linux);
-		osData.put("Linux", 	OS.Linux);
-		osData.put("Mac OS", 	OS.MacOS);
-		osData.put("Mac OS X", 	OS.MacOS);
-		osData.put("Windows", 	OS.XP);
-		osData.put("Windows 7", OS.Vista);
-		osData.put("Windows XP", OS.XP);
-		osData.put("Windows 2003", OS.XP);
-		osData.put("Windows 2000", OS.XP);
-		osData.put("Windows Vista", OS.Vista);
-		
-		if(!osData.containsKey(os)) {
-			MinecraftEnvironment.os = OS.NotSupported;
-		} else {
-			MinecraftEnvironment.os = osData.get(os);
+		if (os.startsWith("Mac"))
+		{
+			MinecraftEnvironment.os = OS.MacOS;
+		}
+		else if (os.startsWith("Windows"))
+		{
+			MinecraftEnvironment.os = OS.Windows;
+		}
+		else
+		{
+			MinecraftEnvironment.os = OS.Linux;
 		}
 		
 		switch(MinecraftEnvironment.os) {
-			case Vista:
-			case XP:
+			case Windows:
 				String basedir = System.getenv("APPDATA");
 				if (basedir == null)
 				{

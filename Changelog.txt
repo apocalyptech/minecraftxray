@@ -1,3 +1,8 @@
+Minecraft X-Ray 3.3.1 (2011.09.14)
+
+  * Updated OS detection to be far more accepting (specifically for
+    Windows Server 2008, but should be relatively future-proof now)
+
 Minecraft X-Ray 3.3.0 (2011.09.12)
 
   * Removed redundant information from world selection dialog
