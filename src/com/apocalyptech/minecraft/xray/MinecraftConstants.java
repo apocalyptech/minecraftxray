@@ -102,7 +102,8 @@ public class MinecraftConstants {
 		PISTON_HEAD,
 		VINE,
 		HUGE_MUSHROOM,
-		SOLID_PANE
+		SOLID_PANE,
+		CHEST
 	}
 
 	// Some block types' renderers automatically use other textures that we don't
@@ -120,6 +121,7 @@ public class MinecraftConstants {
 		blockTypeExtraTextures.put(BLOCK_TYPE.SIMPLE_RAIL, new Integer[] {16}); // actually just for powered rails, but whatever
 		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_BODY, new Integer[] {-2, -1, 1, 2});
 		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_HEAD, new Integer[] {-1, 1, 2, 3});
+		blockTypeExtraTextures.put(BLOCK_TYPE.CHEST, new Integer[] {-1, -2, 14, 15, 30, 31});
 	}
 
 	// ... aand, because Huge Mushrooms are ridiculous, some hardcoded textures to reserve

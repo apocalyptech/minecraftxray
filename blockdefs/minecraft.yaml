@@ -544,11 +544,7 @@ blocks:
     name: Chest
     mapcolor: [125, 91, 38]
     tex: [11, 1]
-    tex_direction:
-      SIDES: [10, 1]
-      BACKWARD: [10, 1]
-      TOP: [9, 1]
-      BOTTOM: [9, 1]
+    type: CHEST
   
   - id: 55
     idStr: REDSTONE_WIRE

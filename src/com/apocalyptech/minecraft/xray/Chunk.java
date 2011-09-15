@@ -2853,6 +2853,96 @@ public class Chunk {
 	}
 	
 	/**
+	 * Renders a chest
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderChest(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+
+		float edges = .45f;
+		float bottom = .49f;
+		float height = .94f;
+		float full = .5f;
+
+		byte orientation = getData(xxx, yyy, zzz);
+
+		// Use GL to rotate these properly
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		// Find out if we have adjacent chests, and rotate.  Our "have_right" and
+		// "have_left" booleans are a little bit at odds with the orientation of the
+		// chest itself, since my "left/right" is looking *at* the front of the
+		// chest, not pointing out in the direction the chest is facing.  Alas.
+		boolean have_left = false;
+		boolean have_right = false;
+		switch(orientation)
+		{
+			case 4:
+				// Facing North
+				have_right = (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == blockId);
+				have_left = (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == blockId);
+				GL11.glRotatef(270f, 0f, 1f, 0f);
+				break;
+			case 5:
+				// Facing South
+				have_right = (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == blockId);
+				have_left = (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == blockId);
+				GL11.glRotatef(90f, 0f, 1f, 0f);
+				break;
+			case 2:
+				// Facing east
+				have_right = (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == blockId);
+				have_left = (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == blockId);
+				GL11.glRotatef(180f, 0f, 1f, 0f);
+				break;
+			case 3:
+			default:
+				// Facing west (this is what chests with a data of "0" will show up as,
+				// weirdly, in Minecraft itself)
+				have_right = (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == blockId);
+				have_left = (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == blockId);
+				break;
+		}
+
+		// Render appropriately
+		if (have_left)
+		{
+			renderVertical(textureId+15, -full, edges, edges, edges, -bottom, height);
+			renderVertical(textureId+31, -full, -edges, edges, -edges, -bottom, height);
+			renderVertical(textureId-1, edges, -edges, edges, edges, -bottom, height);
+			renderHorizontal(textureId-2, -full, -edges, edges, edges, edges, 8, 16, 8, 0, true);
+			renderHorizontal(textureId-2, -full, -edges, edges, edges, -bottom, 8, 16, 8, 0, true);
+		}
+		else if (have_right)
+		{
+			renderVertical(textureId+14, -edges, edges, full, edges, -bottom, height);
+			renderVertical(textureId+30, -edges, -edges, full, -edges, -bottom, height);
+			renderVertical(textureId-1, -edges, -edges, -edges, edges, -bottom, height);
+			renderHorizontal(textureId-2, -edges, -edges, full, edges, edges, 8, 16, 0, 0, true);
+			renderHorizontal(textureId-2, -edges, -edges, full, edges, -bottom, 8, 16, 0, 0, true);
+		}
+		else
+		{
+			renderVertical(textureId, -edges, edges, edges, edges, -bottom, height);
+			renderVertical(textureId-1, -edges, -edges, edges, -edges, -bottom, height);
+			renderVertical(textureId-1, -edges, -edges, -edges, edges, -bottom, height);
+			renderVertical(textureId-1, edges, -edges, edges, edges, -bottom, height);
+			renderHorizontal(textureId-2, -edges, -edges, edges, edges, edges);
+			renderHorizontal(textureId-2, -edges, -edges, edges, -edges, -bottom);
+		}
+
+		// Pop the matrix
+		GL11.glPopMatrix();
+	}
+	
+	/**
 	 * Tests if the given source block has a torch nearby.  This is, I'm willing
 	 * to bet, the least efficient way possible of doing this.  It turns out that
 	 * despite that, it doesn't really have a noticeable impact on performance,
@@ -3255,6 +3345,9 @@ public class Chunk {
 								break;
 							case SOLID_PANE:
 								renderSolidPane(textureId,x,y,z,blockOffset,t);
+								break;
+							case CHEST:
+								renderChest(textureId,x,y,z,blockOffset,t);
 								break;
 							case HALFHEIGHT:
 								if(draw) {
