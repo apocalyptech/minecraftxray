@@ -2935,7 +2935,7 @@ public class Chunk {
 			renderVertical(textureId-1, -edges, -edges, -edges, edges, -bottom, height);
 			renderVertical(textureId-1, edges, -edges, edges, edges, -bottom, height);
 			renderHorizontal(textureId-2, -edges, -edges, edges, edges, edges);
-			renderHorizontal(textureId-2, -edges, -edges, edges, -edges, -bottom);
+			renderHorizontal(textureId-2, -edges, -edges, edges, edges, -bottom);
 		}
 
 		// Pop the matrix
