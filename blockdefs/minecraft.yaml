@@ -854,9 +854,13 @@ blocks:
 
   - id: 97
     idStr: STONE_SILVERFISH
-    name: Silverfish Stone
+    name: Silverfish
     mapcolor: [120, 120, 120]
     tex: [1, 0]
+    tex_data:
+      0: [1, 0]  # Smooth Stone
+      1: [0, 1]  # Cobblestone
+      2: [6, 3]  # Stone Brick
 
   - id: 98
     idStr: STONE_BRICK

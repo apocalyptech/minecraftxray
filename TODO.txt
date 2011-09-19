@@ -58,3 +58,7 @@
 
  * Code in some proper log4j logging, rather than all the other crap that we're
    doing.
+ 
+ * It might be nice to use a custom texture for silverfish blocks, so that they're
+   more readily apparent.  Perhaps even consider them SEMISOLID so that they'll
+   always get rendered?
