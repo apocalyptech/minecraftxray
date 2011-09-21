@@ -64,3 +64,6 @@
    always get rendered?
  
  * Notice dialog when something in xray.properties gets overwritten
+
+ * Blockdef support for mods which use a separate terrain.png-like file, rather than
+   just the "mlblocks" stuff that we do currently.
