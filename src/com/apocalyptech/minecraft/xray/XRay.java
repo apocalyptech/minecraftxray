@@ -997,7 +997,44 @@ public class XRay
 				{
 					chooser.setCurrentDirectory(new File("."));
 				}
-				chooser.setSelectedFile(chooser.getCurrentDirectory());
+				try
+				{
+					chooser.setSelectedFile(chooser.getCurrentDirectory());
+				}
+				catch (java.lang.IndexOutOfBoundsException e)
+				{
+					// TODO:
+					// For some reason, on some systems (so far only Windows, and I haven't been able
+					// to reproduce it on my VMs), the setSelectedFile method ends up throwing this
+					// exception:
+					//
+					// java.lang.IndexOutOfBoundsException: Invalid index
+					//    at javax.swing.DefaultRowSorter.convertRowIndexToModel(Unknown Source)
+					//    at sun.swing.FilePane$SortableListModel.getElementAt(Unknown Source)
+					//    at javax.swing.plaf.basic.BasicListUI.updateLayoutState(Unknown Source)
+					//    at javax.swing.plaf.basic.BasicListUI.maybeUpdateLayoutState(Unknown Source)
+					//    at javax.swing.plaf.basic.BasicListUI.getCellBounds(Unknown Source)
+					//    at javax.swing.JList.getCellBounds(Unknown Source)
+					//    at javax.swing.JList.ensureIndexIsVisible(Unknown Source)
+					//    at sun.swing.FilePane.ensureIndexIsVisible(Unknown Source)
+					//    at sun.swing.FilePane.doDirectoryChanged(Unknown Source)
+					//    at sun.swing.FilePane.propertyChange(Unknown Source)
+					//    at java.beans.PropertyChangeSupport.fire(Unknown Source)
+					//    at java.beans.PropertyChangeSupport.firePropertyChange(Unknown Source)
+					//    at java.beans.PropertyChangeSupport.firePropertyChange(Unknown Source)
+					//    at java.awt.Component.firePropertyChange(Unknown Source)
+					//    at javax.swing.JFileChooser.setCurrentDirectory(Unknown Source)
+					//    at javax.swing.JFileChooser.setSelectedFile(Unknown Source)
+					//    at com.apocalyptech.minecraft.xray.XRay.createWindow(XRay.java:1000)
+					//    at com.apocalyptech.minecraft.xray.XRay.run(XRay.java:310)
+					//    at com.apocalyptech.minecraft.xray.XRay.main(XRay.java:276)
+					//
+					// In both cases that I've found, chooser.getCurrentDirectory().getPath()
+					// ends up returning "C:\Users\(username)\Desktop
+					//
+					// I'd love to figure out why this actually happens, and prevent having to
+					// catch this Exception in the first place.
+				}
 				chooser.setDialogTitle("Select a Minecraft World Directory");
 				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
 				{

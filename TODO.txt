@@ -62,3 +62,5 @@
  * It might be nice to use a custom texture for silverfish blocks, so that they're
    more readily apparent.  Perhaps even consider them SEMISOLID so that they'll
    always get rendered?
+ 
+ * Notice dialog when something in xray.properties gets overwritten
