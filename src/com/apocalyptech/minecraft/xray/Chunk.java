@@ -3554,6 +3554,14 @@ public class Chunk {
 			}
 		}
 	}
+
+	/**
+	 * Returns whether or not this chunk contains paintings (to avoid unnecessary texture-swapping)
+	 */
+	public boolean hasPaintings()
+	{
+		return !this.paintings.isEmpty();
+	}
 	
 	/**
 	 * Renders paintings into our world.  Paintings are stored as Entities, not

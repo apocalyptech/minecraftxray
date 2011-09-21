@@ -1980,9 +1980,12 @@ public class XRay
 				{
 					k.renderSolid(render_bedrock, render_water, highlight_explored);
 					k.renderSelected(this.mineralToggle);
-					paintingTexture.bind();
-					k.renderPaintings();
-					minecraftTexture.bind();
+					if (k.hasPaintings())
+					{
+						paintingTexture.bind();
+						k.renderPaintings();
+						minecraftTexture.bind();
+					}
 				}
 			}
 		}
