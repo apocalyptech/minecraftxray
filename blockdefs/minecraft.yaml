@@ -122,6 +122,7 @@
 #             VINE
 #             HUGE_MUSHROOM
 #             SOLID_PANE
+#             CHEST
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
