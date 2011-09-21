@@ -2797,59 +2797,59 @@ public class Chunk {
 		// Now we should be able to actually draw stuff
 		if (has_north && has_south)
 		{
-			this.renderVertical(textureId, x-.5f, z, x+.5f, z, y-.5f, 1f);
+			this.renderVertical(textureId, x-.5f, z, x+.5f, z, y-.5f, .98f);
 		}
 		else
 		{
 			if (has_north)
 			{
-				this.renderVertical(textureId, x, z, x-.5f, z, y-.5f, 1f, 8, 16, 8, 0);
+				this.renderVertical(textureId, x, z, x-.5f, z, y-.5f, .98f, 8, 16, 8, 0);
 			}
 			if (has_south)
 			{
-				this.renderVertical(textureId, x, z, x+.5f, z, y-.5f, 1f, 8, 16, 8, 0);
+				this.renderVertical(textureId, x, z, x+.5f, z, y-.5f, .98f, 8, 16, 8, 0);
 			}
 		}
 		if (has_north)
 		{
-			this.renderHorizontal(textureId, x-.5f, z+top_width, x-top_width, z, y+.5f, 1, 7, top_row_1, 0, false);
-			this.renderHorizontal(textureId, x-.5f, z-top_width, x-top_width, z, y+.5f, 1, 7, top_row_2, 0, false);
+			this.renderHorizontal(textureId, x-.5f, z+top_width, x-top_width, z, y+.48f, 1, 7, top_row_1, 0, false);
+			this.renderHorizontal(textureId, x-.5f, z-top_width, x-top_width, z, y+.48f, 1, 7, top_row_2, 0, false);
 		}
 		if (has_south)
 		{
-			this.renderHorizontal(textureId, x+.5f, z+top_width, x+top_width, z, y+.5f, 1, 7, top_row_1, 0, false);
-			this.renderHorizontal(textureId, x+.5f, z-top_width, x+top_width, z, y+.5f, 1, 7, top_row_2, 0, false);
+			this.renderHorizontal(textureId, x+.5f, z+top_width, x+top_width, z, y+.48f, 1, 7, top_row_1, 0, false);
+			this.renderHorizontal(textureId, x+.5f, z-top_width, x+top_width, z, y+.48f, 1, 7, top_row_2, 0, false);
 		}
 
 		if (has_west && has_east)
 		{
-			this.renderVertical(textureId, x, z-.5f, x, z+.5f, y-.5f, 1f);
+			this.renderVertical(textureId, x, z-.5f, x, z+.5f, y-.5f, .98f);
 		}
 		else
 		{
 			if (has_west)
 			{
-				this.renderVertical(textureId, x, z, x, z+.5f, y-.5f, 1f, 8, 16, 8, 0);
+				this.renderVertical(textureId, x, z, x, z+.5f, y-.5f, .98f, 8, 16, 8, 0);
 			}
 			if (has_east)
 			{
-				this.renderVertical(textureId, x, z, x, z-.5f, y-.5f, 1f, 8, 16, 8, 0);
+				this.renderVertical(textureId, x, z, x, z-.5f, y-.5f, .98f, 8, 16, 8, 0);
 			}
 		}
 		if (has_west)
 		{
-			this.renderHorizontal(textureId, x+top_width, z+.5f, x, z+top_width, y+.5f, 1, 7, top_row_1, 0, true);
-			this.renderHorizontal(textureId, x-top_width, z+.5f, x, z+top_width, y+.5f, 1, 7, top_row_2, 0, true);
+			this.renderHorizontal(textureId, x+top_width, z+.5f, x, z+top_width, y+.48f, 1, 7, top_row_1, 0, true);
+			this.renderHorizontal(textureId, x-top_width, z+.5f, x, z+top_width, y+.48f, 1, 7, top_row_2, 0, true);
 		}
 		if (has_east)
 		{
-			this.renderHorizontal(textureId, x+top_width, z-.5f, x, z-top_width, y+.5f, 1, 7, top_row_1, 0, true);
-			this.renderHorizontal(textureId, x-top_width, z-.5f, x, z-top_width, y+.5f, 1, 7, top_row_2, 0, true);
+			this.renderHorizontal(textureId, x+top_width, z-.5f, x, z-top_width, y+.48f, 1, 7, top_row_1, 0, true);
+			this.renderHorizontal(textureId, x-top_width, z-.5f, x, z-top_width, y+.48f, 1, 7, top_row_2, 0, true);
 		}
 
 		// Finally, the center top square.  Technically we shouldn't draw past the edge, but whatever.
-		this.renderHorizontal(textureId, x+top_width, z+top_width, x-top_width, z, y+.5f, 1, 2, top_row_1, 7, false);
-		this.renderHorizontal(textureId, x+top_width, z-top_width, x-top_width, z, y+.5f, 1, 2, top_row_2, 7, false);
+		this.renderHorizontal(textureId, x+top_width, z+top_width, x-top_width, z, y+.48f, 1, 2, top_row_1, 7, false);
+		this.renderHorizontal(textureId, x+top_width, z-top_width, x-top_width, z, y+.48f, 1, 2, top_row_2, 7, false);
 	}
 	
 	/**
