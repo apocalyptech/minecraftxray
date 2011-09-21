@@ -1,4 +1,6 @@
   * Tweaked the SOLID_PANE renderer to not overlap with overhead blocks
+  * Tweaked the FENCE_GATE renderer to not overlap with adjacent blocks,
+    for open gates.
 
 Minecraft X-Ray 3.3.2 (2011.09.20)
 

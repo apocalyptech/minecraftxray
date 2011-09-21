@@ -2285,40 +2285,40 @@ public class Chunk {
 		if (open)
 		{
 			// One side, bottom slat
-			this.renderVertical(textureId, post_x1, post_z, post_x1, .5f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderVertical(textureId, post_x2, post_z, post_x2, .5f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .5f, fence_slat_start_offset, 6, 2, 5, 7, true);
-			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .5f, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, false);
+			this.renderVertical(textureId, post_x1, post_z, post_x1, .48f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, post_x2, post_z, post_x2, .48f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .48f, fence_slat_start_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .48f, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, false);
 
 			// One side, top slat
-			this.renderVertical(textureId, post_x1, post_z, post_x1, .5f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderVertical(textureId, post_x2, post_z, post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
-			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, false);
+			this.renderVertical(textureId, post_x1, post_z, post_x1, .48f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, post_x2, post_z, post_x2, .48f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .48f, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, post_x1, post_z, post_x2, .48f, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, false);
 
 			// One side, middle bit
-			this.renderVertical(textureId, post_x1, .5f, post_x1, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
-			this.renderVertical(textureId, post_x2, .5f, post_x2, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
-			this.renderVertical(textureId, post_x1, .5f-middle_w, post_x2, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
-			this.renderVertical(textureId, post_x1, .5f, post_x2, .5f, fence_slat_start_offset, fence_slat_height+fence_top_slat_offset, 2, 9, 7, 0);
+			this.renderVertical(textureId, post_x1, .48f, post_x1, .48f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, post_x2, .48f, post_x2, .48f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, post_x1, .48f-middle_w, post_x2, .48f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, post_x1, .48f, post_x2, .48f, fence_slat_start_offset, fence_slat_height+fence_top_slat_offset, 2, 9, 7, 0);
 
 			// Other side, bottom slat
-			this.renderVertical(textureId, -post_x1, post_z, -post_x1, .5f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderVertical(textureId, -post_x2, post_z, -post_x2, .5f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .5f, fence_slat_start_offset, 6, 2, 5, 7, true);
-			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .5f, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, false);
+			this.renderVertical(textureId, -post_x1, post_z, -post_x1, .48f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, -post_x2, post_z, -post_x2, .48f, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .48f, fence_slat_start_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .48f, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, false);
 
 			// Other side, top slat
-			this.renderVertical(textureId, -post_x1, post_z, -post_x1, .5f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderVertical(textureId, -post_x2, post_z, -post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
-			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .5f, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, false);
+			this.renderVertical(textureId, -post_x1, post_z, -post_x1, .48f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderVertical(textureId, -post_x2, post_z, -post_x2, .48f, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
+			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .48f, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
+			this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, .48f, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, false);
 
 			// Other side, middle bit
-			this.renderVertical(textureId, -post_x1, .5f, -post_x1, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
-			this.renderVertical(textureId, -post_x2, .5f, -post_x2, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
-			this.renderVertical(textureId, -post_x1, .5f-middle_w, -post_x2, .5f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
-			this.renderVertical(textureId, -post_x1, .5f, -post_x2, .5f, fence_slat_start_offset, fence_slat_height+fence_top_slat_offset, 2, 9, 7, 0);
+			this.renderVertical(textureId, -post_x1, .48f, -post_x1, .48f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, -post_x2, .48f, -post_x2, .48f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, -post_x1, .48f-middle_w, -post_x2, .48f-middle_w, middle_y, middle_h, 2, 3, 7, 5);
+			this.renderVertical(textureId, -post_x1, .48f, -post_x2, .48f, fence_slat_start_offset, fence_slat_height+fence_top_slat_offset, 2, 9, 7, 0);
 		}
 		else
 		{

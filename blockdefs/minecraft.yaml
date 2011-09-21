@@ -100,6 +100,7 @@
 #             DECORATION_CROSS
 #             DOOR
 #             FENCE
+#             FENCE_GATE
 #             FLOOR
 #             HALFHEIGHT
 #             LADDER
