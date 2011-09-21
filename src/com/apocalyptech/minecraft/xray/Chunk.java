@@ -3052,14 +3052,14 @@ public class Chunk {
 		boolean draw = false;
 		boolean above = true;
 		boolean below = true;
-		boolean left = true;
-		boolean right = true;
-		boolean near = true;
-		boolean far = true;
+		boolean north = true;
+		boolean south = true;
+		boolean east = true;
+		boolean west = true;
 		int tex_offset = 0;
 		BlockType block;
 
-		int north, south, west, east, top, bottom;
+		int north_t, south_t, west_t, east_t, top_t, bottom_t;
 		
 		for(int x=0;x<16;x++) {
 			int xOff = (x * 128 * 16);
@@ -3089,10 +3089,10 @@ public class Chunk {
 								draw = true;
 								above = false;
 								below = false;
-								left = false;
-								right = false;
-								near = false;
-								far = false;
+								north = false;
+								south = false;
+								east = false;
+								west = false;
 								break;
 							}
 						}
@@ -3109,10 +3109,10 @@ public class Chunk {
 						draw = false;
 						above = true;
 						below = true;
-						left = true;
-						right = true;
-						near = true;
-						far = true;
+						north = true;
+						south = true;
+						east = true;
+						west = true;
 					}
 					
 					if (!render_water && block.type == BLOCK_TYPE.WATER)
@@ -3152,28 +3152,28 @@ public class Chunk {
 								below = false;
 							}
 							
-							// check left;
+							// check north;
 							if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 								draw = true;
-								left = false;
+								north = false;
 							}
 						
-							// check right
+							// check south
 							if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 								draw = true;
-								right = false;
+								south = false;
 							}
 							
-							// check near
+							// check east
 							if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 								draw = true;
-								near = false;
+								east = false;
 							}
 							
-							// check far
+							// check west
 							if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 								draw = true;
-								far = false;
+								west = false;
 							}
 						}
 						else
@@ -3190,28 +3190,28 @@ public class Chunk {
 								below = false;
 							}
 							
-							// check left;
+							// check north;
 							if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset), transparency)) {
 								draw = true;
-								left = false;
+								north = false;
 							}
 						
-							// check right
+							// check south
 							if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset), transparency)) {
 								draw = true;
-								right = false;
+								south = false;
 							}
 							
-							// check near
+							// check east
 							if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset), transparency)) {
 								draw = true;
-								near = false;
+								east = false;
 							}
 							
-							// check far
+							// check west
 							if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset), transparency)) {
 								draw = true;
-								far = false;
+								west = false;
 							}
 						}
 					}
@@ -3351,102 +3351,102 @@ public class Chunk {
 								break;
 							case HALFHEIGHT:
 								if(draw) {
-									if(!near) this.renderWestEast(textureId, worldX+x, y, worldZ+z, 0f, .495f);
-									if(!far) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1, 0f, .495f);
+									if(!east) this.renderWestEast(textureId, worldX+x, y, worldZ+z, 0f, .495f);
+									if(!west) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1, 0f, .495f);
 									
 									if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
 									this.renderTopDown(textureId, worldX+x, y+0.5f, worldZ+z);	
 									
-									if(!left) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z, 0f, .495f);
-									if(!right) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z, 0f, .495f);
+									if(!north) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z, 0f, .495f);
+									if(!south) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z, 0f, .495f);
 								}
 								break;
 							default:
-								north = textureId;
-								south = textureId;
-								west = textureId;
-								east = textureId;
-								top = textureId;
-								bottom = textureId;
+								north_t = textureId;
+								south_t = textureId;
+								west_t = textureId;
+								east_t = textureId;
+								top_t = textureId;
+								bottom_t = textureId;
 								if (block.type == BLOCK_TYPE.HUGE_MUSHROOM)
 								{
 									byte data = getData(x, y, z);
 									switch (data)
 									{
 										case 0:
-											north = TEX_HUGE_MUSHROOM_PORES;
-											south = TEX_HUGE_MUSHROOM_PORES;
-											west = TEX_HUGE_MUSHROOM_PORES;
-											east = TEX_HUGE_MUSHROOM_PORES;
-											top = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES;
+											west_t = TEX_HUGE_MUSHROOM_PORES;
+											east_t = TEX_HUGE_MUSHROOM_PORES;
+											top_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 									    case 1:
-											south = TEX_HUGE_MUSHROOM_PORES;
-											west = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES;
+											west_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 2:
-											north = TEX_HUGE_MUSHROOM_PORES;
-											south = TEX_HUGE_MUSHROOM_PORES;
-											west = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES;
+											west_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 3:
-											north = TEX_HUGE_MUSHROOM_PORES;
-											west = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES;
+											west_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 4:
-											south = TEX_HUGE_MUSHROOM_PORES;
-											west = TEX_HUGE_MUSHROOM_PORES;
-											east = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES;
+											west_t = TEX_HUGE_MUSHROOM_PORES;
+											east_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 5:
-											north = TEX_HUGE_MUSHROOM_PORES;
-											south = TEX_HUGE_MUSHROOM_PORES;
-											west = TEX_HUGE_MUSHROOM_PORES;
-											east = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES;
+											west_t = TEX_HUGE_MUSHROOM_PORES;
+											east_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 6:
-											north = TEX_HUGE_MUSHROOM_PORES;
-											west = TEX_HUGE_MUSHROOM_PORES;
-											east = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES;
+											west_t = TEX_HUGE_MUSHROOM_PORES;
+											east_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 7:
-											south = TEX_HUGE_MUSHROOM_PORES;
-											east = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES;
+											east_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 8:
-											north = TEX_HUGE_MUSHROOM_PORES;
-											south = TEX_HUGE_MUSHROOM_PORES;
-											east = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES;
+											east_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 9:
-											north = TEX_HUGE_MUSHROOM_PORES;
-											east = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES;
+											east_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										case 10:
-											north = TEX_HUGE_MUSHROOM_STEM;
-											south = TEX_HUGE_MUSHROOM_STEM;
-											west = TEX_HUGE_MUSHROOM_STEM;
-											east = TEX_HUGE_MUSHROOM_STEM;
-											top = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_STEM;
+											south_t = TEX_HUGE_MUSHROOM_STEM;
+											west_t = TEX_HUGE_MUSHROOM_STEM;
+											east_t = TEX_HUGE_MUSHROOM_STEM;
+											top_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 										default:
-											north = TEX_HUGE_MUSHROOM_PORES;
-											south = TEX_HUGE_MUSHROOM_PORES;
-											west = TEX_HUGE_MUSHROOM_PORES;
-											east = TEX_HUGE_MUSHROOM_PORES;
-											top = TEX_HUGE_MUSHROOM_PORES;
-											bottom = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES;
+											west_t = TEX_HUGE_MUSHROOM_PORES;
+											east_t = TEX_HUGE_MUSHROOM_PORES;
+											top_t = TEX_HUGE_MUSHROOM_PORES;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES;
 											break;
 									}
 								}
@@ -3468,61 +3468,61 @@ public class Chunk {
 										case NORTH:
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 											{
-												north = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+												north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 											}
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 											{
-												south = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+												south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 											}
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 											{
-												west = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												east = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 											}
 											break;
 										case SOUTH:
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 											{
-												north = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+												north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 											}
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 											{
-												south = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+												south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 											}
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 											{
-												west = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												east = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 											}
 											break;
 										case WEST:
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 											{
-												north = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												south = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 											}
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 											{
-												west = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+												west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 											}
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 											{
-												east = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+												east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 											}
 											break;
 										case EAST:
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 											{
-												north = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												south = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+												south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 											}
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 											{
-												west = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+												west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 											}
 											if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 											{
-												east = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+												east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 											}
 											break;
 									}
@@ -3532,22 +3532,22 @@ public class Chunk {
 									// this back into the case statement above
 									if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.TOP))
 									{
-										top = block.texture_dir_map.get(BlockType.DIRECTION_REL.TOP) + tex_offset;
+										top_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.TOP) + tex_offset;
 									}
 									if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BOTTOM))
 									{
-										bottom = block.texture_dir_map.get(BlockType.DIRECTION_REL.BOTTOM) + tex_offset;
+										bottom_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BOTTOM) + tex_offset;
 									}
 								}
 
-								if(!near) this.renderWestEast(east, worldX+x, y, worldZ+z);
-								if(!far) this.renderWestEast(west, worldX+x, y, worldZ+z+1);
+								if(!east) this.renderWestEast(east_t, worldX+x, y, worldZ+z);
+								if(!west) this.renderWestEast(west_t, worldX+x, y, worldZ+z+1);
 								
-								if(!below) this.renderTopDown(bottom, worldX+x, y, worldZ+z);
-								if(!above) this.renderTopDown(top, worldX+x, y+1, worldZ+z);	
+								if(!below) this.renderTopDown(bottom_t, worldX+x, y, worldZ+z);
+								if(!above) this.renderTopDown(top_t, worldX+x, y+1, worldZ+z);	
 								
-								if(!left) this.renderNorthSouth(north, worldX+x, y, worldZ+z);
-								if(!right) this.renderNorthSouth(south, worldX+x+1, y, worldZ+z);
+								if(!north) this.renderNorthSouth(north_t, worldX+x, y, worldZ+z);
+								if(!south) this.renderNorthSouth(south_t, worldX+x+1, y, worldZ+z);
 						}					
 					}
 				}

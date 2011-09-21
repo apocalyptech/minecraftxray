@@ -67,3 +67,6 @@
 
  * Blockdef support for mods which use a separate terrain.png-like file, rather than
    just the "mlblocks" stuff that we do currently.
+
+ * "Explored" highlight should probably count redstone torches, Jack-O-Lanterns, and
+   Glowstone (when not in Nether, anyway)
