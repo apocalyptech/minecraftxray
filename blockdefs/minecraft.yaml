@@ -955,11 +955,8 @@ blocks:
     type: STAIRS
 
   - id: 110
-    # Name taken from what user "XPaw" at minecraftwiki added
-    # to the "Data Values" page.  No idea if that's correct or
-    # not, as destroying the block just yields a dirt item.
-    idStr: MYCEL
-    name: Mycel
+    idStr: MYCELIUM
+    name: Mycelium
     mapcolor: [140, 115, 119]
     tex: [14, 4]
     tex_direction:
@@ -969,7 +966,7 @@ blocks:
       BACKWARD: [13, 4]
 
   - id: 111
-    idStr: WATER_LILY
+    idStr: LILY_PAD
     name: Lily
     mapcolor: [117, 176, 73]
     tex: [12, 4]
