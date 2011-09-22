@@ -103,7 +103,8 @@ public class MinecraftConstants {
 		VINE,
 		HUGE_MUSHROOM,
 		SOLID_PANE,
-		CHEST
+		CHEST,
+		NETHER_WART
 	}
 
 	// Some block types' renderers automatically use other textures that we don't

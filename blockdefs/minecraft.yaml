@@ -124,6 +124,7 @@
 #             HUGE_MUSHROOM
 #             SOLID_PANE
 #             CHEST
+#             NETHER_WART
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -953,4 +954,32 @@ blocks:
     mapcolor: [120, 120, 120]
     tex: [6, 3]
     type: STAIRS
+
+  - id: 112
+    idStr: NETHER_BRICK
+    name: Nether Brick
+    mapcolor: [54, 24, 30]
+    tex: [0, 14]
+
+  - id: 113
+    idStr: NETHER_FENCE
+    name: Nether Fence
+    mapcolor: [54, 24, 30]
+    tex: [0, 14]
+    type: FENCE
+
+  - id: 114
+    idStr: NETHER_STAIRS
+    name: Nether Stairs
+    mapcolor: [54, 24, 30]
+    tex: [0, 14]
+    type: STAIRS
+
+  - id: 115
+    idStr: NETHER_WART
+    name: Nether Wart
+    mapcolor: [112, 8, 28]
+    tex: [2, 14]
+    type: NETHER_WART
+
 ...

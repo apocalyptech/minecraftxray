@@ -1372,6 +1372,38 @@ public class Chunk {
 		 
 		 renderSpecial(bx, by, ex, ey, x, y, z);
 	}
+	
+	/**
+	 * Renders netherwart.  We still take the fully-grown textureId in the function so that everything
+	 * remains defined in MinecraftConstants
+	 * 
+	 * TODO: This actually isn't entirely accurate...
+	 *
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderNetherwart(int textureId, int xxx, int yyy, int zzz) {
+		 float x = xxx + this.x*16 -0.5f;
+		 float z = zzz + this.z*16 -0.5f;
+		 float y = yyy - 0.5f;
+		 
+		 float bx,by;
+		 float ex,ey;
+
+		 bx = precalcSpriteSheetToTextureX[textureId];
+		 by = precalcSpriteSheetToTextureY[textureId];
+
+		 // Adjust for size; fortunately the textures are all in the same row so it's easy.
+		 byte data = getData(xxx, yyy, zzz);
+		 bx += TEX16 * data;
+		 
+		 ex = bx + TEX16;
+		 ey = by + TEX32;
+		 
+		 renderSpecial(bx, by, ex, ey, x, y, z);
+	}
     
 	/**
 	 * Renders a ladder, given its attached-side data.  We still take in textureId just so
@@ -2104,7 +2136,7 @@ public class Chunk {
 	 * @param zzz
 	 * @param blockOffset Should be passed in from our main draw loop so we don't have to recalculate
 	 */
-	public void renderFence(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
+	public void renderFence(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -2118,7 +2150,7 @@ public class Chunk {
 		this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize, x-fence_postsize, z-fence_postsize, y+0.5f, 4, 4, 6, 6, false);
 
 		// Check for adjacent fences in the -x direction
-		if (this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+		if (this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == blockId)
 		{
 			// Bottom slat
 			this.renderVertical(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z+fence_postsize_h, slat_start, fence_slat_height, 16, 3, 0, 5);
@@ -2134,7 +2166,7 @@ public class Chunk {
 		}
 		
 		// Check for adjacent fences in the -z direction
-		if (this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == BLOCK_FENCE.id)
+		if (this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == blockId)
 		{
 			// Bottom slat
 			this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-1f+fence_postsize, slat_start, fence_slat_height, 16, 3, 0, 5);
@@ -3077,6 +3109,7 @@ public class Chunk {
 					block = blockArray[t];
 					if (block == null)
 					{
+						System.out.println("Unknown block ID: " + t);
 						block = BLOCK_UNKNOWN;
 					}
 					
@@ -3280,6 +3313,9 @@ public class Chunk {
 							case CROPS:
 								renderCrops(textureId,x,y,z);
 								break;
+							case NETHER_WART:
+								renderNetherwart(textureId,x,y,z);
+								break;
 							case LADDER:
 								renderLadder(textureId,x,y,z);
 								break;
@@ -3308,7 +3344,7 @@ public class Chunk {
 								renderWallSign(textureId,x,y,z);
 								break;
 							case FENCE:
-								renderFence(textureId,x,y,z,blockOffset);
+								renderFence(textureId,x,y,z,blockOffset,t);
 								break;
 							case FENCE_GATE:
 								renderFenceGate(textureId,x,y,z,blockOffset);
