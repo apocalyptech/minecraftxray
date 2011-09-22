@@ -967,7 +967,7 @@ blocks:
 
   - id: 111
     idStr: LILY_PAD
-    name: Lily
+    name: Lilypad
     mapcolor: [117, 176, 73]
     tex: [12, 4]
     type: FLOOR
