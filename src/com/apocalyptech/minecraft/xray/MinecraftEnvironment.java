@@ -627,6 +627,13 @@ public class MinecraftEnvironment {
 			g2d.setColor(Color.green);
 			g2d.fill(rect);
 			g2d.drawImage(bi, null, 0, 0);
+
+			// Water Lilies
+			rect = new Rectangle(12*square_width, 4*square_width, square_width, square_width);
+			g2d.setComposite(ac);
+			g2d.setColor(Color.green);
+			g2d.fill(rect);
+			g2d.drawImage(bi, null, 0, 0);
 		}
 
 		// Overlay our custom-colorized side grass on top of the side-grass image

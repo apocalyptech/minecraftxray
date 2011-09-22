@@ -130,8 +130,7 @@
 #         be considered fully solid by X-Ray's rendering engine.  Examples
 #         are glass, lava, fire, and mob spawners.
 #
-#         "FLOOR" is currently only used for redstone wire, and might go
-#         away once I actually get redstone wire rendering done.
+#         "FLOOR" is currently used for redstone wire and Water Lilies
 #
 #         "THINSLICE" is currently only used for snow, and I may eventually
 #         change that to "SNOW" instead, and clean up that rendering.
@@ -954,6 +953,13 @@ blocks:
     mapcolor: [120, 120, 120]
     tex: [6, 3]
     type: STAIRS
+
+  - id: 111
+    idStr: WATER_LILY
+    name: Lily
+    mapcolor: [117, 176, 73]
+    tex: [12, 4]
+    type: FLOOR
 
   - id: 112
     idStr: NETHER_BRICK
