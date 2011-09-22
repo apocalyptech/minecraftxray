@@ -3109,7 +3109,7 @@ public class Chunk {
 					block = blockArray[t];
 					if (block == null)
 					{
-						System.out.println("Unknown block ID: " + t);
+						//System.out.println("Unknown block ID: " + t);
 						block = BLOCK_UNKNOWN;
 					}
 					
