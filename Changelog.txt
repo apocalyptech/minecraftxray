@@ -1,11 +1,9 @@
-  * Tweaked the SOLID_PANE renderer to not overlap with overhead blocks
-  * Tweaked the FENCE_GATE renderer to not overlap with adjacent blocks,
-    for open gates.
   * Support for all Beta 1.9 blocks
-  * Improved rendering for crops (though transparency issues continue to
-    occur)
+  * Various rendering improvements to water, glass, glass panes, iron
+    bars, fence gates, and crops (though transparency issues do continue
+	to persist)
 
-Minecraft X-Ray 3.3.2 (2011.09.20)
+MiNECRAFT x-Ray 3.3.2 (2011.09.20)
 
   * Chests render more correctly now
   * Updated Silverfish block to process its data values correctly
