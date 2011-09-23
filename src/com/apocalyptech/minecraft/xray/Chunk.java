@@ -146,6 +146,31 @@ public class Chunk {
 	}
 
 	/**
+	 * Gets the data value of the block immediately to the north.  This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
+	private byte getAdjNorthBlockData(int x, int y, int z)
+	{
+		if (x > 0)
+		{
+			return getData(x-1, y, z);
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x-1, this.z);
+			if (otherChunk == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return otherChunk.getData(15, y, z);
+			}
+		}
+	}
+
+	/**
 	 * Gets the Block ID of the block immediately to the south.  This might
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
@@ -166,6 +191,31 @@ public class Chunk {
 			else
 			{
 				return otherChunk.getBlock(0, y, z);
+			}
+		}
+	}
+
+	/**
+	 * Gets the data value of the block immediately to the south.  This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
+	private byte getAdjSouthBlockData(int x, int y, int z)
+	{
+		if (x < 15)
+		{
+			return getData(x+1, y, z);
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x+1, this.z);
+			if (otherChunk == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return otherChunk.getData(0, y, z);
 			}
 		}
 	}
@@ -196,6 +246,31 @@ public class Chunk {
 	}
 
 	/**
+	 * Gets the data value of the block immediately to the east.  This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
+	private byte getAdjEastBlockData(int x, int y, int z)
+	{
+		if (z > 0)
+		{
+			return getData(x, y, z-1);
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x, this.z-1);
+			if (otherChunk == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return otherChunk.getData(x, y, 15);
+			}
+		}
+	}
+
+	/**
 	 * Gets the Block ID of the block immediately to the west.  This might
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
@@ -216,6 +291,31 @@ public class Chunk {
 			else
 			{
 				return otherChunk.getBlock(x, y, 0);
+			}
+		}
+	}
+
+	/**
+	 * Gets the data value of the block immediately to the west.  This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
+	private byte getAdjWestBlockData(int x, int y, int z)
+	{
+		if (z < 15)
+		{
+			return getData(x, y, z+1);
+		}
+		else
+		{
+			Chunk otherChunk = level.getChunk(this.x, this.z+1);
+			if (otherChunk == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return otherChunk.getData(x, y, 0);
 			}
 		}
 	}
@@ -2109,7 +2209,10 @@ public class Chunk {
 	}
 	
 	/**
-	 * Renders a fence.
+	 * Renders a fence.  Note that as of 1.9-pre, the two kinds of fences (regular and nether)
+	 * won't link up with each other, but either will attach to a nearby Fence Gate, if they can.
+	 *
+	 * TODO: Sort out the proper texture offsets + orientations, or at least do it consistently
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -2130,9 +2233,15 @@ public class Chunk {
 		this.renderVertical(textureId, x-fence_postsize, z+fence_postsize, x+fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
 		this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize, x-fence_postsize, z-fence_postsize, y+0.5f, 4, 4, 6, 6, false);
 
-		// Check for adjacent fences in the -x direction
-		if (this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == blockId)
+		int adj_id;
+		byte adj_data;
+
+		// Check for adjacent fences / fence gates in the -x direction
+		adj_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj_id == blockId)
 		{
+			// Fence to the North
+
 			// Bottom slat
 			this.renderVertical(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z+fence_postsize_h, slat_start, fence_slat_height, 16, 3, 0, 5);
 			this.renderVertical(textureId, x-fence_postsize, z-fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start, fence_slat_height, 16, 3, 0, 5);
@@ -2145,9 +2254,59 @@ public class Chunk {
 			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_top_slat_offset, 2, 16, 14, 0, false);
 			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_top_slat_offset+fence_slat_height, 2, 16, 14, 0, false);
 		}
+		else if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
+		{
+			// Fence Gate to the North
+			adj_data = this.getAdjNorthBlockData(xxx, yyy, zzz);
+			if (adj_data != -1)
+			{
+				adj_data &= 0x3;
+				if (adj_data == 0 || adj_data == 2)
+				{
+					// Bottom slat
+					this.renderVertical(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z+fence_postsize_h, slat_start, fence_slat_height, 6, 3, 0, 5);
+					this.renderVertical(textureId, x-fence_postsize, z-fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start, fence_slat_height, 6, 3, 0, 5);
+					this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start, 2, 6, 14, 0, false);
+					this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start+fence_slat_height, 2, 6, 14, 0, false);
+
+					// Top slat
+					this.renderVertical(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z+fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 8, 3, 0, 5);
+					this.renderVertical(textureId, x-fence_postsize, z-fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 8, 3, 0, 5);
+					this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset, 2, 8, 14, 0, false);
+					this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset+fence_slat_height, 2, 8, 14, 0, false);
+				}
+			}
+		}
+
+		// Check for adjacent fence gates in the +x direction
+		adj_id = this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
+		{
+			// Fence Gate to the South
+			adj_data = this.getAdjSouthBlockData(xxx, yyy, zzz);
+			if (adj_data != -1)
+			{
+				adj_data &= 0x3;
+				if (adj_data == 0 || adj_data == 2)
+				{
+					// Bottom slat
+					this.renderVertical(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z+fence_postsize_h, slat_start, fence_slat_height, 6, 3, 0, 5);
+					this.renderVertical(textureId, x+fence_postsize, z-fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start, fence_slat_height, 6, 3, 0, 5);
+					this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start, 2, 6, 14, 0, false);
+					this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start+fence_slat_height, 2, 6, 14, 0, false);
+
+					// Top slat
+					this.renderVertical(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z+fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 8, 3, 0, 5);
+					this.renderVertical(textureId, x+fence_postsize, z-fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 8, 3, 0, 5);
+					this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset, 2, 8, 14, 0, false);
+					this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset+fence_slat_height, 2, 8, 14, 0, false);
+				}
+			}
+		}
 		
-		// Check for adjacent fences in the -z direction
-		if (this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == blockId)
+		// Check for adjacent fences / fence gates in the -z direction
+		adj_id = this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj_id == blockId)
 		{
 			// Bottom slat
 			this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-1f+fence_postsize, slat_start, fence_slat_height, 16, 3, 0, 5);
@@ -2161,11 +2320,62 @@ public class Chunk {
 			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset, 2, 16, 14, 0, true);
 			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset+fence_slat_height, 2, 16, 14, 0, true);
 		}
+		else if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
+		{
+			// Fence Gate to the East
+			adj_data = this.getAdjEastBlockData(xxx, yyy, zzz);
+			if (adj_data != -1)
+			{
+				adj_data &= 0x3;
+				if (adj_data == 1 || adj_data == 3)
+				{
+					// Bottom slat
+					this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
+					this.renderVertical(textureId, x-fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
+					this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start, 2, 6, 14, 0, true);
+					this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start+fence_slat_height, 2, 6, 14, 0, true);
+
+					// Top slat
+					this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-.5f, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+					this.renderVertical(textureId, x-fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+					this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start+fence_top_slat_offset, 2, 6, 14, 0, true);
+					this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start+fence_top_slat_offset+fence_slat_height, 2, 6, 14, 0, true);
+				}
+			}
+		}
+
+		// Check for adjacent fence gates in the +z direction
+		adj_id = this.getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
+		{
+			// Fence Gate to the West
+			adj_data = this.getAdjWestBlockData(xxx, yyy, zzz);
+			if (adj_data != -1)
+			{
+				adj_data &= 0x3;
+				if (adj_data == 1 || adj_data == 3)
+				{
+					// Bottom slat
+					this.renderVertical(textureId, x+fence_postsize_h, z+fence_postsize, x+fence_postsize_h, z+.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
+					this.renderVertical(textureId, x-fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
+					this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start, 2, 6, 14, 0, true);
+					this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_slat_height, 2, 6, 14, 0, true);
+
+					// Top slat
+					this.renderVertical(textureId, x+fence_postsize_h, z+fence_postsize, x+fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+					this.renderVertical(textureId, x-fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+					this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset, 2, 6, 14, 0, true);
+					this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset+fence_slat_height, 2, 6, 14, 0, true);
+				}
+			}
+		}
 	}
 	
 	/**
 	 * Renders a fence gate.  Good lord, this is a heck of a function.   I continually feel like I'm
 	 * going about these things in the wrong way.  Ah, well - it works.
+	 *
+	 * TODO: Sort out the proper texture offsets + orientations, or at least do it consistently
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -2192,13 +2402,6 @@ public class Chunk {
 		boolean open = ((data & 0x4) == 0x4);
 		int dir = (data & 0x3);
 
-		boolean have_fence_1 = false;
-		int fence_1_tex = textureId;
-		int id_1;
-		boolean have_fence_2 = false;
-		int fence_2_tex = textureId;
-		int id_2;
-
 		// GL stuff; only draw one way
 		GL11.glPushMatrix();
 		GL11.glTranslatef(x, y, z);
@@ -2206,36 +2409,16 @@ public class Chunk {
 		{
 			case 1:
 				GL11.glRotatef(270f, 0f, 1f, 0f);
-				id_1 = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
-				id_2 = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
 				break;
 			case 2:
 				GL11.glRotatef(180f, 0f, 1f, 0f);
-				id_1 = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
-				id_2 = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
 				break;
 			case 3:
 				GL11.glRotatef(90f, 0f, 1f, 0f);
-				id_1 = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
-				id_2 = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
 				break;
 			case 0:
 			default:
-				id_1 = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
-				id_2 = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
 				break;
-		}
-
-		// Set some vars based on our adjacent fences
-		if (blockArray[id_1] != null && blockArray[id_1].type == BLOCK_TYPE.FENCE)
-		{
-			have_fence_1 = true;
-			fence_1_tex = blockArray[id_1].tex_idx;
-		}
-		if (blockArray[id_2] != null && blockArray[id_2].type == BLOCK_TYPE.FENCE)
-		{
-			have_fence_2 = true;
-			fence_2_tex = blockArray[id_2].tex_idx;
 		}
 
 		// One side post
@@ -2246,22 +2429,6 @@ public class Chunk {
 		this.renderHorizontal(textureId, post_x1, post_z, post_x2, -post_z, post_y_start, 2, 2, 7, 7, false);
 		this.renderHorizontal(textureId, post_x1, post_z, post_x2, -post_z, post_y_start+post_h, 2, 2, 7, 7, false);
 		
-		// ... and its connecting fence post, if it exists
-		if (have_fence_1)
-		{
-			// Bottom
-			this.renderVertical(fence_1_tex, post_x2, post_z, post_x2+.5f-fence_postsize, post_z, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderVertical(fence_1_tex, post_x2, -post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderHorizontal(fence_1_tex, post_x2, post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset, 6, 2, 5, 7, true);
-			this.renderHorizontal(fence_1_tex, post_x2, post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, true);
-
-			// Top
-			this.renderVertical(fence_1_tex, post_x2, post_z, post_x2+.5f-fence_postsize, post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderVertical(fence_1_tex, post_x2, -post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderHorizontal(fence_1_tex, post_x2, post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
-			this.renderHorizontal(fence_1_tex, post_x2, post_z, post_x2+.5f-fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, true);
-		}
-
 		// The other side post
 		this.renderVertical(textureId, -post_x1, post_z, -post_x2, post_z, post_y_start, post_h, 2, 11, 7, 0);
 		this.renderVertical(textureId, -post_x1, -post_z, -post_x2, -post_z, post_y_start, post_h, 2, 11, 7, 0);
@@ -2269,22 +2436,6 @@ public class Chunk {
 		this.renderVertical(textureId, -post_x2, post_z, -post_x2, -post_z, post_y_start, post_h, 2, 11, 7, 0);
 		this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, -post_z, post_y_start, 2, 2, 7, 7, false);
 		this.renderHorizontal(textureId, -post_x1, post_z, -post_x2, -post_z, post_y_start+post_h, 2, 2, 7, 7, false);
-		
-		// ... and its connecting fence post, if it exists
-		if (have_fence_2)
-		{
-			// Bottom
-			this.renderVertical(fence_2_tex, -post_x2, post_z, -post_x2-.5f+fence_postsize, post_z, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderVertical(fence_2_tex, -post_x2, -post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderHorizontal(fence_2_tex, -post_x2, post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset, 6, 2, 5, 7, true);
-			this.renderHorizontal(fence_2_tex, -post_x2, post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset+fence_slat_height, 6, 2, 5, 7, true);
-
-			// Top
-			this.renderVertical(fence_2_tex, -post_x2, post_z, -post_x2-.5f+fence_postsize, post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderVertical(fence_2_tex, -post_x2, -post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset, fence_slat_height, 6, 3, 5, 7);
-			this.renderHorizontal(fence_2_tex, -post_x2, post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset, 6, 2, 5, 7, true);
-			this.renderHorizontal(fence_2_tex, -post_x2, post_z, -post_x2-.5f+fence_postsize, -post_z, fence_slat_start_offset+fence_top_slat_offset+fence_slat_height, 6, 2, 5, 7, true);
-		}
 
 		// Now the gate itself
 		if (open)
