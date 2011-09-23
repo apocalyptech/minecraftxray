@@ -2027,7 +2027,17 @@ public class XRay
 				Chunk k = level.getChunk(lx, lz);
 
 				if (k != null)
-					k.renderTransparency();
+					k.renderNonstandard();
+			}
+		}
+		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX + visible_chunk_range; lx++)
+		{
+			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ + visible_chunk_range; lz++)
+			{
+				Chunk k = level.getChunk(lx, lz);
+
+				if (k != null)
+					k.renderGlass();
 			}
 		}
 

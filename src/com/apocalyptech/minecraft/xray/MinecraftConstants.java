@@ -97,6 +97,7 @@ public class MinecraftConstants {
 		SIMPLE_RAIL,
 		WATER,
 		SEMISOLID,
+		GLASS,
 		TRAPDOOR,
 		PISTON_BODY,
 		PISTON_HEAD,

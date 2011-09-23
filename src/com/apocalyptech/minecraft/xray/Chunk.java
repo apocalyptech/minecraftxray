@@ -51,7 +51,8 @@ import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
  */
 public class Chunk {
 	private int displayListNum;
-	private int transparentListNum;
+	private int nonstandardListNum;
+	private int glassListNum;
 	private int selectedDisplayListNum;
 	public int x;
 	public int z;
@@ -73,7 +74,8 @@ public class Chunk {
 
 	private static enum RENDER_PASS {
 		SOLIDS,
-		TRANSPARENTS,
+		NONSTANDARD,
+		GLASS,
 		SELECTED
 	}
 	
@@ -112,7 +114,8 @@ public class Chunk {
 
 		displayListNum = GL11.glGenLists(1);
 		selectedDisplayListNum = GL11.glGenLists(1);
-		transparentListNum = GL11.glGenLists(1);
+		glassListNum = GL11.glGenLists(1);
+		nonstandardListNum = GL11.glGenLists(1);
 		
 		//System.out.println(data);
 		//System.exit(0);
@@ -3369,9 +3372,14 @@ public class Chunk {
 		renderWorld(RENDER_PASS.SOLIDS, render_bedrock, false, highlight_explored, null);
 	}
 
-	public void renderWorldTransparents(boolean render_water, boolean highlight_explored)
+	public void renderWorldNonstandard(boolean render_water, boolean highlight_explored)
 	{
-		renderWorld(RENDER_PASS.TRANSPARENTS, false, render_water, highlight_explored, null);
+		renderWorld(RENDER_PASS.NONSTANDARD, false, render_water, highlight_explored, null);
+	}
+
+	public void renderWorldGlass(boolean highlight_explored)
+	{
+		renderWorld(RENDER_PASS.GLASS, false, false, highlight_explored, null);
 	}
 
 	public void renderWorldSelected(boolean[] selectedMap)
@@ -3439,6 +3447,13 @@ public class Chunk {
 					
 					// Doublecheck for water
 					if (!render_water && block.type == BLOCK_TYPE.WATER)
+					{
+						continue;
+					}
+
+					// Doublecheck for glass stuffs
+					if ((pass == RENDER_PASS.GLASS && (block.type != BLOCK_TYPE.GLASS && block.type != BLOCK_TYPE.SOLID_PANE)) ||
+							(pass != RENDER_PASS.GLASS && (block.type == BLOCK_TYPE.GLASS || block.type == BLOCK_TYPE.SOLID_PANE)))
 					{
 						continue;
 					}
@@ -3549,11 +3564,17 @@ public class Chunk {
 							}
 							break;
 
-						case TRANSPARENTS:
+						case NONSTANDARD:
 							if (block.isSolid())
 							{
 								continue;
 							}
+							draw = true;
+							break;
+
+						case GLASS:
+							// If we got here, our checks above would have made sure that we're
+							// only dealing with the proper materials.
 							draw = true;
 							break;
 
@@ -3720,6 +3741,7 @@ public class Chunk {
 								break;
 							case SEMISOLID:
 							case WATER:
+							case GLASS:
 								renderSemisolid(textureId,x,y,z,blockOffset,t);
 								break;
 
@@ -4039,18 +4061,25 @@ public class Chunk {
 				GL11.glNewList(this.displayListNum, GL11.GL_COMPILE);
 				renderWorldSolids(render_bedrock, highlight_explored);
 				GL11.glEndList();
-				GL11.glNewList(this.transparentListNum, GL11.GL_COMPILE);
+				GL11.glNewList(this.nonstandardListNum, GL11.GL_COMPILE);
 				//GL11.glDepthMask(false);
-				renderWorldTransparents(render_water, highlight_explored);
+				renderWorldNonstandard(render_water, highlight_explored);
 				//GL11.glDepthMask(true);
+				GL11.glEndList();
+				GL11.glNewList(this.glassListNum, GL11.GL_COMPILE);
+				renderWorldGlass(highlight_explored);
 				GL11.glEndList();
 				this.isDirty = false;
 		}
 		GL11.glCallList(this.displayListNum);
 	}
 	
-	public void renderTransparency() {
-		GL11.glCallList(this.transparentListNum);
+	public void renderNonstandard() {
+		GL11.glCallList(this.nonstandardListNum);
+	}
+
+	public void renderGlass() {
+		GL11.glCallList(this.glassListNum);
 	}
 	
 	public void renderSelected(boolean[] selectedMap) {
