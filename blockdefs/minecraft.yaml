@@ -41,7 +41,6 @@
 #          shouldn't be changed are:
 #
 #               COBBLESTONE (the LEVER renderer uses it)
-#               FENCE / FENCE_GATE (their respective renderers use it)
 #               IRON_BARS (the "solid pane" renderer uses it)
 #               TORCH (the "explored" highlight uses it)
 #               BEDROCK (the "bedrock" toggle uses it)
