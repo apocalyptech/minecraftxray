@@ -3158,7 +3158,7 @@ public class Chunk {
 		if (y > 0)
 		{
 			short bottom = blockData.value[blockOffset-1];
-			render_bottom = (bottom > 0 && blockArray[bottom] != null && !blockArray[bottom].isSolid());
+			render_bottom = (bottom == 0 || (bottom > 0 && blockArray[bottom] != null && !blockArray[bottom].isSolid()));
 		}
 		if (render_bottom)
 		{
