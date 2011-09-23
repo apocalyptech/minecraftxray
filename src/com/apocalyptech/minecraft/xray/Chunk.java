@@ -3187,7 +3187,7 @@ public class Chunk {
 		{
 			return true;
 		}
-		return !blockArray[adj_block].isSolid();
+		return blockArray[adj_block].isSolid();
 	}
 	
 	/**
