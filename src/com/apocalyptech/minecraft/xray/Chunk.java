@@ -70,6 +70,12 @@ public class Chunk {
 	private final float fence_slat_height = .1875f;
 	private final float fence_top_slat_offset = .375f;
 	private final float fence_slat_start_offset = -.125f;
+
+	private static enum RENDER_PASS {
+		SOLIDS,
+		TRANSPARENTS,
+		SELECTED
+	}
 	
 	public Chunk(MinecraftLevel level, Tag data) {
 		
@@ -2610,15 +2616,15 @@ public class Chunk {
 	 * which faces of a block we're supposed to actually render.  "transparency" is whether
 	 * or not we're currently rendering transparent objects.
 	 */
-	public boolean checkSolid(short block, boolean transparency) {
+	public boolean checkSolid(short block) {
 		if(block <= 0) {
 			return true;
 		}
 		if (blockArray[block] == null)
 		{
-			return transparency;
+			return false;
 		}
-		return blockArray[block].isSolid() == transparency;
+		return !blockArray[block].isSolid();
 	}
 
 	/**
@@ -3097,6 +3103,71 @@ public class Chunk {
 		// Pop the matrix
 		GL11.glPopMatrix();
 	}
+
+	/**
+	 * Helper function for renderHalfHeight - given an adjacent block ID, it
+	 * will return true if we should render that "side"
+	 */
+	public boolean shouldRenderHalfHeightAdj(short adj_block)
+	{
+		if (adj_block < 0)
+		{
+			return true;
+		}
+		if (blockArray[adj_block] == null)
+		{
+			return true;
+		}
+		return (!blockArray[adj_block].isSolid() &&
+				blockArray[adj_block].type != BLOCK_TYPE.HALFHEIGHT);
+	}
+	
+	/**
+	 * Renders a half-height block
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderHalfHeight(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+
+		// Sides
+		if (shouldRenderHalfHeightAdj(getAdjEastBlockId(xxx, yyy, zzz, blockOffset)))
+		{
+			this.renderWestEast(textureId, x, y, z, 0f, .5f);
+		}
+		if (shouldRenderHalfHeightAdj(getAdjWestBlockId(xxx, yyy, zzz, blockOffset)))
+		{
+			this.renderWestEast(textureId, x, y, z+1, 0f, .5f);
+		}
+		if (shouldRenderHalfHeightAdj(getAdjNorthBlockId(xxx, yyy, zzz, blockOffset)))
+		{
+			this.renderNorthSouth(textureId, x, y, z, 0f, .5f);
+		}
+		if (shouldRenderHalfHeightAdj(getAdjSouthBlockId(xxx, yyy, zzz, blockOffset)))
+		{
+			this.renderNorthSouth(textureId, x+1, y, z, 0f, .5f);
+		}
+		
+		// Bottom
+		boolean render_bottom = true;
+		if (y > 0)
+		{
+			short bottom = blockData.value[blockOffset-1];
+			render_bottom = (bottom > 0 && blockArray[bottom] != null && !blockArray[bottom].isSolid());
+		}
+		if (render_bottom)
+		{
+			this.renderTopDown(textureId, x, y, z);
+		}
+
+		// Always render the top
+		this.renderTopDown(textureId, x, y+0.5f, z);	
+	}
 	
 	/**
 	 * Tests if the given source block has a torch nearby.  This is, I'm willing
@@ -3188,20 +3259,37 @@ public class Chunk {
 		}
 		return false;
 	}
+
+	public void renderWorldSolids(boolean render_bedrock, boolean highlight_explored)
+	{
+		renderWorld(RENDER_PASS.SOLIDS, render_bedrock, false, highlight_explored, null);
+	}
+
+	public void renderWorldTransparents(boolean render_water, boolean highlight_explored)
+	{
+		renderWorld(RENDER_PASS.TRANSPARENTS, false, render_water, highlight_explored, null);
+	}
+
+	public void renderWorldSelected(boolean[] selectedMap)
+	{
+		renderWorld(RENDER_PASS.SELECTED, false, false, false, selectedMap);
+	}
 	
 	/**
 	 * Renders our chunk.  Most of these options should really be consolidated somehow; maybe just pass in
 	 * a HashMap or something with the options.  Anyway, for now it'll remain the same.
 	 * 
-	 * @param transparency Are we rendering "transparent" objects this time?  (ie: any nonstandard, nonsolid block)
+	 * @param pass What pass of rendering are we processing?
 	 * @param render_bedrock Are we forcing bedrock to be rendered?
 	 * @param render_water Are we forcing water to be rendered?
 	 * @param highlight_explored Are we highlighting the area around torches?
-	 * @param onlySelected Are we ONLY rendering ores that the user's selected?
 	 * @param selectedMap ... if so, here's a HashMap to which ones to highlight.
 	 */
-	public void renderWorld(boolean transparency, boolean render_bedrock, boolean render_water, boolean highlight_explored,
-			boolean onlySelected, boolean[] selectedMap) {
+	public void renderWorld(RENDER_PASS pass,
+			boolean render_bedrock, boolean render_water,
+			boolean highlight_explored,
+			boolean[] selectedMap) {
+
 		float worldX = this.x*16;
 		float worldZ = this.z*16;
 		
@@ -3214,22 +3302,30 @@ public class Chunk {
 		boolean west = true;
 		int tex_offset = 0;
 		BlockType block;
-
+		boolean adj_torch;
+		short t;
+		int xOff, zOff, blockOffset;
+		int x, y, z;
+		int textureId;
+		byte data;
 		int north_t, south_t, west_t, east_t, top_t, bottom_t;
 		
-		for(int x=0;x<16;x++) {
-			int xOff = (x * 128 * 16);
-			for(int z=0;z<16;z++) {
-				int zOff = (z * 128);
-				int blockOffset = zOff + xOff-1;
-				for(int y=0;y<128;y++) {
+		for(x=0; x<16; x++) {
+			xOff = (x * 128 * 16);
+			for(z=0; z<16; z++) {
+				zOff = (z * 128);
+				blockOffset = zOff + xOff-1;
+				for(y=0; y<128; y++) {
 					blockOffset++;
-					short t = blockData.value[blockOffset];
-					
+					adj_torch = false;
+
+					// Grab our block type
+					t = blockData.value[blockOffset];
 					if(t < 1) {
 						continue;
 					}
 
+					// Get the actual BlockType object
 					block = blockArray[t];
 					if (block == null)
 					{
@@ -3237,150 +3333,156 @@ public class Chunk {
 						block = BLOCK_UNKNOWN;
 					}
 					
-					if (onlySelected)
-					{
-						draw = false;
-						for(int i=0;i<selectedMap.length;i++) {
-							if(selectedMap[i] && level.HIGHLIGHT_ORES[i] == t) {
-								// TODO: should maybe check our boundaries for similar ores, like we do for regular blocks
-								draw = true;
-								above = false;
-								below = false;
-								north = false;
-								south = false;
-								east = false;
-								west = false;
-								break;
-							}
-						}
-					}
-					else
-					{
-						if(transparency && block.isSolid()) {
-							continue;
-						}
-						if(!transparency && !block.isSolid()) {
-							continue;
-						}
-						
-						draw = false;
-						above = true;
-						below = true;
-						north = true;
-						south = true;
-						east = true;
-						west = true;
-					}
-					
+					// Doublecheck for water
 					if (!render_water && block.type == BLOCK_TYPE.WATER)
 					{
 						continue;
 					}
 					
-					int textureId = block.tex_idx;
-					
+					// Grab our texture ID and verify it
+					textureId = block.tex_idx;
 					if(textureId == -1) {
 						//System.out.println("Unknown block id: " + t);
 						continue;
 					}
-					/*
-					if(textureId == 253) {
-						System.out.println("Unknown block id: " + t);
-					}
-					*/
-
-					if (!onlySelected)
+					
+					// Set up our intitial drawing parameters
+					switch (pass)
 					{
-						if (render_bedrock && t == BLOCK_BEDROCK.id)
-						{
-							// This block of code was more or less copied/modified directly from the "else" block
-							// below - should see if there's a way we can abstract this instead.  Also, I suspect
-							// that this is where we'd fix water rendering...
+						case SOLIDS:
+							if (!block.isSolid())
+							{
+								continue;
+							}
+							draw = false;
+							above = true;
+							below = true;
+							north = true;
+							south = true;
+							east = true;
+							west = true;
+
+							// Check for adjacent blocks
+							if (render_bedrock && t == BLOCK_BEDROCK.id)
+							{
+								// This block of code was more or less copied/modified directly from the "else" block
+								// below - should see if there's a way we can abstract this instead.  Also, I suspect
+								// that this is where we'd fix water rendering...
+								
+								// check above
+								if(y<127 && blockData.value[blockOffset+1] != BLOCK_BEDROCK.id) {
+									draw = true;
+									above = false;
+								}
+								
+								// check below
+								if(y>0 && blockData.value[blockOffset-1] != BLOCK_BEDROCK.id) {
+									draw = true;
+									below = false;
+								}
+								
+								// check north;
+								if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+									draw = true;
+									north = false;
+								}
 							
-							// check above
-							if(y<127 && blockData.value[blockOffset+1] != BLOCK_BEDROCK.id) {
-								draw = true;
-								above = false;
+								// check south
+								if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+									draw = true;
+									south = false;
+								}
+								
+								// check east
+								if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+									draw = true;
+									east = false;
+								}
+								
+								// check west
+								if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+									draw = true;
+									west = false;
+								}
 							}
+							else
+							{
+								// check above
+								if(y<127 && checkSolid(blockData.value[blockOffset+1])) {
+									draw = true;
+									above = false;
+								}
+								
+								// check below
+								if(y>0 && checkSolid(blockData.value[blockOffset-1])) {
+									draw = true;
+									below = false;
+								}
+								
+								// check north;
+								if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset))) {
+									draw = true;
+									north = false;
+								}
 							
-							// check below
-							if(y>0 && blockData.value[blockOffset-1] != BLOCK_BEDROCK.id) {
-								draw = true;
-								below = false;
+								// check south
+								if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset))) {
+									draw = true;
+									south = false;
+								}
+								
+								// check east
+								if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset))) {
+									draw = true;
+									east = false;
+								}
+								
+								// check west
+								if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset))) {
+									draw = true;
+									west = false;
+								}
 							}
-							
-							// check north;
-							if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-								draw = true;
-								north = false;
+							break;
+
+						case TRANSPARENTS:
+							if (block.isSolid())
+							{
+								continue;
 							}
-						
-							// check south
-							if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-								draw = true;
-								south = false;
+							draw = true;
+							break;
+
+						case SELECTED:
+							draw = false;
+							for(int i=0;i<selectedMap.length;i++) {
+								if(selectedMap[i] && level.HIGHLIGHT_ORES[i] == t) {
+									// TODO: should maybe check our boundaries for similar ores, like we do for regular blocks
+									draw = true;
+									above = false;
+									below = false;
+									north = false;
+									south = false;
+									east = false;
+									west = false;
+									break;
+								}
 							}
-							
-							// check east
-							if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-								draw = true;
-								east = false;
-							}
-							
-							// check west
-							if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-								draw = true;
-								west = false;
-							}
-						}
-						else
-						{
-							// check above
-							if(y<127 && checkSolid(blockData.value[blockOffset+1], transparency)) {
-								draw = true;
-								above = false;
-							}
-							
-							// check below
-							if(y>0 && checkSolid(blockData.value[blockOffset-1], transparency)) {
-								draw = true;
-								below = false;
-							}
-							
-							// check north;
-							if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset), transparency)) {
-								draw = true;
-								north = false;
-							}
-						
-							// check south
-							if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset), transparency)) {
-								draw = true;
-								south = false;
-							}
-							
-							// check east
-							if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset), transparency)) {
-								draw = true;
-								east = false;
-							}
-							
-							// check west
-							if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset), transparency)) {
-								draw = true;
-								west = false;
-							}
-						}
+							break;
+
+						default:
+							// Should never get here
+							continue;
 					}
 					
-					boolean adj_torch = false;
+					// Continue on to the actual rendering
 					if (draw)
 					{
 						// Check to see if this block type has a texture ID which changes depending
 						// on the block's data value
 						if (block.texture_data_map != null)
 						{
-							byte data = getData(x, y, z);
+							data = getData(x, y, z);
 
 							if (t == BLOCK_SAPLING.id)
 							{
@@ -3510,17 +3612,15 @@ public class Chunk {
 								renderChest(textureId,x,y,z,blockOffset,t);
 								break;
 							case HALFHEIGHT:
-								if(draw) {
-									if(!east) this.renderWestEast(textureId, worldX+x, y, worldZ+z, 0f, .495f);
-									if(!west) this.renderWestEast(textureId, worldX+x, y, worldZ+z+1, 0f, .495f);
-									
-									if(!below) this.renderTopDown(textureId, worldX+x, y, worldZ+z);
-									this.renderTopDown(textureId, worldX+x, y+0.5f, worldZ+z);	
-									
-									if(!north) this.renderNorthSouth(textureId, worldX+x, y, worldZ+z, 0f, .495f);
-									if(!south) this.renderNorthSouth(textureId, worldX+x+1, y, worldZ+z, 0f, .495f);
-								}
+								renderHalfHeight(textureId,x,y,z,blockOffset);
 								break;
+							case SEMISOLID:
+								//renderSemisolid(textureId,x,y,z,blockOffset);
+								break;
+
+							case WATER:
+							case NORMAL:
+							case HUGE_MUSHROOM:
 							default:
 								north_t = textureId;
 								south_t = textureId;
@@ -3528,91 +3628,98 @@ public class Chunk {
 								east_t = textureId;
 								top_t = textureId;
 								bottom_t = textureId;
+
+								// Huge Mushrooms are special-case since keeping the data in YAML seemed
+								// like far too much work at the time. Keeping them there does technically
+								// make more sense, so we should do that eventually.
+								// TODO: That ^
 								if (block.type == BLOCK_TYPE.HUGE_MUSHROOM)
 								{
-									byte data = getData(x, y, z);
+									data = getData(x, y, z);
 									switch (data)
 									{
 										case 0:
-											north_t = TEX_HUGE_MUSHROOM_PORES;
-											south_t = TEX_HUGE_MUSHROOM_PORES;
-											west_t = TEX_HUGE_MUSHROOM_PORES;
-											east_t = TEX_HUGE_MUSHROOM_PORES;
-											top_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											top_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 									    case 1:
-											south_t = TEX_HUGE_MUSHROOM_PORES;
-											west_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 2:
-											north_t = TEX_HUGE_MUSHROOM_PORES;
-											south_t = TEX_HUGE_MUSHROOM_PORES;
-											west_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 3:
-											north_t = TEX_HUGE_MUSHROOM_PORES;
-											west_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 4:
-											south_t = TEX_HUGE_MUSHROOM_PORES;
-											west_t = TEX_HUGE_MUSHROOM_PORES;
-											east_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 5:
-											north_t = TEX_HUGE_MUSHROOM_PORES;
-											south_t = TEX_HUGE_MUSHROOM_PORES;
-											west_t = TEX_HUGE_MUSHROOM_PORES;
-											east_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 6:
-											north_t = TEX_HUGE_MUSHROOM_PORES;
-											west_t = TEX_HUGE_MUSHROOM_PORES;
-											east_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 7:
-											south_t = TEX_HUGE_MUSHROOM_PORES;
-											east_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 8:
-											north_t = TEX_HUGE_MUSHROOM_PORES;
-											south_t = TEX_HUGE_MUSHROOM_PORES;
-											east_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 9:
-											north_t = TEX_HUGE_MUSHROOM_PORES;
-											east_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										case 10:
-											north_t = TEX_HUGE_MUSHROOM_STEM;
-											south_t = TEX_HUGE_MUSHROOM_STEM;
-											west_t = TEX_HUGE_MUSHROOM_STEM;
-											east_t = TEX_HUGE_MUSHROOM_STEM;
-											top_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
+											south_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
+											top_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 										default:
-											north_t = TEX_HUGE_MUSHROOM_PORES;
-											south_t = TEX_HUGE_MUSHROOM_PORES;
-											west_t = TEX_HUGE_MUSHROOM_PORES;
-											east_t = TEX_HUGE_MUSHROOM_PORES;
-											top_t = TEX_HUGE_MUSHROOM_PORES;
-											bottom_t = TEX_HUGE_MUSHROOM_PORES;
+											north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											top_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+											bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 											break;
 									}
 								}
+
+								// Now assign the textures for each face, if we're supposed to
 								if (block.texture_dir_map != null)
 								{
-									byte data = getData(x, y, z);
+									data = getData(x, y, z);
 									BlockType.DIRECTION_ABS dir;
 									if (block.texture_dir_data_map != null && block.texture_dir_data_map.containsKey(data))
 									{
@@ -3700,6 +3807,7 @@ public class Chunk {
 									}
 								}
 
+								// Finally, we're to the point of actually rendering the solid
 								if(!east) this.renderWestEast(east_t, worldX+x, y, worldZ+z);
 								if(!west) this.renderWestEast(west_t, worldX+x, y, worldZ+z+1);
 								
@@ -3825,11 +3933,11 @@ public class Chunk {
 	public void renderSolid(boolean render_bedrock, boolean render_water, boolean highlight_explored) {
 		if(isDirty) {
 				GL11.glNewList(this.displayListNum, GL11.GL_COMPILE);
-				renderWorld(false, render_bedrock, false, highlight_explored, false, null);
+				renderWorldSolids(render_bedrock, highlight_explored);
 				GL11.glEndList();
 				GL11.glNewList(this.transparentListNum, GL11.GL_COMPILE);
 				//GL11.glDepthMask(false);
-				renderWorld(true, false, render_water, highlight_explored, false, null);
+				renderWorldTransparents(render_water, highlight_explored);
 				//GL11.glDepthMask(true);
 				GL11.glEndList();
 				this.isDirty = false;
@@ -3844,7 +3952,7 @@ public class Chunk {
 	public void renderSelected(boolean[] selectedMap) {
 		if(isSelectedDirty) {
 			GL11.glNewList(this.selectedDisplayListNum, GL11.GL_COMPILE);
-			renderWorld(false, false, false, false, true, selectedMap);
+			renderWorldSelected(selectedMap);
 			GL11.glEndList();
 			this.isSelectedDirty = false;
 		}
