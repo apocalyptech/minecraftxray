@@ -3168,87 +3168,12 @@ public class Chunk {
 		// Always render the top
 		this.renderTopDown(textureId, x, y+0.5f, z);	
 	}
-
-	/**
-	 * Helper function for renderSemisolid - given an adjacent block ID, it
-	 * will return true if we should render that "side"
-	 */
-	public boolean shouldRenderSemisolidAdj(short adj_block, int ourId)
-	{
-		if (ourId == adj_block)
-		{
-			return false;
-		}
-		if (adj_block < 0)
-		{
-			return true;
-		}
-		if (blockArray[adj_block] == null)
-		{
-			return true;
-		}
-		return blockArray[adj_block].isSolid();
-	}
 	
 	/**
-	 * Renders a semisolid block
-	 * 
-	 * @param textureId
-	 * @param xxx
-	 * @param yyy
-	 * @param zzz
-	 */
-	public void renderSemisolid(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
-		float x = xxx + this.x*16;
-		float z = zzz + this.z*16;
-		float y = yyy;
-
-		// Sides
-		if (shouldRenderSemisolidAdj(getAdjEastBlockId(xxx, yyy, zzz, blockOffset), blockId))
-		{
-			this.renderWestEast(textureId, x, y, z);
-		}
-		if (shouldRenderSemisolidAdj(getAdjWestBlockId(xxx, yyy, zzz, blockOffset), blockId))
-		{
-			this.renderWestEast(textureId, x, y, z+1);
-		}
-		if (shouldRenderSemisolidAdj(getAdjNorthBlockId(xxx, yyy, zzz, blockOffset), blockId))
-		{
-			this.renderNorthSouth(textureId, x, y, z);
-		}
-		if (shouldRenderSemisolidAdj(getAdjSouthBlockId(xxx, yyy, zzz, blockOffset), blockId))
-		{
-			this.renderNorthSouth(textureId, x+1, y, z);
-		}
-		
-		// Bottom
-		boolean render_bottom = true;
-		if (y > 0)
-		{
-			render_bottom = shouldRenderSemisolidAdj(blockData.value[blockOffset-1], blockId);
-		}
-		if (render_bottom)
-		{
-			this.renderTopDown(textureId, x, y, z);
-		}
-
-		// Top
-		boolean render_top = true;
-		if (y < 127)
-		{
-			render_top = shouldRenderSemisolidAdj(blockData.value[blockOffset+1], blockId);
-		}
-		if (render_top)
-		{
-			this.renderTopDown(textureId, x, y+1f, z);	
-		}
-	}
-	
-	/**
-	 * Renders a water block
+	 * Renders a semisolid or water block
 	 *
-	 * TODO: We're doing some ridiculousness here to avoid z-fighting when water is up against
-	 * halfheight blocks.  When we draw a water face on top of an already-existing face with
+	 * TODO: We're doing some ridiculousness here to avoid z-fighting when we're is up against
+	 * halfheight blocks.  When we draw our face on top of an already-existing face with
 	 * the exact same geometry (say, a "full" solid block), the textures combine perfectly and
 	 * we're all happy.  If the polygons are at all differently-sized, though, we get z-fighting
 	 * and it's terrible.  I'd love to know why that is (or, more to the point, why we *don't*
@@ -3265,7 +3190,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderWater(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
+	public void renderSemisolid(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -3794,10 +3719,8 @@ public class Chunk {
 								renderHalfHeight(textureId,x,y,z,blockOffset);
 								break;
 							case SEMISOLID:
-								renderSemisolid(textureId,x,y,z,blockOffset,t);
-								break;
 							case WATER:
-								renderWater(textureId,x,y,z,blockOffset,t);
+								renderSemisolid(textureId,x,y,z,blockOffset,t);
 								break;
 
 							case NORMAL:
