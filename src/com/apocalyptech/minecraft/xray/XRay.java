@@ -838,14 +838,45 @@ public class XRay
 			{
 				for (BlockType decBlock : reverse_block_type_map.get(decBlockType))
 				{
+					// First the basic data map
 					if (decBlock.texture_data_map != null)
 					{
 						for (int textureId : decBlock.texture_data_map.values())
 						{
-							decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+							if (!decorationStats.containsKey(textureId))
+							{
+								decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+							}
 						}
 					}
-					else
+
+					// Now the directional map
+					if (decBlock.texture_dir_map != null)
+					{
+						for (int textureId : decBlock.texture_dir_map.values())
+						{
+							if (!decorationStats.containsKey(textureId))
+							{
+								decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+							}
+						}
+					}
+
+					// Now any "extra" textures which might exist for the block type
+					if (blockTypeExtraTextures.containsKey(decBlock.type))
+					{
+						for (int offset : blockTypeExtraTextures.get(decBlock.type))
+						{
+							int textureId = decBlock.tex_idx + offset;
+							if (!decorationStats.containsKey(textureId))
+							{
+								decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
+							}
+						}
+					}
+
+					// Now the "base" texture, if we didn't already do it
+					if (!decorationStats.containsKey(decBlock.tex_idx))
 					{
 						int textureId = decBlock.tex_idx;
 						decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));

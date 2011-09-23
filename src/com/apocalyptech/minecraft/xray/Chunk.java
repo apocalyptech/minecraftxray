@@ -994,54 +994,6 @@ public class Chunk {
 	}
 	
 	/**
-	 * Renders a "special" block; AKA something that's not just an ordinary cube.
-	 * Basically it draws four "faces" of the object, which creates a plus sign of
-	 * sorts.  This should probably be handled in some other way, actually.
-	 * 
-	 * @param bx Texture Beginning-X coordinate (inside the texture PNG)
-	 * @param by Texture Beginning-Y coordinate
-	 * @param ex Texture Ending-X coordinate
-	 * @param ey Texture Ending-Y coordinate
-	 * @param x Absolute X position of block
-	 * @param y Absolute Y position of block
-	 * @param z Absolute Z position of block
-	 */
-	public void renderSpecial(float bx, float by, float ex, float ey, float x, float y, float z)
-	{
-		 
-		// GL11.glDisable(GL11.GL_CULL_FACE);
-		 //GL11.glDisable(GL11.GL_DEPTH_TEST);
-		 GL11.glBegin(GL11.GL_QUADS);
-		 GL11.glNormal3f(1.0f, 0.0f, 0.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+9/16.0f+TEX64, y+1.0f, 	z);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+9/16.0f+TEX64, y+1.0f, 	z+1.0f);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+9/16.0f-TEX64, y, 		z+1.0f);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+9/16.0f-TEX64, y,	 		z);
-		
-		 GL11.glNormal3f(-1.0f, 0.0f, 0.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+7/16.0f+TEX64, y+1.0f,	z+1.0f);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+7/16.0f+TEX64, y+1.0f,	z);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+7/16.0f-TEX64, y,			z);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x+7/16.0f-TEX64, y,			z+1.0f);
-		 
-		 GL11.glNormal3f(0.0f, 0.0f, 1.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x+1.0f,	y+1.0f,	z+9/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x, 		y+1.0f,	z+9/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x, 		y, 		z+9/16.0f-TEX64);
-		 GL11.glTexCoord2f(bx, ey);	 	GL11.glVertex3f(x+1.0f,	y, 		z+9/16.0f-TEX64);
-		 
-		 GL11.glNormal3f(0.0f, 0.0f, -1.0f);
-		 GL11.glTexCoord2f(bx, by); 	GL11.glVertex3f(x, 		y+1.0f,	z+7/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, by); 	GL11.glVertex3f(x+1.0f,	y+1.0f,	z+7/16.0f+TEX64);
-		 GL11.glTexCoord2f(ex, ey); 	GL11.glVertex3f(x+1.0f,	y, 		z+7/16.0f-TEX64);
-		 GL11.glTexCoord2f(bx, ey); 	GL11.glVertex3f(x, 		y, 		z+7/16.0f-TEX64);
-		 
-		 GL11.glEnd();
-		 //GL11.glEnable(GL11.GL_DEPTH_TEST);
-		 //GL11.glEnable(GL11.GL_CULL_FACE);	
-	}
-	
-	/**
 	 * Renders a torch, making an attempt to render properly given the wall face it's
 	 * attached to, etc.  We take in textureId because we support redstone torches as
 	 * well.
@@ -1344,8 +1296,57 @@ public class Chunk {
 	}
 	
 	/**
-	 * Renders crops.  We still take the fully-grown textureId in the function so that everything
-	 * remains defined in MinecraftConstants
+	 * Renders a "grid" decoration (in the manner of crops and netherwart)
+	 * 
+	 * @param textureId Texture
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderGridDecoration(int textureId, int xxx, int yyy, int zzz)
+	{
+		 float x = xxx + this.x*16;
+		 float z = zzz + this.z*16;
+		 float y = yyy;
+
+		// We do the "% 256" here because our texture ID might be in the "highlighted"
+		// range, for Explored highlighting.
+		TextureDecorationStats stats = XRay.decorationStats.get(textureId % 256);
+		if (stats == null)
+		{
+			return;
+		}
+
+		 float tex_x = precalcSpriteSheetToTextureX[textureId] + stats.getTexLeft();
+		 float tex_y = precalcSpriteSheetToTextureY[textureId] + stats.getTexTop();
+		 float tex_dx = stats.getTexWidth();
+		 float tex_dy = stats.getTexHeight();
+
+		 float width_h = stats.getWidth()/2;
+		 float side_offset = .25f;
+		 float bottom = y -.5f;
+		 float top = bottom + stats.getHeight();
+
+		 // now each side
+		 renderNonstandardVertical(tex_x, tex_y, tex_dx, tex_dy,
+				 x-width_h, top, z+side_offset,
+				 x+width_h, bottom, z+side_offset);
+
+		 renderNonstandardVertical(tex_x, tex_y, tex_dx, tex_dy,
+				 x-width_h, top, z-side_offset,
+				 x+width_h, bottom, z-side_offset);
+
+		 renderNonstandardVertical(tex_x, tex_y, tex_dx, tex_dy,
+				 x+side_offset, top, z-width_h,
+				 x+side_offset, bottom, z+width_h);
+
+		 renderNonstandardVertical(tex_x, tex_y, tex_dx, tex_dy,
+				 x-side_offset, top, z-width_h,
+				 x-side_offset, bottom, z+width_h);
+	}
+	
+	/**
+	 * Renders crops.
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -1353,31 +1354,19 @@ public class Chunk {
 	 * @param zzz
 	 */
 	public void renderCrops(int textureId, int xxx, int yyy, int zzz) {
-		 float x = xxx + this.x*16 -0.5f;
-		 float z = zzz + this.z*16 -0.5f;
-		 float y = yyy - 0.5f;
 		 
-		 float bx,by;
-		 float ex,ey;
-
-		 bx = precalcSpriteSheetToTextureX[textureId];
-		 by = precalcSpriteSheetToTextureY[textureId];
-
-		 // Adjust for crop size; fortunately the textures are all in the same row so it's easy.
+		 // Adjust for crop size
 		 byte data = getData(xxx, yyy, zzz);
-		 bx -= TEX16 * (7-data);
-		 
-		 ex = bx + TEX16;
-		 ey = by + TEX32;
-		 
-		 renderSpecial(bx, by, ex, ey, x, y, z);
+		 if (data > 7)
+		 {
+			 data = 7;
+		 }
+		 textureId -= (7-data);
+		 renderGridDecoration(textureId, xxx, yyy, zzz);
 	}
 	
 	/**
-	 * Renders netherwart.  We still take the fully-grown textureId in the function so that everything
-	 * remains defined in MinecraftConstants
-	 * 
-	 * TODO: This actually isn't entirely accurate...
+	 * Renders netherwart.
 	 *
 	 * @param textureId
 	 * @param xxx
@@ -1385,24 +1374,16 @@ public class Chunk {
 	 * @param zzz
 	 */
 	public void renderNetherwart(int textureId, int xxx, int yyy, int zzz) {
-		 float x = xxx + this.x*16 -0.5f;
-		 float z = zzz + this.z*16 -0.5f;
-		 float y = yyy - 0.5f;
-		 
-		 float bx,by;
-		 float ex,ey;
 
-		 bx = precalcSpriteSheetToTextureX[textureId];
-		 by = precalcSpriteSheetToTextureY[textureId];
-
-		 // Adjust for size; fortunately the textures are all in the same row so it's easy.
+		 // Adjust for size
 		 byte data = getData(xxx, yyy, zzz);
-		 bx += TEX16 * data;
-		 
-		 ex = bx + TEX16;
-		 ey = by + TEX32;
-		 
-		 renderSpecial(bx, by, ex, ey, x, y, z);
+		 //System.out.println("Netherwart data: " + data);
+		 if (data > 3)
+		 {
+			 data = 3;
+		 }
+		 textureId -= 2-((data+1)/2);
+		 renderGridDecoration(textureId, xxx, yyy, zzz);
 	}
     
 	/**

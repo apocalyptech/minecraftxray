@@ -123,6 +123,7 @@ public class MinecraftConstants {
 		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_BODY, new Integer[] {-2, -1, 1, 2});
 		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_HEAD, new Integer[] {-1, 1, 2, 3});
 		blockTypeExtraTextures.put(BLOCK_TYPE.CHEST, new Integer[] {-1, -2, 14, 15, 30, 31});
+		blockTypeExtraTextures.put(BLOCK_TYPE.NETHER_WART, new Integer[] {-1, -2});
 	}
 
 	// ... aand, because Huge Mushrooms are ridiculous, some hardcoded textures to reserve
@@ -162,7 +163,8 @@ public class MinecraftConstants {
 
 	// Block types to compute decoration information for
 	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
-		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS
+		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS,
+		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART
 	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.

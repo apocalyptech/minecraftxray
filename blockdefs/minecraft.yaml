@@ -996,7 +996,7 @@ blocks:
     idStr: NETHER_WART
     name: Nether Wart
     mapcolor: [112, 8, 28]
-    tex: [2, 14]
+    tex: [4, 14]
     type: NETHER_WART
 
 ...
