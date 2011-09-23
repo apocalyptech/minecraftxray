@@ -3246,6 +3246,19 @@ public class Chunk {
 	
 	/**
 	 * Renders a water block
+	 *
+	 * TODO: We're doing some ridiculousness here to avoid z-fighting when water is up against
+	 * halfheight blocks.  When we draw a water face on top of an already-existing face with
+	 * the exact same geometry (say, a "full" solid block), the textures combine perfectly and
+	 * we're all happy.  If the polygons are at all differently-sized, though, we get z-fighting
+	 * and it's terrible.  I'd love to know why that is (or, more to the point, why we *don't*
+	 * get z-fighting when the geometry is equal).  Apparently if we move to using shaders,
+	 * using multitexturing is pretty easy, so we may want to look at doing that.  Whatever that
+	 * actually is.  Someday I should learn how to actually use this stuff, yeah?
+	 *
+	 * TODO: sight, West and South halfheight stuff doesn't seem to actually render for some reason,
+	 * it gets overwritten by the halfheight texture itself.  I'd love to figure out why all of
+	 * this is happening.  Still, IMO it's better than the z-fighting, so for now I'll leave it.
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -3256,23 +3269,60 @@ public class Chunk {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
+		short adj;
 
 		// Sides
-		if (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) != blockId)
+		adj = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != blockId)
 		{
-			this.renderWestEast(textureId, x, y, z);
+			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
+			{
+				this.renderVertical(textureId, x-.5f, z-.5f, x+.5f, z-.5f, y, .5f, 16, 8, 0, 0);
+				this.renderVertical(textureId, x-.5f, z-.5f, x+.5f, z-.5f, y-.5f, .5f, 16, 8, 0, 8);
+			}
+			else
+			{
+				this.renderVertical(textureId, x-.5f, z-.5f, x+.5f, z-.5f, y-.5f, 1f);
+			}
 		}
-		if (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) != blockId)
+		adj = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != blockId)
 		{
-			this.renderWestEast(textureId, x, y, z+1);
+			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
+			{
+				this.renderVertical(textureId, x-.5f, z+.5f, x+.5f, z+.5f, y, .5f, 16, 8, 0, 0);
+				this.renderVertical(textureId, x-.5f, z+.5f, x+.5f, z+.5f, y-.5f, .5f, 16, 8, 0, 8);
+			}
+			else
+			{
+				this.renderVertical(textureId, x-.5f, z+.5f, x+.5f, z+.5f, y-.5f, 1f);
+			}
 		}
-		if (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) != blockId)
+		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != blockId)
 		{
-			this.renderNorthSouth(textureId, x, y, z);
+			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
+			{
+				this.renderVertical(textureId, x-.5f, z+.5f, x-.5f, z-.5f, y, .5f, 16, 8, 0, 0);
+				this.renderVertical(textureId, x-.5f, z+.5f, x-.5f, z-.5f, y-.5f, .5f, 16, 8, 0, 8);
+			}
+			else
+			{
+				this.renderVertical(textureId, x-.5f, z+.5f, x-.5f, z-.5f, y-.5f, 1f);
+			}
 		}
-		if (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) != blockId)
+		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != blockId)
 		{
-			this.renderNorthSouth(textureId, x+1, y, z);
+			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
+			{
+				this.renderVertical(textureId, x+.5f, z+.5f, x+.5f, z-.5f, y, .5f, 16, 8, 0, 0);
+				this.renderVertical(textureId, x+.5f, z+.5f, x+.5f, z-.5f, y-.5f, .5f, 16, 8, 0, 8);
+			}
+			else
+			{
+				this.renderVertical(textureId, x+.5f, z+.5f, x+.5f, z-.5f, y-.5f, 1f);
+			}
 		}
 		
 		// Bottom
