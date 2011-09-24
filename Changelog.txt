@@ -1,9 +1,11 @@
+Minecraft X-Ray 3.3.3 (2011.09.23)
+
   * Support for all Beta 1.9 blocks
   * Various rendering improvements to water, glass, glass panes, iron
     bars, fence gates, and crops (though transparency issues do continue
-	to persist)
+    to persist)
 
-MiNECRAFT x-Ray 3.3.2 (2011.09.20)
+Minecraft X-Ray 3.3.2 (2011.09.20)
 
   * Chests render more correctly now
   * Updated Silverfish block to process its data values correctly
@@ -20,7 +22,7 @@ Minecraft X-Ray 3.3.0 (2011.09.12)
   * Removed redundant information from world selection dialog
   * Added support for opening arbitrary dimensions (for mods right now,
     will also be needed for the eventual official Sky Dimension).  "N"
-	now jumps to the next dimension, "P" jumps to the previous.
+    now jumps to the next dimension, "P" jumps to the previous.
   * Internal support for block IDs > 127 (for mods, primarily)
   * Blocks which orient differently based on direction will default to
     North now, if we see data values we don't understand
