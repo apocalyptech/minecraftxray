@@ -1998,47 +1998,42 @@ public class XRay
 			chunk_range = HIGHLIGHT_RANGES[currentHighlightDistance];
 		}
 
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glColor3f(1.0f, 1.0f, 1.0f);
-		minecraftTexture.bind();
+		// Get a list of chunks that we'll iterate over, on our various passes
+		ArrayList<Chunk> chunkList = new ArrayList<Chunk>();
 		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX + visible_chunk_range; lx++)
 		{
 			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ + visible_chunk_range; lz++)
 			{
 				Chunk k = level.getChunk(lx, lz);
-
 				if (k != null)
 				{
-					k.renderSolid(render_bedrock, render_water, highlight_explored);
-					k.renderSelected(this.mineralToggle);
-					if (k.hasPaintings())
-					{
-						paintingTexture.bind();
-						k.renderPaintings();
-						minecraftTexture.bind();
-					}
+					chunkList.add(k);
 				}
 			}
 		}
-		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX + visible_chunk_range; lx++)
-		{
-			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ + visible_chunk_range; lz++)
-			{
-				Chunk k = level.getChunk(lx, lz);
 
-				if (k != null)
-					k.renderNonstandard();
+		// Now do various passes
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glColor3f(1.0f, 1.0f, 1.0f);
+		minecraftTexture.bind();
+		for (Chunk k : chunkList)
+		{
+			k.renderSolid(render_bedrock, render_water, highlight_explored);
+			k.renderSelected(this.mineralToggle);
+			if (k.hasPaintings())
+			{
+				paintingTexture.bind();
+				k.renderPaintings();
+				minecraftTexture.bind();
 			}
 		}
-		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX + visible_chunk_range; lx++)
+		for (Chunk k : chunkList)
 		{
-			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ + visible_chunk_range; lz++)
-			{
-				Chunk k = level.getChunk(lx, lz);
-
-				if (k != null)
-					k.renderGlass();
-			}
+			k.renderNonstandard();
+		}
+		for (Chunk k : chunkList)
+		{
+			k.renderGlass();
 		}
 
 		if (highlightOres)
@@ -2053,14 +2048,9 @@ public class XRay
 			GL11.glColor4f(alpha, alpha, alpha, alpha);
 			setLightLevel(20);
 			GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-			for (int lx = currentLevelX - chunk_range; lx < currentLevelX + chunk_range; lx++)
+			for (Chunk k : chunkList)
 			{
-				for (int lz = currentLevelZ - chunk_range; lz < currentLevelZ + chunk_range; lz++)
-				{
-					Chunk k = level.getChunk(lx, lz);
-					if (k != null)
-						k.renderSelected(this.mineralToggle);
-				}
+				k.renderSelected(this.mineralToggle);
 			}
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
