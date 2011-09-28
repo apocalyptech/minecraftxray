@@ -392,6 +392,7 @@ public class BlockTypeCollection
 		{
 			ExceptionDialog.setExtraStatus2("Looking at block ID " + block.id + ": " + block.idStr);
 			block.normalizeData();
+			block.postNormalizeData();
 			for (int tex_idx : block.getUsedTextures())
 			{
 				this.useTexture(tex_idx);

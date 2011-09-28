@@ -45,6 +45,7 @@ public class BlockTypeFilename extends BlockType
 	private HashMap<Integer, String> tex_data;
 	private HashMap<String, String> tex_direction;
 	private HashMap<DIRECTION_REL, String> tex_direction_int;
+	private HashMap<String, String> tex_extra;
 
 	// Attributes brought over from BlockTypeCollection
 	public String texpath;
@@ -84,6 +85,16 @@ public class BlockTypeFilename extends BlockType
 		return this.tex_direction;
 	}
 
+	public void setTex_extra(HashMap<String, String> tex_extra)
+	{
+		this.tex_extra = tex_extra;
+	}
+
+	public HashMap<String, String> getTex_extra()
+	{
+		return this.tex_extra;
+	}
+
 	/**
 	 * Pulls data from the master collection
 	 */
@@ -117,6 +128,13 @@ public class BlockTypeFilename extends BlockType
 		if (this.tex_direction_int != null)
 		{
 			for (String tex : this.tex_direction_int.values())
+			{
+				list.add(tex);
+			}
+		}
+		if (this.tex_extra != null)
+		{
+			for (String tex : this.tex_extra.values())
 			{
 				list.add(tex);
 			}
@@ -168,6 +186,23 @@ public class BlockTypeFilename extends BlockType
 				if (texmap.containsKey(entry.getValue()))
 				{
 					this.texture_dir_map.put(entry.getKey(), texmap.get(entry.getValue()));
+				}
+				else
+				{
+					throw new BlockTypeLoadException("No texture mapping found for " + entry.getValue());
+				}
+			}
+		}
+
+		// Now the "extra" textures
+		if (this.tex_extra != null && this.tex_extra.size() > 0)
+		{
+			this.texture_extra_map = new HashMap<String, Integer>();
+			for (Map.Entry<String, String> entry : this.tex_extra.entrySet())
+			{
+				if (texmap.containsKey(entry.getValue()))
+				{
+					this.texture_extra_map.put(entry.getKey(), texmap.get(entry.getValue()));
 				}
 				else
 				{
@@ -245,6 +280,14 @@ public class BlockTypeFilename extends BlockType
 				}
 				this.tex_direction_int.put(dir, this.getFullTextureFilename(entry.getValue()));
 				checkTextureAvailability(this.tex_direction_int.get(dir));
+			}
+		}
+		if (this.tex_extra != null && this.tex_extra.size() > 0)
+		{
+		    for (Map.Entry<String, String> entry : this.tex_extra.entrySet())
+			{
+				entry.setValue(this.getFullTextureFilename(entry.getValue()));
+				checkTextureAvailability(entry.getValue());
 			}
 		}
 	}

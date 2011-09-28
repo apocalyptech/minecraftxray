@@ -1604,7 +1604,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderMinecartTracks(int textureId, int xxx, int yyy, int zzz) {
+	public void renderMinecartTracks(int textureId, int xxx, int yyy, int zzz, BlockType block) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -1612,7 +1612,7 @@ public class Chunk {
 		byte data = getData(xxx, yyy, zzz);
 		if (data > 0x5)
 		{
-			textureId -= 16;
+			textureId = block.texture_extra_map.get("curve");
 		}
  
 		switch (data)
@@ -1683,7 +1683,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderSimpleRail(int textureId, int xxx, int yyy, int zzz) {
+	public void renderSimpleRail(int textureId, int xxx, int yyy, int zzz, BlockType block) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -1694,7 +1694,7 @@ public class Chunk {
 		if (powered > 0)
 		{
 			// This is just for powered rails, to light them up properly
-			textureId += 16;
+			textureId = block.texture_extra_map.get("powered");
 		}
 		data &= 7;
  
@@ -1887,15 +1887,15 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderDoor(int textureId, int xxx, int yyy, int zzz) {
+	public void renderDoor(int textureId, int xxx, int yyy, int zzz, BlockType block) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
 		
 		byte data = getData(xxx, yyy, zzz);
-		if ((data & 0x8) == 0x8)
+		if ((data & 0x8) == 0x0)
 		{
-			textureId -= 16;
+			textureId = block.texture_extra_map.get("bottom");
 		}
 		boolean swung = false;
 		if ((data & 0x4) == 0x4)
@@ -2825,21 +2825,25 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderCake(int textureId, int xxx, int yyy, int zzz) {
+	public void renderCake(int textureId, int xxx, int yyy, int zzz, BlockType block) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
 
 		byte bites_eaten = getData(xxx, yyy, zzz);
 
+		int bottom_tex_idx = block.texture_extra_map.get("bottom");
+		int edge_tex_idx = block.texture_extra_map.get("side_uncut");
+		int cut_tex_idx = block.texture_extra_map.get("side_cut");
+
 		float top_tex_x = precalcSpriteSheetToTextureX[textureId]+TEX256;
 		float top_tex_y = precalcSpriteSheetToTextureY[textureId]+TEX512;
-		float bottom_tex_x = precalcSpriteSheetToTextureX[textureId+3]+TEX256;
-		float bottom_tex_y = precalcSpriteSheetToTextureY[textureId+3]+TEX512;
-		float edge_tex_x = precalcSpriteSheetToTextureX[textureId+1]+TEX256;
-		float edge_tex_y = precalcSpriteSheetToTextureY[textureId+1]+TEX64;
-		float cut_tex_x = precalcSpriteSheetToTextureX[textureId+2]+TEX256;
-		float cut_tex_y = precalcSpriteSheetToTextureY[textureId+2]+TEX64;
+		float bottom_tex_x = precalcSpriteSheetToTextureX[bottom_tex_idx]+TEX256;
+		float bottom_tex_y = precalcSpriteSheetToTextureY[bottom_tex_idx]+TEX512;
+		float edge_tex_x = precalcSpriteSheetToTextureX[edge_tex_idx]+TEX256;
+		float edge_tex_y = precalcSpriteSheetToTextureY[edge_tex_idx]+TEX64;
+		float cut_tex_x = precalcSpriteSheetToTextureX[cut_tex_idx]+TEX256;
+		float cut_tex_y = precalcSpriteSheetToTextureY[cut_tex_idx]+TEX64;
 
 		float far_tex_x, far_tex_y;
 		if (bites_eaten == 0)
@@ -3675,16 +3679,16 @@ public class Chunk {
 								renderFloor(textureId,x,y,z);
 								break;
 							case MINECART_TRACKS:
-								renderMinecartTracks(textureId,x,y,z);
+								renderMinecartTracks(textureId,x,y,z,block);
 								break;
 							case SIMPLE_RAIL:
-								renderSimpleRail(textureId,x,y,z);
+								renderSimpleRail(textureId,x,y,z,block);
 								break;
 							case PRESSURE_PLATE:
 								renderPlate(textureId,x,y,z);
 								break;
 							case DOOR:
-								renderDoor(textureId,x,y,z);
+								renderDoor(textureId,x,y,z,block);
 								break;
 							case STAIRS:
 								renderStairs(textureId,x,y,z);
@@ -3726,7 +3730,7 @@ public class Chunk {
 								renderPistonHead(textureId,x,y,z,false,false);
 								break;
 							case CAKE:
-								renderCake(textureId,x,y,z);
+								renderCake(textureId,x,y,z,block);
 								break;
 							case VINE:
 								renderVine(textureId,x,y,z,blockOffset);

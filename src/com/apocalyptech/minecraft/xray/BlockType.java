@@ -29,6 +29,7 @@ package com.apocalyptech.minecraft.xray;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.lang.StringBuffer;
 import java.awt.Color;
 
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
@@ -105,6 +106,7 @@ public class BlockType
 	public HashMap<Byte, Integer> texture_data_map;
 	public HashMap<DIRECTION_REL, Integer> texture_dir_map;
 	public HashMap<Byte, DIRECTION_ABS> texture_dir_data_map;
+	public HashMap<String, Integer> texture_extra_map;
 
 	public BlockType()
 	{
@@ -298,6 +300,34 @@ public class BlockType
 					throw new BlockTypeLoadException("Invalid absolute direction: " + entry.getValue());
 				}
 				this.texture_dir_data_map.put(entry.getKey().byteValue(), dir);
+			}
+		}
+	}
+
+	/**
+	 * Runs some additional sanity checks on our blocks which must happen post-normalization
+	 */
+	public void postNormalizeData()
+		throws BlockTypeLoadException
+	{
+		if (blockTypeExtraTexturesReq.containsKey(this.type))
+		{
+			if (this.texture_extra_map == null)
+			{
+				StringBuffer sb = new StringBuffer(this.type.toString() + " blocks must contain the following in tex_extra: ");
+				for (String key : blockTypeExtraTexturesReq.get(this.type))
+				{
+					sb.append("'" + key + "', ");
+				}
+				sb.delete(sb.length()-2, sb.length());
+				throw new BlockTypeLoadException(sb.toString());
+			}
+			for (String key : blockTypeExtraTexturesReq.get(this.type))
+			{
+				if (!this.texture_extra_map.containsKey(key))
+				{
+					throw new BlockTypeLoadException(this.type.toString() + " blocks must contain '" + key + "' in the tex_extra section");
+				}
 			}
 		}
 	}

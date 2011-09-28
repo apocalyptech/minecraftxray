@@ -332,6 +332,8 @@ blocks:
     mapcolor: [120, 53, 28]
     tex: [3, 10]
     type: SIMPLE_RAIL
+    tex_extra:
+      powered: [3, 11]
   
   - id: 28
     idStr: DETECTOR_RAIL
@@ -339,6 +341,9 @@ blocks:
     mapcolor: [200, 189, 189]
     tex: [3, 12]
     type: SIMPLE_RAIL
+    tex_extra:
+      powered: [3, 11] # Only because the SIMPLE_RAIL renderer requires it; will
+                       # go unused here.
   
   - id: 29
     idStr: PISTON_STICKY_BODY
@@ -627,8 +632,10 @@ blocks:
     idStr: WOODEN_DOOR
     name: Door
     mapcolor: [136, 109, 67]
-    tex: [1, 6]
+    tex: [1, 5]
     type: DOOR
+    tex_extra:
+      bottom: [1, 6]
   
   - id: 65
     idStr: LADDER
@@ -643,6 +650,8 @@ blocks:
     mapcolor: [150, 134, 102]
     tex: [0, 8]
     type: MINECART_TRACKS
+    tex_extra:
+      curve: [0, 7]
   
   - id: 67
     idStr: COBBLESTONE_STAIRS
@@ -676,8 +685,10 @@ blocks:
     idStr: IRON_DOOR
     name: Door
     mapcolor: [191, 191, 191]
-    tex: [2, 6]
+    tex: [2, 5]
     type: DOOR
+    tex_extra:
+      bottom: [2, 6]
   
   - id: 72
     idStr: WOODEN_PRESSURE_PLATE
@@ -832,6 +843,10 @@ blocks:
     mapcolor: [234, 233, 235]
     tex: [9, 7]
     type: CAKE
+    tex_extra:
+      side_uncut: [10, 7]
+      side_cut: [11, 7]
+      bottom: [12, 7]
   
   - id: 93
     idStr: REDSTONE_REPEATER_OFF

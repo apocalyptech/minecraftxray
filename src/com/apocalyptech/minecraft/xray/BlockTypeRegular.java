@@ -42,6 +42,7 @@ public class BlockTypeRegular extends BlockType
 	private ArrayList<Integer> tex;
 	private HashMap<Integer, ArrayList<Integer>> tex_data;
 	private HashMap<String, ArrayList<Integer>> tex_direction;
+	private HashMap<String, ArrayList<Integer>> tex_extra;
 
 	// Other attributes
 	private boolean generated_texture;
@@ -90,6 +91,16 @@ public class BlockTypeRegular extends BlockType
 	public HashMap<String, ArrayList<Integer>> getTex_direction()
 	{
 		return this.tex_direction;
+	}
+
+	public void setTex_extra(HashMap<String, ArrayList<Integer>> tex_extra)
+	{
+		this.tex_extra = tex_extra;
+	}
+
+	public HashMap<String, ArrayList<Integer>> getTex_extra()
+	{
+		return this.tex_extra;
 	}
 
 	/**
@@ -149,6 +160,14 @@ public class BlockTypeRegular extends BlockType
 					throw new BlockTypeLoadException("Invalid relative direction: " + entry.getKey());
 				}
 				this.texture_dir_map.put(dir, BlockType.getTexReal(entry.getValue()));
+			}
+		}
+		if (this.tex_extra != null)
+		{
+			this.texture_extra_map = new HashMap<String, Integer>();
+			for (Map.Entry<String, ArrayList<Integer>> entry : this.tex_extra.entrySet())
+			{
+				this.texture_extra_map.put(entry.getKey(), BlockType.getTexReal(entry.getValue()));
 			}
 		}
 	}
