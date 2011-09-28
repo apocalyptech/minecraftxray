@@ -42,6 +42,8 @@
 #
 #               COBBLESTONE (the LEVER renderer uses it)
 #               IRON_BARS (the "solid pane" renderer uses it)
+#               PISTON_HEAD (the piston renderers use it)
+#               PISTON_STICKY_BODY (the piston renderers use it)
 #               TORCH (the "explored" highlight uses it)
 #               BEDROCK (the "bedrock" toggle uses it)
 #               GRASS (the "grass rendering" toggle uses it)
@@ -134,6 +136,67 @@
 #
 #         "THINSLICE" is currently only used for snow, and I may eventually
 #         change that to "SNOW" instead, and clean up that rendering.
+#
+#   tex_extra: This is a section to provide extra texture information for 
+#         block types which require it.  A list of the required tex_extra
+#         attributes per block type are:
+#
+#         DOOR
+#            The main texture specified should be the top part of the door.
+#            "bottom" should be specified as the texture for the bottom.
+#
+#         MINECART_TRACKS
+#            The main texture should be the straight track.
+#            "curve" should be the curved texture.
+#
+#         SIMPLE_RAIL
+#            "powered" specifies the texture to use if the rail is powered.
+#            Note that while this attribute only makes sense for the actual
+#            "POWERED_RAIL" block, it's still required for any block type which
+#            is of type SIMPLE_RAIL
+#
+#         CAKE
+#            The main texture should be the top of the cake.
+#            "side_uncut" should be the uncut sides of the cake
+#            "side_cut" shoudl be the cut side of the cake
+#            "bottom" should be the bottom
+#
+#         BED
+#            The main texture should be the top "head" block (with the pillow)
+#            "foot_top" is the top of the lower half of the bed
+#            "foot" and "head" specify the textures at the very end of the bed
+#            "foot_side" and "head_side" specify the sidesm for both head and foot
+#
+#        PISTON_BODY
+#            The main texture should be the compressed side-view texture.
+#            "head" specifies the face of the piston head
+#            "back" specifies the back texture of the body
+#            "front" specifies the front of the body, drawn if the piston is extended
+#
+#        PISTON_HEAD
+#            The main texture should be the regular (non-sticky) face of the head
+#            "head_sticky" should be the sticky texture
+#            "body" should be the main PISTON_BODY texture (used to get the sides of the head)
+#
+#        CHEST
+#            The main texture should be the front face of the small chest.  The others
+#            should be self-explanatory:
+#            side_small, top, front_big_left, front_big_right, back_big_left, back_big_right
+#
+#        CROPS
+#            The main texture should be the fully-grown crop texture.
+#            "smaller_1" through "smaller_7" should be the various stages of growth, with
+#            "smaller_7" being the youngest.
+#
+#        NETHER_WART
+#            The main texture should be the fully-grown nether wart texture.
+#            "smaller_1" through "smaller_2" should be the various stages of growth, with
+#            "smaller_2" being the youngest.
+#
+#        HUGE_MUSHROOM
+#            The main texture should be the outward "skin" texture of the mushroom.
+#            "stem" specifies the stem texture
+#            "pores" specifies the texture for pores
 #
 name: Vanilla Minecraft Block Types
 blocks:
@@ -325,6 +388,12 @@ blocks:
     mapcolor: [255, 0, 0]
     tex: [7, 8]
     type: BED
+    tex_extra:
+      foot_top: [6, 8]
+      head_side: [7, 9]
+      foot_side: [6, 9]
+      foot: [5, 9]
+      head: [8, 9]
   
   - id: 27
     idStr: POWERED_RAIL
@@ -342,7 +411,7 @@ blocks:
     tex: [3, 12]
     type: SIMPLE_RAIL
     tex_extra:
-      powered: [3, 11] # Only because the SIMPLE_RAIL renderer requires it; will
+      powered: [3, 12] # Only because the SIMPLE_RAIL renderer requires it; will
                        # go unused here.
   
   - id: 29
@@ -351,6 +420,10 @@ blocks:
     mapcolor: [132, 132, 132]
     tex: [12, 6]
     type: PISTON_BODY
+    tex_extra:
+      head: [11, 6]
+      back: [13, 6]
+      front: [14, 6]
   
   - id: 30
     idStr: WEB
@@ -383,6 +456,10 @@ blocks:
     mapcolor: [132, 132, 132]
     tex: [12, 6]
     type: PISTON_BODY
+    tex_extra:
+      head: [11, 6]
+      back: [13, 6]
+      front: [14, 6]
   
   - id: 34
     idStr: PISTON_HEAD
@@ -390,6 +467,9 @@ blocks:
     mapcolor: [119, 92, 53]
     tex: [11, 6]
     type: PISTON_HEAD
+    tex_extra:
+      head_sticky: [10, 6]
+      body: [12, 6]
   
   - id: 35
     idStr: WOOL
@@ -552,6 +632,13 @@ blocks:
     mapcolor: [125, 91, 38]
     tex: [11, 1]
     type: CHEST
+    tex_extra:
+      side_small: [10, 1]
+      top: [9, 1]
+      front_big_left: [9, 2]
+      front_big_right: [10, 2]
+      back_big_left: [9, 3]
+      back_big_right: [10, 3]
   
   - id: 55
     idStr: REDSTONE_WIRE
@@ -588,6 +675,14 @@ blocks:
     mapcolor: [146, 192, 0]
     tex: [15, 5]
     type: CROPS
+    tex_extra:
+      smaller_1: [14, 5]
+      smaller_2: [13, 5]
+      smaller_3: [12, 5]
+      smaller_4: [11, 5]
+      smaller_5: [10, 5]
+      smaller_6: [9, 5]
+      smaller_7: [8, 5]
   
   - id: 60
     idStr: FARMLAND
@@ -895,6 +990,9 @@ blocks:
     mapcolor: [145, 109, 85]
     tex: [14, 7]
     type: HUGE_MUSHROOM
+    tex_extra:
+      stem: [13, 8]
+      pores: [14, 8]
 
   - id: 100
     idStr: HUGE_RED_MUSHROOM
@@ -902,6 +1000,9 @@ blocks:
     mapcolor: [181, 29, 27]
     tex: [13, 7]
     type: HUGE_MUSHROOM
+    tex_extra:
+      stem: [13, 8]
+      pores: [14, 8]
 
   - id: 101
     idStr: IRON_BARS
@@ -1013,5 +1114,8 @@ blocks:
     mapcolor: [112, 8, 28]
     tex: [4, 14]
     type: NETHER_WART
+    tex_extra:
+      smaller_1: [3, 14]
+      smaller_2: [2, 14]
 
 ...

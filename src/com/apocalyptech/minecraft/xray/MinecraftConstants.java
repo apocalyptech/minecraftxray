@@ -108,20 +108,7 @@ public class MinecraftConstants {
 		NETHER_WART
 	}
 
-	// Some block types' renderers automatically use other textures that we don't
-	// specify manually.  Here are the offsets from the texture specified in the Yaml
-	// file.
-	public static HashMap<BLOCK_TYPE, Integer[]> blockTypeExtraTextures =
-		new HashMap<BLOCK_TYPE, Integer[]>();
-	static
-	{
-		blockTypeExtraTextures.put(BLOCK_TYPE.CROPS, new Integer[] {-1, -2, -3, -4, -5, -6, -7});
-		blockTypeExtraTextures.put(BLOCK_TYPE.BED, new Integer[] {-1, 14, 15, 16, 17});
-		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_BODY, new Integer[] {-2, -1, 1, 2});
-		blockTypeExtraTextures.put(BLOCK_TYPE.PISTON_HEAD, new Integer[] {-1, 1, 2, 3});
-		blockTypeExtraTextures.put(BLOCK_TYPE.CHEST, new Integer[] {-1, -2, 14, 15, 30, 31});
-		blockTypeExtraTextures.put(BLOCK_TYPE.NETHER_WART, new Integer[] {-1, -2});
-	}
+	// Extra textures specified by various block types
 	public static HashMap<BLOCK_TYPE, String[]> blockTypeExtraTexturesReq =
 		new HashMap<BLOCK_TYPE, String[]>();
 	static
@@ -130,15 +117,17 @@ public class MinecraftConstants {
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.MINECART_TRACKS, new String[] {"curve"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.SIMPLE_RAIL, new String[] {"powered"}); // actually just for powered rails, but whatever
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CAKE, new String[] {"side_uncut", "side_cut", "bottom"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.BED, new String[] {"foot_top", "head_side", "foot_side", "foot", "head"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.PISTON_BODY, new String[] {"head", "back", "front"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.PISTON_HEAD, new String[] {"head_sticky", "body"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CHEST, new String[] {"side_small", "top",
+			"front_big_left", "front_big_right",
+			"back_big_left", "back_big_right"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CROPS, new String[] {"smaller_1", "smaller_2", "smaller_3", "smaller_4",
+			"smaller_5", "smaller_6", "smaller_7"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.NETHER_WART, new String[] {"smaller_1", "smaller_2"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.HUGE_MUSHROOM, new String[] {"stem", "pores"});
 	}
-
-	// ... aand, because Huge Mushrooms are ridiculous, some hardcoded textures to reserve
-	public static int TEX_HUGE_MUSHROOM_STEM = 13+(16*8);
-	public static int TEX_HUGE_MUSHROOM_PORES = 14+(16*8);
-	public static int[] blockTypeAbsoluteTextures = new int[] {
-		TEX_HUGE_MUSHROOM_STEM,
-		TEX_HUGE_MUSHROOM_PORES
-	};
 
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
 	public static BlockTypeCollection blockCollection = new BlockTypeCollection();
@@ -158,6 +147,8 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_WATER;
 	public static BlockType BLOCK_STATIONARY_WATER;
 	public static BlockType BLOCK_IRON_BARS;
+	public static BlockType BLOCK_PISTON_HEAD;
+	public static BlockType BLOCK_PISTON_STICKY_BODY;
 
 	// A meta-block to use for unknown block types
 	public static BlockType BLOCK_UNKNOWN;
@@ -374,6 +365,16 @@ public class MinecraftConstants {
 		{
 			throw new BlockTypeLoadException("IRON_BARS block definition not found");
 		}
+		BLOCK_PISTON_HEAD = blockCollection.getByName("PISTON_HEAD");
+		if (BLOCK_PISTON_HEAD == null)
+		{
+			throw new BlockTypeLoadException("PISTON_HEAD block definition not found");
+		}
+		BLOCK_PISTON_STICKY_BODY = blockCollection.getByName("PISTON_STICKY_BODY");
+		if (BLOCK_PISTON_STICKY_BODY == null)
+		{
+			throw new BlockTypeLoadException("PISTON_STICKY_BODY block definition not found");
+		}
 
 		// We also define a "special" block for unknown block types, so that instead
 		// of empty space, they'll show up as purple blocks.
@@ -389,12 +390,6 @@ public class MinecraftConstants {
 
 		// Set our blockArray
 		blockArray = blockCollection.blockArray;
-
-		// Make sure we're reserving some hardcoded, absolute textures.
-		for (int tex : blockTypeAbsoluteTextures)
-		{
-			blockCollection.useTexture(tex);
-		}
 
 		// Clean up.
 		ExceptionDialog.clearExtraStatus();

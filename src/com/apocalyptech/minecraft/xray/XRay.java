@@ -863,11 +863,11 @@ public class XRay
 					}
 
 					// Now any "extra" textures which might exist for the block type
-					if (blockTypeExtraTextures.containsKey(decBlock.type))
+					if (blockTypeExtraTexturesReq.containsKey(decBlock.type))
 					{
-						for (int offset : blockTypeExtraTextures.get(decBlock.type))
+						for (String key : blockTypeExtraTexturesReq.get(decBlock.type))
 						{
-							int textureId = decBlock.tex_idx + offset;
+							int textureId = decBlock.texture_extra_map.get(key);
 							if (!decorationStats.containsKey(textureId))
 							{
 								decorationStats.put(textureId, new TextureDecorationStats(minecraftTexture, textureId));
