@@ -32,6 +32,11 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import java.awt.Graphics2D;
+import java.awt.AlphaComposite;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -71,13 +76,17 @@ public class BlockTypeCollection
 
 	private String name;
 	private String texpath;
+	private String texfile;
 	private ArrayList<BlockTypeRegular> blocks;
 	private ArrayList<BlockTypeFilename> mlblocks;
 	private ArrayList<BlockType> blocks_composite;
 	private HashMap<String, BlockType> blocksByName;
 	public BlockType[] blockArray;
-	private boolean[] usedTextures;
-	private int reserved_texture_count;
+	private ArrayList<Boolean[]> usedTextures;
+	private ArrayList<Integer> reserved_texture_count;
+	public ArrayList<BufferedImage> textures;
+	public int square_width;
+	private int cur_texture_page;
 	private File file;
 	private boolean global;
 	private BlockTypeLoadException exception;
@@ -91,14 +100,49 @@ public class BlockTypeCollection
 		this.blocksByName = new HashMap<String, BlockType>();
 		this.loadedCollections = new ArrayList<BlockTypeCollection>();
 		this.blockArray = new BlockType[256];
-		this.usedTextures = new boolean[256];
-		this.reserved_texture_count = 0;
+		this.usedTextures = new ArrayList<Boolean[]>();
+		this.reserved_texture_count = new ArrayList<Integer>();
+		this.textures = new ArrayList<BufferedImage>();
+		this.cur_texture_page = -1;
 		this.global = false;
 		this.exception = null;
+		this.addTextureMap(true);
+	}
+
+	private BufferedImage addTextureMap()
+	{
+		return this.addTextureMap(false);
+	}
+
+	private BufferedImage addTextureMap(boolean initial)
+	{
+		Boolean[] usedTextures = new Boolean[256];
+		int res_tex_count = 0;
 		for (int i=0; i<256; i++)
 		{
-			this.usedTextures[i] = false;
+			usedTextures[i] = false;
 		}
+		this.usedTextures.add(usedTextures);
+		this.reserved_texture_count.add(res_tex_count);
+		this.cur_texture_page++;
+		if (!initial)
+		{
+			BufferedImage rootImg = this.textures.get(0);
+			BufferedImage image = new BufferedImage(rootImg.getWidth(), rootImg.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			this.textures.add(image);
+			return image;
+		}
+		return null;
+	}
+
+	public void setInitialTexture(BufferedImage image)
+	{
+		if (this.textures.size() > 0)
+		{
+			return;
+		}
+		this.textures.add(image);
+		this.square_width = image.getWidth()/16;
 	}
 
 	/**
@@ -130,6 +174,16 @@ public class BlockTypeCollection
 	public String getTexpath()
 	{
 		return this.texpath;
+	}
+
+	public void setTexfile(String texfile)
+	{
+		this.texfile = texfile;
+	}
+
+	public String getTexfile()
+	{
+		return this.texfile;
 	}
 
 	public void setBlocks(ArrayList<BlockTypeRegular> blocks)
@@ -268,9 +322,12 @@ public class BlockTypeCollection
 		this.blockArray[newBlockType.getId()] = newBlockType;
 
 		// Mark our textures as "used"
-		for (Integer tex : newBlockType.getUsedTextures())
+		if (newBlockType.texfile == null)
 		{
-			this.useTexture(tex);
+			for (Integer tex : newBlockType.getUsedTextures())
+			{
+				this.useTexture(tex);
+			}
 		}
 		//System.out.println("Textures used by " + newBlockType.idStr + ": " + newBlockType.getUsedTextures().toString());
 		//System.out.println(this.usedTextureCount() + " textures used, " + this.unusedTextureCount() + " textures free.");
@@ -297,7 +354,12 @@ public class BlockTypeCollection
 		{
 			return;
 		}
-		this.usedTextures[texture] = true;
+		this.usedTextures.get(this.cur_texture_page)[texture] = true;
+	}
+
+	public int reserveTexture()
+	{
+		return this.reserveTexture(true);
 	}
 
 	/**
@@ -307,19 +369,34 @@ public class BlockTypeCollection
 	 * blocks that use filenames for textures, so we're going
 	 * to increment that count to use as an offset, even though
 	 * probably that'll never actually come into play.
+	 *
+	 * @param allowCreate Allow ourselves to create a new texture, if needed
 	 */
-	public int reserveTexture()
+	public int reserveTexture(boolean allowCreate)
 	{
-		for (int i=0; i<256; i++)
+		while (true)
 		{
-			if (!this.usedTextures[i])
+			for (int i=0; i<256; i++)
 			{
-				this.useTexture(i);
-				this.reserved_texture_count++;
-				return i;
+				if (!this.usedTextures.get(this.cur_texture_page)[i])
+				{
+					this.useTexture(i);
+					this.reserved_texture_count.set(this.cur_texture_page, this.reserved_texture_count.get(this.cur_texture_page) + 1);
+					return i;
+				}
+			}
+
+			// If we got here, we have no more textures available on
+			// our current page.  Add a new one and recurse
+			if (allowCreate)
+			{
+				this.addTextureMap();
+			}
+			else
+			{
+				return -1;
 			}
 		}
-		return -1;
 	}
 
 	/**
@@ -330,13 +407,13 @@ public class BlockTypeCollection
 		int count = 0;
 		for (int i=0; i<256; i++)
 		{
-			if (!this.usedTextures[i])
+			if (!this.usedTextures.get(this.cur_texture_page)[i])
 			{
 				count++;
 			}
 		}
 		count -= this.getFilenameTextureCount();
-		count += this.reserved_texture_count;
+		count += this.reserved_texture_count.get(this.cur_texture_page);
 		return count;
 	}
 
@@ -348,13 +425,13 @@ public class BlockTypeCollection
 		int count = 0;
 		for (int i=0; i<256; i++)
 		{
-			if (this.usedTextures[i])
+			if (this.usedTextures.get(this.cur_texture_page)[i])
 			{
 				count++;
 			}
 		}
 		count += this.getFilenameTextureCount();
-		count -= this.reserved_texture_count;
+		count -= this.reserved_texture_count.get(this.cur_texture_page);
 		return count;
 	}
 
@@ -466,28 +543,230 @@ public class BlockTypeCollection
 	}
 
 	/**
-	 * Loops through all our blocks to get a list of filenames which should be loaded into
-	 * textures, update those blocks once the textures have been reserved, and then return
-	 * the information so that those blocks can get actually loaded.
+	 * Returns a list of all custom texture files (complete sheets) that the
+	 * collection is using.
 	 */
-	public HashMap<String, Integer> getFilenameTextureBlocks()
-		throws BlockTypeLoadException
+	private ArrayList<String> getCustomTextureFileList()
 	{
-		HashMap<String, Integer> list = new HashMap<String, Integer>();
+		HashMap<String, Integer> tempMap = new HashMap<String, Integer>();
+		ArrayList<String> list = new ArrayList<String>();
 
-		// Load in our list of textures and reserve a texture for each
-		for (String filename : this.getFilenameTextureList())
-		{
-			list.put(filename, this.reserveTexture());
-		}
-
-		// Update our blocks with the fresh texture location information
+		// Loop through and grab them
 		for (BlockType block : this.getBlocksFull())
 		{
-			block.setTextureFilenameMapping(list);
+			String filename = block.getTexfile();
+			if (filename != null && !tempMap.containsKey(filename))
+			{
+				tempMap.put(filename, null);
+				list.add(filename);
+			}
 		}
 
-		// ... and return this list, so the files can actually be loaded.
+		// Return
 		return list;
+	}
+
+	/**
+	 * Returns the count of all custom texture files (complete sheets) that the
+	 * collection is using.
+	 */
+	private int getCustomTextureFileCount()
+	{
+		return this.getCustomTextureFileList().size();
+	}
+
+	/**
+	 * Returns a list of all BlockTypes which use the specified texture file.
+	 */
+	private ArrayList<BlockType> getCustomTextureFileBlocks(String tex)
+	{
+		ArrayList<BlockType> list = new ArrayList<BlockType>();
+
+		// Loop through and grab them
+		for (BlockType block : this.getBlocksFull())
+		{
+			String filename = block.getTexfile();
+			if (filename != null && filename.equalsIgnoreCase(tex))
+			{
+				list.add(block);
+			}
+		}
+
+		// Return
+		return list;
+	}
+
+	/**
+	 * Imports any extra-sheet textures into our main texture
+	 *
+	 * TODO: Proper exception reporting
+	 */
+	public void importCustomTextureSheets()
+		throws BlockTypeLoadException
+	{
+		int new_tex;
+		if (this.getCustomTextureFileCount() > 0)
+		{
+			BufferedImage bi = this.textures.get(this.cur_texture_page);
+			Graphics2D g2d = bi.createGraphics();
+			for (String sheet : this.getCustomTextureFileList())
+			{
+				HashMap<Integer, Integer> seenTextures = new HashMap<Integer, Integer>();
+				BufferedImage bi2 = MinecraftEnvironment.buildImageFromInput(MinecraftEnvironment.getMinecraftTexturepackData(sheet));
+				int bi2_width = bi2.getWidth()/16;
+				for (BlockType block : this.getCustomTextureFileBlocks(sheet))
+				{
+					ArrayList<Integer> blockTex = new ArrayList<Integer>();
+					for (Integer tex : block.getUsedTextures())
+					{
+						if (!seenTextures.containsKey(tex))
+						{
+							seenTextures.put(tex, null);
+							blockTex.add(tex);
+						}
+					}
+					if (blockTex.size() > this.unusedTextureCount())
+					{
+						// This check is to make sure that all textures used by a particular block are
+						// contained within the same texture sheet.
+						// TODO: Ideally what we should do multiple passes and fill up the pages as much
+						// as absolutely possible - using this method it's possible we'll be leaving
+						// empty spots.
+						bi = this.addTextureMap();
+						g2d = bi.createGraphics();
+
+						// Technically speaking this may cause the same texture to exist on both
+						// sheets, if more than one block shares a texture
+						blockTex = block.getUsedTextures();
+						seenTextures.clear();
+						for (int tex : blockTex)
+						{
+							seenTextures.put(tex, null);
+						}
+					}
+
+					// Whatever's left in blockTex at this point should be copied+converted into
+					// our texture
+					for (int tex : blockTex)
+					{
+						seenTextures.put(tex, this.reserveTexture(false));
+						if (seenTextures.get(tex) == -1)
+						{
+							throw new BlockTypeLoadException("Could not allocate additional textures");
+						}
+						int[] idx_coords = BlockType.getTexCoordsArr(seenTextures.get(tex));
+						int[] old_coords = BlockType.getTexCoordsArr(tex);
+
+						// Do the actual copying
+						g2d.setComposite(AlphaComposite.Src);
+						if (this.square_width < bi2_width)
+						{
+							g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+							g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+						}
+						else
+						{
+							g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+							g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
+						}
+						g2d.drawImage(bi2,
+								idx_coords[0]*this.square_width, idx_coords[1]*this.square_width,
+								(idx_coords[0]+1)*this.square_width, (idx_coords[1]+1)*this.square_width,
+								old_coords[0]*bi2_width, old_coords[1]*bi2_width, (old_coords[0]+1)*bi2_width, (old_coords[1]+1)*bi2_width,
+								null);
+					}
+
+					// And now, lest we forget, convert all of the texture indexes in the
+					// BlockType object
+					block.convertTexIdx(seenTextures);
+
+					// TODO: specify texture page on the blocktype!
+				}
+			}
+		}
+	}
+
+	/**
+	 * Loads any filename-based textures into our main texture
+	 *
+	 * TODO: Proper exception reporting
+	 * TODO: It would be nice to have this process all blocks from the same "group"
+	 *       at the same time, rather than potentially interleaved.  Probably not
+	 *       that big of a deal, though.
+	 */
+	public void loadFilenameTextures()
+		throws BlockTypeLoadException
+	{
+		HashMap<String, Integer> mapping = new HashMap<String, Integer>();
+		ArrayList<String> texList;
+
+		BufferedImage bi = this.textures.get(this.cur_texture_page);
+		Graphics2D g2d = bi.createGraphics();
+
+		for (BlockType block : this.getBlocksFull())
+		{
+			texList = block.getTextureFilenames();
+			if (texList.size() > 0)
+			{
+				ArrayList<String> blockTex = new ArrayList<String>();
+				for (String tex : texList)
+				{
+					if (!mapping.containsKey(tex))
+					{
+						mapping.put(tex, null);
+						blockTex.add(tex);
+					}
+				}
+				if (blockTex.size() > this.unusedTextureCount())
+				{
+					// See notes above in importCustomTextureSheets, re: some downsides to this
+					bi = this.addTextureMap();
+					g2d = bi.createGraphics();
+
+					// Again, see notes above.
+					blockTex = block.getTextureFilenames();
+					mapping.clear();
+					for (String tex : blockTex)
+					{
+						mapping.put(tex, null);
+					}
+				}
+
+				// Anything left in blockTex at this point gets copied+converted
+				for (String tex : blockTex)
+				{
+					mapping.put(tex, this.reserveTexture(false));
+					if (mapping.get(tex) == -1)
+					{
+						throw new BlockTypeLoadException("Could not allocate additional textures");
+					}
+					int[] idx_coords = BlockType.getTexCoordsArr(mapping.get(tex));
+
+					BufferedImage bi2 = MinecraftEnvironment.buildImageFromInput(MinecraftEnvironment.getMinecraftTexturepackData(tex));
+					if (bi2 == null)
+					{
+						throw new BlockTypeLoadException("File " + tex + " is not found");
+					}
+					int new_width = bi2.getWidth();
+					g2d.setComposite(AlphaComposite.Src);
+					if (this.square_width < new_width)
+					{
+						g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+						g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+					}
+					else
+					{
+						g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+						g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
+					}
+					g2d.drawImage(bi2, idx_coords[0]*square_width, idx_coords[1]*square_width, square_width, square_width, null);
+				}
+
+				// Finally, update with our mapping
+				block.setTextureFilenameMapping(mapping);
+
+				// TODO: specify texture page on the blocktype!
+			}
+		}
 	}
 }

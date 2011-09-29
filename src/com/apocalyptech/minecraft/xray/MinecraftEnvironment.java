@@ -493,7 +493,7 @@ public class MinecraftEnvironment {
 	 * @param i
 	 * @return
 	 */
-	private static BufferedImage buildImageFromInput(InputStream i) {
+	public static BufferedImage buildImageFromInput(InputStream i) {
 		if (i == null)
 		{
 			return null;
@@ -543,7 +543,7 @@ public class MinecraftEnvironment {
 	 *
 	 * @return
 	 */
-	public static BufferedImage getMinecraftTexture()
+	public static ArrayList<BufferedImage> getMinecraftTexture()
 		throws BlockTypeLoadException
 	{
 		BufferedImage bi = buildImageFromInput(getMinecraftTextureData());
@@ -748,53 +748,53 @@ public class MinecraftEnvironment {
 		g2d.setColor(new Color(.839f, .203f, .952f, .4f));
 		g2d.fillRect(nether_start_x, nether_start_y, square_width, square_width);
 
+		// TODO: we should make sure that anything set to highlight is enabled in the first
+		// texture (though if we ever support dynamically changing the highlights, we'll
+		// just have to cope... perhaps we should cope right from the get go)
+
+		// Send our processed texture 
+		blockCollection.setInitialTexture(bi);
+
+		// Load in extra texture sheets
+		blockCollection.importCustomTextureSheets();
+
 		// Load in filename textures, if needed
 		// TODO: Exception error reporting
-		for (Map.Entry<String, Integer> entry : blockCollection.getFilenameTextureBlocks().entrySet())
+		blockCollection.loadFilenameTextures();
+		
+		// For each texture we now have, copy the texture underneath, tinted for our "explored" areas
+		i = 0;
+		ArrayList<BufferedImage> explored = new ArrayList<BufferedImage>();
+		for (BufferedImage image : blockCollection.textures)
 		{
-			int[] new_tex = BlockType.getTexCoordsArr(entry.getValue());
-			bi2 = buildImageFromInput(getMinecraftTexturepackData(entry.getKey()));
-			if (bi2 == null)
-			{
-				throw new BlockTypeLoadException("File " + entry.getKey() + " is not found");
-			}
-			int new_width = bi2.getWidth();
+			bi2 = new BufferedImage(image.getWidth(), image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
+			g2d = bi2.createGraphics();
 			g2d.setComposite(AlphaComposite.Src);
-			if (square_width < new_width)
-			{
-				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			}
-			else
-			{
-				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
-			}
-			g2d.drawImage(bi2, new_tex[0]*square_width, new_tex[1]*square_width, square_width, square_width, null);
-		}
-		
-		// Duplicate the texture underneath, tinted for our "explored" areas
-		bi2 = new BufferedImage(bi.getWidth(), bi.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
-		g2d = bi2.createGraphics();
-		g2d.setComposite(AlphaComposite.Src);
-		g2d.drawImage(bi, 0, 0, bi.getWidth(), bi.getHeight(), null);
-		g2d.drawImage(bi, 0, bi.getHeight(), bi.getWidth(), bi.getHeight(), null);
-		g2d.setComposite(AlphaComposite.SrcAtop);
-		g2d.setColor(new Color(0f, 1f, 0f, .2f));
-		g2d.fillRect(0, bi.getHeight(), bi.getWidth(), bi.getHeight());
+			g2d.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+			g2d.drawImage(image, 0, image.getHeight(), image.getWidth(), image.getHeight(), null);
+			g2d.setComposite(AlphaComposite.SrcAtop);
+			g2d.setColor(new Color(0f, 1f, 0f, .2f));
+			g2d.fillRect(0, image.getHeight(), image.getWidth(), image.getHeight());
 
-		/*
-		try {
-			ImageIO.write(bi, "PNG", new File(System.getProperty("user.home"), "xray_terrain.png"));
-			System.out.println("Wrote texture to ~/xray_terrain.png");
+			explored.add(bi2);
+
+			try {
+				ImageIO.write(image, "PNG", new File(System.getProperty("user.home"), "xray_terrain_" + i + ".png"));
+				System.out.println("Wrote texture to ~/xray_terrain_" + i + ".png");
+			}
+			catch (Exception e)
+			{
+				// whatever
+			}
+
+			i++;
 		}
-		catch (Exception e)
-		{
-			// whatever
-		}
-		*/
+
+		// This bit here is extremely grody; we should just do this in-place or something
+		blockCollection.textures = explored;
 		
-		return bi2;
+		// a bit unnecessary since that's a constant...
+		return blockCollection.textures;
 	}
 	
 	/***

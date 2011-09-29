@@ -126,6 +126,7 @@ public class XRay
 	private int mouseY;
 
 	// the sprite sheet for all textures
+	public ArrayList<Texture> minecraftTextures;
 	public Texture minecraftTexture;
 	public Texture paintingTexture;
 	public Texture loadingTextTexture;
@@ -817,9 +818,14 @@ public class XRay
 			createMinimapSprites();
 
 			// minecraft textures
-			BufferedImage minecraftTextureImage = MinecraftEnvironment.getMinecraftTexture();
-			minecraftTexture = TextureTool.allocateTexture(minecraftTextureImage, GL11.GL_NEAREST);
-			minecraftTexture.update();
+			minecraftTextures = new ArrayList<Texture>();
+			for (BufferedImage image : MinecraftEnvironment.getMinecraftTexture())
+			{
+				Texture newtex = TextureTool.allocateTexture(image, GL11.GL_NEAREST);
+				newtex.update();
+				minecraftTextures.add(newtex);
+			}
+			minecraftTexture = minecraftTextures.get(0);
 
 			// Get a list of block types organized by type
 			HashMap<BLOCK_TYPE, ArrayList<BlockType>> reverse_block_type_map = new HashMap<BLOCK_TYPE, ArrayList<BlockType>>();

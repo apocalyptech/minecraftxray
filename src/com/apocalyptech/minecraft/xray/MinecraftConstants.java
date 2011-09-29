@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.lang.Integer;
+import java.io.InputStream;
+import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
 
@@ -414,6 +416,24 @@ public class MinecraftConstants {
 		catch (Exception e)
 		{
 			throw new BlockTypeLoadException("Could not load " + filename + ": " + e.toString(), e);
+		}
+
+		// Check to make sure our texfile exists, if it's defined
+		if (blockinfo.getTexfile() != null)
+		{
+			try
+			{
+				InputStream stream = MinecraftEnvironment.getMinecraftTexturepackData(blockinfo.getTexfile());
+				if (stream == null)
+				{
+					throw new BlockTypeLoadException("File " + blockinfo.getTexfile() + " is not found");
+				}
+				stream.close();
+			}
+			catch (IOException e)
+			{
+				throw new BlockTypeLoadException("Error while opening " + blockinfo.getTexfile() + ": " + e.toString(), e);
+			}
 		}
 
 		// Run through and normalize everything

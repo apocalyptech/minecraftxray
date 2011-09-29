@@ -100,6 +100,7 @@ public class BlockTypeFilename extends BlockType
 	 */
 	public void pullDataFromCollection(BlockTypeCollection collection)
 	{
+		super.pullDataFromCollection(collection);
 		this.texpath = collection.getTexpath();
 	}
 
@@ -116,27 +117,40 @@ public class BlockTypeFilename extends BlockType
 	 */
 	public ArrayList<String> getTextureFilenames()
 	{
+		HashMap<String, Integer> tempMap = new HashMap<String, Integer>();
 		ArrayList<String> list = new ArrayList<String>();
 		list.add(this.tex);
 		if (this.tex_data != null)
 		{
 			for (String tex : this.tex_data.values())
 			{
-				list.add(tex);
+				if (!tempMap.containsKey(tex))
+				{
+					tempMap.put(tex, null);
+					list.add(tex);
+				}
 			}
 		}
 		if (this.tex_direction_int != null)
 		{
 			for (String tex : this.tex_direction_int.values())
 			{
-				list.add(tex);
+				if (!tempMap.containsKey(tex))
+				{
+					tempMap.put(tex, null);
+					list.add(tex);
+				}
 			}
 		}
 		if (this.tex_extra != null)
 		{
 			for (String tex : this.tex_extra.values())
 			{
-				list.add(tex);
+				if (!tempMap.containsKey(tex))
+				{
+					tempMap.put(tex, null);
+					list.add(tex);
+				}
 			}
 		}
 		return list;

@@ -108,6 +108,9 @@ public class BlockType
 	public HashMap<Byte, DIRECTION_ABS> texture_dir_data_map;
 	public HashMap<String, Integer> texture_extra_map;
 
+	// Other attributes
+	public String texfile;
+
 	public BlockType()
 	{
 		this.override = false;
@@ -153,6 +156,16 @@ public class BlockType
 	public ArrayList<Integer> getMapcolor()
 	{
 		return this.mapcolor;
+	}
+
+	public void setTexfile(String texfile)
+	{
+		this.texfile = texfile;
+	}
+
+	public String getTexfile()
+	{
+		return this.texfile;
 	}
 
 	public void setTexIdx(int tex)
@@ -235,11 +248,11 @@ public class BlockType
 	/**
 	 * A function to pull any necessary data from the Collection object
 	 * itself.  BlockTypeFilename, for instance, needs to grab the
-	 * Collection's texpath.  This implementation does nothing with it,
-	 * so need not be overridden if the implementing class needs nothing.
+	 * Collection's texpath.
 	 */
 	public void pullDataFromCollection(BlockTypeCollection collection)
 	{
+		this.texfile = collection.getTexfile();
 	}
 
 	/**
@@ -405,4 +418,71 @@ public class BlockType
 		return list;
 	}
 
+	/**
+	 * Given a mapping of old-to-new texture indexes, convert all of our
+	 * available textures.
+	 *
+	 * TODO: proper exception reporting
+	 */
+	public void convertTexIdx(HashMap<Integer, Integer> mapping)
+		throws BlockTypeLoadException
+	{
+		// First the texture itself
+		if (mapping.containsKey(this.tex_idx))
+		{
+			this.tex_idx = mapping.get(this.tex_idx);
+		}
+		else
+		{
+			throw new BlockTypeLoadException("Could not convert main texture");
+		}
+
+		// Now the data map
+		if (this.texture_data_map != null)
+		{
+			for (Map.Entry<Byte, Integer> entry : this.texture_data_map.entrySet())
+			{
+				if (mapping.containsKey(entry.getValue()))
+				{
+					entry.setValue(mapping.get(entry.getValue()));
+				}
+				else
+				{
+					throw new BlockTypeLoadException("Could not convert data map");
+				}
+			}
+		}
+
+		// Now the direction map
+		if (this.texture_dir_map != null)
+		{
+			for (Map.Entry<DIRECTION_REL, Integer> entry : this.texture_dir_map.entrySet())
+			{
+				if (mapping.containsKey(entry.getValue()))
+				{
+					entry.setValue(mapping.get(entry.getValue()));
+				}
+				else
+				{
+					throw new BlockTypeLoadException("Could not convert direction map");
+				}
+			}
+		}
+
+		// Now the extra map
+		if (this.texture_extra_map != null)
+		{
+			for (Map.Entry<String, Integer> entry : this.texture_extra_map.entrySet())
+			{
+				if (mapping.containsKey(entry.getValue()))
+				{
+					entry.setValue(mapping.get(entry.getValue()));
+				}
+				else
+				{
+					throw new BlockTypeLoadException("Could not convert direction map");
+				}
+			}
+		}
+	}
 }
