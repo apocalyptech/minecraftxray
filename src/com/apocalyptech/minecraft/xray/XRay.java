@@ -127,7 +127,6 @@ public class XRay
 
 	// the sprite sheet for all textures
 	public ArrayList<Texture> minecraftTextures;
-	public Texture minecraftTexture;
 	public Texture paintingTexture;
 	public Texture loadingTextTexture;
 
@@ -825,7 +824,7 @@ public class XRay
 				newtex.update();
 				minecraftTextures.add(newtex);
 			}
-			minecraftTexture = minecraftTextures.get(0);
+			Texture minecraftTexture = minecraftTextures.get(0);
 
 			// Get a list of block types organized by type
 			HashMap<BLOCK_TYPE, ArrayList<BlockType>> reverse_block_type_map = new HashMap<BLOCK_TYPE, ArrayList<BlockType>>();
@@ -1199,7 +1198,7 @@ public class XRay
 	private void setMinecraftWorld(WorldInfo world)
 	{
 		this.world = world;
-		this.level = new MinecraftLevel(world, minecraftTexture, paintingTexture, HIGHLIGHT_ORES);
+		this.level = new MinecraftLevel(world, minecraftTextures, paintingTexture, HIGHLIGHT_ORES);
 
 		// determine which chunks are available in this world
 		mapChunksToLoad = new LinkedList<Block>();
@@ -1219,7 +1218,7 @@ public class XRay
 	private void setMinecraftWorld(WorldInfo world, FirstPersonCameraController camera)
 	{
 		this.world = world;
-		this.level = new MinecraftLevel(world, minecraftTexture, paintingTexture, HIGHLIGHT_ORES);
+		this.level = new MinecraftLevel(world, minecraftTextures, paintingTexture, HIGHLIGHT_ORES);
 
 		// determine which chunks are available in this world
 		mapChunksToLoad = new LinkedList<Block>();
@@ -2021,25 +2020,65 @@ public class XRay
 		// Now do various passes
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glColor3f(1.0f, 1.0f, 1.0f);
-		minecraftTexture.bind();
-		for (Chunk k : chunkList)
+		int last_tex = -1;
+		int i;
+		for (i=0; i<this.minecraftTextures.size(); i++)
 		{
-			k.renderSolid(render_bedrock, render_water, highlight_explored);
-			k.renderSelected(this.mineralToggle);
-			if (k.hasPaintings())
+			for (Chunk k : chunkList)
 			{
-				paintingTexture.bind();
-				k.renderPaintings();
-				minecraftTexture.bind();
+				if (k.usesSheet(i))
+				{
+					if (last_tex != i)
+					{
+						minecraftTextures.get(i).bind();
+						last_tex = i;
+					}
+					k.renderSolid(i, render_bedrock, render_water, highlight_explored);
+					k.renderSelected(i, this.mineralToggle);
+				}
+				else
+				{
+				}
 			}
 		}
 		for (Chunk k : chunkList)
 		{
-			k.renderNonstandard();
+			if (k.hasPaintings())
+			{
+				paintingTexture.bind();
+				k.renderPaintings();
+				last_tex = -1;
+			}
 		}
-		for (Chunk k : chunkList)
+		for (i=0; i<this.minecraftTextures.size(); i++)
 		{
-			k.renderGlass();
+			for (Chunk k : chunkList)
+			{
+				if (k.usesSheet(i))
+				{
+					if (last_tex != i)
+					{
+						minecraftTextures.get(i).bind();
+						last_tex = i;
+					}
+					k.renderNonstandard(i);
+				}
+			}
+		}
+		for (i=0; i<this.minecraftTextures.size(); i++)
+		{
+			for (Chunk k : chunkList)
+			{
+				if (k.usesSheet(i))
+				{
+					if (last_tex != i)
+					{
+						minecraftTextures.get(i).bind();
+						last_tex = i;
+					}
+					k.renderGlass(i);
+				}
+			}
 		}
 
 		if (highlightOres)
@@ -2054,9 +2093,21 @@ public class XRay
 			GL11.glColor4f(alpha, alpha, alpha, alpha);
 			setLightLevel(20);
 			GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-			for (Chunk k : chunkList)
+			// TODO: could check for specific textures here, rather than looping over all
+			for (i=0; i<this.minecraftTextures.size(); i++)
 			{
-				k.renderSelected(this.mineralToggle);
+				for (Chunk k : chunkList)
+				{
+					if (k.usesSheet(i))
+					{
+						if (last_tex != i)
+						{
+							minecraftTextures.get(i).bind();
+							last_tex = i;
+						}
+						k.renderSelected(i, this.mineralToggle);
+					}
+				}
 			}
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -2357,7 +2408,8 @@ public class XRay
 			{
 				GL11.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 			}
-			minecraftTexture.bind();
+			// TODO: should really fix this up so that we minimize binds
+			minecraftTextures.get(blockArray[HIGHLIGHT_ORES[i]].getTexSheet()).bind();
 			SpriteTool.drawCurrentSprite(curX, curY, 32, 32, MinecraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
 					MinecraftConstants.precalcSpriteSheetToTextureY[blockArray[HIGHLIGHT_ORES[i]].tex_idx],
 					MinecraftConstants.precalcSpriteSheetToTextureX[blockArray[HIGHLIGHT_ORES[i]].tex_idx] + TEX16,

@@ -83,7 +83,6 @@ public class BlockTypeCollection
 	private HashMap<String, BlockType> blocksByName;
 	public BlockType[] blockArray;
 	private ArrayList<Boolean[]> usedTextures;
-	private ArrayList<Integer> reserved_texture_count;
 	public ArrayList<BufferedImage> textures;
 	public int square_width;
 	private int cur_texture_page;
@@ -101,7 +100,6 @@ public class BlockTypeCollection
 		this.loadedCollections = new ArrayList<BlockTypeCollection>();
 		this.blockArray = new BlockType[256];
 		this.usedTextures = new ArrayList<Boolean[]>();
-		this.reserved_texture_count = new ArrayList<Integer>();
 		this.textures = new ArrayList<BufferedImage>();
 		this.cur_texture_page = -1;
 		this.global = false;
@@ -123,7 +121,6 @@ public class BlockTypeCollection
 			usedTextures[i] = false;
 		}
 		this.usedTextures.add(usedTextures);
-		this.reserved_texture_count.add(res_tex_count);
 		this.cur_texture_page++;
 		if (!initial)
 		{
@@ -381,7 +378,6 @@ public class BlockTypeCollection
 				if (!this.usedTextures.get(this.cur_texture_page)[i])
 				{
 					this.useTexture(i);
-					this.reserved_texture_count.set(this.cur_texture_page, this.reserved_texture_count.get(this.cur_texture_page) + 1);
 					return i;
 				}
 			}
@@ -412,8 +408,6 @@ public class BlockTypeCollection
 				count++;
 			}
 		}
-		count -= this.getFilenameTextureCount();
-		count += this.reserved_texture_count.get(this.cur_texture_page);
 		return count;
 	}
 
@@ -430,8 +424,6 @@ public class BlockTypeCollection
 				count++;
 			}
 		}
-		count += this.getFilenameTextureCount();
-		count -= this.reserved_texture_count.get(this.cur_texture_page);
 		return count;
 	}
 
@@ -679,8 +671,8 @@ public class BlockTypeCollection
 					// And now, lest we forget, convert all of the texture indexes in the
 					// BlockType object
 					block.convertTexIdx(seenTextures);
+					block.setTexSheet(this.cur_texture_page);
 
-					// TODO: specify texture page on the blocktype!
 				}
 			}
 		}
@@ -764,8 +756,7 @@ public class BlockTypeCollection
 
 				// Finally, update with our mapping
 				block.setTextureFilenameMapping(mapping);
-
-				// TODO: specify texture page on the blocktype!
+				block.setTexSheet(this.cur_texture_page);
 			}
 		}
 	}

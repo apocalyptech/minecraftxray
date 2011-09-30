@@ -60,7 +60,7 @@ public class MinecraftLevel {
 	private int spawnPoint_idx;
 	public short[] HIGHLIGHT_ORES;
 	
-	public Texture minecraftTexture;
+	public ArrayList<Texture> minecraftTextures;
 	public Texture paintingTexture;
 
 	public String levelName;
@@ -101,9 +101,9 @@ public class MinecraftLevel {
 	 * Create a minecraftLevel from the given world
 	 * @param world
 	 */
-	public MinecraftLevel(WorldInfo world, Texture minecraftTexture, Texture paintingTexture, short[] HIGHLIGHT_ORES) {
+	public MinecraftLevel(WorldInfo world, ArrayList<Texture> minecraftTextures, Texture paintingTexture, short[] HIGHLIGHT_ORES) {
 		this.world = world;
-		this.minecraftTexture = minecraftTexture;
+		this.minecraftTextures = minecraftTextures;
 		this.paintingTexture = paintingTexture;
 		this.HIGHLIGHT_ORES = HIGHLIGHT_ORES;
 		
@@ -364,10 +364,10 @@ public class MinecraftLevel {
 			{
 				if (chunk != null)
 				{
-					chunk.isSelectedDirty = true;
+					chunk.setSelectedDirty();
 					if (main_dirty)
 					{
-						chunk.isDirty = true;
+						chunk.setDirty();
 					}
 				}
 			}
@@ -378,7 +378,7 @@ public class MinecraftLevel {
 		Chunk c = this.getChunk(x, z);
 		if (c != null)
 		{
-			c.isDirty = true;
+			c.setDirty();
 		}
 	}
 	

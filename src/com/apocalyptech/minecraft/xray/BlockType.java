@@ -110,12 +110,14 @@ public class BlockType
 
 	// Other attributes
 	public String texfile;
+	public int texSheet;
 
 	public BlockType()
 	{
 		this.override = false;
 		this.id = -1;
 		this.tex_idx = -1;
+		this.texSheet = 0;
 	}
 
 	public void setId(short id)
@@ -166,6 +168,16 @@ public class BlockType
 	public String getTexfile()
 	{
 		return this.texfile;
+	}
+
+	public void setTexSheet(int texSheet)
+	{
+		this.texSheet = texSheet;
+	}
+
+	public int getTexSheet()
+	{
+		return this.texSheet;
 	}
 
 	public void setTexIdx(int tex)

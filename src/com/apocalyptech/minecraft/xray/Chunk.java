@@ -27,6 +27,8 @@
 package com.apocalyptech.minecraft.xray;
 
 import java.lang.Math;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
@@ -50,14 +52,14 @@ import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
  * that much of the rendering code would be improved by moving to those if possible.
  */
 public class Chunk {
-	private int displayListNum;
-	private int nonstandardListNum;
-	private int glassListNum;
-	private int selectedDisplayListNum;
+	private HashMap<Integer, Integer> displayListNums;
+	private HashMap<Integer, Integer> nonstandardListNums;
+	private HashMap<Integer, Integer> glassListNums;
+	private HashMap<Integer, Integer> selectedDisplayListNums;
 	public int x;
 	public int z;
-	public boolean isDirty;
-	public boolean isSelectedDirty;
+	public HashMap<Integer, Boolean> isDirty;
+	public HashMap<Integer, Boolean> isSelectedDirty;
 	public boolean isOnMinimap;
 	private CompoundTag chunkData;
 	private ShortArrayTag blockData;
@@ -65,6 +67,8 @@ public class Chunk {
 	private ArrayList<PaintingEntity> paintings;
 	
 	private MinecraftLevel level;
+
+	public HashMap<Integer, Boolean> usedTextureSheets;
 
 	private final float fence_postsize = .125f;
 	private final float fence_postsize_h = fence_postsize/2f;
@@ -108,17 +112,80 @@ public class Chunk {
 		
 		blockData = (ShortArrayTag) levelTag.getTagWithName("Blocks");
 		mapData = (ByteArrayTag) levelTag.getTagWithName("Data");
-		
-		this.isDirty = true;
-		this.isSelectedDirty = true;
 
-		displayListNum = GL11.glGenLists(1);
-		selectedDisplayListNum = GL11.glGenLists(1);
-		glassListNum = GL11.glGenLists(1);
-		nonstandardListNum = GL11.glGenLists(1);
+		// Compute which texture sheets are in-use by this chunk
+		// Much of this is copied from our main render loop, way down below
+		this.usedTextureSheets = new HashMap<Integer, Boolean>();
+		for(int x=0; x<16; x++) {
+			int xOff = (x * 128 * 16);
+			for(int z=0; z<16; z++) {
+				int zOff = (z * 128);
+				int blockOffset = zOff + xOff-1;
+				for(int y=0; y<128; y++) {
+					blockOffset++;
+					int t = blockData.value[blockOffset];
+					if(t < 1) {
+						continue;
+					}
+					BlockType block = blockArray[t];
+					if (block == null)
+					{
+						block = BLOCK_UNKNOWN;
+					}
+					this.usedTextureSheets.put(block.getTexSheet(), true);
+				}
+			}
+		}
+
+		// And create all our necessary GL Lists (and other structures)
+		displayListNums = new HashMap<Integer, Integer>();
+		nonstandardListNums = new HashMap<Integer, Integer>();
+		glassListNums = new HashMap<Integer, Integer>();
+		selectedDisplayListNums = new HashMap<Integer, Integer>();
+		this.isDirty = new HashMap<Integer, Boolean>();
+		this.isSelectedDirty = new HashMap<Integer, Boolean>();
+		for (int sheet : this.usedTextureSheets.keySet())
+		{
+			displayListNums.put(sheet, GL11.glGenLists(1));
+			selectedDisplayListNums.put(sheet, GL11.glGenLists(1));
+			glassListNums.put(sheet, GL11.glGenLists(1));
+			nonstandardListNums.put(sheet, GL11.glGenLists(1));
+			this.isDirty.put(sheet, true);
+			this.isSelectedDirty.put(sheet, true);
+		}
 		
 		//System.out.println(data);
 		//System.exit(0);
+	}
+
+	/**
+	 * Returns whether or not this chunk contains blocks which use the specified sheet
+	 */
+	public boolean usesSheet(int sheet)
+	{
+		return this.usedTextureSheets.containsKey(sheet);
+	}
+
+	/**
+	 * Marks a our lists as dirty
+	 */
+	public void setDirty()
+	{
+		for (Map.Entry<Integer, Boolean> entry : this.isDirty.entrySet())
+		{
+			entry.setValue(true);
+		}
+	}
+
+	/**
+	 * Marks a our selected lists as dirty
+	 */
+	public void setSelectedDirty()
+	{
+		for (Map.Entry<Integer, Boolean> entry : this.isSelectedDirty.entrySet())
+		{
+			entry.setValue(true);
+		}
 	}
 	
 	public CompoundTag getChunkData() {
@@ -3381,24 +3448,24 @@ public class Chunk {
 		return false;
 	}
 
-	public void renderWorldSolids(boolean render_bedrock, boolean highlight_explored)
+	public void renderWorldSolids(int sheet, boolean render_bedrock, boolean highlight_explored)
 	{
-		renderWorld(RENDER_PASS.SOLIDS, render_bedrock, false, highlight_explored, null);
+		renderWorld(RENDER_PASS.SOLIDS, sheet, render_bedrock, false, highlight_explored, null);
 	}
 
-	public void renderWorldNonstandard(boolean render_water, boolean highlight_explored)
+	public void renderWorldNonstandard(int sheet, boolean render_water, boolean highlight_explored)
 	{
-		renderWorld(RENDER_PASS.NONSTANDARD, false, render_water, highlight_explored, null);
+		renderWorld(RENDER_PASS.NONSTANDARD, sheet, false, render_water, highlight_explored, null);
 	}
 
-	public void renderWorldGlass(boolean highlight_explored)
+	public void renderWorldGlass(int sheet, boolean highlight_explored)
 	{
-		renderWorld(RENDER_PASS.GLASS, false, false, highlight_explored, null);
+		renderWorld(RENDER_PASS.GLASS, sheet, false, false, highlight_explored, null);
 	}
 
-	public void renderWorldSelected(boolean[] selectedMap)
+	public void renderWorldSelected(int sheet, boolean[] selectedMap)
 	{
-		renderWorld(RENDER_PASS.SELECTED, false, false, false, selectedMap);
+		renderWorld(RENDER_PASS.SELECTED, sheet, false, false, false, selectedMap);
 	}
 	
 	/**
@@ -3406,12 +3473,13 @@ public class Chunk {
 	 * a HashMap or something with the options.  Anyway, for now it'll remain the same.
 	 * 
 	 * @param pass What pass of rendering are we processing?
+	 * @param sheet Which texture sheet are we currently rendering?
 	 * @param render_bedrock Are we forcing bedrock to be rendered?
 	 * @param render_water Are we forcing water to be rendered?
 	 * @param highlight_explored Are we highlighting the area around torches?
 	 * @param selectedMap ... if so, here's a HashMap to which ones to highlight.
 	 */
-	public void renderWorld(RENDER_PASS pass,
+	public void renderWorld(RENDER_PASS pass, int sheet,
 			boolean render_bedrock, boolean render_water,
 			boolean highlight_explored,
 			boolean[] selectedMap) {
@@ -3457,6 +3525,12 @@ public class Chunk {
 					{
 						//System.out.println("Unknown block ID: " + t);
 						block = BLOCK_UNKNOWN;
+					}
+
+					// Check our texture sheet
+					if (sheet != block.getTexSheet())
+					{
+						continue;
 					}
 					
 					// Doublecheck for water
@@ -4073,39 +4147,55 @@ public class Chunk {
 		}
 	}
 	
-	public void renderSolid(boolean render_bedrock, boolean render_water, boolean highlight_explored) {
-		if(isDirty) {
-				GL11.glNewList(this.displayListNum, GL11.GL_COMPILE);
-				renderWorldSolids(render_bedrock, highlight_explored);
+	public void renderSolid(int sheet, boolean render_bedrock, boolean render_water, boolean highlight_explored) {
+		if (!this.usedTextureSheets.containsKey(sheet))
+		{
+			return;
+		}
+		if(isDirty.get(sheet)) {
+				GL11.glNewList(this.displayListNums.get(sheet), GL11.GL_COMPILE);
+				renderWorldSolids(sheet, render_bedrock, highlight_explored);
 				GL11.glEndList();
-				GL11.glNewList(this.nonstandardListNum, GL11.GL_COMPILE);
+				GL11.glNewList(this.nonstandardListNums.get(sheet), GL11.GL_COMPILE);
 				//GL11.glDepthMask(false);
-				renderWorldNonstandard(render_water, highlight_explored);
+				renderWorldNonstandard(sheet, render_water, highlight_explored);
 				//GL11.glDepthMask(true);
 				GL11.glEndList();
-				GL11.glNewList(this.glassListNum, GL11.GL_COMPILE);
-				renderWorldGlass(highlight_explored);
+				GL11.glNewList(this.glassListNums.get(sheet), GL11.GL_COMPILE);
+				renderWorldGlass(sheet, highlight_explored);
 				GL11.glEndList();
-				this.isDirty = false;
+				this.isDirty.put(sheet, false);
 		}
-		GL11.glCallList(this.displayListNum);
+		GL11.glCallList(this.displayListNums.get(sheet));
 	}
 	
-	public void renderNonstandard() {
-		GL11.glCallList(this.nonstandardListNum);
+	public void renderNonstandard(int sheet) {
+		if (!this.usedTextureSheets.containsKey(sheet))
+		{
+			return;
+		}
+		GL11.glCallList(this.nonstandardListNums.get(sheet));
 	}
 
-	public void renderGlass() {
-		GL11.glCallList(this.glassListNum);
+	public void renderGlass(int sheet) {
+		if (!this.usedTextureSheets.containsKey(sheet))
+		{
+			return;
+		}
+		GL11.glCallList(this.glassListNums.get(sheet));
 	}
 	
-	public void renderSelected(boolean[] selectedMap) {
-		if(isSelectedDirty) {
-			GL11.glNewList(this.selectedDisplayListNum, GL11.GL_COMPILE);
-			renderWorldSelected(selectedMap);
-			GL11.glEndList();
-			this.isSelectedDirty = false;
+	public void renderSelected(int sheet, boolean[] selectedMap) {
+		if (!this.usedTextureSheets.containsKey(sheet))
+		{
+			return;
 		}
-		GL11.glCallList(this.selectedDisplayListNum);
+		if(isSelectedDirty.get(sheet)) {
+			GL11.glNewList(this.selectedDisplayListNums.get(sheet), GL11.GL_COMPILE);
+			renderWorldSelected(sheet, selectedMap);
+			GL11.glEndList();
+			this.isSelectedDirty.put(sheet, false);
+		}
+		GL11.glCallList(this.selectedDisplayListNums.get(sheet));
 	}
 }
