@@ -612,6 +612,22 @@ public class MinecraftEnvironment {
 					tintSquare(block.getTexCoordsArr(), square_width, ac, Color.green, bi, g2d);
 				}
 			}
+
+			// Our one hardcoded-for-now colorization: the side-grass overlay
+			int[] sideGrassCoordsOverlay = new int[] {6, 2};
+			tintSquare(sideGrassCoordsOverlay, square_width, ac, Color.green, bi, g2d);
+
+			// Overlay our custom-colorized side grass on top of the side-grass image
+			int[] sideGrassCoords = BlockType.getTexCoordsArr(BLOCK_GRASS.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES));
+			g2d.setComposite(AlphaComposite.SrcOver);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
+			g2d.drawImage(bi,
+					sideGrassCoords[0]*square_width, sideGrassCoords[1]*square_width,
+					(sideGrassCoords[0]+1)*square_width, (sideGrassCoords[1]+1)*square_width,
+					sideGrassCoordsOverlay[0]*square_width, sideGrassCoordsOverlay[1]*square_width,
+					(sideGrassCoordsOverlay[0]+1)*square_width, (sideGrassCoordsOverlay[1]+1)*square_width,
+					null);
 		}
 
 		// Some blocks to tint unconditionally
@@ -641,22 +657,6 @@ public class MinecraftEnvironment {
 				}
 			}
 		}
-
-		// And finally, our one hardcoded-for-now colorization: the side-grass overlay
-		int[] sideGrassCoordsOverlay = new int[] {6, 2};
-		tintSquare(sideGrassCoordsOverlay, square_width, ac, Color.green, bi, g2d);
-
-		// Overlay our custom-colorized side grass on top of the side-grass image
-		int[] sideGrassCoords = BlockType.getTexCoordsArr(BLOCK_GRASS.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES));
-		g2d.setComposite(AlphaComposite.SrcOver);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
-		g2d.drawImage(bi,
-				sideGrassCoords[0]*square_width, sideGrassCoords[1]*square_width,
-				(sideGrassCoords[0]+1)*square_width, (sideGrassCoords[1]+1)*square_width,
-				sideGrassCoordsOverlay[0]*square_width, sideGrassCoordsOverlay[1]*square_width,
-				(sideGrassCoordsOverlay[0]+1)*square_width, (sideGrassCoordsOverlay[1]+1)*square_width,
-				null);
 
 		// Colorize redstone wire
 		block = blockCollection.getByName("REDSTONE_WIRE");
