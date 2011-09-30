@@ -514,6 +514,24 @@ public class MinecraftEnvironment {
 	public static BufferedImage getMinecraftPaintings() {
 		return buildImageFromInput(getMinecraftPaintingData());
 	}
+
+	/**
+	 * Tints a square at the given coords by the given color, into the specified BufferedImage
+	 * @param coords The coordinates to read from and draw to
+	 * @param square_width width of each square
+	 * @param ac an AlphaComposite to blend with
+	 * @param color The color to tint
+	 * @param bi The image we'll be drawing to and reading from
+	 * @param g2d That image's Graphics2D object
+	 */
+	private static void tintSquare(int[] coords, int square_width, AlphaComposite ac, Color color, BufferedImage bi, Graphics2D g2d)
+	{
+		Rectangle rect = new Rectangle(coords[0]*square_width, coords[1]*square_width, square_width, square_width);
+		g2d.setComposite(ac);
+		g2d.setColor(color);
+		g2d.fill(rect);
+		g2d.drawImage(bi, null, 0, 0);
+	}
 	
 	/***
 	 * Attempts to create a bufferedImage containing the texture sprite sheet.  This does
@@ -552,12 +570,16 @@ public class MinecraftEnvironment {
 		// Figure out our square size, and then check to see if the grass tile is
 		// grayscale or not; we do this by examining the middle row of pixels.  If
 		// it *is* grayscale, then colorize it. 
+		// It does seem a little stupid, at this point, to be bothering with this,
+		// but in the end I think I'd like this to continue working properly on older
+		// versions of Minecraft.
 		int square_width = bi.getWidth()/16;
 		int[] pixels = new int[square_width];
 		int i;
 		int r, g, b;
 		boolean grayscale = true;
-		bi.getRGB(0, square_width/2, square_width, 1, pixels, 0, square_width);
+		int[] tex_coords = BLOCK_GRASS.getTexCoordsArr();
+		bi.getRGB(tex_coords[0]*square_width, (tex_coords[1]*square_width)+(square_width/2), square_width, 1, pixels, 0, square_width);
 		for (i=0; i<square_width; i++)
 		{
 			//a = (pixels[i] & 0xFF000000) >> 24;
@@ -572,85 +594,77 @@ public class MinecraftEnvironment {
 			}
 		}
 		
-		// Now do the coloring if we have to.
-		// TODO: would be nice to read the coordinates from the values given in the YAML, rather
-		// than hardcoding in here
+		// Now do our colorizing.  We'll do it in two parts because technically we're doing
+		// a check for whether or not grass is grayscale (if grass isn't grayscale, leaves
+		// won't be either) (though technically if that's the case, our map won't contain
+		// any of the other blocks we're colorizing, either, so it's a moot point)
+		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f);
+		BlockType block;
+		Rectangle rect;
 		if (grayscale)
 		{	
-			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f);
-			
-			// First greenify grass
-			Rectangle rect = new Rectangle(0, 0, square_width, square_width);
-			g2d.setComposite(ac);
-			g2d.setColor(Color.green);
-			g2d.fill(rect);
-			g2d.drawImage(bi, null, 0, 0);
-			
-			// Now greenify leaves
-			rect = new Rectangle(4*square_width, 3*square_width, 2*square_width, square_width);
-			g2d.setComposite(ac);
-			g2d.setColor(Color.green);
-			g2d.fill(rect);
-			g2d.drawImage(bi, null, 0, 0);
-
-			// Now tall grass
-			rect = new Rectangle(7*square_width, 2*square_width, square_width, square_width);
-			g2d.setComposite(ac);
-			g2d.setColor(Color.green);
-			g2d.fill(rect);
-			g2d.drawImage(bi, null, 0, 0);
-
-			// Now ferns
-			rect = new Rectangle(8*square_width, 3*square_width, square_width, square_width);
-			g2d.setComposite(ac);
-			g2d.setColor(Color.green);
-			g2d.fill(rect);
-			g2d.drawImage(bi, null, 0, 0);
-
-			// Now the side-grass overlay
-			rect = new Rectangle(6*square_width, 2*square_width, square_width, square_width);
-			g2d.setComposite(ac);
-			g2d.setColor(Color.green);
-			g2d.fill(rect);
-			g2d.drawImage(bi, null, 0, 0);
-
-			// Now vines
-			rect = new Rectangle(15*square_width, 8*square_width, square_width, square_width);
-			g2d.setComposite(ac);
-			g2d.setColor(Color.green);
-			g2d.fill(rect);
-			g2d.drawImage(bi, null, 0, 0);
-
-			// Now stems
-			rect = new Rectangle(15*square_width, 6*square_width, square_width, square_width);
-			g2d.setComposite(ac);
-			g2d.setColor(Color.green);
-			g2d.fill(rect);
-			g2d.drawImage(bi, null, 0, 0);
-
-			// Water Lilies
-			rect = new Rectangle(12*square_width, 4*square_width, square_width, square_width);
-			g2d.setComposite(ac);
-			g2d.setColor(Color.green);
-			g2d.fill(rect);
-			g2d.drawImage(bi, null, 0, 0);
+			for (String blockname : new String[] { "GRASS", "LEAVES" })
+			{
+				block = blockCollection.getByName(blockname);
+				if (block != null)
+				{
+					tex_coords = block.getTexCoordsArr();
+					tintSquare(block.getTexCoordsArr(), square_width, ac, Color.green, bi, g2d);
+				}
+			}
 		}
 
+		// Some blocks to tint unconditionally
+		for (String blockname : new String[] { "VINE", "PUMPKIN_STEM", "LILY_PAD" })
+		{
+			block = blockCollection.getByName(blockname);
+			if (block != null)
+			{
+				tex_coords = block.getTexCoordsArr();
+				tintSquare(block.getTexCoordsArr(), square_width, ac, Color.green, bi, g2d);
+			}
+		}
+
+		// Two data values of Tall Grass should get colorized
+		block = blockCollection.getByName("TALL_GRASS");
+		if (block != null)
+		{
+			if (block.texture_data_map != null)
+			{
+				for (byte data : new byte[] { 1, 2 })
+				{
+					if (block.texture_data_map.containsKey(data))
+					{
+						tintSquare(BlockType.getTexCoordsArr(block.texture_data_map.get(data)),
+								square_width, ac, Color.green, bi, g2d);
+					}
+				}
+			}
+		}
+
+		// And finally, our one hardcoded-for-now colorization: the side-grass overlay
+		int[] sideGrassCoordsOverlay = new int[] {6, 2};
+		tintSquare(sideGrassCoordsOverlay, square_width, ac, Color.green, bi, g2d);
+
 		// Overlay our custom-colorized side grass on top of the side-grass image
+		int[] sideGrassCoords = BlockType.getTexCoordsArr(BLOCK_GRASS.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES));
 		g2d.setComposite(AlphaComposite.SrcOver);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);			
-		g2d.drawImage(bi, 3*square_width, 0, 4*square_width, square_width,
-				6*square_width, 2*square_width, 7*square_width, 3*square_width,
+		g2d.drawImage(bi,
+				sideGrassCoords[0]*square_width, sideGrassCoords[1]*square_width,
+				(sideGrassCoords[0]+1)*square_width, (sideGrassCoords[1]+1)*square_width,
+				sideGrassCoordsOverlay[0]*square_width, sideGrassCoordsOverlay[1]*square_width,
+				(sideGrassCoordsOverlay[0]+1)*square_width, (sideGrassCoordsOverlay[1]+1)*square_width,
 				null);
 
 		// Colorize redstone wire
-		AlphaComposite redstone_ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 1f);
-		Rectangle redstone_rect = new Rectangle(4*square_width, 10*square_width, square_width, square_width);
-		g2d.setComposite(redstone_ac);
-		g2d.setColor(Color.red);
-		g2d.fill(redstone_rect);
-		g2d.drawImage(bi, null, 0, 0);
+		block = blockCollection.getByName("REDSTONE_WIRE");
+		if (block != null)
+		{
+			AlphaComposite redstone_ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 1f);
+			tintSquare(block.getTexCoordsArr(), square_width, redstone_ac, Color.red, bi, g2d);
+		}
 
 		// Load in the water texture separately and pretend it's a part of the main texture pack.
 		BLOCK_WATER.setTexIdx(blockCollection.reserveTexture());
