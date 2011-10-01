@@ -3266,8 +3266,6 @@ public class Chunk {
 
 		if (connected)
 		{
-			// TODO: huh; explored highlights won't work quite right with these, or
-			// with other "extra" map textures...
 			int curve_tex = block.texture_extra_map.get("curve")+tex_offset;
 			TextureDecorationStats stats = XRay.decorationStats.get(curve_tex % 256);
 			float tex_begin_x = precalcSpriteSheetToTextureX[curve_tex] + stats.getTexLeft();
