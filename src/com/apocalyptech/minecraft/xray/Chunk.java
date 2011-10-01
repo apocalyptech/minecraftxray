@@ -1530,7 +1530,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderCrops(int textureId, int xxx, int yyy, int zzz, BlockType block) {
+	public void renderCrops(int textureId, int xxx, int yyy, int zzz, BlockType block, int main_tex_offset) {
 		 
 		 // Adjust for crop size
 		 byte data = getData(xxx, yyy, zzz);
@@ -1541,7 +1541,7 @@ public class Chunk {
 		 int tex_offset = (7-data);
 		 if (tex_offset > 0)
 		 {
-			 textureId = block.texture_extra_map.get("smaller_" + tex_offset);
+			 textureId = block.texture_extra_map.get("smaller_" + tex_offset) + main_tex_offset;
 		 }
 		 renderGridDecoration(textureId, xxx, yyy, zzz);
 	}
@@ -1554,7 +1554,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderNetherWart(int textureId, int xxx, int yyy, int zzz, BlockType block) {
+	public void renderNetherWart(int textureId, int xxx, int yyy, int zzz, BlockType block, int main_tex_offset) {
 
 		 // Adjust for size
 		 byte data = getData(xxx, yyy, zzz);
@@ -1566,7 +1566,7 @@ public class Chunk {
 		 int tex_offset = 2-((data+1)/2);
 		 if (tex_offset > 0)
 		 {
-			 textureId = block.texture_extra_map.get("smaller_" + tex_offset);
+			 textureId = block.texture_extra_map.get("smaller_" + tex_offset) + main_tex_offset;
 		 }
 		 renderGridDecoration(textureId, xxx, yyy, zzz);
 	}
@@ -1680,7 +1680,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderMinecartTracks(int textureId, int xxx, int yyy, int zzz, BlockType block) {
+	public void renderMinecartTracks(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -1688,7 +1688,7 @@ public class Chunk {
 		byte data = getData(xxx, yyy, zzz);
 		if (data > 0x5)
 		{
-			textureId = block.texture_extra_map.get("curve");
+			textureId = block.texture_extra_map.get("curve") + tex_offset;
 		}
  
 		switch (data)
@@ -1759,7 +1759,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderSimpleRail(int textureId, int xxx, int yyy, int zzz, BlockType block) {
+	public void renderSimpleRail(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -1770,7 +1770,7 @@ public class Chunk {
 		if (powered > 0)
 		{
 			// This is just for powered rails, to light them up properly
-			textureId = block.texture_extra_map.get("powered");
+			textureId = block.texture_extra_map.get("powered") + tex_offset;
 		}
 		data &= 7;
  
@@ -1878,7 +1878,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderBed(int textureId, int xxx, int yyy, int zzz, BlockType block) {
+	public void renderBed(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -1893,7 +1893,7 @@ public class Chunk {
 		data &= 0xF;
 		if ((data & 0x8) == 0)
 		{
-			textureId = block.texture_extra_map.get("foot_top");
+			textureId = block.texture_extra_map.get("foot_top") + tex_offset;
 			head = false;
 		}
 		data &= 0x3;
@@ -1924,20 +1924,20 @@ public class Chunk {
 		float side_tex_x, side_tex_y;
 		if (head)
 		{
-			end_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("head")];
-			end_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("head")+16]-bed_tex_height;
-			side_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("head_side")];
-			side_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("head_side")+16]-bed_tex_height;
+			end_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("head")+tex_offset];
+			end_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("head")+16+tex_offset]-bed_tex_height;
+			side_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("head_side")+tex_offset];
+			side_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("head_side")+16+tex_offset]-bed_tex_height;
 			first_z = side_full;
 			second_z = -side_part;
 			end_z = -side_part;
 		}
 		else
 		{
-			end_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("foot")];
-			end_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("foot")+16]-bed_tex_height;
-			side_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("foot_side")];
-			side_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("foot_side")+16]-bed_tex_height;
+			end_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("foot")+tex_offset];
+			end_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("foot")+16+tex_offset]-bed_tex_height;
+			side_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("foot_side")+tex_offset];
+			side_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("foot_side")+16+tex_offset]-bed_tex_height;
 			first_z = side_part;
 			second_z = -side_full;
 			end_z = side_part;
@@ -1965,7 +1965,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderDoor(int textureId, int xxx, int yyy, int zzz, BlockType block) {
+	public void renderDoor(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -1973,7 +1973,7 @@ public class Chunk {
 		byte data = getData(xxx, yyy, zzz);
 		if ((data & 0x8) == 0x0)
 		{
-			textureId = block.texture_extra_map.get("bottom");
+			textureId = block.texture_extra_map.get("bottom") + tex_offset;
 		}
 		boolean swung = false;
 		if ((data & 0x4) == 0x4)
@@ -2735,7 +2735,7 @@ public class Chunk {
 	 * @param zzz
 	 * @param block The actual BlockType object; needed for the piston head
 	 */
-	public void renderPistonBody(int textureId, int xxx, int yyy, int zzz, BlockType block) {
+	public void renderPistonBody(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -2778,12 +2778,12 @@ public class Chunk {
 		renderNonstandardHorizontal(tex_x, tex_y, TEX16, TEX_PISTON, -.49f, .25f, .49f, -.49f, -.49f);
 		renderNonstandardVertical(tex_x, tex_y, TEX16, TEX_PISTON, -.49f, .49f, .25f, -.49f, -.49f, -.49f);
 		renderNonstandardVertical(tex_x, tex_y, TEX16, TEX_PISTON, .49f, .49f, .25f, .49f, -.49f, -.49f);
-		renderVertical(block.texture_extra_map.get("back"), -.49f, -.49f, .49f, -.49f, -.49f, .98f);
+		renderVertical(block.texture_extra_map.get("back")+tex_offset, -.49f, -.49f, .49f, -.49f, -.49f, .98f);
 
 		// If we're extended, draw our faceplate; if not, draw the retracted face
 		if (extended)
 		{
-			renderVertical(block.texture_extra_map.get("front"), -.49f, .25f, .49f, .25f, -.49f, .98f);
+			renderVertical(block.texture_extra_map.get("front")+tex_offset, -.49f, .25f, .49f, .25f, -.49f, .98f);
 
 			// Pop the matrix after
 			GL11.glPopMatrix();
@@ -2793,7 +2793,8 @@ public class Chunk {
 			// Pop the matrix before
 			GL11.glPopMatrix();
 
-			renderPistonHead(block.texture_extra_map.get("head"), xxx, yyy, zzz, BLOCK_PISTON_HEAD, true, (block.id == BLOCK_PISTON_STICKY_BODY.id));
+			renderPistonHead(block.texture_extra_map.get("head")+tex_offset, xxx, yyy, zzz, BLOCK_PISTON_HEAD, tex_offset,
+					true, (block.id == BLOCK_PISTON_STICKY_BODY.id));
 		}
 
 	}
@@ -2818,7 +2819,7 @@ public class Chunk {
 	 * @param attached Are we attached to the piston body?
 	 * @param override_sticky If attached, are we a sticky piston or a regular piston?
 	 */
-	public void renderPistonHead(int textureId, int xxx, int yyy, int zzz, BlockType block, boolean attached, boolean override_sticky) {
+	public void renderPistonHead(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset, boolean attached, boolean override_sticky) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -2826,8 +2827,8 @@ public class Chunk {
 		boolean sticky = ((data & 0x8) == 0x8);
 		int direction = (data & 0x7);
 
-		float side_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("body")];
-		float side_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("body")];
+		float side_tex_x = precalcSpriteSheetToTextureX[block.texture_extra_map.get("body")+tex_offset];
+		float side_tex_y = precalcSpriteSheetToTextureY[block.texture_extra_map.get("body")+tex_offset];
 
 		// Matrix stuff
 		GL11.glPushMatrix();
@@ -2879,14 +2880,14 @@ public class Chunk {
 		{
 			if (override_sticky)
 			{
-				textureId = block.texture_extra_map.get("head_sticky");
+				textureId = block.texture_extra_map.get("head_sticky")+tex_offset;
 			}
 		}
 		else
 		{
 			if (sticky)
 			{
-				textureId = block.texture_extra_map.get("head_sticky");
+				textureId = block.texture_extra_map.get("head_sticky")+tex_offset;
 			}
 		}
 		renderVertical(textureId, -.49f, .49f, .49f, .49f, -.49f, .98f);
@@ -2903,16 +2904,16 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderCake(int textureId, int xxx, int yyy, int zzz, BlockType block) {
+	public void renderCake(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
 
 		byte bites_eaten = getData(xxx, yyy, zzz);
 
-		int bottom_tex_idx = block.texture_extra_map.get("bottom");
-		int edge_tex_idx = block.texture_extra_map.get("side_uncut");
-		int cut_tex_idx = block.texture_extra_map.get("side_cut");
+		int bottom_tex_idx = block.texture_extra_map.get("bottom")+tex_offset;
+		int edge_tex_idx = block.texture_extra_map.get("side_uncut")+tex_offset;
+		int cut_tex_idx = block.texture_extra_map.get("side_cut")+tex_offset;
 
 		float top_tex_x = precalcSpriteSheetToTextureX[textureId]+TEX256;
 		float top_tex_y = precalcSpriteSheetToTextureY[textureId]+TEX512;
@@ -3107,7 +3108,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderChest(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block) {
+	public void renderChest(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -3161,28 +3162,28 @@ public class Chunk {
 		// Render appropriately
 		if (have_left)
 		{
-			renderVertical(block.texture_extra_map.get("front_big_right"), -full, edges, edges, edges, -bottom, height);
-			renderVertical(block.texture_extra_map.get("back_big_right"), -full, -edges, edges, -edges, -bottom, height);
-			renderVertical(block.texture_extra_map.get("side_small"), edges, -edges, edges, edges, -bottom, height);
-			renderHorizontal(block.texture_extra_map.get("top"), -full, -edges, edges, edges, edges, 8, 16, 8, 0, true);
-			renderHorizontal(block.texture_extra_map.get("top"), -full, -edges, edges, edges, -bottom, 8, 16, 8, 0, true);
+			renderVertical(block.texture_extra_map.get("front_big_right")+tex_offset, -full, edges, edges, edges, -bottom, height);
+			renderVertical(block.texture_extra_map.get("back_big_right")+tex_offset, -full, -edges, edges, -edges, -bottom, height);
+			renderVertical(block.texture_extra_map.get("side_small")+tex_offset, edges, -edges, edges, edges, -bottom, height);
+			renderHorizontal(block.texture_extra_map.get("top")+tex_offset, -full, -edges, edges, edges, edges, 8, 16, 8, 0, true);
+			renderHorizontal(block.texture_extra_map.get("top")+tex_offset, -full, -edges, edges, edges, -bottom, 8, 16, 8, 0, true);
 		}
 		else if (have_right)
 		{
-			renderVertical(block.texture_extra_map.get("front_big_left"), -edges, edges, full, edges, -bottom, height);
-			renderVertical(block.texture_extra_map.get("back_big_left"), -edges, -edges, full, -edges, -bottom, height);
-			renderVertical(block.texture_extra_map.get("side_small"), -edges, -edges, -edges, edges, -bottom, height);
-			renderHorizontal(block.texture_extra_map.get("top"), -edges, -edges, full, edges, edges, 8, 16, 0, 0, true);
-			renderHorizontal(block.texture_extra_map.get("top"), -edges, -edges, full, edges, -bottom, 8, 16, 0, 0, true);
+			renderVertical(block.texture_extra_map.get("front_big_left")+tex_offset, -edges, edges, full, edges, -bottom, height);
+			renderVertical(block.texture_extra_map.get("back_big_left")+tex_offset, -edges, -edges, full, -edges, -bottom, height);
+			renderVertical(block.texture_extra_map.get("side_small")+tex_offset, -edges, -edges, -edges, edges, -bottom, height);
+			renderHorizontal(block.texture_extra_map.get("top")+tex_offset, -edges, -edges, full, edges, edges, 8, 16, 0, 0, true);
+			renderHorizontal(block.texture_extra_map.get("top")+tex_offset, -edges, -edges, full, edges, -bottom, 8, 16, 0, 0, true);
 		}
 		else
 		{
 			renderVertical(textureId, -edges, edges, edges, edges, -bottom, height);
-			renderVertical(block.texture_extra_map.get("side_small"), -edges, -edges, edges, -edges, -bottom, height);
-			renderVertical(block.texture_extra_map.get("side_small"), -edges, -edges, -edges, edges, -bottom, height);
-			renderVertical(block.texture_extra_map.get("side_small"), edges, -edges, edges, edges, -bottom, height);
-			renderHorizontal(block.texture_extra_map.get("top"), -edges, -edges, edges, edges, edges);
-			renderHorizontal(block.texture_extra_map.get("top"), -edges, -edges, edges, edges, -bottom);
+			renderVertical(block.texture_extra_map.get("side_small")+tex_offset, -edges, -edges, edges, -edges, -bottom, height);
+			renderVertical(block.texture_extra_map.get("side_small")+tex_offset, -edges, -edges, -edges, edges, -bottom, height);
+			renderVertical(block.texture_extra_map.get("side_small")+tex_offset, edges, -edges, edges, edges, -bottom, height);
+			renderHorizontal(block.texture_extra_map.get("top")+tex_offset, -edges, -edges, edges, edges, edges);
+			renderHorizontal(block.texture_extra_map.get("top")+tex_offset, -edges, -edges, edges, edges, -bottom);
 		}
 
 		// Pop the matrix
@@ -3199,7 +3200,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderStem(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block) {
+	public void renderStem(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -3267,7 +3268,7 @@ public class Chunk {
 		{
 			// TODO: huh; explored highlights won't work quite right with these, or
 			// with other "extra" map textures...
-			int curve_tex = block.texture_extra_map.get("curve");
+			int curve_tex = block.texture_extra_map.get("curve")+tex_offset;
 			TextureDecorationStats stats = XRay.decorationStats.get(curve_tex % 256);
 			float tex_begin_x = precalcSpriteSheetToTextureX[curve_tex] + stats.getTexLeft();
 			float tex_begin_y = precalcSpriteSheetToTextureY[curve_tex] + stats.getTexTop();
@@ -3282,7 +3283,6 @@ public class Chunk {
 			GL11.glTranslatef(x, y, z);
 			GL11.glRotatef(rotate, 0f, 1f, 0f);
 
-			//this.renderVertical(curve_tex, -.5f, 0f, .5f, 0f, -.5f, 1f);
 			this.renderNonstandardVertical(tex_begin_x, tex_begin_y, tex_width, tex_height,
 				-.5f, -.5f+height, 0f,
 				-.5f+width, -.5f, 0f);
@@ -3860,10 +3860,10 @@ public class Chunk {
 								renderCrossDecoration(textureId,x,y,z);
 								break;
 							case CROPS:
-								renderCrops(textureId,x,y,z,block);
+								renderCrops(textureId,x,y,z,block,tex_offset);
 								break;
 							case NETHER_WART:
-								renderNetherWart(textureId,x,y,z,block);
+								renderNetherWart(textureId,x,y,z,block,tex_offset);
 								break;
 							case LADDER:
 								renderLadder(textureId,x,y,z);
@@ -3872,16 +3872,16 @@ public class Chunk {
 								renderFloor(textureId,x,y,z);
 								break;
 							case MINECART_TRACKS:
-								renderMinecartTracks(textureId,x,y,z,block);
+								renderMinecartTracks(textureId,x,y,z,block,tex_offset);
 								break;
 							case SIMPLE_RAIL:
-								renderSimpleRail(textureId,x,y,z,block);
+								renderSimpleRail(textureId,x,y,z,block,tex_offset);
 								break;
 							case PRESSURE_PLATE:
 								renderPlate(textureId,x,y,z);
 								break;
 							case DOOR:
-								renderDoor(textureId,x,y,z,block);
+								renderDoor(textureId,x,y,z,block,tex_offset);
 								break;
 							case STAIRS:
 								renderStairs(textureId,x,y,z);
@@ -3911,19 +3911,19 @@ public class Chunk {
 								renderThinslice(textureId,x,y,z);
 								break;
 							case BED:
-								renderBed(textureId,x,y,z,block);
+								renderBed(textureId,x,y,z,block,tex_offset);
 								break;
 							case TRAPDOOR:
 								renderTrapdoor(textureId,x,y,z);
 								break;
 							case PISTON_BODY:
-								renderPistonBody(textureId,x,y,z,block);
+								renderPistonBody(textureId,x,y,z,block,tex_offset);
 								break;
 							case PISTON_HEAD:
-								renderPistonHead(textureId,x,y,z,block,false,false);
+								renderPistonHead(textureId,x,y,z,block,tex_offset,false,false);
 								break;
 							case CAKE:
-								renderCake(textureId,x,y,z,block);
+								renderCake(textureId,x,y,z,block,tex_offset);
 								break;
 							case VINE:
 								renderVine(textureId,x,y,z,blockOffset);
@@ -3932,10 +3932,10 @@ public class Chunk {
 								renderSolidPane(textureId,x,y,z,blockOffset,t);
 								break;
 							case CHEST:
-								renderChest(textureId,x,y,z,blockOffset,block);
+								renderChest(textureId,x,y,z,blockOffset,block,tex_offset);
 								break;
 							case STEM:
-								renderStem(textureId,x,y,z,blockOffset,block);
+								renderStem(textureId,x,y,z,blockOffset,block,tex_offset);
 								break;
 							case HALFHEIGHT:
 								renderHalfHeight(textureId,x,y,z,blockOffset);
