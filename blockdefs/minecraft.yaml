@@ -127,6 +127,7 @@
 #             SOLID_PANE
 #             CHEST
 #             NETHER_WART
+#             STEM
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -197,6 +198,10 @@
 #            The main texture should be the outward "skin" texture of the mushroom.
 #            "stem" specifies the stem texture
 #            "pores" specifies the texture for pores
+#
+#        STEM
+#            The main texture should be the upright stem.
+#            "curve" specifies the texture to use when curved towards its fruit
 #
 name: Vanilla Minecraft Block Types
 blocks:
@@ -1033,14 +1038,18 @@ blocks:
     name: Pumpkin Stem
     mapcolor: [227, 144, 29]
     tex: [15, 6]
-    type: DECORATION_CROSS
+    type: STEM
+    tex_extra:
+      curve: [15, 7]
 
   - id: 105
     idStr: MELON_STEM
     name: Melon Stem
     mapcolor: [190, 184, 41]
     tex: [15, 6]
-    type: DECORATION_CROSS
+    type: STEM
+    tex_extra:
+      curve: [15, 7]
 
   - id: 106
     idStr: VINE

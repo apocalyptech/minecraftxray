@@ -641,6 +641,22 @@ public class MinecraftEnvironment {
 			}
 		}
 
+		// PUMPKIN_STEM has an additional texture as well
+		// TODO: Technically we should maybe do MELON_STEM (both here and above) separately,
+		// but we'd need to keep track of which textures we've tinted, so as not to tint
+		// something twice.  Right now these both use the same texture (though technically
+		// we should copy the texture and tint it twice, differently for each) so I'm just
+		// doing the one.
+		block = blockCollection.getByName("PUMPKIN_STEM");
+		if (block != null)
+		{
+			if (block.texture_extra_map != null)
+			{
+				tex_coords = BlockType.getTexCoordsArr(block.texture_extra_map.get("curve"));
+				tintSquare(tex_coords, square_width, ac, Color.green, bi, g2d);
+			}
+		}
+
 		// Two data values of Tall Grass should get colorized
 		block = blockCollection.getByName("TALL_GRASS");
 		if (block != null)

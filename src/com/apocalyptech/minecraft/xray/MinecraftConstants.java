@@ -107,7 +107,8 @@ public class MinecraftConstants {
 		HUGE_MUSHROOM,
 		SOLID_PANE,
 		CHEST,
-		NETHER_WART
+		NETHER_WART,
+		STEM
 	}
 
 	// Extra textures specified by various block types
@@ -129,6 +130,7 @@ public class MinecraftConstants {
 			"smaller_5", "smaller_6", "smaller_7"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.NETHER_WART, new String[] {"smaller_1", "smaller_2"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.HUGE_MUSHROOM, new String[] {"stem", "pores"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.STEM, new String[] {"curve"});
 	}
 
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
@@ -161,7 +163,7 @@ public class MinecraftConstants {
 	// Block types to compute decoration information for
 	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
 		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS,
-		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART
+		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART, BLOCK_TYPE.STEM
 	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.

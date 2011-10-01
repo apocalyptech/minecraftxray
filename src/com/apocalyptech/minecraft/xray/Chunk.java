@@ -30,6 +30,7 @@ import java.lang.Math;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.regex.PatternSyntaxException;
 
 import org.lwjgl.opengl.GL11;
 
@@ -3188,6 +3189,114 @@ public class Chunk {
 		GL11.glPopMatrix();
 	}
 
+	
+	/**
+	 * Renders a stem.  Will check for adjacent blocks, but note that this is very particular about
+	 * block naming.  If the stem name is MELON_STEM, we'll be checking for MELON.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderStem(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+
+		byte data = getData(xxx, yyy, zzz);
+		float rotate = 0f;
+		boolean connected = false;
+
+		// Look for adjacent blocks if it makes sense to do so
+		if (data == 7)
+		{
+			String[] nameparts = null;
+			try
+			{
+				nameparts = block.idStr.split("_");
+			}
+			catch (PatternSyntaxException e)
+			{
+			}
+
+			if (nameparts != null && nameparts.length > 1)
+			{
+				short adjblock;
+				// Stems will prefer: North, South, East, West
+				adjblock = getAdjNorthBlockId(xxx,yyy,zzz,blockOffset);
+				if (adjblock > 0 && blockArray[adjblock] != null &&
+						blockArray[adjblock].idStr.equals(nameparts[0]))
+				{
+					connected = true;
+				}
+				if (!connected)
+				{
+					adjblock = getAdjSouthBlockId(xxx,yyy,zzz,blockOffset);
+					if (adjblock > 0 && blockArray[adjblock] != null &&
+							blockArray[adjblock].idStr.equals(nameparts[0]))
+					{
+						connected = true;
+						rotate = 180f;
+					}
+				}
+				if (!connected)
+				{
+					adjblock = getAdjEastBlockId(xxx,yyy,zzz,blockOffset);
+					if (adjblock > 0 && blockArray[adjblock] != null &&
+							blockArray[adjblock].idStr.equals(nameparts[0]))
+					{
+						connected = true;
+						rotate = 270f;
+					}
+				}
+				if (!connected)
+				{
+					adjblock = getAdjWestBlockId(xxx,yyy,zzz,blockOffset);
+					if (adjblock > 0 && blockArray[adjblock] != null &&
+							blockArray[adjblock].idStr.equals(nameparts[0]))
+					{
+						connected = true;
+						rotate = 90f;
+					}
+				}
+			}
+		}
+
+		if (connected)
+		{
+			// TODO: huh; explored highlights won't work quite right with these, or
+			// with other "extra" map textures...
+			int curve_tex = block.texture_extra_map.get("curve");
+			TextureDecorationStats stats = XRay.decorationStats.get(curve_tex % 256);
+			float tex_begin_x = precalcSpriteSheetToTextureX[curve_tex] + stats.getTexLeft();
+			float tex_begin_y = precalcSpriteSheetToTextureY[curve_tex] + stats.getTexTop();
+			float tex_width = stats.getTexWidth();
+			float tex_height = stats.getTexHeight();
+
+			float width = stats.getWidth();
+			float height = stats.getHeight();
+
+			// Use GL to rotate these properly
+			GL11.glPushMatrix();
+			GL11.glTranslatef(x, y, z);
+			GL11.glRotatef(rotate, 0f, 1f, 0f);
+
+			//this.renderVertical(curve_tex, -.5f, 0f, .5f, 0f, -.5f, 1f);
+			this.renderNonstandardVertical(tex_begin_x, tex_begin_y, tex_width, tex_height,
+				-.5f, -.5f+height, 0f,
+				-.5f+width, -.5f, 0f);
+
+			// Pop the matrix
+			GL11.glPopMatrix();
+		}
+		else
+		{
+			// TODO: technically this should offset with the data value
+			this.renderCrossDecoration(textureId, xxx, yyy, zzz);
+		}
+	}
+
 	/**
 	 * Helper function for renderHalfHeight - given an adjacent block ID, it
 	 * will return true if we should render that "side"
@@ -3824,6 +3933,9 @@ public class Chunk {
 								break;
 							case CHEST:
 								renderChest(textureId,x,y,z,blockOffset,block);
+								break;
+							case STEM:
+								renderStem(textureId,x,y,z,blockOffset,block);
 								break;
 							case HALFHEIGHT:
 								renderHalfHeight(textureId,x,y,z,blockOffset);
