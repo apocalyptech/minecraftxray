@@ -5,9 +5,9 @@
   * The "C" key will toggle the new-style fence connection rendering,
     introduced in Beta 1.9
   * Slight improvements to fence and fence gate rendering accuracy
-  * The "V" key will toggle Silverfish block highlighting on/off now.
-    By default, silverfish blocks are now highlighted in red.
   * Silverfish block ID changed from STONE_SILVERFISH to SILVERFISH
+  * The "V" key will toggle Silverfish block highlighting on/off now.
+    By default, silverfish blocks are highlighted in red.
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 
