@@ -355,6 +355,7 @@ public class MinecraftEnvironment {
 		File overrideFile = new File(xrayBaseDir, "textures/" + filename);
 		if(overrideFile.exists()) {
 			try {
+				System.out.println("Overriding textures/" + filename + " at " + overrideFile.getPath());
 				return new FileInputStream(overrideFile);
 			} catch (FileNotFoundException e) {
 				// Don't do anything; just continue on our merry little way
@@ -429,6 +430,7 @@ public class MinecraftEnvironment {
 					ZipEntry entry = zf.getEntry(filename);
 					if (entry != null)
 					{
+						System.out.println("Using " + filename + " from texturepack " + texturepack);
 						return zf.getInputStream(entry);
 					}
 				}
