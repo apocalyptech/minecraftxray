@@ -65,3 +65,5 @@
    Glowstone (when not in Nether, anyway)
 
  * Simple shading on blocks so that they look more natural (like how MCEdit does it)
+
+ * Pull the grass colorization color from a point on misc/grasscolor.png
