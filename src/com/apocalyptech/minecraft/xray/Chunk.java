@@ -2312,6 +2312,7 @@ public class Chunk {
 		float z = zzz + this.z*16;
 		float y = yyy;
 		float slat_start = y+fence_slat_start_offset;
+		boolean beta19_fences = XRay.toggle.beta19_fences;
 		
 		// First the fencepost
 		this.renderVertical(textureId, x+fence_postsize, z+fence_postsize, x+fence_postsize, z-fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
@@ -2320,7 +2321,7 @@ public class Chunk {
 		this.renderVertical(textureId, x-fence_postsize, z+fence_postsize, x+fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
 		this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize, x-fence_postsize, z-fence_postsize, y+0.5f, 4, 4, 6, 6, false);
 
-		int adj_id;
+		short adj_id;
 		byte adj_data;
 
 		// Check for adjacent fences / fence gates in the -x direction
@@ -2340,6 +2341,22 @@ public class Chunk {
 			this.renderVertical(textureId, x-fence_postsize, z-fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 16, 3, 0, 5);
 			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_top_slat_offset, 2, 16, 14, 0, false);
 			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-1f+fence_postsize, z-fence_postsize_h, slat_start+fence_top_slat_offset+fence_slat_height, 2, 16, 14, 0, false);
+		}
+		else if (beta19_fences && this.isSolid(adj_id))
+		{
+			// Solid block to the North
+
+			// Bottom slat
+			this.renderVertical(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z+fence_postsize_h, slat_start, fence_slat_height, 6, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize, z-fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start, fence_slat_height, 6, 3, 0, 5);
+			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start, 2, 6, 14, 0, false);
+			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start+fence_slat_height, 2, 6, 14, 0, false);
+
+			// Top slat
+			this.renderVertical(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z+fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize, z-fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset, 2, 6, 14, 0, false);
+			this.renderHorizontal(textureId, x-fence_postsize, z+fence_postsize_h, x-.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset+fence_slat_height, 2, 6, 14, 0, false);
 		}
 		else if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
 		{
@@ -2390,6 +2407,22 @@ public class Chunk {
 				}
 			}
 		}
+		else if (beta19_fences && this.isSolid(adj_id))
+		{
+			// Solid block to the South
+
+			// Bottom slat
+			this.renderVertical(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z+fence_postsize_h, slat_start, fence_slat_height, 6, 3, 0, 5);
+			this.renderVertical(textureId, x+fence_postsize, z-fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start, fence_slat_height, 6, 3, 0, 5);
+			this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start, 2, 6, 14, 0, false);
+			this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start+fence_slat_height, 2, 6, 14, 0, false);
+
+			// Top slat
+			this.renderVertical(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z+fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+			this.renderVertical(textureId, x+fence_postsize, z-fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+			this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset, 2, 6, 14, 0, false);
+			this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize_h, x+.5f, z-fence_postsize_h, slat_start+fence_top_slat_offset+fence_slat_height, 2, 6, 14, 0, false);
+		}
 		
 		// Check for adjacent fences / fence gates in the -z direction
 		adj_id = this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
@@ -2406,6 +2439,22 @@ public class Chunk {
 			this.renderVertical(textureId, x-fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset, fence_slat_height, 16, 3, 0, 5);
 			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset, 2, 16, 14, 0, true);
 			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-1f+fence_postsize, slat_start+fence_top_slat_offset+fence_slat_height, 2, 16, 14, 0, true);
+		}
+		else if (beta19_fences && this.isSolid(adj_id))
+		{
+			// Solid block to the East
+
+			// Bottom slat
+			this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start, 2, 6, 14, 0, true);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start+fence_slat_height, 2, 6, 14, 0, true);
+
+			// Top slat
+			this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-.5f, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start+fence_top_slat_offset, 2, 6, 14, 0, true);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z-fence_postsize, x-fence_postsize_h, z-.5f, slat_start+fence_top_slat_offset+fence_slat_height, 2, 6, 14, 0, true);
 		}
 		else if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
 		{
@@ -2455,6 +2504,22 @@ public class Chunk {
 					this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset+fence_slat_height, 2, 6, 14, 0, true);
 				}
 			}
+		}
+		else if (beta19_fences && this.isSolid(adj_id))
+		{
+			// Solid block to the West
+
+			// Bottom slat
+			this.renderVertical(textureId, x+fence_postsize_h, z+fence_postsize, x+fence_postsize_h, z+.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start, 2, 6, 14, 0, true);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_slat_height, 2, 6, 14, 0, true);
+
+			// Top slat
+			this.renderVertical(textureId, x+fence_postsize_h, z+fence_postsize, x+fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+			this.renderVertical(textureId, x-fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset, fence_slat_height, 6, 3, 0, 5);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset, 2, 6, 14, 0, true);
+			this.renderHorizontal(textureId, x+fence_postsize_h, z+fence_postsize, x-fence_postsize_h, z+.5f, slat_start+fence_top_slat_offset+fence_slat_height, 2, 6, 14, 0, true);
 		}
 	}
 	

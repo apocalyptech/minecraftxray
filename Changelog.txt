@@ -2,6 +2,8 @@
     which use an entire new sheet of textures
   * Support for effectively unlimited block textures
   * Stems now connect to neighboring fruit properly
+  * The "C" key will toggle the new-style fence connection rendering,
+    introduced in Beta 1.9
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 

@@ -141,6 +141,7 @@ public class XRay
 		public boolean render_bedrock = false;
 		public boolean render_water = true;
 		public boolean highlight_explored = false;
+		public boolean beta19_fences = true;
 	}
 	public static RenderToggles toggle = new RenderToggles();
 
@@ -1669,6 +1670,13 @@ public class XRay
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_BETA19_FENCES))
+				{
+					// Toggle bedrock rendering
+					toggle.beta19_fences = !toggle.beta19_fences;
+					invalidateSelectedChunks(true);
+					updateRenderDetails();
+				}
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_CAMERA_LOCK))
 				{
 					// Toggle camera lock
@@ -2333,6 +2341,11 @@ public class XRay
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Vertical Lock: ", Color.BLACK, DETAILFONT, "On", Color.green.darker(), DETAILVALUEFONT);
 		}
+		if (!toggle.beta19_fences)
+		{
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "\"New\" Fences: ", Color.BLACK, DETAILFONT, "Off", Color.green.darker(), DETAILVALUEFONT);
+		}
 		cur_renderDetails_h = (line_count + 1) * line_h - 8;
 		g.setColor(Color.BLUE);
 		g.setStroke(new BasicStroke(2));
@@ -2786,8 +2799,9 @@ public class XRay
 	{
 		xray_properties.setBooleanProperty("STATE_BEDROCK", toggle.render_bedrock);
 		xray_properties.setBooleanProperty("STATE_WATER", toggle.render_water);
-		xray_properties.setBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
 		xray_properties.setBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
+		xray_properties.setBooleanProperty("STATE_BETA19_FENCES", toggle.beta19_fences);
+		xray_properties.setBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
 		xray_properties.setBooleanProperty("STATE_LIGHTING", lightMode);
 		xray_properties.setBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
 		xray_properties.setBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
@@ -2811,6 +2825,7 @@ public class XRay
 		toggle.render_bedrock = xray_properties.getBooleanProperty("STATE_BEDROCK", toggle.render_bedrock);
 		toggle.render_water = xray_properties.getBooleanProperty("STATE_WATER", toggle.render_water);
 		toggle.highlight_explored = xray_properties.getBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
+		toggle.beta19_fences = xray_properties.getBooleanProperty("STATE_BETA19_FENCES", toggle.beta19_fences);
 		camera_lock = xray_properties.getBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
 		lightMode = xray_properties.getBooleanProperty("STATE_LIGHTING", lightMode);
 		highlightOres = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
