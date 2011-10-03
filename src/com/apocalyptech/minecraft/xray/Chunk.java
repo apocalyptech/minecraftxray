@@ -4354,6 +4354,23 @@ public class Chunk {
 		}
 		GL11.glCallList(this.glassListNums.get(sheet));
 	}
+
+	/**
+	 * Renders a border around this chunk.  Note that we should have our chunkBorderTexture
+	 * bound before we get in here.
+	 */
+	public void renderBorder()
+	{
+		float x = this.x*16-.49f;
+		float z = this.z*16-.49f;
+		float top = 128.5f;
+		float bottom = .5f;
+		float width = 15.98f;
+		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z, x+width, bottom, z);
+		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z+width, x+width, bottom, z+width);
+		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z, x, bottom, z+width);
+		this.renderNonstandardVertical(0, 0, 1, 1, x+width, top, z, x+width, bottom, z+width);
+	}
 	
 	public void renderSelected(int sheet, boolean[] selectedMap) {
 		if (!this.usedTextureSheets.containsKey(sheet))

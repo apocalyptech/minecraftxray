@@ -129,6 +129,7 @@ public class XRay
 	public ArrayList<Texture> minecraftTextures;
 	public Texture paintingTexture;
 	public Texture loadingTextTexture;
+	public Texture chunkBorderTexture;
 
 	// the textures used by the minimap
 	private Texture minimapTexture;
@@ -167,8 +168,8 @@ public class XRay
 	private int screenWidth, screenHeight;
 
 	// the current camera position
-	private int currentCameraPosX;
-	private int currentCameraPosZ;
+	private float currentCameraPosX;
+	private float currentCameraPosZ;
 
 	// wheter we show the big map or the mini map
 	private boolean mapBig = false;
@@ -232,6 +233,9 @@ public class XRay
 
 	// Silverfish rendering status
 	private boolean silverfishHighlight = true;
+
+	// Chunk border rendering status
+	private boolean renderChunkBorders = false;
 
 	// vars to keep track of our current chunk coordinates
 	private int cur_chunk_x = 0;
@@ -951,6 +955,23 @@ public class XRay
 				mineralToggleTextures[i].update();
 			}
 
+			// Chunk border texture
+			int chunkBorderWidth = 256;
+			int chunkBorderHeight = 2048;
+			int stripeheight = 64;
+			BufferedImage chunkBorderImage = new BufferedImage(chunkBorderWidth, chunkBorderHeight, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = chunkBorderImage.createGraphics();
+			g2d.setColor(new Color(0f, 0f, 0f, .4f));
+			g2d.fillRect(0, 0, chunkBorderWidth, chunkBorderHeight);
+			g2d.setColor(new Color(1f, 1f, 1f, .05f));
+			for (int y=stripeheight; y<chunkBorderHeight; y += (stripeheight*2))
+			{
+				g2d.fillRect(0, y, chunkBorderWidth, stripeheight);
+			}
+			g2d.setColor(new Color(1f, 1f, 1f, .8f));
+			g2d.drawRect(0, 0, chunkBorderWidth-1, chunkBorderHeight-1);
+			chunkBorderTexture = TextureTool.allocateTexture(chunkBorderImage, GL11.GL_NEAREST);
+			chunkBorderTexture.update();
 		}
 		catch (IOException e1)
 		{
@@ -1733,6 +1754,12 @@ public class XRay
 					camera_lock = !camera_lock;
 					updateRenderDetails();
 				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_CHUNK_BORDERS))
+				{
+					renderChunkBorders = !renderChunkBorders;
+					// I think this one should be obvious enough not to bother with wording in the info box
+					//updateRenderDetails();
+				}
 				else if (key == key_mapping.get(KEY_ACTIONS.DIMENSION_NEXT))
 				{
 					// Toggle between dimenaions
@@ -2038,14 +2065,16 @@ public class XRay
 		// change the camera to point a the right direction
 		camera.applyCameraTransformation();
 
-		currentCameraPosX = (int) -camera.getPosition().x;
-		currentCameraPosZ = (int) -camera.getPosition().z;
+		currentCameraPosX = -camera.getPosition().x;
+		currentCameraPosZ = -camera.getPosition().z;
+		int tempX = (int)(currentCameraPosX-.5f);
+		int tempZ = (int)(currentCameraPosZ-.5f);
 
 		// determine if we need to load new map chunks
-		if (currentCameraPosX != levelBlockX || currentCameraPosZ != levelBlockZ || needToReloadWorld)
+		if (tempX != levelBlockX || tempZ != levelBlockZ || needToReloadWorld)
 		{
-			levelBlockX = currentCameraPosX;
-			levelBlockZ = currentCameraPosZ;
+			levelBlockX = tempX;
+			levelBlockZ = tempZ;
 			currentLevelX = level.getChunkX(levelBlockX);
 			currentLevelZ = level.getChunkZ(levelBlockZ);
 		}
@@ -2059,6 +2088,7 @@ public class XRay
 
 		// Get a list of chunks that we'll iterate over, on our various passes
 		ArrayList<Chunk> chunkList = new ArrayList<Chunk>();
+		Chunk curChunk = null;
 		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX + visible_chunk_range; lx++)
 		{
 			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ + visible_chunk_range; lz++)
@@ -2067,6 +2097,10 @@ public class XRay
 				if (k != null)
 				{
 					chunkList.add(k);
+					if (lx == currentLevelX && lz == currentLevelZ)
+					{
+						curChunk = k;
+					}
 				}
 			}
 		}
@@ -2133,6 +2167,11 @@ public class XRay
 					k.renderGlass(i);
 				}
 			}
+		}
+		if (renderChunkBorders && curChunk != null)
+		{
+			chunkBorderTexture.bind();
+			curChunk.renderBorder();
 		}
 
 		if (highlightOres)
@@ -2486,6 +2525,10 @@ public class XRay
 
 	/***
 	 * Draws a simple fps counter on the top-left of the screen
+	 *
+	 * TODO: rather than do our thing with lastFpsTime, etc, compare the values that
+	 * we'll be showing, and update whenever we need to (so we get immediate feeback,
+	 * instead of delayed feedback)
 	 */
 	private void drawFPSCounter()
 	{
@@ -2855,6 +2898,7 @@ public class XRay
 		xray_properties.setBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
 		xray_properties.setBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
 		xray_properties.setBooleanProperty("STATE_SILVERFISH_HIGHLIGHT", silverfishHighlight);
+		xray_properties.setBooleanProperty("STATE_CHUNK_BORDERS", renderChunkBorders);
 		xray_properties.setIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
 		xray_properties.setIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
 		xray_properties.setIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);
@@ -2881,6 +2925,7 @@ public class XRay
 		renderDetailsToggle = xray_properties.getBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
 		accurateGrass = xray_properties.getBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
 		silverfishHighlight = xray_properties.getBooleanProperty("STATE_SILVERFISH_HIGHLIGHT", silverfishHighlight);
+		renderChunkBorders = xray_properties.getBooleanProperty("STATE_CHUNK_BORDERS", renderChunkBorders);
 		currentChunkRange = xray_properties.getIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
 		currentHighlightDistance = xray_properties.getIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
 		currentLightLevel = xray_properties.getIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);

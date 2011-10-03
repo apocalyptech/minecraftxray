@@ -147,6 +147,7 @@ overridden, though.  The default keybindings are as follows:
         Toggle accurate grass sides: G
         Toggle Beta 1.9 Fences:      C
         Toggle Silverfish highlight: V
+        Toggle chunk borders:        U
 
     Other
         Toggle Fullscreen:      BACKSPACE
@@ -240,6 +241,10 @@ viewing pre-1.9 maps.
 
 By default, X-Ray will highlight Silverfish blocks with a red tint.  You can
 toggle this on and off with the "V" key.
+
+The "U" key can be used to toggle the rendering of chunk borders.  This will
+draw a transparent box around the chunk the camera is currently in, so it's
+easy to see what's inside your current chunk and what isn't.
 
 The rendering information popup can be toggled with "R" and is on by
 default.  This will let you know what these various settings are set to.

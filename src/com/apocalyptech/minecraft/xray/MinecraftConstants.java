@@ -205,6 +205,7 @@ public class MinecraftConstants {
 		TOGGLE_HIGHLIGHT_EXPLORED (Keyboard.KEY_E),
 		TOGGLE_BETA19_FENCES (Keyboard.KEY_C),
 		TOGGLE_SILVERFISH (Keyboard.KEY_V),
+		TOGGLE_CHUNK_BORDERS (Keyboard.KEY_U),
 		MOVE_TO_SPAWN (Keyboard.KEY_HOME),
 		MOVE_TO_PLAYER (Keyboard.KEY_END),
 		MOVE_NEXT_CAMERAPOS (Keyboard.KEY_INSERT),
