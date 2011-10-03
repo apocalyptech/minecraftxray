@@ -153,6 +153,7 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_IRON_BARS;
 	public static BlockType BLOCK_PISTON_HEAD;
 	public static BlockType BLOCK_PISTON_STICKY_BODY;
+	public static BlockType BLOCK_SILVERFISH;
 
 	// A meta-block to use for unknown block types
 	public static BlockType BLOCK_UNKNOWN;
@@ -203,6 +204,7 @@ public class MinecraftConstants {
 		TOGGLE_WATER (Keyboard.KEY_T),
 		TOGGLE_HIGHLIGHT_EXPLORED (Keyboard.KEY_E),
 		TOGGLE_BETA19_FENCES (Keyboard.KEY_C),
+		TOGGLE_SILVERFISH (Keyboard.KEY_V),
 		MOVE_TO_SPAWN (Keyboard.KEY_HOME),
 		MOVE_TO_PLAYER (Keyboard.KEY_END),
 		MOVE_NEXT_CAMERAPOS (Keyboard.KEY_INSERT),
@@ -379,6 +381,15 @@ public class MinecraftConstants {
 		if (BLOCK_PISTON_STICKY_BODY == null)
 		{
 			throw new BlockTypeLoadException("PISTON_STICKY_BODY block definition not found");
+		}
+		BLOCK_SILVERFISH = blockCollection.getByName("SILVERFISH");
+		if (BLOCK_SILVERFISH == null)
+		{
+			throw new BlockTypeLoadException("SILVERFISH block definition not found");
+		}
+		if (BLOCK_SILVERFISH.texture_data_map == null || !BLOCK_SILVERFISH.texture_data_map.containsKey((byte)0))
+		{
+			throw new BlockTypeLoadException("SILVERFISH block definition must include at least one data value of 0");
 		}
 
 		// We also define a "special" block for unknown block types, so that instead

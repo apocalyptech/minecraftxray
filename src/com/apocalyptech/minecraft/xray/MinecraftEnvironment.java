@@ -68,6 +68,8 @@ public class MinecraftEnvironment {
 	public static OS os; 
 	public static File baseDir;
 	public static File xrayBaseDir;
+	public static HashMap<Byte, Integer> silverfishDataPlain;
+	public static HashMap<Byte, Integer> silverfishDataHighlighted;
 	
     private static class MCDirectoryFilter implements FileFilter
     {
@@ -680,6 +682,36 @@ public class MinecraftEnvironment {
 		{
 			AlphaComposite redstone_ac = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 1f);
 			tintSquare(block.getTexCoordsArr(), square_width, redstone_ac, Color.red, bi, g2d);
+		}
+
+		// Generate separate textures for each of the Silverfish textures, and colorize them
+		// I feel a little guilty for occupying three whole new textures for this, especially given the
+		// recent addition of mod support.  More and more likely that folks will break into the
+		// two-texture range (though at least we do support it now).  I may want to look into just
+		// doing some GL trickery to tint them at render-time instead.  If I ever get around to doing
+		// some simple shading on the blocks, that'd probably be a good opportunity to do so.
+		// TODO: that ^
+		block = BLOCK_SILVERFISH;
+		silverfishDataPlain = new HashMap<Byte, Integer>();
+		silverfishDataHighlighted = new HashMap<Byte, Integer>();
+		if (block.texture_data_map != null)
+		{
+			for (Map.Entry<Byte, Integer> entry : block.texture_data_map.entrySet())
+			{
+				int new_tex = blockCollection.reserveTexture();
+				int[] old_coords = BlockType.getTexCoordsArr(entry.getValue());
+				int[] new_coords = BlockType.getTexCoordsArr(new_tex);
+				g2d.setComposite(AlphaComposite.Src);
+				g2d.drawImage(bi,
+						new_coords[0]*square_width, new_coords[1]*square_width,
+						(new_coords[0]+1)*square_width, (new_coords[1]+1)*square_width,
+						old_coords[0]*square_width, old_coords[1]*square_width,
+						(old_coords[0]+1)*square_width, (old_coords[1]+1)*square_width,
+						null);
+				tintSquare(new_coords, square_width, ac, Color.red, bi, g2d);
+				silverfishDataPlain.put(entry.getKey(), entry.getValue());
+				silverfishDataHighlighted.put(entry.getKey(), new_tex);
+			}
 		}
 
 		// Load in the water texture separately and pretend it's a part of the main texture pack.

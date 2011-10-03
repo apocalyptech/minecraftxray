@@ -59,16 +59,9 @@
  * Code in some proper log4j logging, rather than all the other crap that we're
    doing.
  
- * It might be nice to use a custom texture for silverfish blocks, so that they're
-   more readily apparent.  Perhaps even consider them SEMISOLID so that they'll
-   always get rendered?
- 
  * Notice dialog when something in xray.properties gets overwritten
-
- * Blockdef support for mods which use a separate terrain.png-like file, rather than
-   just the "mlblocks" stuff that we do currently.
 
  * "Explored" highlight should probably count redstone torches, Jack-O-Lanterns, and
    Glowstone (when not in Nether, anyway)
- 
- * shorter fence gates...
+
+ * Simple shading on blocks so that they look more natural (like how MCEdit does it)

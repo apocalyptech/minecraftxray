@@ -76,19 +76,19 @@ For specifying resource highlights, you should use the following names:
     BROWN_MUSHROOM          JUKEBOX                  SANDSTONE
     BURNING_FURNACE         LADDER                   SAPLING
     CACTUS                  LAPIS_LAZULI_BLOCK       SIGNPOST
-    CAKE                    LAPIS_LAZULI_ORE         SLAB
-    CHEST                   LAVA                     SNOW
-    CLAY                    LEAVES                   SNOW_BLOCK
-    COAL_ORE                LEVER                    SOUL_SAND
-    COBBLESTONE             LILY_PAD                 SPONGE
-    COBBLESTONE_STAIRS      MELON                    STATIONARY_LAVA
-    CROPS                   MELON_STEM               STATIONARY_WATER
-    DEAD_SHRUB              MINECART_TRACKS          STONE
-    DETECTOR_RAIL           MOB_SPAWNER              STONE_BRICK
-    DIAMOND_BLOCK           MOSSY_COBBLESTONE        STONE_BRICK_STAIRS
-    DIAMOND_ORE             MYCELIUM                 STONE_BUTTON
-    DIRT                    NETHER_BRICK             STONE_PRESSURE_PLATE
-    DISPENSER               NETHER_FENCE             STONE_SILVERFISH
+    CAKE                    LAPIS_LAZULI_ORE         SILVERFISH
+    CHEST                   LAVA                     SLAB
+    CLAY                    LEAVES                   SNOW
+    COAL_ORE                LEVER                    SNOW_BLOCK
+    COBBLESTONE             LILY_PAD                 SOUL_SAND
+    COBBLESTONE_STAIRS      MELON                    SPONGE
+    CROPS                   MELON_STEM               STATIONARY_LAVA
+    DEAD_SHRUB              MINECART_TRACKS          STATIONARY_WATER
+    DETECTOR_RAIL           MOB_SPAWNER              STONE
+    DIAMOND_BLOCK           MOSSY_COBBLESTONE        STONE_BRICK
+    DIAMOND_ORE             MYCELIUM                 STONE_BRICK_STAIRS
+    DIRT                    NETHER_BRICK             STONE_BUTTON
+    DISPENSER               NETHER_FENCE             STONE_PRESSURE_PLATE
     DOUBLE_SLAB             NETHER_STAIRS            SUGARCANE
     FARMLAND                NETHER_WART              TALL_GRASS
     FENCE                   NETHERRACK               TNT
@@ -145,6 +145,8 @@ overridden, though.  The default keybindings are as follows:
         Set visibility range:        NUMPAD1 - NUMPAD6 (remember numlock)
         Toggle "explored" areas:     E
         Toggle accurate grass sides: G
+        Toggle Beta 1.9 Fences:      C
+        Toggle Silverfish highlight: V
 
     Other
         Toggle Fullscreen:      BACKSPACE
@@ -230,6 +232,14 @@ of green, which I found occasionally handy while hollowing out mountains
 and the like, to know where I could still dig out and where I was right up
 against the edge.  X-Ray will now default to the more-accurate rendering,
 but you can toggle back and forth with the "G" key.
+
+Minecraft Beta 1.9 changed the way fences work slightly, so that they will
+"connect" up to adjacent solid blocks.  X-Ray will now, by default, render
+fences that way, but you can toggle it with the "C" key, in case you're
+viewing pre-1.9 maps.
+
+By default, X-Ray will highlight Silverfish blocks with a red tint.  You can
+toggle this on and off with the "V" key.
 
 The rendering information popup can be toggled with "R" and is on by
 default.  This will let you know what these various settings are set to.

@@ -230,6 +230,9 @@ public class XRay
 	// Grass rendering status
 	private boolean accurateGrass = true;
 
+	// Silverfish rendering status
+	private boolean silverfishHighlight = true;
+
 	// vars to keep track of our current chunk coordinates
 	private int cur_chunk_x = 0;
 	private int cur_chunk_z = 0;
@@ -725,7 +728,7 @@ public class XRay
 	}
 
 	/**
-	 * Alters our SOLID_DIRECTIONAL_BLOCKS to include or not include the fancier
+	 * Alters our grass texture_dir_map to include or not include the fancier
 	 * grass rendering, in case anyone wants that behavior on occasion.
 	 */
 	private void setAccurateGrass()
@@ -743,6 +746,24 @@ public class XRay
 			{
 				BLOCK_GRASS.texture_dir_map = null;
 			}
+		}
+	}
+
+	/**
+	 * Alters our silverfish texture_dir_map to include or not include the fancier
+	 * silverfish highlighting
+	 */
+	private void setSilverfishHighlight()
+	{
+		if (silverfishHighlight)
+		{
+			BLOCK_SILVERFISH.texture_data_map = MinecraftEnvironment.silverfishDataHighlighted;
+			BLOCK_SILVERFISH.setTexIdx(MinecraftEnvironment.silverfishDataHighlighted.get((byte)0));
+		}
+		else
+		{
+			BLOCK_SILVERFISH.texture_data_map = MinecraftEnvironment.silverfishDataPlain;
+			BLOCK_SILVERFISH.setTexIdx(MinecraftEnvironment.silverfishDataPlain.get((byte)0));
 		}
 	}
 
@@ -939,6 +960,8 @@ public class XRay
 
 		// Extra things we have to do
 		this.prepareNewWorld();
+		setAccurateGrass();
+		setSilverfishHighlight();
 
 		// set mouse grabbed so we can get x/y coordinates
 		Mouse.setGrabbed(true);
@@ -1691,8 +1714,16 @@ public class XRay
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_BETA19_FENCES))
 				{
-					// Toggle bedrock rendering
+					// Toggle "new" fence rendering
 					toggle.beta19_fences = !toggle.beta19_fences;
+					invalidateSelectedChunks(true);
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_SILVERFISH))
+				{
+					// Toggle silverfish highlighting
+					silverfishHighlight = !silverfishHighlight;
+					setSilverfishHighlight();
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
@@ -2357,6 +2388,11 @@ public class XRay
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "\"New\" Fences: ", Color.BLACK, DETAILFONT, "Off", Color.green.darker(), DETAILVALUEFONT);
 		}
+		if (!silverfishHighlight)
+		{
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Silverfish Highlight: ", Color.BLACK, DETAILFONT, "Off", Color.green.darker(), DETAILVALUEFONT);
+		}
 		cur_renderDetails_h = (line_count + 1) * line_h - 8;
 		g.setColor(Color.BLUE);
 		g.setStroke(new BasicStroke(2));
@@ -2818,6 +2854,7 @@ public class XRay
 		xray_properties.setBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
 		xray_properties.setBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
 		xray_properties.setBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
+		xray_properties.setBooleanProperty("STATE_SILVERFISH_HIGHLIGHT", silverfishHighlight);
 		xray_properties.setIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
 		xray_properties.setIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
 		xray_properties.setIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);
@@ -2843,6 +2880,7 @@ public class XRay
 		levelInfoToggle = xray_properties.getBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
 		renderDetailsToggle = xray_properties.getBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
 		accurateGrass = xray_properties.getBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
+		silverfishHighlight = xray_properties.getBooleanProperty("STATE_SILVERFISH_HIGHLIGHT", silverfishHighlight);
 		currentChunkRange = xray_properties.getIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
 		currentHighlightDistance = xray_properties.getIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
 		currentLightLevel = xray_properties.getIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);
@@ -2850,9 +2888,6 @@ public class XRay
 		{
 			mineralToggle[i] = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_" + i, mineralToggle[i]);
 		}
-		
-		// If we have to call out to any functions because of these states, now might be a good time
-		setAccurateGrass();
 	}
 
 	/***

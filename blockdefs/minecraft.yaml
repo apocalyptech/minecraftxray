@@ -47,6 +47,7 @@
 #               TORCH (the "explored" highlight uses it)
 #               BEDROCK (the "bedrock" toggle uses it)
 #               GRASS (the "grass rendering" toggle uses it)
+#               SILVERFISH (the "silverfish highlighting" toggle uses it)
 #               SAPLING (some special data handling is needed)
 #               PORTAL (we generate the texture to use for this one)
 #               FIRE (we generate the texture to use for this one)
@@ -970,7 +971,7 @@ blocks:
     type: TRAPDOOR
 
   - id: 97
-    idStr: STONE_SILVERFISH
+    idStr: SILVERFISH
     name: Silverfish
     mapcolor: [120, 120, 120]
     tex: [1, 0]
