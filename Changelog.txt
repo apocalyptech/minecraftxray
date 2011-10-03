@@ -4,6 +4,7 @@
   * Stems now connect to neighboring fruit properly
   * The "C" key will toggle the new-style fence connection rendering,
     introduced in Beta 1.9
+  * Slight improvements to fence and fence gate rendering accuracy
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 
