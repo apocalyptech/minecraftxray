@@ -788,6 +788,29 @@ public class XRay
 
 	}
 
+	/**
+	 * Clears out variables and textures that we'd need while loading a new world
+	 * (just when switching dimensions, at the moment)
+	 */
+	private void prepareNewWorld()
+	{
+		try
+		{
+			minimapTexture = TextureTool.allocateTexture(minimap_dim, minimap_dim);
+			minimapGraphics = minimapTexture.getImage().createGraphics();
+			loadingTextTexture = TextureTool.allocateTexture(1024, 64);
+		}
+		catch (IOException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		// level data
+		levelBlockX = Integer.MIN_VALUE;
+		levelBlockZ = Integer.MIN_VALUE;
+	}
+
 	/***
 	 * Load textures init precalc tables determine available worlds init misc
 	 * variables
@@ -811,12 +834,9 @@ public class XRay
 		{
 			// Note that in order to avoid weird texture-resize fuzziness, these textures
 			// should have dimensions which are powers of 2
-			minimapTexture = TextureTool.allocateTexture(minimap_dim, minimap_dim);
-			minimapGraphics = minimapTexture.getImage().createGraphics();
 			minimapArrowTexture = TextureTool.allocateTexture(32, 32);
 			fpsTexture = TextureTool.allocateTexture(128, 32);
 			levelInfoTexture = TextureTool.allocateTexture(128, 256);
-			loadingTextTexture = TextureTool.allocateTexture(1024, 64);
 			renderDetailsTexture = TextureTool.allocateTexture(256, 256);
 
 			createMinimapSprites();
@@ -917,9 +937,8 @@ public class XRay
 			e1.printStackTrace();
 		}
 
-		// level data
-		levelBlockX = Integer.MIN_VALUE;
-		levelBlockZ = Integer.MIN_VALUE;
+		// Extra things we have to do
+		this.prepareNewWorld();
 
 		// set mouse grabbed so we can get x/y coordinates
 		Mouse.setGrabbed(true);
@@ -1876,15 +1895,7 @@ public class XRay
 		// A full reinitialization is kind of overkill, but whatever.
 		FirstPersonCameraController cur_camera = this.camera;
 		this.camera.processNetherWarp(camera_mult);
-		try
-		{
-			initialize();
-		}
-		catch (BlockTypeLoadException e)
-		{
-			ExceptionDialog.presentDialog("Error reading Minecraft block data", e);
-			System.exit(0);
-		}
+		this.prepareNewWorld();
 		this.setMinecraftWorld(newworld, cur_camera);
 		this.updateRenderDetails();
 		this.triggerChunkLoads();
