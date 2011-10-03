@@ -135,10 +135,14 @@ public class XRay
 	private Texture minimapArrowTexture;
 	private Graphics2D minimapGraphics;
 
-	// Whether or not we're showing bedrock/water/explored areas
-	private boolean render_bedrock = false;
-	private boolean render_water = true;
-	private boolean highlight_explored = false;
+	// Toggles that need to be available to the renderers
+	public static class RenderToggles
+	{
+		public boolean render_bedrock = false;
+		public boolean render_water = true;
+		public boolean highlight_explored = false;
+	}
+	public static RenderToggles toggle = new RenderToggles();
 
 	// the minecraft level we are exploring
 	private MinecraftLevel level;
@@ -1647,21 +1651,21 @@ public class XRay
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_BEDROCK))
 				{
 					// Toggle bedrock rendering
-					render_bedrock = !render_bedrock;
+					toggle.render_bedrock = !toggle.render_bedrock;
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_HIGHLIGHT_EXPLORED))
 				{
 					// Toggle explored-area highlighting
-					highlight_explored = !highlight_explored;
+					toggle.highlight_explored = !toggle.highlight_explored;
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_WATER))
 				{
 					// Toggle water rendering
-					render_water = !render_water;
+					toggle.render_water = !toggle.render_water;
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
@@ -2033,7 +2037,7 @@ public class XRay
 						minecraftTextures.get(i).bind();
 						last_tex = i;
 					}
-					k.renderSolid(i, render_bedrock, render_water, highlight_explored);
+					k.renderSolid(i);
 					k.renderSelected(i, this.mineralToggle);
 				}
 				else
@@ -2304,17 +2308,17 @@ public class XRay
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Ore Highlight: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT);
 		}
-		if (highlight_explored)
+		if (toggle.highlight_explored)
 		{
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Explored Highlight: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT);
 		}
-		if (render_bedrock)
+		if (toggle.render_bedrock)
 		{
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Bedrock: ", Color.BLACK, DETAILFONT, "On", Color.GREEN.darker(), DETAILVALUEFONT);
 		}
-		if (!render_water)
+		if (!toggle.render_water)
 		{
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Water: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT);
@@ -2780,10 +2784,10 @@ public class XRay
 	 */
 	private void saveOptionStates()
 	{
-		xray_properties.setBooleanProperty("STATE_BEDROCK", render_bedrock);
-		xray_properties.setBooleanProperty("STATE_WATER", render_water);
+		xray_properties.setBooleanProperty("STATE_BEDROCK", toggle.render_bedrock);
+		xray_properties.setBooleanProperty("STATE_WATER", toggle.render_water);
 		xray_properties.setBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
-		xray_properties.setBooleanProperty("STATE_EXPLORED", highlight_explored);
+		xray_properties.setBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
 		xray_properties.setBooleanProperty("STATE_LIGHTING", lightMode);
 		xray_properties.setBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
 		xray_properties.setBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
@@ -2804,10 +2808,10 @@ public class XRay
 	 */
 	private void loadOptionStates()
 	{
-		render_bedrock = xray_properties.getBooleanProperty("STATE_BEDROCK", render_bedrock);
-		render_water = xray_properties.getBooleanProperty("STATE_WATER", render_water);
+		toggle.render_bedrock = xray_properties.getBooleanProperty("STATE_BEDROCK", toggle.render_bedrock);
+		toggle.render_water = xray_properties.getBooleanProperty("STATE_WATER", toggle.render_water);
+		toggle.highlight_explored = xray_properties.getBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
 		camera_lock = xray_properties.getBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
-		highlight_explored = xray_properties.getBooleanProperty("STATE_EXPLORED", highlight_explored);
 		lightMode = xray_properties.getBooleanProperty("STATE_LIGHTING", lightMode);
 		highlightOres = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
 		levelInfoToggle = xray_properties.getBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);

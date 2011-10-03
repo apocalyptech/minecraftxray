@@ -3555,41 +3555,34 @@ public class Chunk {
 		return false;
 	}
 
-	public void renderWorldSolids(int sheet, boolean render_bedrock, boolean highlight_explored)
+	public void renderWorldSolids(int sheet)
 	{
-		renderWorld(RENDER_PASS.SOLIDS, sheet, render_bedrock, false, highlight_explored, null);
+		renderWorld(RENDER_PASS.SOLIDS, sheet, null);
 	}
 
-	public void renderWorldNonstandard(int sheet, boolean render_water, boolean highlight_explored)
+	public void renderWorldNonstandard(int sheet)
 	{
-		renderWorld(RENDER_PASS.NONSTANDARD, sheet, false, render_water, highlight_explored, null);
+		renderWorld(RENDER_PASS.NONSTANDARD, sheet, null);
 	}
 
-	public void renderWorldGlass(int sheet, boolean highlight_explored)
+	public void renderWorldGlass(int sheet)
 	{
-		renderWorld(RENDER_PASS.GLASS, sheet, false, false, highlight_explored, null);
+		renderWorld(RENDER_PASS.GLASS, sheet, null);
 	}
 
 	public void renderWorldSelected(int sheet, boolean[] selectedMap)
 	{
-		renderWorld(RENDER_PASS.SELECTED, sheet, false, false, false, selectedMap);
+		renderWorld(RENDER_PASS.SELECTED, sheet, selectedMap);
 	}
 	
 	/**
-	 * Renders our chunk.  Most of these options should really be consolidated somehow; maybe just pass in
-	 * a HashMap or something with the options.  Anyway, for now it'll remain the same.
+	 * Renders our chunk.
 	 * 
 	 * @param pass What pass of rendering are we processing?
 	 * @param sheet Which texture sheet are we currently rendering?
-	 * @param render_bedrock Are we forcing bedrock to be rendered?
-	 * @param render_water Are we forcing water to be rendered?
-	 * @param highlight_explored Are we highlighting the area around torches?
-	 * @param selectedMap ... if so, here's a HashMap to which ones to highlight.
+	 * @param selectedMap If in RENDER_PASS.SELECTED, here's a HashMap to which ones to highlight.
 	 */
-	public void renderWorld(RENDER_PASS pass, int sheet,
-			boolean render_bedrock, boolean render_water,
-			boolean highlight_explored,
-			boolean[] selectedMap) {
+	public void renderWorld(RENDER_PASS pass, int sheet, boolean[] selectedMap) {
 
 		float worldX = this.x*16;
 		float worldZ = this.z*16;
@@ -3641,7 +3634,8 @@ public class Chunk {
 					}
 					
 					// Doublecheck for water
-					if (!render_water && block.type == BLOCK_TYPE.WATER)
+					if ((pass != RENDER_PASS.NONSTANDARD && block.type == BLOCK_TYPE.WATER) ||
+							(!XRay.toggle.render_water && block.type == BLOCK_TYPE.WATER))
 					{
 						continue;
 					}
@@ -3678,7 +3672,7 @@ public class Chunk {
 							west = true;
 
 							// Check for adjacent blocks
-							if (render_bedrock && t == BLOCK_BEDROCK.id)
+							if (XRay.toggle.render_bedrock && t == BLOCK_BEDROCK.id)
 							{
 								// This block of code was more or less copied/modified directly from the "else" block
 								// below - should see if there's a way we can abstract this instead.  Also, I suspect
@@ -3830,7 +3824,7 @@ public class Chunk {
 
 						// If we're highlighting explored regions and there's an adjacent
 						// torch, flip over to the "highlighted" textures
-						if (highlight_explored)
+						if (XRay.toggle.highlight_explored)
 						{
 							adj_torch = hasAdjacentTorch(x,y,z);
 							if (adj_torch)
@@ -4257,22 +4251,22 @@ public class Chunk {
 		}
 	}
 	
-	public void renderSolid(int sheet, boolean render_bedrock, boolean render_water, boolean highlight_explored) {
+	public void renderSolid(int sheet) {
 		if (!this.usedTextureSheets.containsKey(sheet))
 		{
 			return;
 		}
 		if(isDirty.get(sheet)) {
 				GL11.glNewList(this.displayListNums.get(sheet), GL11.GL_COMPILE);
-				renderWorldSolids(sheet, render_bedrock, highlight_explored);
+				renderWorldSolids(sheet);
 				GL11.glEndList();
 				GL11.glNewList(this.nonstandardListNums.get(sheet), GL11.GL_COMPILE);
 				//GL11.glDepthMask(false);
-				renderWorldNonstandard(sheet, render_water, highlight_explored);
+				renderWorldNonstandard(sheet);
 				//GL11.glDepthMask(true);
 				GL11.glEndList();
 				GL11.glNewList(this.glassListNums.get(sheet), GL11.GL_COMPILE);
-				renderWorldGlass(sheet, highlight_explored);
+				renderWorldGlass(sheet);
 				GL11.glEndList();
 				this.isDirty.put(sheet, false);
 		}
