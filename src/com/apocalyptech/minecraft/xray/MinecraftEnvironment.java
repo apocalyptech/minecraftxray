@@ -825,6 +825,9 @@ public class MinecraftEnvironment {
 		// Load in filename textures, if needed
 		// TODO: Exception error reporting
 		blockCollection.loadFilenameTextures();
+
+		// Report on the count of texture sheets
+		System.out.println("Texture Sheet count: " + blockCollection.textures.size());
 		
 		// For each texture we now have, copy the texture underneath, tinted for our "explored" areas
 		i = 0;
@@ -842,6 +845,7 @@ public class MinecraftEnvironment {
 
 			explored.add(bi2);
 
+			/*
 			try {
 				ImageIO.write(image, "PNG", new File(System.getProperty("user.home"), "xray_terrain_" + i + ".png"));
 				System.out.println("Wrote texture to ~/xray_terrain_" + i + ".png");
@@ -850,6 +854,7 @@ public class MinecraftEnvironment {
 			{
 				// whatever
 			}
+			*/
 
 			i++;
 		}
