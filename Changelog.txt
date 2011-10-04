@@ -13,6 +13,7 @@
   * Block and chunk information in the positioning popup are now
     slightly more accurate.
   * Slime-spawning chunks can be highlighted with the "M" key.
+  * Highlighting on solid blocks so they look more three-dimensional
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 

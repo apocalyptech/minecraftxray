@@ -144,6 +144,7 @@ public class XRay
 		public boolean render_water = true;
 		public boolean highlight_explored = false;
 		public boolean beta19_fences = true;
+		public boolean highlightOres = true;
 	}
 	public static RenderToggles toggle = new RenderToggles();
 
@@ -211,9 +212,6 @@ public class XRay
 
 	// lighting on or of (its actually fog, but hey...)
 	private boolean lightMode = true;
-
-	// highlight the ores by making them blink
-	private boolean highlightOres = true;
 
 	// level info texture
 	private boolean levelInfoToggle = false;
@@ -1669,7 +1667,7 @@ public class XRay
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING))
 				{
 					// Toggle ore highlighting
-					highlightOres = !highlightOres;
+					toggle.highlightOres = !toggle.highlightOres;
 					updateRenderDetails();
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ACCURATE_GRASS))
@@ -2207,7 +2205,7 @@ public class XRay
 			last_tex = -1;
 		}
 
-		if (highlightOres)
+		if (toggle.highlightOres)
 		{
 
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -2425,7 +2423,7 @@ public class XRay
 		infoboxSlider(g, x_off, line_count * line_h, "Render Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentChunkRange, CHUNK_RANGES.length);
 		line_count++;
 		infoboxSlider(g, x_off, line_count * line_h, "Highlight Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentHighlightDistance, HIGHLIGHT_RANGES.length);
-		if (!highlightOres)
+		if (!toggle.highlightOres)
 		{
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Ore Highlight: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT);
@@ -2929,9 +2927,9 @@ public class XRay
 		xray_properties.setBooleanProperty("STATE_WATER", toggle.render_water);
 		xray_properties.setBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
 		xray_properties.setBooleanProperty("STATE_BETA19_FENCES", toggle.beta19_fences);
+		xray_properties.setBooleanProperty("STATE_HIGHLIGHT_ORES", toggle.highlightOres);
 		xray_properties.setBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
 		xray_properties.setBooleanProperty("STATE_LIGHTING", lightMode);
-		xray_properties.setBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
 		xray_properties.setBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
 		xray_properties.setBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
 		xray_properties.setBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
@@ -2957,9 +2955,9 @@ public class XRay
 		toggle.render_water = xray_properties.getBooleanProperty("STATE_WATER", toggle.render_water);
 		toggle.highlight_explored = xray_properties.getBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
 		toggle.beta19_fences = xray_properties.getBooleanProperty("STATE_BETA19_FENCES", toggle.beta19_fences);
+		toggle.highlightOres = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_ORES", toggle.highlightOres);
 		camera_lock = xray_properties.getBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
 		lightMode = xray_properties.getBooleanProperty("STATE_LIGHTING", lightMode);
-		highlightOres = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_ORES", highlightOres);
 		levelInfoToggle = xray_properties.getBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
 		renderDetailsToggle = xray_properties.getBooleanProperty("STATE_RENDER_DETAILS", renderDetailsToggle);
 		accurateGrass = xray_properties.getBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
