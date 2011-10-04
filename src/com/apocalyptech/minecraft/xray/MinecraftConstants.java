@@ -206,6 +206,7 @@ public class MinecraftConstants {
 		TOGGLE_BETA19_FENCES (Keyboard.KEY_C),
 		TOGGLE_SILVERFISH (Keyboard.KEY_V),
 		TOGGLE_CHUNK_BORDERS (Keyboard.KEY_U),
+		TOGGLE_SLIME_CHUNKS (Keyboard.KEY_M),
 		MOVE_TO_SPAWN (Keyboard.KEY_HOME),
 		MOVE_TO_PLAYER (Keyboard.KEY_END),
 		MOVE_NEXT_CAMERAPOS (Keyboard.KEY_INSERT),

@@ -12,6 +12,7 @@
   * The "U" key will now toggle the rendering of chunk borders
   * Block and chunk information in the positioning popup are now
     slightly more accurate.
+  * Slime-spawning chunks can be highlighted with the "M" key.
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 

@@ -28,6 +28,7 @@ package com.apocalyptech.minecraft.xray;
 
 import java.lang.Math;
 import java.util.Map;
+import java.util.Random;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
@@ -68,6 +69,7 @@ public class Chunk {
 	private ArrayList<PaintingEntity> paintings;
 	
 	private MinecraftLevel level;
+	public boolean willSpawnSlimes;
 
 	public HashMap<Integer, Boolean> usedTextureSheets;
 
@@ -154,6 +156,16 @@ public class Chunk {
 			this.isDirty.put(sheet, true);
 			this.isSelectedDirty.put(sheet, true);
 		}
+
+		// Lastly, compute whether or not we'll spawn slimes, based on the randomSeed
+		// Taken from http://www.minecraftforum.net/topic/397835-find-slime-spawning-chunks/
+		// Or, indirectly from http://www.minecraftwiki.net/wiki/Slime#Spawning
+		Random rnd = new Random(level.getRandomSeed() +
+				(long) (this.x * this.x * 0x4c1906) +
+				(long) (this.x * 0x5ac0db) +
+				(long) (this.z * this.z) * 0x4307a7L +
+				(long) (this.z * 0x5f24f) ^ 0x3ad8025f);
+		this.willSpawnSlimes = (rnd.nextInt(10) == 0);
 		
 		//System.out.println(data);
 		//System.exit(0);
@@ -4370,6 +4382,25 @@ public class Chunk {
 		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z+width, x+width, bottom, z+width);
 		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z, x, bottom, z+width);
 		this.renderNonstandardVertical(0, 0, 1, 1, x+width, top, z, x+width, bottom, z+width);
+	}
+
+	/**
+	 * Renders a box around where a slime would spawn.  We don't check our own willSpawnSlimes
+	 * var here; that's controlled by the main XRay render loop.
+	 */
+	public void renderSlimeBox()
+	{
+		float x = this.x*16-.48f;
+		float z = this.z*16-.48f;
+		float top = 16.51f;
+		float bottom = .49f;
+		float width = 15.94f;
+		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z, x+width, bottom, z);
+		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z+width, x+width, bottom, z+width);
+		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z, x, bottom, z+width);
+		this.renderNonstandardVertical(0, 0, 1, 1, x+width, top, z, x+width, bottom, z+width);
+		this.renderNonstandardHorizontal(0, 0, 1, 1, x, z, x+width, z+width, top);
+		this.renderNonstandardHorizontal(0, 0, 1, 1, x, z, x+width, z+width, bottom);
 	}
 	
 	public void renderSelected(int sheet, boolean[] selectedMap) {

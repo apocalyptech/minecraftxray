@@ -130,6 +130,7 @@ public class XRay
 	public Texture paintingTexture;
 	public Texture loadingTextTexture;
 	public Texture chunkBorderTexture;
+	public Texture slimeChunkTexture;
 
 	// the textures used by the minimap
 	private Texture minimapTexture;
@@ -236,6 +237,9 @@ public class XRay
 
 	// Chunk border rendering status
 	private boolean renderChunkBorders = false;
+
+	// Slime chunk rendering status
+	private boolean renderSlimeChunks = false;
 
 	// vars to keep track of our current chunk coordinates
 	private int cur_chunk_x = 0;
@@ -972,6 +976,17 @@ public class XRay
 			g2d.drawRect(0, 0, chunkBorderWidth-1, chunkBorderHeight-1);
 			chunkBorderTexture = TextureTool.allocateTexture(chunkBorderImage, GL11.GL_NEAREST);
 			chunkBorderTexture.update();
+
+			// Slime chunk textures
+			int slimeChunkWidth = 256;
+			BufferedImage slimeChunkImage = new BufferedImage(slimeChunkWidth, slimeChunkWidth, BufferedImage.TYPE_INT_ARGB);
+			g2d = slimeChunkImage.createGraphics();
+			g2d.setColor(new Color(0f, .5f, 0f, .4f));
+			g2d.fillRect(0, 0, slimeChunkWidth, slimeChunkWidth);
+			g2d.setColor(new Color(.7f, 1f, .7f, .8f));
+			g2d.drawRect(0, 0, slimeChunkWidth-1, slimeChunkWidth-1);
+			slimeChunkTexture = TextureTool.allocateTexture(slimeChunkImage, GL11.GL_NEAREST);
+			slimeChunkTexture.update();
 		}
 		catch (IOException e1)
 		{
@@ -1760,6 +1775,11 @@ public class XRay
 					// I think this one should be obvious enough not to bother with wording in the info box
 					//updateRenderDetails();
 				}
+				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_SLIME_CHUNKS))
+				{
+					renderSlimeChunks = !renderSlimeChunks;
+					updateRenderDetails();
+				}
 				else if (key == key_mapping.get(KEY_ACTIONS.DIMENSION_NEXT))
 				{
 					// Toggle between dimenaions
@@ -2168,10 +2188,23 @@ public class XRay
 				}
 			}
 		}
+		if (renderSlimeChunks)
+		{
+			for (Chunk k : chunkList)
+			{
+				if (k.willSpawnSlimes)
+				{
+					slimeChunkTexture.bind();
+					k.renderSlimeBox();
+					last_tex = -1;
+				}
+			}
+		}
 		if (renderChunkBorders && curChunk != null)
 		{
 			chunkBorderTexture.bind();
 			curChunk.renderBorder();
+			last_tex = -1;
 		}
 
 		if (highlightOres)
@@ -2275,7 +2308,7 @@ public class XRay
 		g.setColor(Color.BLACK);
 		g.drawString("World Y:", labelX, 22 + 16 + 32 + 16);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString((int) -camera.getPosition().y), valueX, 22 + 16 + 32 + 16);
+		g.drawString(Integer.toString((int) (-camera.getPosition().y-.5f)), valueX, 22 + 16 + 32 + 16);
 
 		long heapSize = Runtime.getRuntime().totalMemory();
 		g.setColor(Color.BLACK);
@@ -2431,6 +2464,11 @@ public class XRay
 		{
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Silverfish Highlight: ", Color.BLACK, DETAILFONT, "Off", Color.green.darker(), DETAILVALUEFONT);
+		}
+		if (renderSlimeChunks)
+		{
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Slime Chunks: ", Color.BLACK, DETAILFONT, "On", Color.green.darker(), DETAILVALUEFONT);
 		}
 		cur_renderDetails_h = (line_count + 1) * line_h - 8;
 		g.setColor(Color.BLUE);
@@ -2899,6 +2937,7 @@ public class XRay
 		xray_properties.setBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
 		xray_properties.setBooleanProperty("STATE_SILVERFISH_HIGHLIGHT", silverfishHighlight);
 		xray_properties.setBooleanProperty("STATE_CHUNK_BORDERS", renderChunkBorders);
+		xray_properties.setBooleanProperty("STATE_SLIME_CHUNKS", renderSlimeChunks);
 		xray_properties.setIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
 		xray_properties.setIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
 		xray_properties.setIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);
@@ -2926,6 +2965,7 @@ public class XRay
 		accurateGrass = xray_properties.getBooleanProperty("STATE_ACCURATE_GRASS", accurateGrass);
 		silverfishHighlight = xray_properties.getBooleanProperty("STATE_SILVERFISH_HIGHLIGHT", silverfishHighlight);
 		renderChunkBorders = xray_properties.getBooleanProperty("STATE_CHUNK_BORDERS", renderChunkBorders);
+		renderSlimeChunks = xray_properties.getBooleanProperty("STATE_SLIME_CHUNKS", renderSlimeChunks);
 		currentChunkRange = xray_properties.getIntProperty("STATE_CHUNK_RANGE", currentChunkRange);
 		currentHighlightDistance = xray_properties.getIntProperty("STATE_HIGHLIGHT_DISTANCE", currentHighlightDistance);
 		currentLightLevel = xray_properties.getIntProperty("STATE_LIGHT_LEVEL", currentLightLevel);

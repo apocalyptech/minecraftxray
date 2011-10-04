@@ -39,6 +39,7 @@ import com.apocalyptech.minecraft.xray.dtf.FloatTag;
 import com.apocalyptech.minecraft.xray.dtf.IntTag;
 import com.apocalyptech.minecraft.xray.dtf.ListTag;
 import com.apocalyptech.minecraft.xray.dtf.StringTag;
+import com.apocalyptech.minecraft.xray.dtf.LongTag;
 import com.apocalyptech.minecraft.xray.dtf.Tag;
 
 /***
@@ -58,6 +59,7 @@ public class MinecraftLevel {
 	private ArrayList<CameraPreset> playerPositions;
 	private int playerPos_idx;
 	private int spawnPoint_idx;
+	private long randomSeed;
 	public short[] HIGHLIGHT_ORES;
 	
 	public ArrayList<Texture> minecraftTextures;
@@ -236,6 +238,25 @@ public class MinecraftLevel {
 			}
 			this.levelName = null;
 		}
+
+		// Pull our random seed
+		this.randomSeed = ((LongTag) levelDataData.getTagWithName("RandomSeed")).value;
+	}
+
+	/**
+	 * Sets the random seed.
+	 */
+	public void setRandomSeed(long randomSeed)
+	{
+		this.randomSeed = randomSeed;
+	}
+
+	/**
+	 * Returns the random seed.
+	 */
+	public long getRandomSeed()
+	{
+		return this.randomSeed;
 	}
 	
 	/***

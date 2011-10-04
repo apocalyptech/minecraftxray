@@ -148,6 +148,7 @@ overridden, though.  The default keybindings are as follows:
         Toggle Beta 1.9 Fences:      C
         Toggle Silverfish highlight: V
         Toggle chunk borders:        U
+        Toggle slime chunks:         M
 
     Other
         Toggle Fullscreen:      BACKSPACE
@@ -245,6 +246,16 @@ toggle this on and off with the "V" key.
 The "U" key can be used to toggle the rendering of chunk borders.  This will
 draw a transparent box around the chunk the camera is currently in, so it's
 easy to see what's inside your current chunk and what isn't.
+
+The "Slime Chunk" option will turn on the highlighting of chunks which
+should be able to spawn Slimes.  The highlighting will actually only occur
+on the bottom part of the map, where the slimes themselves are actually
+capable of spawning.  The equation used to calculate this was taken from
+http://www.minecraftwiki.net/wiki/Slime#Spawning in early October, 2011,
+when Beta 1.9-pre2 was out.  The equation may or may not be valid for
+earlier or later versions of Minecraft, but should be at least valid
+for Minecraft Beta 1.6 through Beta 1.9.  The default key to toggle this
+highlighting is "M".
 
 The rendering information popup can be toggled with "R" and is on by
 default.  This will let you know what these various settings are set to.
