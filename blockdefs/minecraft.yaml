@@ -1129,6 +1129,25 @@ blocks:
       smaller_1: [3, 14]
       smaller_2: [2, 14]
 
+  - id: 116
+    idStr: ENCHANTMENT_TABLE
+    name: Table
+    mapcolor: [88, 23, 22]
+    tex: [6, 10]
+
+  - id: 117
+    idStr: BREWING_STAND
+    name: Brewing Stand
+    mapcolor: [189, 163, 82]
+    tex: [13, 9]
+    type: DECORATION_CROSS
+
+  - id: 118
+    idStr: CAULDRON
+    name: CAULDRON
+    mapcolor: [79, 79, 79]
+    tex: [11, 8]
+
   - id: 120
     idStr: AIR_PORTAL
     name: Air Portal
