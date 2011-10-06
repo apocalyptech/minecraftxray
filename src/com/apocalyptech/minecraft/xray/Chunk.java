@@ -3382,13 +3382,17 @@ public class Chunk {
 	
 	/**
 	 * Renders a cauldron
+	 *
+	 * TODO: technically this should extend for the entire length of the block; I didn't feel
+	 * like running checks of the adjacent blocks, though, so it's a bit smaller than it should be
 	 * 
 	 * @param textureId
 	 * @param xxx
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderCauldron(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset) {
+	public void renderCauldron(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset)
+	{
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -3428,11 +3432,54 @@ public class Chunk {
 		// Contents
 		if (data > 0)
 		{
-			renderHorizontal(BLOCK_WATER.tex_idx, inside, inside, -inside, -inside, base+((insideheight-.0625f)*(data/3f)));
+			renderHorizontal(BLOCK_WATER.tex_idx+tex_offset, inside, inside, -inside, -inside, base+((insideheight-.0625f)*(data/3f)));
 		}
 
 		// Top
 		renderHorizontal(block.texture_extra_map.get("top")+tex_offset, edge, edge, -edge, -edge, height-.5f);
+
+		GL11.glPopMatrix();
+	}
+	
+	/**
+	 * Renders an enchantment table.  
+	 * 
+	 * TODO: technically this should extend for the entire length of the block; I didn't feel
+	 * like running checks of the adjacent blocks, though, so it's a bit smaller than it should be
+	 *
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderEnchantmentTable(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset)
+	{
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		float edge = .48f;
+		float height = .75f;
+		float bottom = -.5f;
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		int side_tex = block.texture_extra_map.get("sides") + tex_offset;
+
+		// Top
+		renderHorizontal(textureId, edge, edge, -edge, -edge, height+bottom);
+
+		// Bottom
+		if (y == 0 || !isSolid(blockData.value[blockOffset-1]))
+		{
+			renderHorizontal(block.texture_extra_map.get("bottom")+tex_offset, edge, edge, -edge, -edge, bottom);
+		}
+
+		// Sides
+		renderVertical(side_tex, edge, edge, -edge, edge, bottom, height, 16, 12, 0, 4);
+		renderVertical(side_tex, edge, -edge, -edge, -edge, bottom, height, 16, 12, 0, 4);
+		renderVertical(side_tex, edge, edge, edge, -edge, bottom, height, 16, 12, 0, 4);
+		renderVertical(side_tex, -edge, edge, -edge, -edge, bottom, height, 16, 12, 0, 4);
 
 		GL11.glPopMatrix();
 	}
@@ -4138,6 +4185,9 @@ public class Chunk {
 									break;
 								case CAULDRON:
 									renderCauldron(textureId,x,y,z,blockOffset,block,tex_offset);
+									break;
+								case ENCHANTMENT_TABLE:
+									renderEnchantmentTable(textureId,x,y,z,blockOffset,block,tex_offset);
 									break;
 								case SEMISOLID:
 								case WATER:

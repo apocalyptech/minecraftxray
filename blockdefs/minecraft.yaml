@@ -131,6 +131,7 @@
 #             STEM
 #             AIR_PORTAL
 #             CAULDRON
+#             ENCHANTMENT_TABLE
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -210,6 +211,11 @@
 #            The main texture should be the cauldron sides.
 #            "inside" should be the inside faces
 #            "top" should be the lip of the cauldron
+#
+#        ENCHANTMENT_TABLE
+#            The main texture should be the top
+#            "sides" should be the side textures
+#            "bottom" should be the bottom face
 #
 name: Vanilla Minecraft Block Types
 blocks:
@@ -1140,6 +1146,10 @@ blocks:
     name: Table
     mapcolor: [88, 23, 22]
     tex: [6, 10]
+    type: ENCHANTMENT_TABLE
+    tex_extra:
+      sides: [6, 11]
+      bottom: [7, 11]
 
   - id: 117
     idStr: BREWING_STAND
