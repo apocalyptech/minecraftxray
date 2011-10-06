@@ -3548,6 +3548,29 @@ public class Chunk {
 			this.renderTopDown(textureId, x, y+1f, z);
 		}
 	}
+
+	/**
+	 * Renders an Air Portal block.  Will call out to either renderSemisolid or
+	 * renderCrossDecoration depending on the data value.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 * @param blockOffset
+	 * @param blockId
+	 */
+	public void renderAirPortal(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
+		byte data = getData(xxx, yyy, zzz);
+		if (data == 0)
+		{
+			this.renderSemisolid(textureId, xxx, yyy, zzz, blockOffset, blockId);
+		}
+		else
+		{
+			this.renderCrossDecoration(textureId, xxx, yyy, zzz);
+		}
+	}
 	
 	/**
 	 * Tests if the given source block has a torch nearby.  This is, I'm willing
@@ -3765,9 +3788,9 @@ public class Chunk {
 						}
 
 						// Doublecheck for glass stuffs
-						if ((pass == RENDER_PASS.GLASS && (block.type != BLOCK_TYPE.GLASS && block.type != BLOCK_TYPE.SOLID_PANE)) ||
+						if ((pass == RENDER_PASS.GLASS && (block.type != BLOCK_TYPE.GLASS && block.type != BLOCK_TYPE.SOLID_PANE && block.type != BLOCK_TYPE.AIR_PORTAL)) ||
 								(pass != RENDER_PASS.SELECTED &&
-								 pass != RENDER_PASS.GLASS && (block.type == BLOCK_TYPE.GLASS || block.type == BLOCK_TYPE.SOLID_PANE)))
+								 pass != RENDER_PASS.GLASS && (block.type == BLOCK_TYPE.GLASS || block.type == BLOCK_TYPE.SOLID_PANE || block.type == BLOCK_TYPE.AIR_PORTAL)))
 						{
 							continue;
 						}
@@ -4060,6 +4083,9 @@ public class Chunk {
 								case WATER:
 								case GLASS:
 									renderSemisolid(textureId,x,y,z,blockOffset,t);
+									break;
+								case AIR_PORTAL:
+									renderAirPortal(textureId,x,y,z,blockOffset,t);
 									break;
 
 								case NORMAL:

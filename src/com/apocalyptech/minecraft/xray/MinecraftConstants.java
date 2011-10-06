@@ -108,7 +108,8 @@ public class MinecraftConstants {
 		SOLID_PANE,
 		CHEST,
 		NETHER_WART,
-		STEM
+		STEM,
+		AIR_PORTAL
 	}
 
 	// Extra textures specified by various block types
@@ -164,7 +165,8 @@ public class MinecraftConstants {
 	// Block types to compute decoration information for
 	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
 		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS,
-		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART, BLOCK_TYPE.STEM
+		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART, BLOCK_TYPE.STEM,
+		BLOCK_TYPE.AIR_PORTAL
 	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.

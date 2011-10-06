@@ -129,6 +129,7 @@
 #             CHEST
 #             NETHER_WART
 #             STEM
+#             AIR_PORTAL
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -1127,5 +1128,15 @@ blocks:
     tex_extra:
       smaller_1: [3, 14]
       smaller_2: [2, 14]
+
+  - id: 120
+    idStr: AIR_PORTAL
+    name: Air Portal
+    mapcolor: [55, 142, 215]
+    tex: [15, 9]
+    tex_data:
+      0: [15, 9]
+      1: [14, 9]
+    type: AIR_PORTAL
 
 ...
