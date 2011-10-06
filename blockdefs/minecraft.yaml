@@ -130,6 +130,7 @@
 #             NETHER_WART
 #             STEM
 #             AIR_PORTAL
+#             CAULDRON
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -204,6 +205,11 @@
 #        STEM
 #            The main texture should be the upright stem.
 #            "curve" specifies the texture to use when curved towards its fruit
+#
+#        CAULDRON
+#            The main texture should be the cauldron sides.
+#            "inside" should be the inside faces
+#            "top" should be the lip of the cauldron
 #
 name: Vanilla Minecraft Block Types
 blocks:
@@ -1146,7 +1152,11 @@ blocks:
     idStr: CAULDRON
     name: CAULDRON
     mapcolor: [79, 79, 79]
-    tex: [11, 8]
+    tex: [10, 9]
+    type: CAULDRON
+    tex_extra:
+      inside: [11, 8]
+      top: [10, 8]
 
   - id: 120
     idStr: AIR_PORTAL

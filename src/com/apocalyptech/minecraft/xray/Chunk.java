@@ -3379,6 +3379,63 @@ public class Chunk {
 			this.renderCrossDecoration(textureId, xxx, yyy, zzz);
 		}
 	}
+	
+	/**
+	 * Renders a cauldron
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderCauldron(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		float edge = .48f;
+		float bottom = -.5f;
+		float height = 1f;
+		float base = -.3125f;
+		float inside = (.375f*(edge*2f)); // Modified to account for scaling
+		float insideheight = 1f - (.5f + base);
+
+		byte data = getData(xxx, yyy, zzz);
+		if (data > 3)
+		{
+			data = 3;
+		}
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		int inside_tex = block.texture_extra_map.get("inside")+tex_offset;
+
+		// Base
+		renderHorizontal(inside_tex, edge, edge, -edge, -edge, base);
+
+		// Sides
+		renderVertical(textureId, edge, edge, -edge, edge, bottom, height);
+		renderVertical(textureId, edge, -edge, -edge, -edge, bottom, height);
+		renderVertical(textureId, edge, edge, edge, -edge, bottom, height);
+		renderVertical(textureId, -edge, edge, -edge, -edge, bottom, height);
+
+		// Inside faces
+		renderVertical(textureId, inside, inside, -inside, inside, base, insideheight);
+		renderVertical(textureId, inside, -inside, -inside, -inside, base, insideheight);
+		renderVertical(textureId, inside, inside, inside, -inside, base, insideheight);
+		renderVertical(textureId, -inside, inside, -inside, -inside, base, insideheight);
+
+		// Contents
+		if (data > 0)
+		{
+			renderHorizontal(BLOCK_WATER.tex_idx, inside, inside, -inside, -inside, base+((insideheight-.0625f)*(data/3f)));
+		}
+
+		// Top
+		renderHorizontal(block.texture_extra_map.get("top")+tex_offset, edge, edge, -edge, -edge, height-.5f);
+
+		GL11.glPopMatrix();
+	}
 
 	/**
 	 * Helper function for renderHalfHeight - given an adjacent block ID, it
@@ -4078,6 +4135,9 @@ public class Chunk {
 									break;
 								case HALFHEIGHT:
 									renderHalfHeight(textureId,x,y,z,blockOffset);
+									break;
+								case CAULDRON:
+									renderCauldron(textureId,x,y,z,blockOffset,block,tex_offset);
 									break;
 								case SEMISOLID:
 								case WATER:

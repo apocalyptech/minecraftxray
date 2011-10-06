@@ -109,7 +109,8 @@ public class MinecraftConstants {
 		CHEST,
 		NETHER_WART,
 		STEM,
-		AIR_PORTAL
+		AIR_PORTAL,
+		CAULDRON
 	}
 
 	// Extra textures specified by various block types
@@ -132,6 +133,7 @@ public class MinecraftConstants {
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.NETHER_WART, new String[] {"smaller_1", "smaller_2"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.HUGE_MUSHROOM, new String[] {"stem", "pores"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.STEM, new String[] {"curve"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CAULDRON, new String[] {"inside", "top"});
 	}
 
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
