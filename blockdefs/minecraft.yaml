@@ -132,6 +132,7 @@
 #             AIR_PORTAL
 #             CAULDRON
 #             ENCHANTMENT_TABLE
+#             BREWING_STAND
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -216,6 +217,10 @@
 #            The main texture should be the top
 #            "sides" should be the side textures
 #            "bottom" should be the bottom face
+#
+#        BREWING_STAND
+#            The main texture should be the main texture
+#            "base" should be the base that potions reside on
 #
 name: Vanilla Minecraft Block Types
 blocks:
@@ -1156,7 +1161,9 @@ blocks:
     name: Brewing Stand
     mapcolor: [189, 163, 82]
     tex: [13, 9]
-    type: DECORATION_CROSS
+    type: BREWING_STAND
+    tex_extra:
+      base: [12, 9]
 
   - id: 118
     idStr: CAULDRON

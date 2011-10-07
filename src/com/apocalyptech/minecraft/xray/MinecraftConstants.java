@@ -111,7 +111,8 @@ public class MinecraftConstants {
 		STEM,
 		AIR_PORTAL,
 		CAULDRON,
-		ENCHANTMENT_TABLE
+		ENCHANTMENT_TABLE,
+		BREWING_STAND
 	}
 
 	// Extra textures specified by various block types
@@ -136,6 +137,7 @@ public class MinecraftConstants {
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.STEM, new String[] {"curve"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CAULDRON, new String[] {"inside", "top"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.ENCHANTMENT_TABLE, new String[] {"sides", "bottom"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.BREWING_STAND, new String[] {"base"});
 	}
 
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
@@ -170,7 +172,7 @@ public class MinecraftConstants {
 	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
 		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS,
 		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART, BLOCK_TYPE.STEM,
-		BLOCK_TYPE.AIR_PORTAL
+		BLOCK_TYPE.AIR_PORTAL, BLOCK_TYPE.BREWING_STAND
 	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.

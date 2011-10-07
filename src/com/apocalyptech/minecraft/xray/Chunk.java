@@ -3677,6 +3677,139 @@ public class Chunk {
 	}
 	
 	/**
+	 * Renders a brewing stand
+	 *
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderBrewingStand(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+
+		float zero = 0f;
+		float one = .0625f;
+		float two = .125f;
+		float three = .1875f;
+		float four = .25f;
+		float five = .3125f;
+		float six = .375f;
+		float seven = .4375f;
+		float eight= .5f;
+		float nine = .5625f;
+		float postheight = .875f;
+
+		TextureDecorationStats stats = XRay.decorationStats.get(textureId % 256);
+		if (stats == null)
+		{
+			return;
+		}
+		byte data = getData(xxx, yyy, zzz);
+		int tex_base = block.texture_extra_map.get("base") + tex_offset;
+
+		float potion_on_begin_x = precalcSpriteSheetToTextureX[textureId] + stats.getTexLeft();
+		float potion_on_width = TEX32 - TEX256 - stats.getTexLeft();
+		float potion_off_begin_x = precalcSpriteSheetToTextureX[textureId] + TEX32 + TEX256;
+		float potion_off_width = stats.getTexRight() - TEX32;
+
+		float potion_begin_y = precalcSpriteSheetToTextureY[textureId] + stats.getTexTop();
+		float potion_height = TEX32 - stats.getTexTop() - TEX256;
+
+		float potion_abs_top = eight - stats.getTexTop();
+		float potion_abs_bottom = -six;
+		float potion_on_abs_length = .5f-stats.getLeft();
+		float potion_off_abs_length = 1f-stats.getRight();
+
+		boolean potion_0x1 = false;  // South
+		boolean potion_0x2 = false;  // Northwest
+		boolean potion_0x4 = false;  // Northeast
+		if ((data & 0x1) == 0x1) { potion_0x1 = true; }
+		if ((data & 0x2) == 0x2) { potion_0x2 = true; }
+		if ((data & 0x4) == 0x4) { potion_0x4 = true; }
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		// Center post
+		renderVertical(textureId, one, one, -one, one, -eight, postheight, 2, 14, 7, 2);
+		renderVertical(textureId, one, -one, -one, -one, -eight, postheight, 2, 14, 7, 2);
+		renderVertical(textureId, one, one, one, -one, -eight, postheight, 2, 14, 7, 2);
+		renderVertical(textureId, -one, one, -one, -one, -eight, postheight, 2, 14, 7, 2);
+		renderHorizontal(textureId, one, one, -one, -one, six, 2, 2, 7, 7, false);
+
+		// Base, potion 0x1
+		renderHorizontal(tex_base, one, -three, seven, three, -seven, 6, 6, 9, 6, true);
+		renderVertical(tex_base, one, -three, seven, -three, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, one, three, seven, three, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, one, three, one, -three, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, seven, three, seven, -three, -eight, one, 6, 1, 0, 0);
+
+		// Base, potion 0x2
+		renderHorizontal(tex_base, -six, -one, zero, -seven, -seven, 6, 6, 2, 1, true);
+		renderVertical(tex_base, -six, -one, zero, -one, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, -six, -seven, zero, -seven, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, -six, -one, -six, -seven, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, zero, -one, zero, -seven, -eight, one, 6, 1, 0, 0);
+
+		// Base, potion 0x4
+		renderHorizontal(tex_base, -six, seven, zero, one, -seven, 6, 6, 2, 9, true);
+		renderVertical(tex_base, -six, seven, zero, seven, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, -six, one, zero, one, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, -six, seven, -six, one, -eight, one, 6, 1, 0, 0);
+		renderVertical(tex_base, zero, seven, zero, one, -eight, one, 6, 1, 0, 0);
+
+		// Potion 0x1
+		if (potion_0x1)
+		{
+			renderNonstandardVertical(potion_on_begin_x, potion_begin_y, potion_on_width, potion_height,
+				potion_on_abs_length, potion_abs_top, 0,
+				one, potion_abs_bottom, 0);
+		}
+		else
+		{
+			renderNonstandardVertical(potion_off_begin_x, potion_begin_y, potion_off_width, potion_height,
+				one, potion_abs_top, 0,
+				potion_off_abs_length, potion_abs_bottom, 0);
+		}
+
+		// Potion 0x2
+		if (potion_0x2)
+		{
+			float dist = -(float)Math.sqrt(Math.pow(potion_on_abs_length, 2)/2);
+			renderNonstandardVertical(potion_on_begin_x, potion_begin_y, potion_on_width, potion_height,
+				dist, potion_abs_top, dist,
+			    -one, potion_abs_bottom, -one);
+		}
+		else
+		{
+			float dist = -(float)Math.sqrt(Math.pow(potion_off_abs_length, 2)/2);
+			renderNonstandardVertical(potion_off_begin_x, potion_begin_y, potion_off_width, potion_height,
+			    -one, potion_abs_top, -one,
+				dist, potion_abs_bottom, dist);
+		}
+
+		// Potion 0x4
+		if (potion_0x4)
+		{
+			float dist = -(float)Math.sqrt(Math.pow(potion_on_abs_length, 2)/2);
+			renderNonstandardVertical(potion_on_begin_x, potion_begin_y, potion_on_width, potion_height,
+				dist, potion_abs_top, -dist,
+			    -one, potion_abs_bottom, one);
+		}
+		else
+		{
+			float dist = -(float)Math.sqrt(Math.pow(potion_off_abs_length, 2)/2);
+			renderNonstandardVertical(potion_off_begin_x, potion_begin_y, potion_off_width, potion_height,
+			    -one, potion_abs_top, one,
+				dist, potion_abs_bottom, -dist);
+		}
+
+		GL11.glPopMatrix();
+	}
+	
+	/**
 	 * Tests if the given source block has a torch nearby.  This is, I'm willing
 	 * to bet, the least efficient way possible of doing this.  It turns out that
 	 * despite that, it doesn't really have a noticeable impact on performance,
@@ -4188,6 +4321,9 @@ public class Chunk {
 									break;
 								case ENCHANTMENT_TABLE:
 									renderEnchantmentTable(textureId,x,y,z,blockOffset,block,tex_offset);
+									break;
+								case BREWING_STAND:
+									renderBrewingStand(textureId,x,y,z,block,tex_offset);
 									break;
 								case SEMISOLID:
 								case WATER:
