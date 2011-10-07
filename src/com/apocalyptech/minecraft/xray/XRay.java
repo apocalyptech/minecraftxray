@@ -71,6 +71,8 @@ import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 public class XRay
 {
 
+	private long render_time = 0;
+
 	// number of chunks around the camera which are visible (Square)
 	private int visible_chunk_range = 5;
 
@@ -390,6 +392,7 @@ public class XRay
 
 			}
 			// cleanup
+			System.out.println((render_time)/1000f + " seconds spent constructing renders");
 			saveOptionStates();
 			cleanup();
 		}
@@ -2139,7 +2142,7 @@ public class XRay
 						minecraftTextures.get(i).bind();
 						last_tex = i;
 					}
-					k.renderSolid(i);
+					render_time += k.renderSolid(i);
 					k.renderSelected(i, this.mineralToggle);
 				}
 				else

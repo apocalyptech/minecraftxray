@@ -3900,19 +3900,19 @@ public class Chunk {
 		return false;
 	}
 
-	public void renderWorldSolids(int sheet)
+	public long renderWorldSolids(int sheet)
 	{
-		renderWorld(RENDER_PASS.SOLIDS, sheet, null);
+		return renderWorld(RENDER_PASS.SOLIDS, sheet, null);
 	}
 
-	public void renderWorldNonstandard(int sheet)
+	public long renderWorldNonstandard(int sheet)
 	{
-		renderWorld(RENDER_PASS.NONSTANDARD, sheet, null);
+		return renderWorld(RENDER_PASS.NONSTANDARD, sheet, null);
 	}
 
-	public void renderWorldGlass(int sheet)
+	public long renderWorldGlass(int sheet)
 	{
-		renderWorld(RENDER_PASS.GLASS, sheet, null);
+		return renderWorld(RENDER_PASS.GLASS, sheet, null);
 	}
 
 	public void renderWorldSelected(int sheet, boolean[] selectedMap)
@@ -3927,7 +3927,9 @@ public class Chunk {
 	 * @param sheet Which texture sheet are we currently rendering?
 	 * @param selectedMap If in RENDER_PASS.SELECTED, here's a HashMap to which ones to highlight.
 	 */
-	public void renderWorld(RENDER_PASS pass, int sheet, boolean[] selectedMap) {
+	public long renderWorld(RENDER_PASS pass, int sheet, boolean[] selectedMap) {
+
+		long time_start = System.currentTimeMillis();
 
 		float worldX = this.x*16;
 		float worldZ = this.z*16;
@@ -4551,6 +4553,8 @@ public class Chunk {
 				}
 			}
 		}
+		long time_end = System.currentTimeMillis();
+		return (time_end-time_start);
 	}
 
 	/**
@@ -4660,26 +4664,28 @@ public class Chunk {
 		}
 	}
 	
-	public void renderSolid(int sheet) {
+	public long renderSolid(int sheet) {
+		long time = 0;
 		if (!this.usedTextureSheets.containsKey(sheet))
 		{
-			return;
+			return time;
 		}
 		if(isDirty.get(sheet)) {
 				GL11.glNewList(this.displayListNums.get(sheet), GL11.GL_COMPILE);
-				renderWorldSolids(sheet);
+				time += renderWorldSolids(sheet);
 				GL11.glEndList();
 				GL11.glNewList(this.nonstandardListNums.get(sheet), GL11.GL_COMPILE);
 				//GL11.glDepthMask(false);
-				renderWorldNonstandard(sheet);
+				time += renderWorldNonstandard(sheet);
 				//GL11.glDepthMask(true);
 				GL11.glEndList();
 				GL11.glNewList(this.glassListNums.get(sheet), GL11.GL_COMPILE);
-				renderWorldGlass(sheet);
+				time += renderWorldGlass(sheet);
 				GL11.glEndList();
 				this.isDirty.put(sheet, false);
 		}
 		GL11.glCallList(this.displayListNums.get(sheet));
+		return time;
 	}
 	
 	public void renderNonstandard(int sheet) {
