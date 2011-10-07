@@ -4062,78 +4062,100 @@ public class Chunk {
 									// below - should see if there's a way we can abstract this instead.  Also, I suspect
 									// that this is where we'd fix water rendering...
 									
-									// check above
-									if(y<127 && blockData.value[blockOffset+1] != BLOCK_BEDROCK.id) {
-										draw = true;
-										above = false;
-									}
-									
-									// check below
-									if(y>0 && blockData.value[blockOffset-1] != BLOCK_BEDROCK.id) {
-										draw = true;
-										below = false;
-									}
-									
-									// check north;
-									if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										north = false;
-									}
-								
-									// check south
-									if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										south = false;
-									}
-									
-									// check east
-									if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										east = false;
-									}
-									
-									// check west
-									if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										west = false;
+									switch (loopPass)
+									{
+										case TOP:
+											// check above
+											if(y<127 && blockData.value[blockOffset+1] != BLOCK_BEDROCK.id) {
+												draw = true;
+												above = false;
+											}
+											break;
+
+										case BOTTOM:
+											// check below
+											if(y>0 && blockData.value[blockOffset-1] != BLOCK_BEDROCK.id) {
+												draw = true;
+												below = false;
+											}
+											break;
+
+										case NORTHSOUTH:
+											// check north;
+											if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+												draw = true;
+												north = false;
+											}
+										
+											// check south
+											if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+												draw = true;
+												south = false;
+											}
+											break;
+
+										case EASTWEST:
+											// check east
+											if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+												draw = true;
+												east = false;
+											}
+											
+											// check west
+											if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+												draw = true;
+												west = false;
+											}
+											break;
 									}
 								}
 								else
 								{
-									// check above
-									if(y<127 && checkSolid(blockData.value[blockOffset+1])) {
-										draw = true;
-										above = false;
-									}
+									switch (loopPass)
+									{
+										case TOP:
+											// check above
+											if(y<127 && checkSolid(blockData.value[blockOffset+1])) {
+												draw = true;
+												above = false;
+											}
+											break;
+
+										case BOTTOM:
+											// check below
+											if(y>0 && checkSolid(blockData.value[blockOffset-1])) {
+												draw = true;
+												below = false;
+											}
+											break;
 									
-									// check below
-									if(y>0 && checkSolid(blockData.value[blockOffset-1])) {
-										draw = true;
-										below = false;
-									}
+										case NORTHSOUTH:
+											// check north;
+											if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset))) {
+												draw = true;
+												north = false;
+											}
+										
+											// check south
+											if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset))) {
+												draw = true;
+												south = false;
+											}
+											break;
 									
-									// check north;
-									if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset))) {
-										draw = true;
-										north = false;
-									}
-								
-									// check south
-									if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset))) {
-										draw = true;
-										south = false;
-									}
-									
-									// check east
-									if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset))) {
-										draw = true;
-										east = false;
-									}
-									
-									// check west
-									if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset))) {
-										draw = true;
-										west = false;
+										case EASTWEST:
+											// check east
+											if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset))) {
+												draw = true;
+												east = false;
+											}
+											
+											// check west
+											if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset))) {
+												draw = true;
+												west = false;
+											}
+											break;
 									}
 								}
 								break;
@@ -4450,63 +4472,91 @@ public class Chunk {
 										switch (dir)
 										{
 											case NORTH:
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+												switch (loopPass)
 												{
-													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
-												{
-													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
-												{
-													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-													east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+													case NORTHSOUTH:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+														{
+															north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+														{
+															south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+														}
+														break;
+													case EASTWEST:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+														{
+															west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+															east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+														}
+														break;
 												}
 												break;
 											case SOUTH:
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+												switch (loopPass)
 												{
-													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
-												{
-													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
-												{
-													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-													east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+													case NORTHSOUTH:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+														{
+															north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+														{
+															south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+														}
+														break;
+													case EASTWEST:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+														{
+															west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+															east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+														}
+														break;
 												}
 												break;
 											case WEST:
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+												switch (loopPass)
 												{
-													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
-												{
-													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
-												{
-													east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+													case NORTHSOUTH:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+														{
+															north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+															south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+														}
+														break;
+													case EASTWEST:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+														{
+															west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+														{
+															east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+														}
+														break;
 												}
 												break;
 											case EAST:
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+												switch (loopPass)
 												{
-													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
-												{
-													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
-												{
-													east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+													case NORTHSOUTH:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+														{
+															north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+															south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+														}
+														break;
+													case EASTWEST:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+														{
+															west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+														{
+															east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+														}
+														break;
 												}
 												break;
 										}
@@ -4514,38 +4564,55 @@ public class Chunk {
 										// Top/Bottom doesn't depend on orientation, at least for anything currently in Minecraft.
 										// If Minecraft starts adding blocks that can be oriented Up or Down, we'll have to move
 										// this back into the case statement above
-										if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.TOP))
+										switch (loopPass)
 										{
-											top_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.TOP) + tex_offset;
-										}
-										if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BOTTOM))
-										{
-											bottom_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BOTTOM) + tex_offset;
+											case TOP:
+												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.TOP))
+												{
+													top_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.TOP) + tex_offset;
+												}
+												break;
+											case BOTTOM:
+												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BOTTOM))
+												{
+													bottom_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BOTTOM) + tex_offset;
+												}
+												break;
 										}
 									}
 
 									// Finally, we're to the point of actually rendering the solid
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.EASTWEST)
+									switch (loopPass)
 									{
-										if(!east) this.renderWestEast(east_t, worldX+x, y, worldZ+z);
-										if(!west) this.renderWestEast(west_t, worldX+x, y, worldZ+z+1);
+										case EASTWEST:
+											if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.EASTWEST)
+											{
+												if(!east) this.renderWestEast(east_t, worldX+x, y, worldZ+z);
+												if(!west) this.renderWestEast(west_t, worldX+x, y, worldZ+z+1);
+											}
+											break;
+										case BOTTOM:
+											if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.BOTTOM)
+											{
+												if(!below) this.renderTopDown(bottom_t, worldX+x, y, worldZ+z);
+											}
+											break;
+										case TOP:
+											if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.TOP)
+											{
+												if(!above) this.renderTopDown(top_t, worldX+x, y+1, worldZ+z);	
+											}
+											break;
+										case NORTHSOUTH:
+											if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.NORTHSOUTH)
+											{
+												if(!north) this.renderNorthSouth(north_t, worldX+x, y, worldZ+z);
+												if(!south) this.renderNorthSouth(south_t, worldX+x+1, y, worldZ+z);
+											}
+											break;
 									}
-									
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.BOTTOM)
-									{
-										if(!below) this.renderTopDown(bottom_t, worldX+x, y, worldZ+z);
-									}
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.TOP)
-									{
-										if(!above) this.renderTopDown(top_t, worldX+x, y+1, worldZ+z);	
-									}
-									
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.NORTHSOUTH)
-									{
-										if(!north) this.renderNorthSouth(north_t, worldX+x, y, worldZ+z);
-										if(!south) this.renderNorthSouth(south_t, worldX+x+1, y, worldZ+z);
-									}
-							}					
+									break;
+							}
 						}
 					}
 				}
