@@ -713,6 +713,11 @@ blocks:
     name: Farmland
     mapcolor: [95, 58, 30]
     tex: [6, 5]
+    tex_direction:
+      FORWARD: [2, 0]
+      SIDES: [2, 0]
+      BACKWARD: [2, 0]
+      BOTTOM: [2, 0]
   
   - id: 61
     idStr: FURNACE

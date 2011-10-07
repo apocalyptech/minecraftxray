@@ -14,6 +14,7 @@
     slightly more accurate.
   * Slime-spawning chunks can be highlighted with the "M" key.
   * Highlighting on solid blocks so they look more three-dimensional
+  * Farmland block tweaked slightly
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 
