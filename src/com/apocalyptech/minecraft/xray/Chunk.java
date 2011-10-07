@@ -65,6 +65,12 @@ public class Chunk {
 	public boolean isOnMinimap;
 	private CompoundTag chunkData;
 	private ShortArrayTag blockData;
+	private short[][] solidTopBlocks;
+	private short[][] solidBottomBlocks;
+	private short[][] solidNorthSouthBlocks;
+	private short[][] solidWestEastBlocks;
+	private short[][] solidOtherBlocks;
+	boolean generated_blockarrs = false;
 	private ByteArrayTag mapData;
 	private ArrayList<PaintingEntity> paintings;
 	
@@ -90,7 +96,8 @@ public class Chunk {
 		TOP,
 		BOTTOM,
 		EASTWEST,
-		NORTHSOUTH
+		NORTHSOUTH,
+		OTHER
 	}
 	
 	public Chunk(MinecraftLevel level, Tag data) {
@@ -125,6 +132,7 @@ public class Chunk {
 
 		// Compute which texture sheets are in-use by this chunk
 		// Much of this is copied from our main render loop, way down below
+		int max_sheet = 0;
 		this.usedTextureSheets = new HashMap<Integer, Boolean>();
 		for(int x=0; x<16; x++) {
 			int xOff = (x * 128 * 16);
@@ -143,6 +151,10 @@ public class Chunk {
 						block = BLOCK_UNKNOWN;
 					}
 					this.usedTextureSheets.put(block.getTexSheet(), true);
+					if (block.getTexSheet() > max_sheet)
+					{
+						max_sheet = block.getTexSheet();
+					}
 				}
 			}
 		}
@@ -173,6 +185,16 @@ public class Chunk {
 				(long) (this.z * this.z) * 0x4307a7L +
 				(long) (this.z * 0x5f24f) ^ 0x3ad8025f);
 		this.willSpawnSlimes = (rnd.nextInt(10) == 0);
+
+		// Oh, memory...
+		for (int i=0; i<=max_sheet; i++)
+		{
+			solidTopBlocks = new short[max_sheet+1][];
+			solidBottomBlocks = new short[max_sheet+1][];
+			solidNorthSouthBlocks = new short[max_sheet+1][];
+			solidWestEastBlocks = new short[max_sheet+1][];
+			solidOtherBlocks = new short[max_sheet+1][];
+		}
 		
 		//System.out.println(data);
 		//System.exit(0);
@@ -3919,6 +3941,148 @@ public class Chunk {
 	{
 		renderWorld(RENDER_PASS.SELECTED, sheet, selectedMap);
 	}
+
+	public void classifyBlocks(int sheet)
+	{
+		int x, y, z;
+		int xOff, zOff, blockOffset;
+		short t;
+		BlockType block;
+		int textureId;
+
+		int count = 0;
+
+		solidTopBlocks[sheet] = new short[65536];
+		solidBottomBlocks[sheet] = new short[65536];
+		solidNorthSouthBlocks[sheet] = new short[65536];
+		solidWestEastBlocks[sheet] = new short[65536];
+		solidOtherBlocks[sheet] = new short[65536];
+
+		for(x=0; x<16; x++) {
+			xOff = (x * 128 * 16);
+			for(z=0; z<16; z++) {
+				zOff = (z * 128);
+				blockOffset = zOff + xOff-1;
+				for(y=0; y<128; y++) {
+					blockOffset++;
+
+					// Grab our block type
+					t = blockData.value[blockOffset];
+					if(t < 1) {
+						continue;
+					}
+
+					// Get the actual BlockType object
+					block = blockArray[t];
+					if (block == null)
+					{
+						block = BLOCK_UNKNOWN;
+						t = block.id;
+					}
+
+					// Check our texture sheet
+					if (sheet != block.getTexSheet())
+					{
+						continue;
+					}
+					
+					// Grab our texture ID and verify it
+					textureId = block.tex_idx;
+					if(textureId == -1) {
+						continue;
+					}
+
+					// Check for some specific types
+					if (block.type == BLOCK_TYPE.WATER ||
+							block.type == BLOCK_TYPE.GLASS ||
+							block.type == BLOCK_TYPE.SOLID_PANE ||
+							block.type == BLOCK_TYPE.AIR_PORTAL)
+					{
+						solidOtherBlocks[sheet][blockOffset] = t;
+						continue;
+					}
+
+					// Now we get into the meat of things...
+					if (block.isSolid())
+					{
+						// Check for adjacent blocks
+						if (XRay.toggle.render_bedrock && t == BLOCK_BEDROCK.id)
+						{
+							// This block of code was more or less copied/modified directly from the "else" block
+							// below - should see if there's a way we can abstract this instead.  Also, I suspect
+							// that this is where we'd fix water rendering...
+							
+							// check above
+							if(y<127 && blockData.value[blockOffset+1] != BLOCK_BEDROCK.id) {
+								solidTopBlocks[sheet][blockOffset] = t;
+							}
+							
+							// check below
+							if(y>0 && blockData.value[blockOffset-1] != BLOCK_BEDROCK.id) {
+								solidBottomBlocks[sheet][blockOffset] = t;
+							}
+							
+							// check north;
+							if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+								solidNorthSouthBlocks[sheet][blockOffset] = t;
+							}
+						
+							// check south
+							if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+								solidNorthSouthBlocks[sheet][blockOffset] = t;
+							}
+							
+							// check east
+							if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+								solidWestEastBlocks[sheet][blockOffset] = t;
+							}
+							
+							// check west
+							if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+								solidWestEastBlocks[sheet][blockOffset] = t;
+							}
+						}
+						else
+						{
+							// check above
+							if(y<127 && checkSolid(blockData.value[blockOffset+1])) {
+								solidTopBlocks[sheet][blockOffset] = t;
+							}
+							
+							// check below
+							if(y>0 && checkSolid(blockData.value[blockOffset-1])) {
+								solidBottomBlocks[sheet][blockOffset] = t;
+							}
+							
+							// check north;
+							if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset))) {
+								solidNorthSouthBlocks[sheet][blockOffset] = t;
+							}
+						
+							// check south
+							if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset))) {
+								solidNorthSouthBlocks[sheet][blockOffset] = t;
+							}
+							
+							// check east
+							if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset))) {
+								solidWestEastBlocks[sheet][blockOffset] = t;
+							}
+							
+							// check west
+							if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset))) {
+								solidWestEastBlocks[sheet][blockOffset] = t;
+							}
+						}
+					}
+					else
+					{
+						solidOtherBlocks[sheet][blockOffset] = t;
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Renders our chunk.
@@ -3951,6 +4115,7 @@ public class Chunk {
 		int textureId;
 		byte data;
 		int north_t, south_t, west_t, east_t, top_t, bottom_t;
+		short[] ourData;
 
 		// This is to support dynamically highlighting "regular" blocks based on their
 		// face.  It's quite slow to do the tinting down at the bottom on a per-block
@@ -3964,7 +4129,7 @@ public class Chunk {
 		}
 		else
 		{
-			loopPasses = new SOLID_PASS[] { SOLID_PASS.TOP };
+			loopPasses = new SOLID_PASS[] { SOLID_PASS.OTHER };
 		}
 
 		for (SOLID_PASS loopPass :  loopPasses)
@@ -3976,18 +4141,31 @@ public class Chunk {
 				switch (loopPass)
 				{
 					case TOP:
+						ourData = solidTopBlocks[sheet];
 						GL11.glColor3f(1f, 1f, 1f);
 						break;
 					case BOTTOM:
+						ourData = solidBottomBlocks[sheet];
 						GL11.glColor3f(.5f, .5f, .5f);
 						break;
 					case EASTWEST:
+						ourData = solidWestEastBlocks[sheet];
 						GL11.glColor3f(.83f, .83f, .83f);
 						break;
 					case NORTHSOUTH:
+						ourData = solidNorthSouthBlocks[sheet];
 						GL11.glColor3f(.66f, .66f, .66f);
 						break;
+					case OTHER:
+					default:
+						ourData = solidOtherBlocks[sheet];
+						GL11.glColor3f(1f, 1f, 1f);
+						break;
 				}
+			}
+			else
+			{
+				ourData = solidOtherBlocks[sheet];
 			}
 		
 			for(x=0; x<16; x++) {
@@ -4000,55 +4178,62 @@ public class Chunk {
 						adj_torch = false;
 
 						// Grab our block type
-						t = blockData.value[blockOffset];
+						t = ourData[blockOffset];
 						if(t < 1) {
 							continue;
 						}
 
-						// Get the actual BlockType object
-						block = blockArray[t];
-						if (block == null)
+						if (pass == RENDER_PASS.SELECTED)
 						{
-							//System.out.println("Unknown block ID: " + t);
-							block = BLOCK_UNKNOWN;
-						}
+							// Get the actual BlockType object
+							block = blockArray[t];
+							if (block == null)
+							{
+								//System.out.println("Unknown block ID: " + t);
+								block = BLOCK_UNKNOWN;
+							}
 
-						// Check our texture sheet
-						if (sheet != block.getTexSheet())
-						{
-							continue;
+							// Check our texture sheet
+							if (sheet != block.getTexSheet())
+							{
+								continue;
+							}
+							
+							// Grab our texture ID and verify it
+							textureId = block.tex_idx;
+							if(textureId == -1) {
+								//System.out.println("Unknown block id: " + t);
+								continue;
+							}
 						}
-						
-						// Doublecheck for water
-						if ((pass != RENDER_PASS.NONSTANDARD && block.type == BLOCK_TYPE.WATER) ||
-								(!XRay.toggle.render_water && block.type == BLOCK_TYPE.WATER))
+						else
 						{
-							continue;
+							block = blockArray[t];
+							textureId = block.tex_idx;
 						}
+							
+						if (pass != RENDER_PASS.SOLIDS)
+						{
+							// Doublecheck for water
+							if ((pass != RENDER_PASS.NONSTANDARD && block.type == BLOCK_TYPE.WATER) ||
+									(!XRay.toggle.render_water && block.type == BLOCK_TYPE.WATER))
+							{
+								continue;
+							}
 
-						// Doublecheck for glass stuffs
-						if ((pass == RENDER_PASS.GLASS && (block.type != BLOCK_TYPE.GLASS && block.type != BLOCK_TYPE.SOLID_PANE && block.type != BLOCK_TYPE.AIR_PORTAL)) ||
-								(pass != RENDER_PASS.SELECTED &&
-								 pass != RENDER_PASS.GLASS && (block.type == BLOCK_TYPE.GLASS || block.type == BLOCK_TYPE.SOLID_PANE || block.type == BLOCK_TYPE.AIR_PORTAL)))
-						{
-							continue;
-						}
-						
-						// Grab our texture ID and verify it
-						textureId = block.tex_idx;
-						if(textureId == -1) {
-							//System.out.println("Unknown block id: " + t);
-							continue;
+							// Doublecheck for glass stuffs
+							if ((pass == RENDER_PASS.GLASS && (block.type != BLOCK_TYPE.GLASS && block.type != BLOCK_TYPE.SOLID_PANE && block.type != BLOCK_TYPE.AIR_PORTAL)) ||
+									(pass != RENDER_PASS.SELECTED &&
+									 pass != RENDER_PASS.GLASS && (block.type == BLOCK_TYPE.GLASS || block.type == BLOCK_TYPE.SOLID_PANE || block.type == BLOCK_TYPE.AIR_PORTAL)))
+							{
+								continue;
+							}
 						}
 						
 						// Set up our intitial drawing parameters
 						switch (pass)
 						{
 							case SOLIDS:
-								if (!block.isSolid())
-								{
-									continue;
-								}
 								draw = false;
 								above = true;
 								below = true;
@@ -4060,91 +4245,75 @@ public class Chunk {
 								// Check for adjacent blocks
 								if (XRay.toggle.render_bedrock && t == BLOCK_BEDROCK.id)
 								{
-									// This block of code was more or less copied/modified directly from the "else" block
-									// below - should see if there's a way we can abstract this instead.  Also, I suspect
-									// that this is where we'd fix water rendering...
-									
-									// check above
-									if(y<127 && blockData.value[blockOffset+1] != BLOCK_BEDROCK.id) {
-										draw = true;
-										above = false;
-									}
-									
-									// check below
-									if(y>0 && blockData.value[blockOffset-1] != BLOCK_BEDROCK.id) {
-										draw = true;
-										below = false;
-									}
-									
-									// check north;
-									if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										north = false;
-									}
-								
-									// check south
-									if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										south = false;
-									}
-									
-									// check east
-									if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										east = false;
-									}
-									
-									// check west
-									if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										west = false;
+									switch (loopPass)
+									{
+										case TOP:
+											draw = true;
+											above = false;
+											break;
+										case BOTTOM:
+											draw = true;
+											below = false;
+											break;
+										case NORTHSOUTH:
+											if (this.getAdjNorthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+												draw = true;
+												north = false;
+											}
+											if (this.getAdjSouthBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+												draw = true;
+												south = false;
+											}
+											break;
+										case EASTWEST:
+											if (this.getAdjEastBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+												draw = true;
+												east = false;
+											}
+											if (this.getAdjWestBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
+												draw = true;
+												west = false;
+											}
+											break;
 									}
 								}
 								else
 								{
-									// check above
-									if(y<127 && checkSolid(blockData.value[blockOffset+1])) {
-										draw = true;
-										above = false;
-									}
-									
-									// check below
-									if(y>0 && checkSolid(blockData.value[blockOffset-1])) {
-										draw = true;
-										below = false;
-									}
-									
-									// check north;
-									if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset))) {
-										draw = true;
-										north = false;
-									}
-								
-									// check south
-									if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset))) {
-										draw = true;
-										south = false;
-									}
-									
-									// check east
-									if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset))) {
-										draw = true;
-										east = false;
-									}
-									
-									// check west
-									if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset))) {
-										draw = true;
-										west = false;
+									switch (loopPass)
+									{
+										case TOP:
+											draw = true;
+											above = false;
+											break;
+										case BOTTOM:
+											draw = true;
+											below = false;
+											break;
+										case NORTHSOUTH:
+											if (checkSolid(this.getAdjNorthBlockId(x, y, z, blockOffset))) {
+												draw = true;
+												north = false;
+											}
+											if (checkSolid(this.getAdjSouthBlockId(x, y, z, blockOffset))) {
+												draw = true;
+												south = false;
+											}
+											break;
+										case EASTWEST:
+											if (checkSolid(this.getAdjEastBlockId(x, y, z, blockOffset))) {
+												draw = true;
+												east = false;
+											}
+											if (checkSolid(this.getAdjWestBlockId(x, y, z, blockOffset))) {
+												draw = true;
+												west = false;
+											}
+											break;
 									}
 								}
 								break;
 
 							case NONSTANDARD:
-								if (block.isSolid())
-								{
-									continue;
-								}
 								draw = true;
 								break;
 
@@ -4229,116 +4398,118 @@ public class Chunk {
 							}
 
 							// Now process the actual drawing
-							switch(block.type)
+							if (loopPass == SOLID_PASS.OTHER)
 							{
-								case TORCH:
-									renderTorch(textureId,x,y,z);
-									break;
-								case DECORATION_CROSS:
-									renderCrossDecoration(textureId,x,y,z);
-									break;
-								case CROPS:
-									renderCrops(textureId,x,y,z,block,tex_offset);
-									break;
-								case NETHER_WART:
-									renderNetherWart(textureId,x,y,z,block,tex_offset);
-									break;
-								case LADDER:
-									renderLadder(textureId,x,y,z);
-									break;
-								case FLOOR:
-									renderFloor(textureId,x,y,z);
-									break;
-								case MINECART_TRACKS:
-									renderMinecartTracks(textureId,x,y,z,block,tex_offset);
-									break;
-								case SIMPLE_RAIL:
-									renderSimpleRail(textureId,x,y,z,block,tex_offset);
-									break;
-								case PRESSURE_PLATE:
-									renderPlate(textureId,x,y,z);
-									break;
-								case DOOR:
-									renderDoor(textureId,x,y,z,block,tex_offset);
-									break;
-								case STAIRS:
-									renderStairs(textureId,x,y,z);
-									break;
-								case SIGNPOST:
-									renderSignpost(textureId,x,y,z);
-									break;
-								case WALLSIGN:
-									renderWallSign(textureId,x,y,z);
-									break;
-								case FENCE:
-									renderFence(textureId,x,y,z,blockOffset,t);
-									break;
-								case FENCE_GATE:
-									renderFenceGate(textureId,x,y,z,blockOffset);
-									break;
-								case LEVER:
-									renderLever(textureId,x,y,z);
-									break;
-								case BUTTON:
-									renderButton(textureId,x,y,z);
-									break;
-								case PORTAL:
-									renderPortal(textureId,x,y,z,blockOffset,t);
-									break;
-								case THINSLICE:
-									renderThinslice(textureId,x,y,z);
-									break;
-								case BED:
-									renderBed(textureId,x,y,z,block,tex_offset);
-									break;
-								case TRAPDOOR:
-									renderTrapdoor(textureId,x,y,z);
-									break;
-								case PISTON_BODY:
-									renderPistonBody(textureId,x,y,z,block,tex_offset);
-									break;
-								case PISTON_HEAD:
-									renderPistonHead(textureId,x,y,z,block,tex_offset,false,false);
-									break;
-								case CAKE:
-									renderCake(textureId,x,y,z,block,tex_offset);
-									break;
-								case VINE:
-									renderVine(textureId,x,y,z,blockOffset);
-									break;
-								case SOLID_PANE:
-									renderSolidPane(textureId,x,y,z,blockOffset,t);
-									break;
-								case CHEST:
-									renderChest(textureId,x,y,z,blockOffset,block,tex_offset);
-									break;
-								case STEM:
-									renderStem(textureId,x,y,z,blockOffset,block,tex_offset);
-									break;
-								case HALFHEIGHT:
-									renderHalfHeight(textureId,x,y,z,blockOffset);
-									break;
-								case CAULDRON:
-									renderCauldron(textureId,x,y,z,blockOffset,block,tex_offset);
-									break;
-								case ENCHANTMENT_TABLE:
-									renderEnchantmentTable(textureId,x,y,z,blockOffset,block,tex_offset);
-									break;
-								case BREWING_STAND:
-									renderBrewingStand(textureId,x,y,z,block,tex_offset);
-									break;
-								case SEMISOLID:
-								case WATER:
-								case GLASS:
-									renderSemisolid(textureId,x,y,z,blockOffset,t);
-									break;
-								case AIR_PORTAL:
-									renderAirPortal(textureId,x,y,z,blockOffset,t);
-									break;
-
-								case NORMAL:
-								case HUGE_MUSHROOM:
-								default:
+								switch(block.type)
+								{
+									case TORCH:
+										renderTorch(textureId,x,y,z);
+										break;
+									case DECORATION_CROSS:
+										renderCrossDecoration(textureId,x,y,z);
+										break;
+									case CROPS:
+										renderCrops(textureId,x,y,z,block,tex_offset);
+										break;
+									case NETHER_WART:
+										renderNetherWart(textureId,x,y,z,block,tex_offset);
+										break;
+									case LADDER:
+										renderLadder(textureId,x,y,z);
+										break;
+									case FLOOR:
+										renderFloor(textureId,x,y,z);
+										break;
+									case MINECART_TRACKS:
+										renderMinecartTracks(textureId,x,y,z,block,tex_offset);
+										break;
+									case SIMPLE_RAIL:
+										renderSimpleRail(textureId,x,y,z,block,tex_offset);
+										break;
+									case PRESSURE_PLATE:
+										renderPlate(textureId,x,y,z);
+										break;
+									case DOOR:
+										renderDoor(textureId,x,y,z,block,tex_offset);
+										break;
+									case STAIRS:
+										renderStairs(textureId,x,y,z);
+										break;
+									case SIGNPOST:
+										renderSignpost(textureId,x,y,z);
+										break;
+									case WALLSIGN:
+										renderWallSign(textureId,x,y,z);
+										break;
+									case FENCE:
+										renderFence(textureId,x,y,z,blockOffset,t);
+										break;
+									case FENCE_GATE:
+										renderFenceGate(textureId,x,y,z,blockOffset);
+										break;
+									case LEVER:
+										renderLever(textureId,x,y,z);
+										break;
+									case BUTTON:
+										renderButton(textureId,x,y,z);
+										break;
+									case PORTAL:
+										renderPortal(textureId,x,y,z,blockOffset,t);
+										break;
+									case THINSLICE:
+										renderThinslice(textureId,x,y,z);
+										break;
+									case BED:
+										renderBed(textureId,x,y,z,block,tex_offset);
+										break;
+									case TRAPDOOR:
+										renderTrapdoor(textureId,x,y,z);
+										break;
+									case PISTON_BODY:
+										renderPistonBody(textureId,x,y,z,block,tex_offset);
+										break;
+									case PISTON_HEAD:
+										renderPistonHead(textureId,x,y,z,block,tex_offset,false,false);
+										break;
+									case CAKE:
+										renderCake(textureId,x,y,z,block,tex_offset);
+										break;
+									case VINE:
+										renderVine(textureId,x,y,z,blockOffset);
+										break;
+									case SOLID_PANE:
+										renderSolidPane(textureId,x,y,z,blockOffset,t);
+										break;
+									case CHEST:
+										renderChest(textureId,x,y,z,blockOffset,block,tex_offset);
+										break;
+									case STEM:
+										renderStem(textureId,x,y,z,blockOffset,block,tex_offset);
+										break;
+									case HALFHEIGHT:
+										renderHalfHeight(textureId,x,y,z,blockOffset);
+										break;
+									case CAULDRON:
+										renderCauldron(textureId,x,y,z,blockOffset,block,tex_offset);
+										break;
+									case ENCHANTMENT_TABLE:
+										renderEnchantmentTable(textureId,x,y,z,blockOffset,block,tex_offset);
+										break;
+									case BREWING_STAND:
+										renderBrewingStand(textureId,x,y,z,block,tex_offset);
+										break;
+									case SEMISOLID:
+									case WATER:
+									case GLASS:
+										renderSemisolid(textureId,x,y,z,blockOffset,t);
+										break;
+									case AIR_PORTAL:
+										renderAirPortal(textureId,x,y,z,blockOffset,t);
+										break;
+								}
+							}
+							else
+							{
 									north_t = textureId;
 									south_t = textureId;
 									west_t = textureId;
@@ -4449,80 +4620,93 @@ public class Chunk {
 											dir = BlockType.DIRECTION_ABS.NORTH;
 										}
 
-										switch (dir)
+										switch (loopPass)
 										{
-											case NORTH:
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+											case NORTHSOUTH:
+												switch (dir)
 												{
-													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
-												{
-													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
-												{
-													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-													east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												}
-												break;
-											case SOUTH:
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
-												{
-													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
-												{
-													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
-												{
-													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-													east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												}
-												break;
-											case WEST:
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
-												{
-													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
-												{
-													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
-												{
-													east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+													case NORTH:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+														{
+															north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+														{
+															south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+														{
+															west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+															east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+														}
+														break;
+													case SOUTH:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+														{
+															north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+														{
+															south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+														{
+															west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+															east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+														}
+														break;
 												}
 												break;
-											case EAST:
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
-												{
-													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
-												{
-													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
-												}
-												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
-												{
-													east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
-												}
-												break;
-										}
 
-										// Top/Bottom doesn't depend on orientation, at least for anything currently in Minecraft.
-										// If Minecraft starts adding blocks that can be oriented Up or Down, we'll have to move
-										// this back into the case statement above
-										if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.TOP))
-										{
-											top_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.TOP) + tex_offset;
-										}
-										if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BOTTOM))
-										{
-											bottom_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BOTTOM) + tex_offset;
+											case EASTWEST:
+												switch (dir)
+												{
+													case WEST:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+														{
+															north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+															south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+														{
+															west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+														{
+															east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+														}
+														break;
+													case EAST:
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
+														{
+															north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+															south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
+														{
+															west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
+														}
+														if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
+														{
+															east_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
+														}
+														break;
+												}
+												break;
+
+											case TOP:
+												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.TOP))
+												{
+													top_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.TOP) + tex_offset;
+												}
+												break;
+
+											case BOTTOM:
+												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BOTTOM))
+												{
+													bottom_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BOTTOM) + tex_offset;
+												}
+												break;
 										}
 									}
 
@@ -4671,6 +4855,7 @@ public class Chunk {
 			return time;
 		}
 		if(isDirty.get(sheet)) {
+				classifyBlocks(sheet);
 				GL11.glNewList(this.displayListNums.get(sheet), GL11.GL_COMPILE);
 				time += renderWorldSolids(sheet);
 				GL11.glEndList();
