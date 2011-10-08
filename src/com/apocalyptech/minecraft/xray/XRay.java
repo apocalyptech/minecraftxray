@@ -26,6 +26,11 @@
  */
 package com.apocalyptech.minecraft.xray;
 
+import com.apocalyptech.minecraft.xray.dialog.JumpDialog;
+import com.apocalyptech.minecraft.xray.dialog.WarningDialog;
+import com.apocalyptech.minecraft.xray.dialog.ExceptionDialog;
+import com.apocalyptech.minecraft.xray.dialog.ResolutionDialog;
+
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -870,7 +875,11 @@ public class XRay
 
 			// minecraft textures
 			minecraftTextures = new ArrayList<Texture>();
-			for (BufferedImage image : MinecraftEnvironment.getMinecraftTexture())
+			ArrayList<BufferedImage> textureImages = MinecraftEnvironment.getMinecraftTexture();
+			if (textureImages == null)
+			{
+			}
+			for (BufferedImage image : textureImages)
 			{
 				Texture newtex = TextureTool.allocateTexture(image, GL11.GL_NEAREST);
 				newtex.update();

@@ -73,3 +73,5 @@
    the algorithm may change depending on the version of Minecraft in use.
 
  * Snow has data, as it turns out...
+
+ * Figure out why loading in nonexistant chunks seems to glitch the app so much

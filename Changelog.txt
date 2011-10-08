@@ -3,7 +3,7 @@
   * Support for effectively unlimited block textures
   * Stems now connect to neighboring fruit properly
   * The "C" key will toggle the new-style fence connection rendering,
-    introduced in Beta 1.9
+    introduced in Beta 1.9-pre2
   * Slight improvements to fence and fence gate rendering accuracy
   * Silverfish block ID changed from STONE_SILVERFISH to SILVERFISH
   * The "V" key will toggle Silverfish block highlighting on/off now.
@@ -15,10 +15,11 @@
   * Slime-spawning chunks can be highlighted with the "M" key.
   * Highlighting on solid blocks so they look more three-dimensional
   * Farmland block tweaked slightly
+  * Support for the new Beta 1.9-pre3 blocks
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 
-  * Support for all Beta 1.9 blocks
+  * Support for all Beta 1.9-pre1 blocks
   * Various rendering improvements to water, glass, glass panes, iron
     bars, fence gates, crops, and slabs (though transparency issues do
 	continue to persist)

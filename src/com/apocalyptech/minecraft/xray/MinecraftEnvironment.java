@@ -569,6 +569,10 @@ public class MinecraftEnvironment {
 		throws BlockTypeLoadException
 	{
 		BufferedImage bi = buildImageFromInput(getMinecraftTextureData());
+		if (bi == null)
+		{
+			return null;
+		}
 		Graphics2D g2d = bi.createGraphics();
 		
 		// Figure out our square size, and then check to see if the grass tile is

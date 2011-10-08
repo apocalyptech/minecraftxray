@@ -24,8 +24,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.apocalyptech.minecraft.xray;
+package com.apocalyptech.minecraft.xray.dialog;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -66,7 +68,7 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
 import javax.swing.JComponent;
-import javax.swing.JCheckBox;
+import javax.swing.JScrollPane;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 import javax.swing.AbstractAction;
@@ -77,22 +79,22 @@ import javax.swing.plaf.metal.MetalBorders.TextFieldBorder;
 
 /**
  */
-public class WarningDialog extends JFrame {
-	private static final long serialVersionUID = 1185056716578355842L;
-	private static final int FRAMEWIDTH = 400;
-	private static final int FRAMEHEIGHT = 250;
-
-	private JCheckBox showCheckbox;
+public class ExceptionDialog extends JFrame {
+	static final long serialVersionUID = -6144075797607274601L;
+	private static final int FRAMEWIDTH = 800;
+	private static final int FRAMEHEIGHT = 400;
 
 	private JButton okButton;
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
 	private JTextArea mainLabel;
-
-	public static boolean selectedShow;
+	private JScrollPane mainPane;
 	
 	public static Image iconImage;
+
+	private static String extraStatus1;
+	private static String extraStatus2;
 
 	/***
 	 * Centers this dialog on the screen
@@ -113,27 +115,37 @@ public class WarningDialog extends JFrame {
 	/***
 	 * Layouts all the controls and labels on the dialog using a gridbaglayout
 	 */
-	private void layoutControlsOnDialog() {
+	private void layoutControlsOnDialog(String windowName) {
 		basicPanel = new JPanel();
 		
 		this.getContentPane().setLayout(gridBagLayoutManager);
 		basicPanel.setLayout(gridBagLayoutManager);
 		GridBagConstraints c = new GridBagConstraints();
 		
-		JLabel headerLabel = new JLabel("Warning");
+		JLabel headerLabel = new JLabel(windowName);
 		headerLabel.setFont(new Font("Arial", Font.BOLD, 18));
-		
-		float flabel = 0.1f;
-		float flist = 1.9f;
+
+		JLabel reportLabel = new JLabel("If you report this error, please be sure to include the full text of this exception.");
+		reportLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+
+		JLabel extraStatusLabel1 = null;
+		if (extraStatus1 != null)
+		{
+			extraStatusLabel1 = new JLabel(extraStatus1);
+			extraStatusLabel1.setFont(new Font("Arial", Font.PLAIN, 12));
+		}
+
+		JLabel extraStatusLabel2 = null;
+		if (extraStatus2 != null)
+		{
+			extraStatusLabel2 = new JLabel(extraStatus2);
+			extraStatusLabel2.setFont(new Font("Arial", Font.PLAIN, 12));
+		}
 
 		int current_grid_y = 0;
 		
 		c.insets = new Insets(5,5,5,5);
 		c.weighty = .1f;
-
-		// Checkbox to see if we'll show this warning in the future
-		showCheckbox = new JCheckBox("Show this warning next time");
-		showCheckbox.setSelected(true);
 
 		// Now actually add the buttons
 		c.insets = new Insets(5, 5, 5, 5);
@@ -142,22 +154,44 @@ public class WarningDialog extends JFrame {
 		c.weightx = 1f;
 		c.weighty = 0f;
 		c.anchor = GridBagConstraints.CENTER;
+
+		// Header
 		current_grid_y++;
 		c.gridy = current_grid_y;
 		addComponent(basicPanel, headerLabel, c);
+
+		// Extra Status Label 1
+		if (extraStatusLabel1 != null)
+		{
+			current_grid_y++;
+			c.gridy = current_grid_y;
+			addComponent(basicPanel, extraStatusLabel1, c);
+		}
+
+		// Extra Status Label 2
+		if (extraStatusLabel2 != null)
+		{
+			current_grid_y++;
+			c.gridy = current_grid_y;
+			addComponent(basicPanel, extraStatusLabel2, c);
+		}
+
+		// the main exception pane
 		current_grid_y++;
 		c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.weighty = 1f;
 		c.fill = GridBagConstraints.BOTH;
-		addComponent(basicPanel, mainLabel, c);
+		addComponent(basicPanel, mainPane, c);
+
+		// Also add a bit about reporting errors
 		current_grid_y++;
 		c.gridy = current_grid_y;
-		c.weighty = 0f;
 		c.weightx = 1f;
-		c.anchor = GridBagConstraints.EAST;
+		c.weighty = 0f;
+		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.NONE;
-		addComponent(basicPanel, showCheckbox, c);
+		addComponent(basicPanel, reportLabel, c);
 		
 		// Add our JPanel to the window
 		c.weightx = 1.0f;  
@@ -216,11 +250,13 @@ public class WarningDialog extends JFrame {
 
 		// Main label
 		mainLabel  = new JTextArea(warningText);
-		mainLabel.setLineWrap(true);
-		mainLabel.setWrapStyleWord(true);
+		mainLabel.setLineWrap(false);
 		mainLabel.setEditable(false);
 		mainLabel.setMargin(new Insets(8, 8, 8, 8));
 		mainLabel.setBorder(new CompoundBorder(new TextFieldBorder(), new EmptyBorder(6, 6, 6, 6)));
+
+		// Scrollpane
+		mainPane = new JScrollPane(mainLabel);
 
 	}
 
@@ -229,31 +265,81 @@ public class WarningDialog extends JFrame {
 	 */
 	private void dialogOK()
 	{
-		setSelectedValues();
 		setVisible(false);
 		dispose();
-		synchronized(WarningDialog.this) {
-			WarningDialog.this.notify();
+		synchronized(ExceptionDialog.this) {
+			ExceptionDialog.this.notify();
 		}
 	}
 	
-	/***
-	 * Sets the selected values to the static properties of this resolution dialog
+	/**
+	 * We have a couple of extra strings to keep track of status information.
+	 * this method clears them out.
 	 */
-	private void setSelectedValues() {
-		WarningDialog.selectedShow = this.showCheckbox.isSelected();
+	public static void clearExtraStatus()
+	{
+		clearExtraStatus1();
+		clearExtraStatus2();
 	}
-	
+
+	/**
+	 * Sets our first extra-status string.
+	 */
+	public static void setExtraStatus1(String newStatus)
+	{
+		extraStatus1 = newStatus;
+	}
+
+	/**
+	 * Gets our first extra-status string.
+	 */
+	public static String getExtraStatus1()
+	{
+		return extraStatus1;
+	}
+
+	/**
+	 * Clears out our first extra-status string.
+	 */
+	public static void clearExtraStatus1()
+	{
+		extraStatus1 = null;
+	}
+
+	/**
+	 * Sets our second extra-status string.
+	 */
+	public static void setExtraStatus2(String newStatus)
+	{
+		extraStatus2 = newStatus;
+	}
+
+	/**
+	 * Gets our second extra-status string.
+	 */
+	public static String getExtraStatus2()
+	{
+		return extraStatus2;
+	}
+
+	/**
+	 * Clears out our second extra-status string.
+	 */
+	public static void clearExtraStatus2()
+	{
+		extraStatus2 = null;
+	}
+
 	/***
-	 * Creates a new WarningDialog
+	 * Creates a new ExceptionDialog
 	 * @param windowName the title of the dialog
 	 */
-	protected WarningDialog(String windowName, String warningText)
+	protected ExceptionDialog(String windowName, String warningText)
 	{
 		super(windowName);
 		
-		if(WarningDialog.iconImage != null)
-			this.setIconImage(WarningDialog.iconImage);
+		if(ExceptionDialog.iconImage != null)
+			this.setIconImage(ExceptionDialog.iconImage);
 		
 		this.setSize(FRAMEWIDTH,FRAMEHEIGHT);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -262,7 +348,7 @@ public class WarningDialog extends JFrame {
 		centerDialogOnScreen();
 	
 		buildButtons(warningText);
-		layoutControlsOnDialog();
+		layoutControlsOnDialog(windowName);
 		
 		validate();
 		
@@ -275,7 +361,7 @@ public class WarningDialog extends JFrame {
 	 */
 	public static void presentDialog(String windowName, String warningText)
 	{
-		WarningDialog dialog = new WarningDialog(windowName, warningText);
+		ExceptionDialog dialog = new ExceptionDialog(windowName, warningText);
 		try
 		{
 			synchronized(dialog)
@@ -287,5 +373,18 @@ public class WarningDialog extends JFrame {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	/***
+	 * Pops up the dialog window, given an exception
+	 * @param windowName the title of the dialog
+	 */
+	public static void presentDialog(String windowName, Exception e)
+	{
+		e.printStackTrace();
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		presentDialog(windowName, sw.toString());
 	}
 }

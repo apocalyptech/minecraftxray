@@ -26,6 +26,8 @@
  */
 package com.apocalyptech.minecraft.xray;
 
+import com.apocalyptech.minecraft.xray.dialog.ExceptionDialog;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Map;

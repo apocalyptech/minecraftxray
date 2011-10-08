@@ -26,6 +26,8 @@
  */
 package com.apocalyptech.minecraft.xray;
 
+import com.apocalyptech.minecraft.xray.dialog.ExceptionDialog;
+
 public class BlockTypeLoadException extends Exception {
 	private Exception origException;
 	private String extraStatus1;

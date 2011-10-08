@@ -26,6 +26,8 @@
  */
 package com.apocalyptech.minecraft.xray;
 
+import com.apocalyptech.minecraft.xray.dialog.ExceptionDialog;
+
 import java.io.File;
 import java.io.FileReader;
 import java.util.Map;

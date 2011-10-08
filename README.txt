@@ -18,7 +18,9 @@ to provide the sourcecode for that excellent application.
 
 Minecraft X-Ray is released under the Modified BSD License.
 See COPYING.txt for more information, and Changelog.txt for a complete
-list of changes since X-Ray 2.7.
+list of changes since X-Ray 2.7.  X-Ray uses various third-party libraries
+for other tasks.  See COPYING.txt for details on their licensing, and
+COPYING-*.txt for copies of the licenses themselves.
 
 See TODO.txt for a list of known bugs and things that I'd like to
 implement, and BUILDING.txt if you wanted some info on building the project

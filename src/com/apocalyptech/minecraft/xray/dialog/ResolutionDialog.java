@@ -25,7 +25,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.apocalyptech.minecraft.xray;
+package com.apocalyptech.minecraft.xray.dialog;
+
+import com.apocalyptech.minecraft.xray.XRay;
+import com.apocalyptech.minecraft.xray.WorldInfo;
+import com.apocalyptech.minecraft.xray.XRayProperties;
+import com.apocalyptech.minecraft.xray.BlockTypeCollection;
 
 import java.awt.Component;
 import java.awt.Container;
