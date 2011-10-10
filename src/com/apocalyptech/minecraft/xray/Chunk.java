@@ -4785,6 +4785,20 @@ public class Chunk {
 		}
 		GL11.glCallList(this.glassListNums.get(sheet));
 	}
+	
+	public void renderSelected(int sheet, boolean[] selectedMap) {
+		if (!this.usedTextureSheets.containsKey(sheet))
+		{
+			return;
+		}
+		if(isSelectedDirty.get(sheet)) {
+			GL11.glNewList(this.selectedDisplayListNums.get(sheet), GL11.GL_COMPILE);
+			renderWorldSelected(sheet, selectedMap);
+			GL11.glEndList();
+			this.isSelectedDirty.put(sheet, false);
+		}
+		GL11.glCallList(this.selectedDisplayListNums.get(sheet));
+	}
 
 	/**
 	 * Renders a border around this chunk.  Note that we should have our chunkBorderTexture
@@ -4820,19 +4834,5 @@ public class Chunk {
 		this.renderNonstandardVertical(0, 0, 1, 1, x+width, top, z, x+width, bottom, z+width);
 		this.renderNonstandardHorizontal(0, 0, 1, 1, x, z, x+width, z+width, top);
 		this.renderNonstandardHorizontal(0, 0, 1, 1, x, z, x+width, z+width, bottom);
-	}
-	
-	public void renderSelected(int sheet, boolean[] selectedMap) {
-		if (!this.usedTextureSheets.containsKey(sheet))
-		{
-			return;
-		}
-		if(isSelectedDirty.get(sheet)) {
-			GL11.glNewList(this.selectedDisplayListNums.get(sheet), GL11.GL_COMPILE);
-			renderWorldSelected(sheet, selectedMap);
-			GL11.glEndList();
-			this.isSelectedDirty.put(sheet, false);
-		}
-		GL11.glCallList(this.selectedDisplayListNums.get(sheet));
 	}
 }

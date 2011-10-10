@@ -1678,6 +1678,7 @@ public class XRay
 					// Toggle ore highlighting
 					toggle.highlightOres = !toggle.highlightOres;
 					updateRenderDetails();
+					invalidateSelectedChunks();
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ACCURATE_GRASS))
 				{
@@ -2137,6 +2138,22 @@ public class XRay
 		GL11.glColor3f(1.0f, 1.0f, 1.0f);
 		int last_tex = -1;
 		int i;
+
+		// May as well render paintings first; they'll be "behind" everything then.
+		for (Chunk k : chunkList)
+		{
+			if (k.hasPaintings())
+			{
+				if (last_tex != -2)
+				{
+					paintingTexture.bind();
+				}
+				k.renderPaintings();
+				last_tex = -2;
+			}
+		}
+
+		// Now our regular blocks
 		for (i=0; i<this.minecraftTextures.size(); i++)
 		{
 			for (Chunk k : chunkList)
@@ -2149,22 +2166,15 @@ public class XRay
 						last_tex = i;
 					}
 					k.renderSolid(i);
-					k.renderSelected(i, this.mineralToggle);
-				}
-				else
-				{
+					if (!toggle.highlightOres)
+					{
+						k.renderSelected(i, this.mineralToggle);
+					}
 				}
 			}
 		}
-		for (Chunk k : chunkList)
-		{
-			if (k.hasPaintings())
-			{
-				paintingTexture.bind();
-				k.renderPaintings();
-				last_tex = -1;
-			}
-		}
+
+		// Now nonstandard blocks
 		for (i=0; i<this.minecraftTextures.size(); i++)
 		{
 			for (Chunk k : chunkList)
@@ -2180,6 +2190,8 @@ public class XRay
 				}
 			}
 		}
+
+		// Now Glass, or anything else we consider glassy
 		for (i=0; i<this.minecraftTextures.size(); i++)
 		{
 			for (Chunk k : chunkList)
@@ -2195,6 +2207,8 @@ public class XRay
 				}
 			}
 		}
+
+		// Slime chunks!
 		if (renderSlimeChunks)
 		{
 			for (Chunk k : chunkList)
@@ -2207,6 +2221,8 @@ public class XRay
 				}
 			}
 		}
+
+		// Now chunk borders
 		if (renderChunkBorders && curChunk != null)
 		{
 			chunkBorderTexture.bind();
@@ -2214,6 +2230,7 @@ public class XRay
 			last_tex = -1;
 		}
 
+		// And now, if we're highlighting ores, highlight them.
 		if (toggle.highlightOres)
 		{
 
