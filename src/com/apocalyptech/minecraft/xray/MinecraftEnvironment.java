@@ -725,22 +725,6 @@ public class MinecraftEnvironment {
 		int[] water_tex = BLOCK_WATER.getTexCoordsArr();
 		BLOCK_STATIONARY_WATER.setTexIdxCoords(water_tex[0], water_tex[1]);
 		BufferedImage bi2 = buildImageFromInput(getMinecraftWaterData());
-		if (bi2 == null)
-		{
-			// If we don't have a water texture (some mods seem to get rid of it), construct our own
-			bi2 = new BufferedImage(square_width, square_width, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D bi2g2d = bi2.createGraphics();
-			bi2g2d.setComposite(AlphaComposite.Src);
-			bi2g2d.setColor(new Color(.14f, .36f, 1f, .52f));
-			bi2g2d.fillRect(0, 0, square_width, square_width);
-
-			// A bit of detail
-			bi2g2d.setColor(new Color(.23f, .42f, 1f, .57f));
-			bi2g2d.drawLine((int)(square_width*.1), (int)(square_width*.2), (int)(square_width*.8), (int)(square_width*.3));
-			bi2g2d.drawLine((int)(square_width*.2), (int)(square_width*.5), (int)(square_width*.7), (int)(square_width*.54));
-			bi2g2d.drawLine((int)(square_width*.05), (int)(square_width*.9), (int)(square_width*.6), (int)(square_width*.9));
-			bi2g2d.drawLine((int)(square_width*.5), (int)(square_width*.7), (int)(square_width*.9), (int)(square_width*.6));
-		}
 		int water_width = bi2.getWidth();
 		g2d.setComposite(AlphaComposite.Src);
 		if (square_width < water_width)
@@ -871,48 +855,71 @@ public class MinecraftEnvironment {
 	}
 	
 	/***
-	 * Creates an Inputstream to a file in side the main minecraft.jar file.
+	 * Creates an Inputstream to a file in side the main minecraft.jar file, or failing
+	 * that, to our bundled fallbacks.
+	 *
 	 * @param fileName
 	 * @return
 	 */
 	public static InputStream getMinecraftFile(String fileName){
 		File minecraftDataFile = new File(baseDir, "bin/minecraft.jar");
-		if(!minecraftDataFile.exists()) {
-			return null;
+		if(minecraftDataFile.exists()) {
+			if (minecraftDataFile.isDirectory())
+			{
+				// Some mods (TooManyItems in particular) on some OSes (OSX in particular)
+				// end up replacing minecraft.jar with an unpacked directory containing
+				// its contents.  We may as well check for that.
+				File dataFile = new File(minecraftDataFile, fileName);
+				if (dataFile.exists())
+				{
+					try
+					{
+						return new FileInputStream(dataFile);
+					}
+					catch (FileNotFoundException e)
+					{
+					}
+				}
+			}
+			else
+			{
+				try {
+					JarFile jf = new JarFile(minecraftDataFile);
+					ZipEntry zipEntry = jf.getEntry(fileName);
+					if(zipEntry != null) {
+						return jf.getInputStream(zipEntry);
+					}
+				} catch (IOException e) {
+					//System.out.println(e.toString());
+					//return null;
+				}
+			}
 		}
 
-		if (minecraftDataFile.isDirectory())
+		// If we get here, either we couldn't find minecraft.jar or there was
+		// something wrong with it (perhaps altered by a mod, or whatever).  In
+		// the absence of anything else to do, we'll just load a bundled version
+		// that comes with X-Ray.  If that doesn't work, we'll just sit down
+		// and have a cry.  Note that this bit is sort of implicitly assuming that
+		// any file we might have bundled is a texture, hence the directory name.
+		if (fileName.equals("terrain.png") || fileName.equals("particles.png") ||
+				fileName.equals("art/kz.png") || fileName.equals("misc/water.png"))
 		{
-			// Some mods (TooManyItems in particular) on some OSes (OSX in particular)
-			// end up replacing minecraft.jar with an unpacked directory containing
-			// its contents.  We may as well check for that.
-			File dataFile = new File(minecraftDataFile, fileName);
-			if (!dataFile.exists())
+			System.out.println("Resorting to bundled " + fileName);
+			File dataFile = new File("textures", fileName);
+			if (dataFile.exists())
 			{
-				return null;
-			}
-			try
-			{
-				return new FileInputStream(dataFile);
-			}
-			catch (FileNotFoundException e)
-			{
-				return null;
-			}
-		}
-		else
-		{
-			try {
-				JarFile jf = new JarFile(minecraftDataFile);
-				ZipEntry zipEntry = jf.getEntry(fileName);
-				if(zipEntry == null) {
-					return null;
+				try
+				{
+					return new FileInputStream(dataFile);
 				}
-				return jf.getInputStream(zipEntry);
-			} catch (IOException e) {
-				System.out.println(e.toString());
-				return null;
+				catch (FileNotFoundException e)
+				{
+				}
 			}
 		}
+
+		// *sob*
+		return null;
 	}
 }

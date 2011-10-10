@@ -9,6 +9,11 @@ details on that.
 X-Ray redistributes SnakeYAML, which is available under the Apache License
 2.0.  See COPYING-snakeyaml.txt for more details on that.
 
+X-Ray also redistributes the "Faithful 32x32" texture pack, by Vattic,
+available at http://www.minecraftforum.net/topic/72747-
+As mentioned in the first post: "If anyone wants to use anything I've made
+please give credit and link back to this topic."
+
 In general the sourcecode files here will list a copyright for both Vincent
 Vollers and CJ Kucera, though the actual distribution of code copyright
 would probably be more complicated than that.  Please forgive any instances
