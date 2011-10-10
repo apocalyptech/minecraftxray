@@ -645,7 +645,7 @@ public class MinecraftEnvironment {
 			if (block != null)
 			{
 				tex_coords = block.getTexCoordsArr();
-				tintSquare(block.getTexCoordsArr(), square_width, ac, Color.green, bi, g2d);
+				tintSquare(block.getTexCoordsArr(), square_width, ac, Color.green.darker(), bi, g2d);
 			}
 		}
 
@@ -661,7 +661,7 @@ public class MinecraftEnvironment {
 			if (block.texture_extra_map != null)
 			{
 				tex_coords = BlockType.getTexCoordsArr(block.texture_extra_map.get("curve"));
-				tintSquare(tex_coords, square_width, ac, Color.green, bi, g2d);
+				tintSquare(tex_coords, square_width, ac, Color.green.darker(), bi, g2d);
 			}
 		}
 
@@ -676,7 +676,7 @@ public class MinecraftEnvironment {
 					if (block.texture_data_map.containsKey(data))
 					{
 						tintSquare(BlockType.getTexCoordsArr(block.texture_data_map.get(data)),
-								square_width, ac, Color.green, bi, g2d);
+								square_width, ac, Color.green.darker(), bi, g2d);
 					}
 				}
 			}

@@ -20,6 +20,7 @@
     isn't found.
   * (internal) Updated to LWJGL 2.8.0
   * Tweaked ore highlighting to be more noticeable
+  * Tweaked coloring for vines, stems, tall grass, and lilypads
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 
