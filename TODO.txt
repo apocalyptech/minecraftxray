@@ -75,3 +75,8 @@
  * Snow has data, as it turns out...
 
  * Figure out why loading in nonexistant chunks seems to glitch the app so much
+
+ * When compiling on JDK1.7.0, various warnings are thrown in ResolutionDialog due to
+   a few classes using generics now, when previously they didn't.  At some point I
+   should address those somehow, but since handling the generics Properly means that
+   we can't compile At All on previous JDKs, for now it's staying the way it is.
