@@ -33,17 +33,11 @@
    with doing things the "right way."  The code could use cleanup in general.
  
  * Hotkey to re-open the "Open" dialog and load a new world
-
- * Would be nice to maybe redistribute Minecraft's terrain.png and provide an
-   option via the GUI to override the texture pack to default, though that'd
-   be violating Notch's "do not distribute" rule probably.  Will have to see
-   if they'd be okay with that...
  
- * And, of course, completing the mod support - UI to select extra mod files,
-   extra YAML attributes required to read things in.  "reserved" to mark additional
-   textures that the renderer pulls in, "secondary" perhaps, for portal (so that
-   Aetherfolk can have their portals key off Glowstone properly)  "override" to
-   explicitly override a previously-defined blocktype (also: CHECK FOR THAT).
+ * And, of course, completing the mod support - UI to select extra mod files, etc.
+   "override" to explicitly override a previously-defined blocktype (this is
+   technically in there already but completely untested), "version" so that people
+   could override the builtin blockdef more efficiently, if they want, etc...
 
  * Figure out a more noticeable highlighting for things like Clay and Obsidian
    (anything very dark, or very light, really)
@@ -62,11 +56,7 @@
  * "Explored" highlight should probably count redstone torches, Jack-O-Lanterns, and
    Glowstone (when not in Nether, anyway)
 
- * Simple shading on blocks so that they look more natural (like how MCEdit does it)
-
  * Pull the grass colorization color from a point on misc/grasscolor.png
-
- * Make sure exception reporting stuff works okay on the new texfile stuff
 
  * I feel like there should be a disclaimer somewhere when slime-spawn chunk
    highlighting is enabled, to make sure folks are aware of the fact that

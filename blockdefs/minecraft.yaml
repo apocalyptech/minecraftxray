@@ -15,6 +15,11 @@
 # through fifteen.  For example, the bookshelf texture is (3, 2), and the
 # birch sapling is (15, 4).
 #
+# Additionally, X-Ray will allow you to specify a "texfile" attribute, if
+# the texture sheet to be used isn't Minecraft's default terrain.png file.
+# An example would be the Better Than Wolves mod, with which you'd specify
+# "texfile: btwmodtex/btwterrain01.png"
+#
 # Using "mlblocks" instead of "blocks" will allow you to specify texture
 # information in a way useful for mods that use a ModLoader-style texture
 # definition, where each block's texture is defined in a separate graphic
