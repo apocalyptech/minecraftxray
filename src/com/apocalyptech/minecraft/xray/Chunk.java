@@ -1230,7 +1230,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderLever(int textureId, int xxx, int yyy, int zzz)
+	public void renderLever(int textureId, int xxx, int yyy, int zzz, BlockType block, int tex_offset)
 	{
 		byte data = getData(xxx, yyy, zzz);
 		boolean thrown = false;
@@ -1241,8 +1241,8 @@ public class Chunk {
 		data &= 7;
 		//System.out.println("Data: " + data);
 		 
-		// First draw the cobblestoney box
-		int cobble_tex = BLOCK_COBBLESTONE.tex_idx;
+		// First draw the base
+		int cobble_tex = block.texture_extra_map.get("base") + tex_offset;
 		float box_height = .15f;
 		float box_length = .2f;
 		float box_width = .15f;
@@ -4315,7 +4315,7 @@ public class Chunk {
 									renderFenceGate(textureId,x,y,z,blockOffset);
 									break;
 								case LEVER:
-									renderLever(textureId,x,y,z);
+									renderLever(textureId,x,y,z,block,tex_offset);
 									break;
 								case BUTTON:
 									renderButton(textureId,x,y,z);

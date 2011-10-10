@@ -40,7 +40,6 @@
 #          so shouldn't be changed.  A complete list of the ones that
 #          shouldn't be changed are:
 #
-#               COBBLESTONE (the LEVER renderer uses it)
 #               IRON_BARS (the "solid pane" renderer uses it)
 #               PISTON_HEAD (the piston renderers use it)
 #               PISTON_STICKY_BODY (the piston renderers use it)
@@ -152,6 +151,10 @@
 #         DOOR
 #            The main texture specified should be the top part of the door.
 #            "bottom" should be specified as the texture for the bottom.
+#
+#         LEVER
+#            The main texture should be the lever itself
+#            "base" defines the texture of the lever base
 #
 #         MINECART_TRACKS
 #            The main texture should be the straight track.
@@ -799,6 +802,8 @@ blocks:
     mapcolor: [124, 98, 62]
     tex: [0, 6]
     type: LEVER
+    tex_extra:
+      base: [0, 1]
   
   - id: 70
     idStr: STONE_PRESSURE_PLATE

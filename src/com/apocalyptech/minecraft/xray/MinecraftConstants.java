@@ -141,6 +141,7 @@ public class MinecraftConstants {
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CAULDRON, new String[] {"inside", "top"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.ENCHANTMENT_TABLE, new String[] {"sides", "bottom"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.BREWING_STAND, new String[] {"base"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.LEVER, new String[] {"base"});
 	}
 
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
@@ -153,7 +154,6 @@ public class MinecraftConstants {
 	// There are a few blocks that we know we need references to.
 	public static BlockType BLOCK_BEDROCK;
 	public static BlockType BLOCK_GRASS;
-	public static BlockType BLOCK_COBBLESTONE;
 	public static BlockType BLOCK_PORTAL;
 	public static BlockType BLOCK_AIR_PORTAL;
 	public static BlockType BLOCK_TORCH;
@@ -345,11 +345,6 @@ public class MinecraftConstants {
 		if (BLOCK_GRASS == null)
 		{
 			throw new BlockTypeLoadException("GRASS block definition not found");
-		}
-		BLOCK_COBBLESTONE = blockCollection.getByName("COBBLESTONE");
-		if (BLOCK_COBBLESTONE == null)
-		{
-			throw new BlockTypeLoadException("COBBLESTONE block definition not found");
 		}
 		BLOCK_PORTAL = blockCollection.getByName("PORTAL");
 		if (BLOCK_PORTAL == null)
