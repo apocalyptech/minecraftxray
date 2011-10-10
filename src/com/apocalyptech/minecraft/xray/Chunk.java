@@ -3654,7 +3654,25 @@ public class Chunk {
 	}
 
 	/**
-	 * Renders an Air Portal block.  Will call out to either renderSemisolid or
+	 * Renders an Air Portal block.
+	 * 
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 * @param blockOffset
+	 * @param blockId
+	 */
+	public void renderAirPortal(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		
+		renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.4375f);
+	}
+
+	/**
+	 * Renders an Air Portal Frame block.  Will call out to either renderSemisolid or
 	 * renderCrossDecoration depending on the data value.
 	 * 
 	 * @param textureId
@@ -3664,7 +3682,7 @@ public class Chunk {
 	 * @param blockOffset
 	 * @param blockId
 	 */
-	public void renderAirPortal(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
+	public void renderAirPortalFrame(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
 		byte data = getData(xxx, yyy, zzz);
 		if (data == 0)
 		{
@@ -4353,7 +4371,10 @@ public class Chunk {
 									renderSemisolid(textureId,x,y,z,blockOffset,t);
 									break;
 								case AIR_PORTAL:
-									renderAirPortal(textureId,x,y,z,blockOffset,t);
+									renderAirPortal(textureId,x,y,z);
+									break;
+								case AIR_PORTAL_FRAME:
+									renderAirPortalFrame(textureId,x,y,z,blockOffset,t);
 									break;
 
 								case NORMAL:

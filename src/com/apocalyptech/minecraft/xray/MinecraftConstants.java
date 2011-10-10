@@ -112,6 +112,7 @@ public class MinecraftConstants {
 		NETHER_WART,
 		STEM,
 		AIR_PORTAL,
+		AIR_PORTAL_FRAME,
 		CAULDRON,
 		ENCHANTMENT_TABLE,
 		BREWING_STAND
@@ -154,6 +155,7 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_GRASS;
 	public static BlockType BLOCK_COBBLESTONE;
 	public static BlockType BLOCK_PORTAL;
+	public static BlockType BLOCK_AIR_PORTAL;
 	public static BlockType BLOCK_TORCH;
 	public static BlockType BLOCK_SAPLING;
 	public static BlockType BLOCK_FIRE;
@@ -174,7 +176,7 @@ public class MinecraftConstants {
 	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
 		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS,
 		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART, BLOCK_TYPE.STEM,
-		BLOCK_TYPE.AIR_PORTAL, BLOCK_TYPE.BREWING_STAND
+		BLOCK_TYPE.AIR_PORTAL_FRAME, BLOCK_TYPE.BREWING_STAND
 	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
@@ -353,6 +355,11 @@ public class MinecraftConstants {
 		if (BLOCK_PORTAL == null)
 		{
 			throw new BlockTypeLoadException("PORTAL block definition not found");
+		}
+		BLOCK_AIR_PORTAL = blockCollection.getByName("AIR_PORTAL");
+		if (BLOCK_AIR_PORTAL == null)
+		{
+			throw new BlockTypeLoadException("AIR_PORTAL block definition not found");
 		}
 		BLOCK_TORCH = blockCollection.getByName("TORCH");
 		if (BLOCK_TORCH == null)

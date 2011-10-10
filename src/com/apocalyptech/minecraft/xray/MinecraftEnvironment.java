@@ -549,7 +549,7 @@ public class MinecraftEnvironment {
 	 *      skins don't actually have a water graphic in the same place as the default skin
 	 *   4) Then we attempt to construct a passable "fire" texture from the particles file.
 	 *   5) Then we create a "blank" texture, for use with unknown block types
-	 *   6) Then we create a nether (portal) texture
+	 *   6) Then we create a nether (portal) texture and an air portal texture
 	 *   7) Lastly, we duplicate the texture with a green tint, immediately below the
 	 *      main texture group.  We do this to support our "explored" highlighting - the
 	 *      tinting can be done easily via OpenGL itself, but there were pretty severe
@@ -799,6 +799,14 @@ public class MinecraftEnvironment {
 		int nether_start_y = square_width*portal_tex[1];
 		g2d.setColor(new Color(.839f, .203f, .952f, .4f));
 		g2d.fillRect(nether_start_x, nether_start_y, square_width, square_width);
+
+		// Create an air portal texture
+		BLOCK_AIR_PORTAL.setTexIdx(blockCollection.reserveTexture());
+		int[] air_tex = BLOCK_AIR_PORTAL.getTexCoordsArr();
+		int air_start_x = square_width*air_tex[0];
+		int air_start_y = square_width*air_tex[1];
+		g2d.setColor(new Color(0f, 0f, 0f));
+		g2d.fillRect(air_start_x, air_start_y, square_width, square_width);
 
 		// TODO: we should make sure that anything set to highlight is enabled in the first
 		// texture (though if we ever support dynamically changing the highlights, we'll

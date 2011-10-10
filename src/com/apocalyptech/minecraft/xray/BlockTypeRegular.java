@@ -117,7 +117,8 @@ public class BlockTypeRegular extends BlockType
 		if (this.tex == null)
 		{
 			if (this.idStr.equals("WATER") || this.idStr.equals("STATIONARY_WATER") ||
-					this.idStr.equals("FIRE") || this.idStr.equals("PORTAL"))
+					this.idStr.equals("FIRE") || this.idStr.equals("PORTAL") || 
+					this.idStr.equals("AIR_PORTAL"))
 			{
 				this.generated_texture = true;
 			}
