@@ -808,10 +808,6 @@ public class MinecraftEnvironment {
 		g2d.setColor(new Color(0f, 0f, 0f));
 		g2d.fillRect(air_start_x, air_start_y, square_width, square_width);
 
-		// TODO: we should make sure that anything set to highlight is enabled in the first
-		// texture (though if we ever support dynamically changing the highlights, we'll
-		// just have to cope... perhaps we should cope right from the get go)
-
 		// Send our processed texture 
 		blockCollection.setInitialTexture(bi);
 
@@ -819,7 +815,6 @@ public class MinecraftEnvironment {
 		blockCollection.importCustomTextureSheets();
 
 		// Load in filename textures, if needed
-		// TODO: Exception error reporting
 		blockCollection.loadFilenameTextures();
 
 		// Report on the count of texture sheets

@@ -592,8 +592,6 @@ public class BlockTypeCollection
 
 	/**
 	 * Imports any extra-sheet textures into our main texture
-	 *
-	 * TODO: Proper exception reporting
 	 */
 	public void importCustomTextureSheets()
 		throws BlockTypeLoadException
@@ -605,11 +603,13 @@ public class BlockTypeCollection
 			Graphics2D g2d = bi.createGraphics();
 			for (String sheet : this.getCustomTextureFileList())
 			{
+				ExceptionDialog.setExtraStatus1("Importing textures from " + sheet);
 				HashMap<Integer, Integer> seenTextures = new HashMap<Integer, Integer>();
 				BufferedImage bi2 = MinecraftEnvironment.buildImageFromInput(MinecraftEnvironment.getMinecraftTexturepackData(sheet));
 				int bi2_width = bi2.getWidth()/16;
 				for (BlockType block : this.getCustomTextureFileBlocks(sheet))
 				{
+					ExceptionDialog.setExtraStatus2("Processing block " + block.id + ": " + block.idStr);
 					ArrayList<Integer> blockTex = new ArrayList<Integer>();
 					for (Integer tex : block.getUsedTextures())
 					{
@@ -683,7 +683,6 @@ public class BlockTypeCollection
 	/**
 	 * Loads any filename-based textures into our main texture
 	 *
-	 * TODO: Proper exception reporting
 	 * TODO: It would be nice to have this process all blocks from the same "group"
 	 *       at the same time, rather than potentially interleaved.  Probably not
 	 *       that big of a deal, though.
@@ -699,6 +698,7 @@ public class BlockTypeCollection
 
 		for (BlockType block : this.getBlocksFull())
 		{
+			ExceptionDialog.setExtraStatus1("Importing textures for block " + block.id + ": " + block.idStr);
 			texList = block.getTextureFilenames();
 			if (texList.size() > 0)
 			{
@@ -729,6 +729,7 @@ public class BlockTypeCollection
 				// Anything left in blockTex at this point gets copied+converted
 				for (String tex : blockTex)
 				{
+					ExceptionDialog.setExtraStatus2("Loading texture " + tex);
 					mapping.put(tex, this.reserveTexture(false));
 					if (mapping.get(tex) == -1)
 					{
