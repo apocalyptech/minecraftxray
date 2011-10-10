@@ -2235,12 +2235,11 @@ public class XRay
 		{
 
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
-			long time = System.currentTimeMillis();
-			float alpha = (time % 1000) / 1000.0f;
-			if (time % 2000 > 1000)
-				alpha = 1.0f - alpha;
-			alpha = 0.1f + (alpha * 0.8f);
-			GL11.glColor4f(alpha, alpha, alpha, alpha);
+			float timeidx = (System.currentTimeMillis() % 1000) * 6.28318f / 1000.0f;
+			float red = (float)Math.sin(timeidx)*.5f+.5f;
+			float green = (float)Math.sin(timeidx+2.09439f)*.5f+.5f;
+			float blue = (float)Math.sin(timeidx+4.18878f)*.5f+.5f;
+			GL11.glColor4f(red, green, blue, 1f);
 			setLightLevel(20);
 			GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 			// TODO: could check for specific textures here, rather than looping over all

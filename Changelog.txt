@@ -19,6 +19,7 @@
   * Bundle a third-party texture pack to fall back on if minecraft.jar
     isn't found.
   * (internal) Updated to LWJGL 2.8.0
+  * Tweaked ore highlighting to be more noticeable
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 

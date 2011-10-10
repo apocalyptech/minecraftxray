@@ -38,9 +38,6 @@
    "override" to explicitly override a previously-defined blocktype (this is
    technically in there already but completely untested), "version" so that people
    could override the builtin blockdef more efficiently, if they want, etc...
-
- * Figure out a more noticeable highlighting for things like Clay and Obsidian
-   (anything very dark, or very light, really)
  
  * Technically the minimap colors for a few block types should vary based on the
    data value.
