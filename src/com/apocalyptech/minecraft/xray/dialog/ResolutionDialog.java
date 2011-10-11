@@ -649,7 +649,13 @@ public class ResolutionDialog extends JFrame {
 	/***
 	 * Builds the different lists and fills them with their respective information
 	 * (Available Resolutions, Available Bit Depths, Available Refresh Rates etc)
+	 *
+	 * TODO: The "unchecked" suppression here is just for Java7, which adds in
+	 * some generics to datatypes which previously didn't have them.  Adding in
+	 * the proper generics support would break compilation on previous JDKs, so
+	 * we'll just suppress the warnings for now.
 	 */
+	@SuppressWarnings("unchecked")
 	private void buildLists() {
 		resolutionsModel 	= new DefaultComboBoxModel();
 		bitDepthModel 		= new DefaultComboBoxModel();
@@ -743,7 +749,13 @@ public class ResolutionDialog extends JFrame {
 	 * for a given resolution. Will then attempt to select the most compatible color depth
 	 * and refresh rate given the preferred values for each
 	 * @param mode The mode for which to look up the color depth and refresh rates
+	 *
+	 * TODO: The "unchecked" suppression here is just for Java7, which adds in
+	 * some generics to datatypes which previously didn't have them.  Adding in
+	 * the proper generics support would break compilation on previous JDKs, so
+	 * we'll just suppress the warnings for now.
 	 */
+	@SuppressWarnings("unchecked")
 	private void fillBppAndRefreshForMode(IntegerPair mode) {
 		List<DisplayMode> modes = resolutionsMap.get(mode);
 		

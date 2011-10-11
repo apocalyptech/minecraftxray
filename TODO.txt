@@ -52,14 +52,12 @@
 
  * Figure out why loading in nonexistant chunks seems to glitch the app so much
 
- * When compiling on JDK1.7.0, various warnings are thrown in ResolutionDialog due to
-   a few classes using generics now, when previously they didn't.  At some point I
-   should address those somehow, but since handling the generics Properly means that
-   we can't compile At All on previous JDKs, for now it's staying the way it is.
+ * Update position information popup in realtime rather than after a delay
  
- * Somewhat relatedly, the resolution-picking dialog has some issues in Java7 to
-   begin with.  One, the dropdowns seem far, far slower.  Two, our hotkeys (enter and
-   escape) only work so long as the dialog has NEVER actually had the mouse pointer
-   focused on top of it, at least on my WM.  This could potentially have something to
-   do with my focus-follows-mouse type setup, but it works totally fine in both
-   Java5 and Java6, so...
+ * The resolution-picking dialog has some issues in Java7.  One, the dropdowns
+   seem very sluggish, whereas on previous JDKs they're quite fast.  Two (and
+   possibly relatedly), our hotkeys (enter and escape) only work so long as the
+   dialog has NEVER actually had the mouse pointer focused on top of it, at
+   least on my WM.  This could potentially have something to do with my
+   focus-follows-mouse type setup, but it works totally fine in both Java5 and
+   Java6, so...
