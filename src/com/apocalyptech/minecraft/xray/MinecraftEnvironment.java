@@ -355,7 +355,7 @@ public class MinecraftEnvironment {
 		File overrideFile = new File(xrayBaseDir, "textures/" + filename);
 		if(overrideFile.exists()) {
 			try {
-				XRay.logger.info("Overriding textures/" + filename + " at " + overrideFile.getPath());
+				XRay.logger.info("Overriding " + filename + " at " + overrideFile.getPath());
 				return new FileInputStream(overrideFile);
 			} catch (FileNotFoundException e) {
 				// Don't do anything; just continue on our merry little way
