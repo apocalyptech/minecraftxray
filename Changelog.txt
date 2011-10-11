@@ -1,32 +1,39 @@
-  * Added "texfile" entry in block definition YAML, to support mods
-    which use an entire new sheet of textures
-  * Support for effectively unlimited block textures
-  * Stems now connect to neighboring fruit properly
-  * The "C" key will toggle the new-style fence connection rendering,
-    introduced in Beta 1.9-pre2
-  * Slight improvements to fence and fence gate rendering accuracy
-  * Silverfish block ID changed from STONE_SILVERFISH to SILVERFISH
-  * The "V" key will toggle Silverfish block highlighting on/off now.
-    By default, silverfish blocks are highlighted in red.
-  * Fixed an issue with grass colorization on some texturepacks
-  * The "U" key will now toggle the rendering of chunk borders
-  * Block and chunk information in the positioning popup are now
-    slightly more accurate.
-  * Slime-spawning chunks can be highlighted with the "M" key.
-  * Highlighting on solid blocks so they look more three-dimensional
-  * Farmland block tweaked slightly
-  * Support for the new Beta 1.9-pre3 blocks
-  * Bundle a third-party texture pack to fall back on if minecraft.jar
-    isn't found.
-  * (internal) Updated to LWJGL 2.8.0
-  * Tweaked ore highlighting to be more noticeable
-  * Tweaked coloring for vines, stems, tall grass, and lilypads
-  * (internal) Use log4j for file logging and console error reporting
-  * "Y" will bring up a window with a keyboard reference
-  * Explored highlighting will now key off of redstone torches,
-    Glowstone, and Jack-O-Lanterns, in addition to regular torches
-  * More visible notifications when settings in xray.properties get
-    overwritten with defaults
+Minecraft X-Ray 3.4.0 (2011.10.11)
+
+  * New Functions:
+    * The "C" key will toggle the new-style fence connection rendering,
+      introduced in Beta 1.9-pre2
+    * The "V" key will toggle Silverfish block highlighting on/off
+    * The "U" key will toggle the rendering of chunk borders
+    * Slime-spawning chunks can be highlighted with the "M" key.
+    * "Y" will bring up a window with a keyboard reference
+
+  * Rendering Improvements:
+    * Support for the new Beta 1.9-pre3 blocks
+    * Highlighting on solid blocks so they look more three-dimensional
+    * Stems now connect to neighboring fruit properly
+    * Slight improvements to fence and fence gate rendering accuracy
+    * Fixed an issue with grass colorization on some texturepacks
+    * Block and chunk information in the positioning popup are now
+      slightly more accurate.
+    * Farmland block tweaked slightly
+    * Tweaked ore highlighting to be more noticeable
+    * Tweaked coloring for vines, stems, tall grass, and lilypads
+    * Explored highlighting will now key off of redstone torches,
+      Glowstone, and Jack-O-Lanterns, in addition to regular torches
+    * By default, silverfish blocks are highlighted in red.
+
+  * Internal Changes:
+    * Added "texfile" entry in block definition YAML, to support mods
+      which use an entire new sheet of textures
+    * Updated to LWJGL 2.8.0
+    * Use log4j for file logging and console error reporting
+    * Silverfish block ID changed from STONE_SILVERFISH to SILVERFISH
+    * Bundle a third-party texture pack to fall back on if minecraft.jar
+      isn't found.  Using "Faithful 32x32" by Vattic currently.
+      http://www.minecraftforum.net/topic/72747-
+    * More visible notifications when settings in xray.properties get
+      overwritten with defaults
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 

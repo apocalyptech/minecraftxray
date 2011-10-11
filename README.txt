@@ -300,7 +300,7 @@ In general, X-Ray will attempt to use the same texture pack that Minecraft is
 using, but there may be some circumstances where you want X-Ray to use a
 particular texture.
 
-X-Ray will look in three locations for the texture information to load, in this
+X-Ray will look in four locations for the texture information to load, in this
 order:
 
   1) Inside the following directory, as an override:
@@ -309,11 +309,15 @@ order:
         OSX: ~/Library/Application Support/.minecraft_xray/textures/
         Linux: ~/.minecraft_xray/textures/
 
-  2) From the texture pack that Minecraft itself is set to use
+  2) From the texture pack that Minecraft itself is set to use.
 
-  3) Finally, from the builtin texture that Minecraft itself uses. This might
+  3) From the builtin texture that Minecraft itself uses. This might
      be a custom texture pack if you've patched the Minecraft JAR file directly
-     with a texture pack, with xau's mcpatcher or the like.
+     with a texture pack.
+
+  4) From a bundled, built-in texturepack included with X-Ray itself.  This
+     method should theoretically never fail, unless the X-Ray install directory
+     has been modified.
 
 The override texture directory mirrors the internal structure of the
 texturepacks, but should not be a zipfile. Right now there's really only two
