@@ -67,6 +67,7 @@ import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
 import javax.swing.JComponent;
 import javax.swing.JCheckBox;
+import javax.swing.JScrollPane;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 import javax.swing.AbstractAction;
@@ -88,7 +89,7 @@ public class WarningDialog extends JFrame {
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
-	private JTextArea mainLabel;
+	private JScrollPane mainLabel;
 
 	public static boolean selectedShow;
 	
@@ -113,7 +114,7 @@ public class WarningDialog extends JFrame {
 	/***
 	 * Layouts all the controls and labels on the dialog using a gridbaglayout
 	 */
-	private void layoutControlsOnDialog() {
+	private void layoutControlsOnDialog(boolean showCheckboxBool) {
 		basicPanel = new JPanel();
 		
 		this.getContentPane().setLayout(gridBagLayoutManager);
@@ -151,13 +152,16 @@ public class WarningDialog extends JFrame {
 		c.weighty = 1f;
 		c.fill = GridBagConstraints.BOTH;
 		addComponent(basicPanel, mainLabel, c);
-		current_grid_y++;
-		c.gridy = current_grid_y;
-		c.weighty = 0f;
-		c.weightx = 1f;
-		c.anchor = GridBagConstraints.EAST;
-		c.fill = GridBagConstraints.NONE;
-		addComponent(basicPanel, showCheckbox, c);
+		if (showCheckboxBool)
+		{
+			current_grid_y++;
+			c.gridy = current_grid_y;
+			c.weighty = 0f;
+			c.weightx = 1f;
+			c.anchor = GridBagConstraints.EAST;
+			c.fill = GridBagConstraints.NONE;
+			addComponent(basicPanel, showCheckbox, c);
+		}
 		
 		// Add our JPanel to the window
 		c.weightx = 1.0f;  
@@ -208,6 +212,8 @@ public class WarningDialog extends JFrame {
 		// Key mapping for the OK button
 		KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enterStroke, "ENTER");
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ENTER");
 		rootPane.getActionMap().put("ENTER", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				dialogOK();
@@ -215,12 +221,15 @@ public class WarningDialog extends JFrame {
 		});
 
 		// Main label
-		mainLabel  = new JTextArea(warningText);
-		mainLabel.setLineWrap(true);
-		mainLabel.setWrapStyleWord(true);
-		mainLabel.setEditable(false);
-		mainLabel.setMargin(new Insets(8, 8, 8, 8));
-		mainLabel.setBorder(new CompoundBorder(new TextFieldBorder(), new EmptyBorder(6, 6, 6, 6)));
+		JTextArea labelArea  = new JTextArea(warningText);
+		labelArea.setLineWrap(true);
+		labelArea.setWrapStyleWord(true);
+		labelArea.setEditable(false);
+		labelArea.setMargin(new Insets(8, 8, 8, 8));
+		labelArea.setBorder(new CompoundBorder(new TextFieldBorder(), new EmptyBorder(6, 6, 6, 6)));
+		mainLabel = new JScrollPane(labelArea);
+		mainLabel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		mainLabel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
 	}
 
@@ -248,34 +257,43 @@ public class WarningDialog extends JFrame {
 	 * Creates a new WarningDialog
 	 * @param windowName the title of the dialog
 	 */
-	protected WarningDialog(String windowName, String warningText)
+	protected WarningDialog(String windowName, String warningText, boolean showCheckbox, int width, int height)
 	{
 		super(windowName);
 		
 		if(WarningDialog.iconImage != null)
 			this.setIconImage(WarningDialog.iconImage);
 		
-		this.setSize(FRAMEWIDTH,FRAMEHEIGHT);
+		this.setSize(width, height);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setMinimumSize(new Dimension(FRAMEWIDTH, FRAMEHEIGHT));
+		this.setMinimumSize(new Dimension(width, height));
 
 		centerDialogOnScreen();
 	
 		buildButtons(warningText);
-		layoutControlsOnDialog();
+		layoutControlsOnDialog(showCheckbox);
 		
 		validate();
 		
 		this.setVisible(true);
 	}
-	
+
 	/***
 	 * Pops up the dialog window
 	 * @param windowName the title of the dialog
 	 */
 	public static void presentDialog(String windowName, String warningText)
 	{
-		WarningDialog dialog = new WarningDialog(windowName, warningText);
+		presentDialog(windowName, warningText, true, FRAMEWIDTH, FRAMEHEIGHT);
+	}
+	
+	/***
+	 * Pops up the dialog window
+	 * @param windowName the title of the dialog
+	 */
+	public static void presentDialog(String windowName, String warningText, boolean showCheckbox, int width, int height)
+	{
+		WarningDialog dialog = new WarningDialog(windowName, warningText, showCheckbox, width, height);
 		try
 		{
 			synchronized(dialog)

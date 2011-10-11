@@ -25,6 +25,8 @@
   * "Y" will bring up a window with a keyboard reference
   * Explored highlighting will now key off of redstone torches,
     Glowstone, and Jack-O-Lanterns, in addition to regular torches
+  * More visible notifications when settings in xray.properties get
+    overwritten with defaults
 
 Minecraft X-Ray 3.3.3 (2011.09.23)
 

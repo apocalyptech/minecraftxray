@@ -330,7 +330,17 @@ public class XRay
 
 			// Load our preferences (this includes key mappings)
 			setPreferenceDefaults();
-			loadPreferences();
+			ArrayList<String> errors = loadPreferences();
+			if (errors.size() > 0)
+			{
+				StringBuffer errorText = new StringBuffer();
+				errorText.append("The following errors were encountered while loading xray.properties:\n\n");
+				for (String error : errors)
+				{
+					errorText.append(" * " + error + "\n");
+				}
+				WarningDialog.presentDialog("Errors in xray.properties", errorText.toString(), false, 600, 250);
+			}
 
 			// prompt for the resolution and initialize the window
 			createWindow();
@@ -419,9 +429,11 @@ public class XRay
 	 * Loads our preferences. This also sets our default keybindings if they're
 	 * not overridden somewhere.
 	 */
-	public void loadPreferences()
+	public ArrayList<String> loadPreferences()
 	{
 		xray_properties = new XRayProperties();
+		ArrayList<String> errors = new ArrayList<String>();
+		String error;
 
 		// First load our defaults into the prefs object
 		for (KEY_ACTIONS action : KEY_ACTIONS.values())
@@ -462,7 +474,9 @@ public class XRay
 				if (newkey == Keyboard.KEY_NONE)
 				{
 					// TODO: Should output something more visible to the user
-					logger.warn("Warning: key '" + prefskey + "' for action " + action + " in the config file is unknown.  Default key assigned.");
+					error = "Key '" + prefskey + "' for action " + action + " is unknown.  Default key '" + Keyboard.getKeyName(key_mapping.get(action)) + "' assigned.";
+					logger.warn(error);
+					errors.add(error);
 					continue;
 				}
 			}
@@ -498,6 +512,9 @@ public class XRay
 			catch (Exception e)
 			{
 				// no worries, just populate with our default
+				error = "Block type '" + prefs_highlight + "', for HIGHLIGHT_" + (i+1) + " is an unknown block.  Reverting to default: " + blockArray[HIGHLIGHT_ORES[i]].idStr;
+				logger.warn(error);
+				errors.add(error);
 			}
 			xray_properties.put(prefs_highlight_key, blockArray[HIGHLIGHT_ORES[i]].idStr);
 		}
@@ -507,6 +524,9 @@ public class XRay
 
 		// Save the file immediately, in case we picked up new defaults which weren't present previously
 		this.savePreferences();
+
+		// Return
+		return errors;
 	}
 
 	/**
