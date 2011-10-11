@@ -1,30 +1,47 @@
-X-Ray itself is available under the New/Modified BSD License.  LWJGL is
-also distributed under the same license, though specific details can be
-found in COPYING-lwjgl.txt.  This distribution redistributes components
-of launch4j, for Windows EXE generation, which is available under a BSD
-license, and appears to include code under the MIT license, and includes
-some binaries licensed under the GPL.  See COPYING-launch4j.txt for more
-details on that.
+X-Ray itself is available under the New/Modified BSD License.  Full text
+is below.
 
-X-Ray redistributes SnakeYAML, which is available under the Apache License
-2.0.  See COPYING-snakeyaml.txt for more details on that.
+X-Ray redistributes the following components:
 
-X-Ray redistributes log4j, which is also available under the Apache License
-2.0.  See COPYING-log4j.txt for more details on that.
+  * LWJGL
+    http://lwjgl.org/
+    This is also distributed under the the new/modified BSD license, though
+    specific details can be found in COPYING-lwjgl.txt.
+    
+  * launch4j
+    http://launch4j.sourceforge.net/
+    This is used for Windows EXE generation, and is available under a BSD
+    license.  It also appears to include code under the MIT license, and
+    includes some binaries licensed under the GPL.  See COPYING-launch4j.txt
+    for more details on that.
 
-X-Ray also redistributes the "Faithful 32x32" texture pack, by Vattic,
-available at http://www.minecraftforum.net/topic/72747-
-As mentioned in the first post: "If anyone wants to use anything I've made
-please give credit and link back to this topic."
+  * SnakeYAML
+    http://code.google.com/p/snakeyaml/
+    Available under the Apache License 2.0.  See COPYING-snakeyaml.txt for more
+    details on that.
 
-In general the sourcecode files here will list a copyright for both Vincent
-Vollers and CJ Kucera, though the actual distribution of code copyright
-would probably be more complicated than that.  Please forgive any instances
-of code misattribution! 
+  * log4j
+    http://logging.apache.org/log4j/1.2/
+    Also available under the Apache License 2.0.  See COPYING-log4j.txt for
+    more details on that.
 
-RegionFile.java and RegionFileCache.java are courtesy Jens Bergensten of
-Mojang: http://mojang.com/2011/02/16/minecraft-save-file-format-in-beta-1-3/
-They appear to be under a sort of generic public domain license.
+  * Bare Bones Browser Launch
+    http://www.centerkey.com/java/browser/
+    Available in the public domain.  See COPYING-bbb.txt for more details.
+
+  * "Faithful 32x32" Minecraft Texture Pack, by Vattic
+    http://www.minecraftforum.net/topic/72747-
+    As mentioned in the first post: "If anyone wants to use anything I've made
+    please give credit and link back to this topic."
+
+  * RegionFile.java and RegionFileCache.java, courtesy Jens Bergensten of Mojang
+    http://mojang.com/2011/02/16/minecraft-save-file-format-in-beta-1-3/
+    They appear to be under a sort of generic public domain license.
+
+In general, the X-Ray sourcecode files here will list a copyright for both
+Vincent Vollers and CJ Kucera, though the actual distribution of code copyright
+would probably be more complicated than that.  Please forgive any instances of
+code misattribution! 
 
 ----
 

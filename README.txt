@@ -153,13 +153,14 @@ overridden, though.  The default keybindings are as follows:
         Toggle slime chunks:         M
 
     Other
-        Toggle Fullscreen:      BACKSPACE
-        Toggle Level Info:      ` (grave accent)
-        Toggle Rendering Info:  R (on by default)
-        Reload Map from Disk:   =
-        Show large map:         TAB
-        Release Mouse:          ESC
-        Quit:                   CTRL-Q
+        Toggle Fullscreen:       BACKSPACE
+        Toggle Level Info:       ` (grave accent)
+        Toggle Rendering Info:   R (on by default)
+        Reload Map from Disk:    =
+        Show large map:          TAB
+        Release Mouse:           ESC
+        Show Keyboard Reference: Y
+        Quit:                    CTRL-Q
 
 EXTRA BLOCK DEFINITIONS
 -----------------------

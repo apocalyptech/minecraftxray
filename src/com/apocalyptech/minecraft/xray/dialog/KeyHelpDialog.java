@@ -29,7 +29,10 @@ package com.apocalyptech.minecraft.xray.dialog;
 import com.apocalyptech.minecraft.xray.XRay;
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
+import com.centerkey.utils.BareBonesBrowserLaunch;
+
 import java.awt.Font;
+import java.awt.Cursor;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -44,6 +47,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -80,6 +85,30 @@ public class KeyHelpDialog extends JFrame {
 	public static Image iconImage;
 
 	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
+
+	private class JUrlLabel extends JLabel
+	{
+		private String url;
+
+		public JUrlLabel(String url)
+		{
+			super();
+			this.url = url;
+			setup();
+		}
+
+		private void setup()
+		{
+			setText("<html><span style=\"color: #000099;\"><u>" + this.url + "</u></span></html>");
+			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e)
+				{
+					BareBonesBrowserLaunch.openURL(url);
+				}
+			});
+		}
+	}
 	
 	/***
 	 * Centers this dialog on the screen
@@ -120,8 +149,8 @@ public class KeyHelpDialog extends JFrame {
 		
 		Insets standardInsets = new Insets(5, 5, 5, 5);
 		Insets categoryInsets = new Insets(20, 5, 5, 5);
-		Insets slimeTopInsets = new Insets(5, 5, 0, 5);
-		Insets slimeBottomInsets = new Insets(0, 5, 5, 5);
+		Insets noBottomInsets = new Insets(5, 5, 0, 5);
+		Insets noTopInsets = new Insets(0, 5, 5, 5);
 		c.insets = standardInsets;
 		c.weighty = .1f;
 
@@ -162,7 +191,7 @@ public class KeyHelpDialog extends JFrame {
 
 			if (key == KEY_ACTIONS.TOGGLE_SLIME_CHUNKS)
 			{
-				c.insets = slimeTopInsets;
+				c.insets = noBottomInsets;
 			}
 
 			c.gridx = 0;
@@ -210,7 +239,7 @@ public class KeyHelpDialog extends JFrame {
 			{
 				current_grid_y++;
 				c.gridy = current_grid_y;
-				c.insets = slimeBottomInsets;
+				c.insets = noTopInsets;
 
 				c.gridx = 0;
 				c.anchor = GridBagConstraints.EAST;
@@ -236,6 +265,19 @@ public class KeyHelpDialog extends JFrame {
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.CENTER;
 		addComponent(this.getContentPane(), titleLabel, c);
+
+		// Link
+		current_grid_y++;
+		c.gridx = 0; c.gridy = current_grid_y;
+		c.anchor = GridBagConstraints.CENTER;
+		c.insets = noBottomInsets;
+		addComponent(this.getContentPane(), new JLabel("For information on setting your own keybindings, see:"), c);
+		current_grid_y++;
+		c.gridx = 0; c.gridy = current_grid_y;
+		c.anchor = GridBagConstraints.CENTER;
+		c.insets = noTopInsets;
+		addComponent(this.getContentPane(), new JUrlLabel("http://apocalyptech.com/minecraft/xray/config.php"), c);
+		c.insets = standardInsets;
 		
 		// Add our scrollpane to the window
 		current_grid_y++;
