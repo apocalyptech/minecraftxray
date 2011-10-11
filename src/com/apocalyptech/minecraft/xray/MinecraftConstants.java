@@ -254,8 +254,8 @@ public class MinecraftConstants {
 		TOGGLE_ACCURATE_GRASS     (ACTION_CAT.RENDERING, Keyboard.KEY_G, "Toggle Accurate Grass"),
 		TOGGLE_BETA19_FENCES      (ACTION_CAT.RENDERING, Keyboard.KEY_C, "Toggle Beta 1.9 Fences"),
 		TOGGLE_SILVERFISH         (ACTION_CAT.RENDERING, Keyboard.KEY_V, "Toggle Silverfish Highlighting"),
-		TOGGLE_SLIME_CHUNKS       (ACTION_CAT.RENDERING, Keyboard.KEY_M, "Toggle Slime Chunk Highlighting"),
 		TOGGLE_CHUNK_BORDERS      (ACTION_CAT.RENDERING, Keyboard.KEY_U, "Toggle Chunk Borders"),
+		TOGGLE_SLIME_CHUNKS       (ACTION_CAT.RENDERING, Keyboard.KEY_M, "Toggle Slime Chunk Highlighting"),
 
 		TOGGLE_FULLSCREEN     (ACTION_CAT.OTHER, Keyboard.KEY_BACK, "Toggle Fullscreen"),
 		TOGGLE_POSITION_INFO  (ACTION_CAT.OTHER, Keyboard.KEY_GRAVE, "Toggle Level Info"),

@@ -22,10 +22,8 @@ Minecraft X-Ray 3.4.0 (2011.10.11)
     * Explored highlighting will now key off of redstone torches,
       Glowstone, and Jack-O-Lanterns, in addition to regular torches
     * By default, silverfish blocks are highlighted in red.
-	* Tweaked fence renderer to avoid z-fighting when a solid block
-	  is on top.
-	* Reverted back to having "open space" at the edges of the map,
-	  instead of a large wall
+    * Reverted back to having "open space" at the edges of the map,
+      instead of a large wall
 
   * Internal Changes:
     * Added "texfile" entry in block definition YAML, to support mods
