@@ -416,4 +416,12 @@ public class KeyHelpDialog extends JFrame {
 			KeyHelpDialog.keyhelp_dialog = new KeyHelpDialog();
 		}
 	}
+
+	public static void closeDialog()
+	{
+		if (KeyHelpDialog.dialog_showing && KeyHelpDialog.keyhelp_dialog != null)
+		{
+			KeyHelpDialog.keyhelp_dialog.dialogOK();
+		}
+	}
 }
