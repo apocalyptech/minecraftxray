@@ -14,11 +14,15 @@ project, you'll have to do some file copying:
        lwjgl.jar
        lzma.jar
        snakeyaml-1.9.jar
+       log4j-1.2.16.jar
    
    ... Possibly some of those are optional, but you may as well leave them
    in.  Inside lib/native, make sure that you've got the "native" LWJGL
    files, as well.  These will be .dll if you're on Windows, and .so on
    Linux.
+
+   Additionally, technically speaking you'd want to copy the "textures"
+   directory over into the source tree as well.
 
 At that point, you should theoretically be good to go.
 
@@ -29,12 +33,23 @@ annoying, which was all the urging I needed to abandon the crutch of
 handy autocompletion for the warm comforts of my beloved vim (which,
 yes, I know, can do autocompletes if you coerce it into doing so).
 
+COMMANDLINE
+-----------
+
 If you're on the commandline, you can use Ant to build/run,
 etc.  "ant run" should be sufficient to run the app (it will compile up
 a debug version automatically).  "ant dist" will package it up as if you're
 doing a release, though note that right now that step will only work
 on Linux.  I've never taken the time to figure out how to get launch4j to
 work on other platforms.  See build.xml for other ant targets.
+
+ECLIPSE
+-------
+
+First, a disclaimer: as I mentioned above, I haven't actually used Eclipse
+with this project in some time, so it's possible that you'll need to do
+more work than is mentioned here.  I believe that these docs should be
+sufficient, but let me know if it's not.
 
 If you want to use Eclipse, there's a couple of extra steps.  I feel that
 both of them really *should* have workarounds which would prevent them from
@@ -56,7 +71,7 @@ being needed, but I never did figure it out.  Anyway:
    in Package Explorer, go to Properties -> Run/Debug Settings -> XRay, and
    click on "Edit".  In the Arguments tab, set the VM arguments to:
    
-   	 -Xms256m -Xmx1024m -Djava.library.path=/path/to/workspace/xray/lib/native
+   	 -Xms256m -Xmx1024m -Djava.library.path=/path/to/workspace/xray/lib/native -Dlog4j.configuration=file:support/log4j.properties
    
    ... replacing the "/path/to/workspace" with the path to your actual
    Eclipse workspace.  If anyone's got a way around having to do that, let
@@ -66,4 +81,4 @@ being needed, but I never did figure it out.  Anyway:
    the JARs under lib/ again (which would show up under that XRAY_CLASSPATH
    var), though I don't remember if that automatically happens or not.
 
-The various build.xml targets will work fine inside Eclipse, too, of course.
+The various build.xml targets should work fine inside Eclipse, too, of course.

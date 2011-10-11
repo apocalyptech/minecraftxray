@@ -92,9 +92,11 @@
 				<include name="TODO.txt" />
 				<include name="README.txt" />
 				<include name="COPYING.txt" />
+				<include name="COPYING-bbb.txt" />
 				<include name="COPYING-lwjgl.txt" />
 				<include name="COPYING-log4j.txt" />
 				<include name="COPYING-jsmooth.txt" />
+				<include name="COPYING-launch4j.txt" />
 				<include name="COPYING-snakeyaml.txt" />
 			</fileset>
 		</copy>
@@ -103,6 +105,9 @@
 		</copy>
 		<copy todir="${dist}/blockdefs">
 			<fileset dir="blockdefs" />
+		</copy>
+		<copy todir="${dist}/textures">
+			<fileset dir="textures" />
 		</copy>
 		
 		<!-- Mark the UNIXy ones as executable -->
@@ -122,6 +127,7 @@
 				<exclude name="build/" />
 				<exclude name="dist/" />
 				<exclude name="lib/" />
+				<exclude name="textures/" />
 				<exclude name=".git/" />
 				<exclude name=".gitignore" />
 			</fileset>

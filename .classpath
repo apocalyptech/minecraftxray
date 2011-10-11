@@ -8,6 +8,8 @@
 	<classpathentry kind="var" path="XRAY_CLASSPATH/lwjgl_util.jar"/>
 	<classpathentry kind="var" path="XRAY_CLASSPATH/lwjgl.jar"/>
 	<classpathentry kind="var" path="XRAY_CLASSPATH/lzma.jar"/>
+	<classpathentry kind="var" path="XRAY_CLASSPATH/snakeyaml-1.9.jar"/>
+	<classpathentry kind="var" path="XRAY_CLASSPATH/log4j-1.2.16.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
