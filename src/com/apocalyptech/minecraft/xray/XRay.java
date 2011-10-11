@@ -28,6 +28,7 @@ package com.apocalyptech.minecraft.xray;
 
 import com.apocalyptech.minecraft.xray.dialog.JumpDialog;
 import com.apocalyptech.minecraft.xray.dialog.WarningDialog;
+import com.apocalyptech.minecraft.xray.dialog.KeyHelpDialog;
 import com.apocalyptech.minecraft.xray.dialog.ExceptionDialog;
 import com.apocalyptech.minecraft.xray.dialog.ResolutionDialog;
 
@@ -1086,6 +1087,7 @@ public class XRay
 
 			ResolutionDialog.iconImage = iconTexture128;
 			JumpDialog.iconImage = iconTexture128;
+			KeyHelpDialog.iconImage = iconTexture128;
 			WarningDialog.iconImage = iconTexture128;
 			ExceptionDialog.iconImage = iconTexture128;
 		}
@@ -1345,6 +1347,12 @@ public class XRay
 	{
 		Mouse.setGrabbed(false);
 		JumpDialog.presentDialog("Choose a New Position", this);
+	}
+
+	private void launchKeyHelpDialog()
+	{
+		Mouse.setGrabbed(false);
+		KeyHelpDialog.presentDialog(key_mapping);
 	}
 
 	/**
@@ -1806,6 +1814,11 @@ public class XRay
 				{
 					// Toggle between dimenaions
 					switchDimension(-1);
+				}
+				else if (key == key_mapping.get(KEY_ACTIONS.KEY_HELP))
+				{
+					// Launch the dialog
+					launchKeyHelpDialog();
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.RELEASE_MOUSE))
 				{

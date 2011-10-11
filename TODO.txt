@@ -52,10 +52,6 @@
 
  * Pull the grass colorization color from a point on misc/grasscolor.png
 
- * I feel like there should be a disclaimer somewhere when slime-spawn chunk
-   highlighting is enabled, to make sure folks are aware of the fact that
-   the algorithm may change depending on the version of Minecraft in use.
-
  * Snow has data, as it turns out...
 
  * Figure out why loading in nonexistant chunks seems to glitch the app so much

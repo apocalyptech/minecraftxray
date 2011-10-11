@@ -184,71 +184,93 @@ public class MinecraftConstants {
 		"CLAY", "PUMPKIN", "OBSIDIAN", "COAL_ORE", "IRON_ORE",
 		"GOLD_ORE", "LAPIS_LAZULI_ORE", "DIAMOND_ORE", "REDSTONE_ORE", "MOB_SPAWNER"};
 
+	// Keyboard action categories
+	public static enum ACTION_CAT {
+		MOVEMENT ("Movement"),
+		CAMERA ("Camera"),
+		RENDERING ("Rendering"),
+		OTHER ("Other")
+		;
+		public String title;
+		ACTION_CAT(String title)
+		{
+			this.title = title;
+		}
+	}
+
 	// Keyboard actions
 	public static enum KEY_ACTIONS {
-		SPEED_INCREASE (Keyboard.KEY_LSHIFT),
-		SPEED_DECREASE (Keyboard.KEY_RSHIFT),
-		MOVE_FORWARD (Keyboard.KEY_W),
-		MOVE_BACKWARD (Keyboard.KEY_S),
-		MOVE_LEFT (Keyboard.KEY_A),
-		MOVE_RIGHT (Keyboard.KEY_D),
-		MOVE_UP (Keyboard.KEY_SPACE),
-		MOVE_DOWN (Keyboard.KEY_LCONTROL),
-		TOGGLE_MINIMAP (Keyboard.KEY_TAB),
-		TOGGLE_ORE_1 (Keyboard.KEY_F1),
-		TOGGLE_ORE_2 (Keyboard.KEY_F2),
-		TOGGLE_ORE_3 (Keyboard.KEY_F3),
-		TOGGLE_ORE_4 (Keyboard.KEY_F4),
-		TOGGLE_ORE_5 (Keyboard.KEY_F5),
-		TOGGLE_ORE_6 (Keyboard.KEY_F6),
-		TOGGLE_ORE_7 (Keyboard.KEY_F7),
-		TOGGLE_ORE_8 (Keyboard.KEY_F8),
-		TOGGLE_ORE_9 (Keyboard.KEY_F9),
-		TOGGLE_ORE_10 (Keyboard.KEY_F10),
-		TOGGLE_FULLSCREEN (Keyboard.KEY_BACK),
-		TOGGLE_FULLBRIGHT (Keyboard.KEY_F),
-		TOGGLE_ORE_HIGHLIGHTING (Keyboard.KEY_H),
-		TOGGLE_CAMERA_LOCK (Keyboard.KEY_L),
-		TOGGLE_POSITION_INFO (Keyboard.KEY_GRAVE),
-		TOGGLE_RENDER_DETAILS (Keyboard.KEY_R),
-		TOGGLE_BEDROCK (Keyboard.KEY_B),
-		TOGGLE_ACCURATE_GRASS (Keyboard.KEY_G),
-		TOGGLE_WATER (Keyboard.KEY_T),
-		TOGGLE_HIGHLIGHT_EXPLORED (Keyboard.KEY_E),
-		TOGGLE_BETA19_FENCES (Keyboard.KEY_C),
-		TOGGLE_SILVERFISH (Keyboard.KEY_V),
-		TOGGLE_CHUNK_BORDERS (Keyboard.KEY_U),
-		TOGGLE_SLIME_CHUNKS (Keyboard.KEY_M),
-		MOVE_TO_SPAWN (Keyboard.KEY_HOME),
-		MOVE_TO_PLAYER (Keyboard.KEY_END),
-		MOVE_NEXT_CAMERAPOS (Keyboard.KEY_INSERT),
-		MOVE_PREV_CAMERAPOS (Keyboard.KEY_DELETE),
-		LIGHT_INCREASE (Keyboard.KEY_ADD),
-		LIGHT_DECREASE (Keyboard.KEY_SUBTRACT),
-		DIMENSION_NEXT (Keyboard.KEY_N),
-		DIMENSION_PREV (Keyboard.KEY_P),
-		CHUNK_RANGE_1 (Keyboard.KEY_NUMPAD1),
-		CHUNK_RANGE_2 (Keyboard.KEY_NUMPAD2),
-		CHUNK_RANGE_3 (Keyboard.KEY_NUMPAD3),
-		CHUNK_RANGE_4 (Keyboard.KEY_NUMPAD4),
-		CHUNK_RANGE_5 (Keyboard.KEY_NUMPAD5),
-		CHUNK_RANGE_6 (Keyboard.KEY_NUMPAD6),
-		HIGHLIGHT_RANGE_1 (Keyboard.KEY_1),
-		HIGHLIGHT_RANGE_2 (Keyboard.KEY_2),
-		HIGHLIGHT_RANGE_3 (Keyboard.KEY_3),
-		HIGHLIGHT_RANGE_4 (Keyboard.KEY_4),
-		HIGHLIGHT_RANGE_5 (Keyboard.KEY_5),
-		HIGHLIGHT_RANGE_6 (Keyboard.KEY_6),
-		HIGHLIGHT_RANGE_7 (Keyboard.KEY_7),
-		RELEASE_MOUSE (Keyboard.KEY_ESCAPE),
-		JUMP (Keyboard.KEY_J),
-		RELOAD (Keyboard.KEY_EQUALS),
-		QUIT (Keyboard.KEY_Q)
+		MOVE_FORWARD   (ACTION_CAT.MOVEMENT, Keyboard.KEY_W, "Move Forward"),
+		MOVE_BACKWARD  (ACTION_CAT.MOVEMENT, Keyboard.KEY_S, "Move Backward"),
+		MOVE_LEFT      (ACTION_CAT.MOVEMENT, Keyboard.KEY_A, "Strafe Left"),
+		MOVE_RIGHT     (ACTION_CAT.MOVEMENT, Keyboard.KEY_D, "Strafe Right"),
+		MOVE_UP        (ACTION_CAT.MOVEMENT, Keyboard.KEY_SPACE, "Fly Up"),
+		MOVE_DOWN      (ACTION_CAT.MOVEMENT, Keyboard.KEY_LCONTROL, "Fly Down"),
+		SPEED_INCREASE (ACTION_CAT.MOVEMENT, Keyboard.KEY_LSHIFT, "Move Faster"),
+		SPEED_DECREASE (ACTION_CAT.MOVEMENT, Keyboard.KEY_RSHIFT, "Move Slower"),
+
+		MOVE_TO_SPAWN       (ACTION_CAT.CAMERA, Keyboard.KEY_HOME, "Jump to Spawnpoint"),
+		MOVE_TO_PLAYER      (ACTION_CAT.CAMERA, Keyboard.KEY_END, "Jump to Player Position"),
+		MOVE_NEXT_CAMERAPOS (ACTION_CAT.CAMERA, Keyboard.KEY_INSERT, "Jump to Next Camera Preset"),
+		MOVE_PREV_CAMERAPOS (ACTION_CAT.CAMERA, Keyboard.KEY_DELETE, "Jump to Previous Camera Preset"),
+		JUMP                (ACTION_CAT.CAMERA, Keyboard.KEY_J, "Jump to Abritrary Position"),
+		DIMENSION_NEXT      (ACTION_CAT.CAMERA, Keyboard.KEY_N, "Jump to Next Dimension"),
+		DIMENSION_PREV      (ACTION_CAT.CAMERA, Keyboard.KEY_P, "Jump to Previous Dimension"),
+		TOGGLE_CAMERA_LOCK  (ACTION_CAT.CAMERA, Keyboard.KEY_L, "Lock Camera to Vertical Axis"),
+
+		TOGGLE_ORE_1              (ACTION_CAT.RENDERING, Keyboard.KEY_F1, "Toggle Ore #1"),
+		TOGGLE_ORE_2              (ACTION_CAT.RENDERING, Keyboard.KEY_F2, "Toggle Ore #2"),
+		TOGGLE_ORE_3              (ACTION_CAT.RENDERING, Keyboard.KEY_F3, "Toggle Ore #3"),
+		TOGGLE_ORE_4              (ACTION_CAT.RENDERING, Keyboard.KEY_F4, "Toggle Ore #4"),
+		TOGGLE_ORE_5              (ACTION_CAT.RENDERING, Keyboard.KEY_F5, "Toggle Ore #5"),
+		TOGGLE_ORE_6              (ACTION_CAT.RENDERING, Keyboard.KEY_F6, "Toggle Ore #6"),
+		TOGGLE_ORE_7              (ACTION_CAT.RENDERING, Keyboard.KEY_F7, "Toggle Ore #7"),
+		TOGGLE_ORE_8              (ACTION_CAT.RENDERING, Keyboard.KEY_F8, "Toggle Ore #8"),
+		TOGGLE_ORE_9              (ACTION_CAT.RENDERING, Keyboard.KEY_F9, "Toggle Ore #9"),
+		TOGGLE_ORE_10             (ACTION_CAT.RENDERING, Keyboard.KEY_F10, "Toggle Ore #10"),
+		TOGGLE_ORE_HIGHLIGHTING   (ACTION_CAT.RENDERING, Keyboard.KEY_H, "Toggle Ore Highlight Glow"),
+		HIGHLIGHT_RANGE_1         (ACTION_CAT.RENDERING, Keyboard.KEY_1, "Ore Highlight Distance 1"),
+		HIGHLIGHT_RANGE_2         (ACTION_CAT.RENDERING, Keyboard.KEY_2, "Ore Highlight Distance 2"),
+		HIGHLIGHT_RANGE_3         (ACTION_CAT.RENDERING, Keyboard.KEY_3, "Ore Highlight Distance 3"),
+		HIGHLIGHT_RANGE_4         (ACTION_CAT.RENDERING, Keyboard.KEY_4, "Ore Highlight Distance 4"),
+		HIGHLIGHT_RANGE_5         (ACTION_CAT.RENDERING, Keyboard.KEY_5, "Ore Highlight Distance 5"),
+		HIGHLIGHT_RANGE_6         (ACTION_CAT.RENDERING, Keyboard.KEY_6, "Ore Highlight Distance 6"),
+		HIGHLIGHT_RANGE_7         (ACTION_CAT.RENDERING, Keyboard.KEY_7, "Ore Highlight Distance 7"),
+		TOGGLE_FULLBRIGHT         (ACTION_CAT.RENDERING, Keyboard.KEY_F, "Toggle Fullbright"),
+		TOGGLE_BEDROCK            (ACTION_CAT.RENDERING, Keyboard.KEY_B, "Toggle Bedrock"),
+		TOGGLE_WATER              (ACTION_CAT.RENDERING, Keyboard.KEY_T, "Toggle Water"),
+		LIGHT_INCREASE            (ACTION_CAT.RENDERING, Keyboard.KEY_ADD, "Increase Lighting Range"),
+		LIGHT_DECREASE            (ACTION_CAT.RENDERING, Keyboard.KEY_SUBTRACT, "Decrease Lighting Range"),
+		CHUNK_RANGE_1             (ACTION_CAT.RENDERING, Keyboard.KEY_NUMPAD1, "Visibility Range 1"),
+		CHUNK_RANGE_2             (ACTION_CAT.RENDERING, Keyboard.KEY_NUMPAD2, "Visibility Range 2"),
+		CHUNK_RANGE_3             (ACTION_CAT.RENDERING, Keyboard.KEY_NUMPAD3, "Visibility Range 3"),
+		CHUNK_RANGE_4             (ACTION_CAT.RENDERING, Keyboard.KEY_NUMPAD4, "Visibility Range 4"),
+		CHUNK_RANGE_5             (ACTION_CAT.RENDERING, Keyboard.KEY_NUMPAD5, "Visibility Range 5"),
+		CHUNK_RANGE_6             (ACTION_CAT.RENDERING, Keyboard.KEY_NUMPAD6, "Visibility Range 6"),
+		TOGGLE_HIGHLIGHT_EXPLORED (ACTION_CAT.RENDERING, Keyboard.KEY_E, "Toggle 'Explored' Areas"),
+		TOGGLE_ACCURATE_GRASS     (ACTION_CAT.RENDERING, Keyboard.KEY_G, "Toggle Accurate Grass"),
+		TOGGLE_BETA19_FENCES      (ACTION_CAT.RENDERING, Keyboard.KEY_C, "Toggle Beta 1.9 Fences"),
+		TOGGLE_SILVERFISH         (ACTION_CAT.RENDERING, Keyboard.KEY_V, "Toggle Silverfish Highlighting"),
+		TOGGLE_SLIME_CHUNKS       (ACTION_CAT.RENDERING, Keyboard.KEY_M, "Toggle Slime Chunk Highlighting"),
+		TOGGLE_CHUNK_BORDERS      (ACTION_CAT.RENDERING, Keyboard.KEY_U, "Toggle Chunk Borders"),
+
+		TOGGLE_FULLSCREEN     (ACTION_CAT.OTHER, Keyboard.KEY_BACK, "Toggle Fullscreen"),
+		TOGGLE_POSITION_INFO  (ACTION_CAT.OTHER, Keyboard.KEY_GRAVE, "Toggle Level Info"),
+		TOGGLE_RENDER_DETAILS (ACTION_CAT.OTHER, Keyboard.KEY_R, "Toggle Rendering Info"),
+		RELOAD                (ACTION_CAT.OTHER, Keyboard.KEY_EQUALS, "Reload Map from Disk"),
+		TOGGLE_MINIMAP        (ACTION_CAT.OTHER, Keyboard.KEY_TAB, "Toggle Minimap"),
+		RELEASE_MOUSE         (ACTION_CAT.OTHER, Keyboard.KEY_ESCAPE, "Release Mouse"),
+		KEY_HELP              (ACTION_CAT.OTHER, Keyboard.KEY_Y, "Show Keyboard Reference"),
+		QUIT                  (ACTION_CAT.OTHER, Keyboard.KEY_Q, "Quit")
 		;
+		public final ACTION_CAT category;
 		public final int def_key;
-		KEY_ACTIONS(int def_key)
+		public final String desc;
+		KEY_ACTIONS(ACTION_CAT category, int def_key, String desc)
 		{
+			this.category = category;
 			this.def_key = def_key;
+			this.desc = desc;
 		}
 	}
 	
