@@ -30,7 +30,8 @@
    that, mostly, instead of the camelCase which was more prevalent.  Should really
    reformat everything to a single style (and retab the whole thing, and clean up
    formatting and style in general).  And really, I've been pretty lazy all around
-   with doing things the "right way."  The code could use cleanup in general.
+   with doing things the "right way."  The code could use cleanup in general.  Also
+   I think most of the files are still using DOS line-endings.
  
  * Hotkey to re-open the "Open" dialog and load a new world
  
