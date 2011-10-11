@@ -2783,7 +2783,12 @@ public class Chunk {
 	 * or not we're currently rendering transparent objects.
 	 */
 	public boolean checkSolid(short block) {
-		if(block <= 0) {
+		if(block < 0)
+		{
+			return false;
+		}
+		else if (block == 0)
+		{
 			return true;
 		}
 		if (blockArray[block] == null)

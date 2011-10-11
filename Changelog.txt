@@ -24,6 +24,8 @@ Minecraft X-Ray 3.4.0 (2011.10.11)
     * By default, silverfish blocks are highlighted in red.
 	* Tweaked fence renderer to avoid z-fighting when a solid block
 	  is on top.
+	* Reverted back to having "open space" at the edges of the map,
+	  instead of a large wall
 
   * Internal Changes:
     * Added "texfile" entry in block definition YAML, to support mods
@@ -71,6 +73,7 @@ Minecraft X-Ray 3.3.0 (2011.09.12)
   * All new Beta 1.8 blocks supported
   * (internal) Updated to LWJGL 2.7.1
   * Reorganization of how X-Ray gets packaged for distribution
+  * Map edges show as large walls instead of open space
 
 Minecraft X-Ray 3.2.2 (2011.09.05)
 
