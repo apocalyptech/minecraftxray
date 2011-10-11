@@ -2398,6 +2398,34 @@ public class XRay
 		g.drawString(value, (int) (x + bounds.getWidth()), y);
 	}
 
+
+	/**
+	 * Renders a note in the info box, centered.  Note that for the centering, this routine
+	 * will assume a border of "x" on each side, so it'll only work properly if the infobox
+	 * is right at the edge of the screen.
+	 *
+	 * 
+	 * @param g
+	 *            Graphics context to render to
+	 * @param x
+	 *            Baseline x offset for the label
+	 * @param y
+	 *            Baseline y offset for the label
+	 * @param label
+	 *            The label to draw
+	 * @param labelColor
+	 *            Label color
+	 * @param labelFont
+	 *            Label font
+	 */
+	private void infoboxTextNote(Graphics2D g, int x, int y, String label, Color labelColor, Font labelFont)
+	{
+		Rectangle2D bounds = labelFont.getStringBounds(label, g.getFontRenderContext());
+		g.setColor(labelColor);
+		g.setFont(labelFont);
+		g.drawString(label, x + (int)((renderDetails_w - (x*2) - bounds.getWidth())/2), y);
+	}
+
 	/**
 	 * Renders a slider-type graphic in an info box, including its label
 	 * 
@@ -2515,6 +2543,11 @@ public class XRay
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Slime Chunks: ", Color.BLACK, DETAILFONT, "On", Color.green.darker(), DETAILVALUEFONT);
 		}
+
+		// Add a note about our keyboard reference, since we have that now.
+		line_count++;
+		infoboxTextNote(g, x_off, line_count * line_h, "Keyboard Reference: " + Keyboard.getKeyName(key_mapping.get(KEY_ACTIONS.KEY_HELP)), Color.BLACK, SMALLFONT);
+
 		cur_renderDetails_h = (line_count + 1) * line_h - 8;
 		g.setColor(Color.BLUE);
 		g.setStroke(new BasicStroke(2));

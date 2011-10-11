@@ -69,6 +69,7 @@ public class MinecraftConstants {
     public static final Font HEADERFONT = new Font("Arial", Font.BOLD, 26);
     public static final Font DETAILFONT = new Font("Arial", Font.PLAIN, 13);
     public static final Font DETAILVALUEFONT = new Font("Arial", Font.BOLD, 13);
+    public static final Font SMALLFONT = new Font("Arial", Font.PLAIN, 10);
 	
     // some convenience statics regarding time calculation
 	public static final long NANOSPERSECOND 	= 1000000000;
