@@ -99,6 +99,7 @@ public class BlockType
 	private String texpath;
 	private HashMap<Integer, String> tex_direction_data;
 	private boolean override; // This is not at all tested yet
+	private boolean explored;
 
 	// Computed Attributes
 	public Color color;
@@ -115,6 +116,7 @@ public class BlockType
 	public BlockType()
 	{
 		this.override = false;
+		this.explored = false;
 		this.id = -1;
 		this.tex_idx = -1;
 		this.texSheet = 0;
@@ -248,6 +250,16 @@ public class BlockType
 	public boolean getOverride()
 	{
 		return this.override;
+	}
+
+	public void setExplored(boolean explored)
+	{
+		this.explored = explored;
+	}
+
+	public boolean getExplored()
+	{
+		return this.explored;
 	}
 
 	public boolean isSolid()

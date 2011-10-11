@@ -852,6 +852,16 @@ public class MinecraftEnvironment {
 
 		// This bit here is extremely grody; we should just do this in-place or something
 		blockCollection.textures = explored;
+
+		// And while we're on that subject, let's populate our exploredBlocks HashMap
+		exploredBlocks = new HashMap<Short, Boolean>();
+		for (BlockType expblock : blockCollection.getBlocksFull())
+		{
+			if (expblock.getExplored())
+			{
+				exploredBlocks.put(expblock.id, true);
+			}
+		}
 		
 		// a bit unnecessary since that's a constant...
 		return blockCollection.textures;

@@ -1291,6 +1291,32 @@ public class XRay
 		this.currentHighlightDistance = n;
 	}
 
+	/**
+	 * Updates our exploredBlocks hashmap based on dimension (Glowstone should trigger
+	 * in Overworld, but not in Nether)
+	 */
+	private void updateExploredBlocks()
+	{
+		BlockType glowstone = blockCollection.getByName("GLOWSTONE");
+		if (glowstone != null)
+		{
+			if (this.world.isDimension(-1))
+			{
+				if (exploredBlocks.containsKey(glowstone.id))
+				{
+					exploredBlocks.remove(glowstone.id);
+				}
+			}
+			else
+			{
+				if (glowstone.getExplored() && !exploredBlocks.containsKey(glowstone.id))
+				{
+					exploredBlocks.put(glowstone.id, true);
+				}
+			}
+		}
+	}
+
 	/***
 	 * Sets the world number we want to view
 	 * 
@@ -1303,6 +1329,8 @@ public class XRay
 
 		// determine which chunks are available in this world
 		mapChunksToLoad = new LinkedList<Block>();
+
+		updateExploredBlocks();
 
 		moveCameraToPlayerPos();
 	}
@@ -1323,6 +1351,8 @@ public class XRay
 
 		// determine which chunks are available in this world
 		mapChunksToLoad = new LinkedList<Block>();
+
+		updateExploredBlocks();
 
 		this.camera = camera;
 		initial_load_queued = false;

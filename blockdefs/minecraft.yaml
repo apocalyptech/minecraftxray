@@ -48,7 +48,6 @@
 #               IRON_BARS (the "solid pane" renderer uses it)
 #               PISTON_HEAD (the piston renderers use it)
 #               PISTON_STICKY_BODY (the piston renderers use it)
-#               TORCH (the "explored" highlight uses it)
 #               BEDROCK (the "bedrock" toggle uses it)
 #               GRASS (the "grass rendering" toggle uses it)
 #               SILVERFISH (the "silverfish highlighting" toggle uses it)
@@ -63,6 +62,10 @@
 #         as one of your highlights (unimportant otherwise)
 #
 #   mapcolor: RGB values for the minimap, 0-255
+#
+#   explored: If set to "true" this block will be checked for in X-Ray's
+#        "explored" highlighting mode.  This field is not required, and 
+#        will default to "false."
 #
 #   tex: The "main" (and possibly only) texture to use for this block type.
 #        In "block" lists, this must be (X, Y) coordinates, and in "mlblock"
@@ -639,6 +642,7 @@ blocks:
     mapcolor: [245, 220, 50]
     tex: [0, 5]
     type: TORCH
+    explored: true
   
   - id: 51
     idStr: FIRE
@@ -851,6 +855,7 @@ blocks:
     mapcolor: [181, 140, 64]
     tex: [3, 7]
     type: TORCH
+    explored: true
   
   - id: 76
     idStr: REDSTONE_TORCH_ON
@@ -858,6 +863,7 @@ blocks:
     mapcolor: [255, 0, 0]
     tex: [3, 6]
     type: TORCH
+    explored: true
   
   - id: 77
     idStr: STONE_BUTTON
@@ -953,6 +959,7 @@ blocks:
     name: Glowstone
     mapcolor: [249, 212, 156]
     tex: [9, 6]
+    explored: true
   
   - id: 90
     idStr: PORTAL
@@ -964,6 +971,7 @@ blocks:
     idStr: JACK_O_LANTERN
     name: Jack
     mapcolor: [249, 255, 58]
+    explored: true
     tex: [8, 7]
     tex_direction:
       FORWARD: [8, 7]

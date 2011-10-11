@@ -3897,14 +3897,14 @@ public class Chunk {
 						{
 							continue;
 						}
-						else if (otherChunk.blockData.value[(tz*128)+(tx*128*16)+y] == BLOCK_TORCH.id)
+						else if (exploredBlocks.containsKey(otherChunk.blockData.value[(tz*128)+(tx*128*16)+y]))
 						{
 							return true;
 						}
 					}
 					else
 					{
-						if (blockData.value[(z*128)+(x*128*16)+y] == BLOCK_TORCH.id)
+						if (exploredBlocks.containsKey(blockData.value[(z*128)+(x*128*16)+y]))
 						{
 							return true;
 						}

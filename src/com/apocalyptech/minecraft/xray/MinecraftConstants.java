@@ -157,7 +157,6 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_GRASS;
 	public static BlockType BLOCK_PORTAL;
 	public static BlockType BLOCK_AIR_PORTAL;
-	public static BlockType BLOCK_TORCH;
 	public static BlockType BLOCK_SAPLING;
 	public static BlockType BLOCK_FIRE;
 	public static BlockType BLOCK_WATER;
@@ -166,6 +165,9 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_PISTON_HEAD;
 	public static BlockType BLOCK_PISTON_STICKY_BODY;
 	public static BlockType BLOCK_SILVERFISH;
+
+	// A HashMap to define blocks that the "explored" highlight will use
+	public static HashMap<Short, Boolean> exploredBlocks;
 
 	// A meta-block to use for unknown block types
 	public static BlockType BLOCK_UNKNOWN;
@@ -378,11 +380,6 @@ public class MinecraftConstants {
 		if (BLOCK_AIR_PORTAL == null)
 		{
 			throw new BlockTypeLoadException("AIR_PORTAL block definition not found");
-		}
-		BLOCK_TORCH = blockCollection.getByName("TORCH");
-		if (BLOCK_TORCH == null)
-		{
-			throw new BlockTypeLoadException("TORCH block definition not found");
 		}
 		BLOCK_SAPLING = blockCollection.getByName("SAPLING");
 		if (BLOCK_SAPLING == null)

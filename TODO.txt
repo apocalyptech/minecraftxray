@@ -47,9 +47,6 @@
  
  * Notice dialog when something in xray.properties gets overwritten
 
- * "Explored" highlight should probably count redstone torches, Jack-O-Lanterns, and
-   Glowstone (when not in Nether, anyway)
-
  * Pull the grass colorization color from a point on misc/grasscolor.png
 
  * Snow has data, as it turns out...
