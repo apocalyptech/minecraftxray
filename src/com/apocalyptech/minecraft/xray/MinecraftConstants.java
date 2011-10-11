@@ -306,16 +306,16 @@ public class MinecraftConstants {
 					// them before potentially polluting our blockCollection with partial blockdef files
 					blockCollection.importFrom(coll, false);
 					blockCollection.importFrom(coll, true);
-					System.out.println("Got " + g + " blockdef " + coll.getName() + " (" + coll.getFile().getName() + "), " + coll.usedTextureCount() + " sheet textures, " + coll.getFilenameTextureCount() + " file textures");
+					XRay.logger.debug("Got " + g + " blockdef " + coll.getName() + " (" + coll.getFile().getName() + "), " + coll.usedTextureCount() + " sheet textures, " + coll.getFilenameTextureCount() + " file textures");
 				}
 				catch (BlockTypeLoadException e)
 				{
-					System.out.println("Error loading " + g + " blockdef at " + coll.getFile().getName() + ": " + e.toString());
+					XRay.logger.info("Error loading " + g + " blockdef at " + coll.getFile().getName() + ": " + e.toString());
 				}
 			}
 			else
 			{
-				System.out.println("Error in " + g + " blockdef at " + coll.getFile().getName() + ": " + coll.getException().toString());
+				XRay.logger.info("Error in " + g + " blockdef at " + coll.getFile().getName() + ": " + coll.getException().toString());
 			}
 		}
 	}

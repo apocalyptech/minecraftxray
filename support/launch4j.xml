@@ -8,5 +8,6 @@
         <jre>
             <minVersion>1.6.0</minVersion>
             <opt>-Djava.library.path=lib\\native</opt>
+            <opt>-Dlog4j.configuration=file:log4j.properties</opt>
         </jre>
 </launch4jConfig>

@@ -69,6 +69,9 @@ import org.lwjgl.util.glu.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import com.apocalyptech.minecraft.xray.Block;
 import com.apocalyptech.minecraft.xray.WorldInfo;
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
@@ -271,6 +274,8 @@ public class XRay
 
 	public static HashMap<Integer, TextureDecorationStats> decorationStats;
 
+	public static Logger logger = Logger.getLogger(XRay.class);
+
 	// A class to provide filename filtering on our "Other" dialog
 	private class LevelDatFileFilter extends FileFilter
 	{
@@ -286,12 +291,13 @@ public class XRay
 	// lets start with the program
 	public static void main(String args[])
 	{
+		//PropertyConfigurator.configure("xray-log4j.properties");
 		Date now = new Date();
-		System.out.println("Starting " + windowTitle + " at " + now.toString());
-		System.out.println("LWJGL version " + Sys.getVersion());
-		System.out.println("JVM version " + System.getProperty("java.version"));
-		System.out.println("Detected OS " + MinecraftEnvironment.os.toString());
-		System.out.println();
+		logger.info("Starting " + windowTitle + " at " + now.toString());
+		logger.info("LWJGL version " + Sys.getVersion());
+		logger.info("JVM version " + System.getProperty("java.version"));
+		logger.info("Detected OS " + MinecraftEnvironment.os.toString());
+		logger.info("");
 		new XRay().run();
 	}
 
@@ -433,7 +439,7 @@ public class XRay
 			catch (IOException e)
 			{
 				// Just report and continue
-				System.out.println("Could not load configuration file: " + e.toString());
+				logger.warn("Could not load configuration file: " + e.toString());
 			}
 		}
 
@@ -455,7 +461,7 @@ public class XRay
 				if (newkey == Keyboard.KEY_NONE)
 				{
 					// TODO: Should output something more visible to the user
-					System.out.println("Warning: key '" + prefskey + "' for action " + action + " in the config file is unknown.  Default key assigned.");
+					logger.warn("Warning: key '" + prefskey + "' for action " + action + " in the config file is unknown.  Default key assigned.");
 					continue;
 				}
 			}
@@ -516,7 +522,7 @@ public class XRay
 		catch (IOException e)
 		{
 			// Just report on the console and move on
-			System.out.println("Could not save preferences to file: " + e.toString());
+			logger.error("Could not save preferences to file: " + e.toString());
 		}
 	}
 
@@ -593,7 +599,7 @@ public class XRay
 		{
 			// Load and draw the chunk
 			b = (Block) mapChunksToLoad.removeFirst();
-			// System.out.println("Loading chunk " + b.x + "," + b.z);
+			// logger.debug("Loading chunk " + b.x + "," + b.z);
 
 			// There may be some circumstances where a chunk we're going to load is already loaded.
 			// Mostly while moving diagonally, I think. I'm actually not convinced that it's worth
@@ -1231,16 +1237,19 @@ public class XRay
 	{
 		if (MinecraftEnvironment.getMinecraftDirectory() == null)
 		{
+			logger.error("OS not supported (" + System.getProperty("os.name") + ")");
 			JOptionPane.showMessageDialog(null, "OS not supported (" + System.getProperty("os.name") + "), please report.", "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 		if (!MinecraftEnvironment.getMinecraftDirectory().exists())
 		{
+			logger.error("Minecraft directory not found: " + MinecraftEnvironment.getMinecraftDirectory().getAbsolutePath());
 			JOptionPane.showMessageDialog(null, "Minecraft directory not found: " + MinecraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 		if (!MinecraftEnvironment.getMinecraftDirectory().canRead())
 		{
+			logger.error("Minecraft directory not readable: " + MinecraftEnvironment.getMinecraftDirectory().getAbsolutePath());
 			JOptionPane.showMessageDialog(null, "Minecraft directory not readable: " + MinecraftEnvironment.getMinecraftDirectory().getAbsolutePath(), "Minecraft X-Ray Error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
@@ -1418,13 +1427,13 @@ public class XRay
 			// X
 			if (dx < 0)
 			{
-				// System.out.println("Loading in chunks from the X range " + (cur_chunk_x-1-loadChunkRange) + " to " + (chunkX-loadChunkRange) + " (going down)");
+				// logger.trace("Loading in chunks from the X range " + (cur_chunk_x-1-loadChunkRange) + " to " + (chunkX-loadChunkRange) + " (going down)");
 				top_x = cur_chunk_x - 1 - loadChunkRange;
 				bot_x = chunkX - loadChunkRange;
 			}
 			else if (dx > 0)
 			{
-				// System.out.println("Loading in chunks from the X range " + (cur_chunk_x+1+loadChunkRange) + " to " + (chunkX+loadChunkRange) + " (going up)");
+				// logger.trace("Loading in chunks from the X range " + (cur_chunk_x+1+loadChunkRange) + " to " + (chunkX+loadChunkRange) + " (going up)");
 				top_x = chunkX + loadChunkRange;
 				bot_x = cur_chunk_x + 1 + loadChunkRange;
 			}
@@ -1456,13 +1465,13 @@ public class XRay
 			// Z
 			if (dz < 0)
 			{
-				// System.out.println("Loading in chunks from the Z range " + (cur_chunk_z-1-loadChunkRange) + " to " + (chunkZ-loadChunkRange) + " (going down)");
+				// logger.trace("Loading in chunks from the Z range " + (cur_chunk_z-1-loadChunkRange) + " to " + (chunkZ-loadChunkRange) + " (going down)");
 				top_z = cur_chunk_z - 1 - loadChunkRange;
 				bot_z = chunkZ - loadChunkRange;
 			}
 			else if (dz > 0)
 			{
-				// System.out.println("Loading in chunks from the Z range " + (cur_chunk_z+1+loadChunkRange) + " to " + (chunkZ+loadChunkRange) + " (going up)");
+				// logger.trace("Loading in chunks from the Z range " + (cur_chunk_z+1+loadChunkRange) + " to " + (chunkZ+loadChunkRange) + " (going up)");
 				top_z = chunkZ + loadChunkRange;
 				bot_z = cur_chunk_z + 1 + loadChunkRange;
 			}
@@ -1500,7 +1509,7 @@ public class XRay
 			{
 				if (total_dX < 0)
 				{
-					// System.out.println("Clearing X from " + (chunkX-minimap_trim_chunk_distance+minimap_trim_chunks) + " to " + (chunkX-minimap_trim_chunk_distance));
+					// logger.trace("Clearing X from " + (chunkX-minimap_trim_chunk_distance+minimap_trim_chunks) + " to " + (chunkX-minimap_trim_chunk_distance));
 					for (i = chunkX - minimap_trim_chunk_distance + minimap_trim_chunks; i >= chunkX - minimap_trim_chunk_distance; i--)
 					{
 						trimList.addAll(level.removeChunkRowXFromMinimap(i));
@@ -1509,7 +1518,7 @@ public class XRay
 				}
 				else
 				{
-					// System.out.println("Clearing X from " + (chunkX+minimap_trim_chunk_distance-minimap_trim_chunks) + " to " + (chunkX+minimap_trim_chunk_distance));
+					// logger.trace("Clearing X from " + (chunkX+minimap_trim_chunk_distance-minimap_trim_chunks) + " to " + (chunkX+minimap_trim_chunk_distance));
 					for (i = chunkX + minimap_trim_chunk_distance - minimap_trim_chunks; i <= chunkX + minimap_trim_chunk_distance; i++)
 					{
 						trimList.addAll(level.removeChunkRowXFromMinimap(i));
@@ -1521,7 +1530,7 @@ public class XRay
 			{
 				if (total_dZ < 0)
 				{
-					// System.out.println("Clearing Z from " + (chunkZ-minimap_trim_chunk_distance+minimap_trim_chunks) + " to " + (chunkZ-minimap_trim_chunk_distance));
+					// logger.trace("Clearing Z from " + (chunkZ-minimap_trim_chunk_distance+minimap_trim_chunks) + " to " + (chunkZ-minimap_trim_chunk_distance));
 					for (i = chunkZ - minimap_trim_chunk_distance + minimap_trim_chunks; i >= chunkZ - minimap_trim_chunk_distance; i--)
 					{
 						trimList.addAll(level.removeChunkRowZFromMinimap(i));
@@ -1530,7 +1539,7 @@ public class XRay
 				}
 				else
 				{
-					// System.out.println("Clearing Z from " + (chunkZ+minimap_trim_chunk_distance-minimap_trim_chunks) + " to " + (chunkZ+minimap_trim_chunk_distance));
+					// logger.trace("Clearing Z from " + (chunkZ+minimap_trim_chunk_distance-minimap_trim_chunks) + " to " + (chunkZ+minimap_trim_chunk_distance));
 					for (i = chunkZ + minimap_trim_chunk_distance - minimap_trim_chunks; i <= chunkZ + minimap_trim_chunk_distance; i++)
 					{
 						trimList.addAll(level.removeChunkRowZFromMinimap(i));
@@ -1543,7 +1552,7 @@ public class XRay
 		}
 		else
 		{
-			// System.out.println("Loading world from X: " + (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) + ", Z: " + (chunkZ-loadChunkRange) + " - " + (chunkZ+loadChunkRange));
+			// logger.trace("Loading world from X: " + (chunkX-loadChunkRange) + " - " + (chunkX+loadChunkRange) + ", Z: " + (chunkZ-loadChunkRange) + " - " + (chunkZ+loadChunkRange));
 			for (int lx = chunkX - loadChunkRange; lx <= chunkX + loadChunkRange; lx++)
 			{
 				for (int lz = chunkZ - loadChunkRange; lz <= chunkZ + loadChunkRange; lz++)
@@ -1818,7 +1827,7 @@ public class XRay
 					BufferedImage bi = minimapTexture.getImage();
 					try {
 						ImageIO.write(bi, "PNG", new File("/home/pez/xray.png"));
-						System.out.println("Wrote minimap to disk.");
+						logger.info("Wrote minimap to disk.");
 					}
 					catch (Exception e)
 					{

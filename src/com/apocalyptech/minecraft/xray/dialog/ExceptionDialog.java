@@ -26,6 +26,8 @@
  */
 package com.apocalyptech.minecraft.xray.dialog;
 
+import com.apocalyptech.minecraft.xray.XRay;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.awt.Component;
@@ -381,10 +383,21 @@ public class ExceptionDialog extends JFrame {
 	 */
 	public static void presentDialog(String windowName, Exception e)
 	{
-		e.printStackTrace();
+		// Put our stack trace into a string...
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
+
+		// ... and report.
+		if (getExtraStatus1() != null)
+		{
+			XRay.logger.error(getExtraStatus1());
+		}
+		if (getExtraStatus2() != null)
+		{
+			XRay.logger.error(getExtraStatus2());
+		}
+		XRay.logger.error(sw.toString());
 		presentDialog(windowName, sw.toString());
 	}
 }

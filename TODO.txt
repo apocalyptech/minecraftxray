@@ -44,9 +44,6 @@
  
  * There's attributes in BlockType which use ArrayList, and I think I'd rather they
    just be arrays.  Should look into that.
-
- * Code in some proper log4j logging, rather than all the other crap that we're
-   doing.
  
  * Notice dialog when something in xray.properties gets overwritten
 

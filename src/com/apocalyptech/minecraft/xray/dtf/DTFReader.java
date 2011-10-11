@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
+import com.apocalyptech.minecraft.xray.XRay;
+
 public class DTFReader {
 	public static Tag readTag(byte tagType, String name, DataInputStream stream) throws IOException {
 		short twofiftysix = 256;
@@ -101,21 +103,14 @@ public class DTFReader {
 				ArrayList<Tag> list = new ArrayList<Tag>();
 				for(int i=0;i<listLength;i++) {
 					Tag t = readTag(type, "", stream);
-					//System.out.println(t.toString());
 					list.add(t);
 				}
 				return new ListTag(name, list);
 			case 10:
 				ArrayList<Tag> compound = new ArrayList<Tag>();
 				while((type = stream.readByte()) != 0) {
-					//String tagName = stream.readUTF();
-					//short l = stream.readShort();
-					//System.out.println(type + ", " + l);
-					//stream.skip(l);
-					//String tagName = "errorTest";
 					String tagName = stream.readUTF();
 					Tag tag = readTag(type, tagName, stream);
-					//System.out.println(tag.toString());
 					compound.add(tag);
 				}
 				return new CompoundTag(name, compound);
@@ -140,7 +135,6 @@ public class DTFReader {
 			if(type != 0){
 				String name = stream.readUTF();
 				Tag t = readTag(type, name, stream);
-				//System.out.println(t);
 				stream.close();
 				return t;
 			}
@@ -156,11 +150,11 @@ public class DTFReader {
 			return readTagData(stream);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block"
-			System.err.println("Error reading " + f.getPath() + " -");
+			XRay.logger.error("Error reading " + f.getPath() + " -");
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.err.println("Error reading " + f.getPath() + " -");
+			XRay.logger.error("Error reading " + f.getPath() + " -");
 			e.printStackTrace();
 		}
 		return null;

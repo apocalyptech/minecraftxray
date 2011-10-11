@@ -359,7 +359,7 @@ public class WorldInfo implements Comparable<WorldInfo>
 				}
 				catch (IOException e)
 				{
-					System.out.println("Exception attempting to read world at " + this.dirName + ": " + e.toString());
+					XRay.logger.warn("Exception attempting to read world at " + this.dirName + ": " + e.toString());
 					// whatever, just skip
 				}
 			}

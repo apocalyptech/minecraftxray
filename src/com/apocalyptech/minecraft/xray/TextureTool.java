@@ -74,7 +74,7 @@ public class TextureTool {
         // create the texture ID for this texture
         int textureId = TextureTool.createTextureID(); 
  
-		//System.out.println("frame: " + frame.getFrameNum());
+		//XRay.logger.trace("frame: " + frame.getFrameNum());
         frame.setTextureId(textureId);
 		
 		frame.bind();
@@ -168,8 +168,8 @@ public class TextureTool {
 						       
 			frame.initializeTextureCompatibleBuffer();
 			frame.updateTextureCompatibleBuffer();
-	        //System.out.println(realWidth);
-	        //System.out.println(realHeight);
+	        //XRay.logger.trace(realWidth);
+	        //XRay.logger.trace(realHeight);
 	        
 	        if (bufferedImage.getColorModel().hasAlpha()) {
 	            srcPixelFormat = GL11.GL_RGBA;

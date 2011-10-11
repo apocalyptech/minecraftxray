@@ -328,8 +328,8 @@ public class BlockTypeCollection
 				this.useTexture(tex);
 			}
 		}
-		//System.out.println("Textures used by " + newBlockType.idStr + ": " + newBlockType.getUsedTextures().toString());
-		//System.out.println(this.usedTextureCount() + " textures used, " + this.unusedTextureCount() + " textures free.");
+		//XRay.logger.debug("Textures used by " + newBlockType.idStr + ": " + newBlockType.getUsedTextures().toString());
+		//XRay.logger.debug(this.usedTextureCount() + " textures used, " + this.unusedTextureCount() + " textures free.");
 	}
 
 	public BlockType getByName(String name)

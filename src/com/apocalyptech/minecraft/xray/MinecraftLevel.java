@@ -115,7 +115,7 @@ public class MinecraftLevel {
 		
 		CompoundTag levelData = (CompoundTag) DTFReader.readDTFFile(levelFile);
 		
-		//	System.out.println(levelData.toString());
+		//	XRay.logger.trace(levelData.toString());
 		
 		this.playerPositions = new ArrayList<CameraPreset>();
 		this.playerPos_idx = -1;
@@ -186,7 +186,7 @@ public class MinecraftLevel {
 			catch (Exception e)
 			{
 				// Just report to console and continue.
-				System.out.println("Error loading position information for user " + mpusername + ": " + e.toString());
+				XRay.logger.warn("Error loading position information for user " + mpusername + ": " + e.toString());
 			}
 		}
 		
@@ -365,9 +365,9 @@ public class MinecraftLevel {
 			return chunk.getMapData().value[blockOffset];
 		} catch(Exception e) {
 			// dirty, but there was an error with out of range blockvalues O_o
-			System.out.println(blockOffset);
-			System.out.println("" + x + ", " + y + ", " + z);
-			System.out.println("" + blockX + ", " + blockZ );
+			XRay.logger.fatal(blockOffset);
+			XRay.logger.fatal("" + x + ", " + y + ", " + z);
+			XRay.logger.fatal("" + blockX + ", " + blockZ );
 			System.exit(0);
 			return 0;
 		}
@@ -458,7 +458,7 @@ public class MinecraftLevel {
 		{
 			if (this.levelData[xval][i] != null && this.levelData[xval][i].isOnMinimap)
 			{
-				//System.out.println("(" + chunkX + ") Removing from minimap on " + xval + ", " + i);
+				//XRay.logger.trace("(" + chunkX + ") Removing from minimap on " + xval + ", " + i);
 				this.levelData[xval][i].isOnMinimap = false;
 				chunks.add(this.levelData[xval][i]);
 			}
@@ -479,7 +479,7 @@ public class MinecraftLevel {
 		{
 			if (this.levelData[i][zval] != null && this.levelData[i][zval].isOnMinimap)
 			{
-				//System.out.println("Removing from minimap on " + i + ", " + zval);
+				//XRay.logger.trace("Removing from minimap on " + i + ", " + zval);
 				this.levelData[i][zval].isOnMinimap = false;
 				chunks.add(this.levelData[i][zval]);
 			}
@@ -500,7 +500,7 @@ public class MinecraftLevel {
 			{
 				if (this.levelData[x][z] != null && this.levelData[x][z].isOnMinimap)
 				{
-					//System.out.println("(" + chunkX + ") Removing from minimap on " + xval + ", " + i);
+					//XRay.logger.trace("(" + chunkX + ") Removing from minimap on " + xval + ", " + i);
 					this.levelData[x][z].isOnMinimap = false;
 					chunks.add(this.levelData[x][z]);
 				}

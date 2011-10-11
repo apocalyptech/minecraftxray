@@ -173,9 +173,6 @@ public class Chunk {
 				(long) (this.z * this.z) * 0x4307a7L +
 				(long) (this.z * 0x5f24f) ^ 0x3ad8025f);
 		this.willSpawnSlimes = (rnd.nextInt(10) == 0);
-		
-		//System.out.println(data);
-		//System.exit(0);
 	}
 
 	/**
@@ -1239,7 +1236,7 @@ public class Chunk {
 			thrown = true;
 		}
 		data &= 7;
-		//System.out.println("Data: " + data);
+		//XRay.logger.trace("Data: " + data);
 		 
 		// First draw the base
 		int cobble_tex = block.texture_extra_map.get("base") + tex_offset;
@@ -1577,7 +1574,7 @@ public class Chunk {
 
 		 // Adjust for size
 		 byte data = getData(xxx, yyy, zzz);
-		 //System.out.println("Netherwart data: " + data);
+		 //XRay.logger.trace("Netherwart data: " + data);
 		 if (data > 3)
 		 {
 			 data = 3;
@@ -4025,7 +4022,7 @@ public class Chunk {
 						block = blockArray[t];
 						if (block == null)
 						{
-							//System.out.println("Unknown block ID: " + t);
+							//XRay.logger.debug("Unknown block ID: " + t);
 							block = BLOCK_UNKNOWN;
 						}
 
@@ -4053,7 +4050,7 @@ public class Chunk {
 						// Grab our texture ID and verify it
 						textureId = block.tex_idx;
 						if(textureId == -1) {
-							//System.out.println("Unknown block id: " + t);
+							//XRay.logger.debug("Unknown block id: " + t);
 							continue;
 						}
 						
@@ -4242,7 +4239,7 @@ public class Chunk {
 								catch (NullPointerException e)
 								{
 									// Just report and continue
-									System.out.println("Unknown data value for block " + block.idStr + ": " + data);
+									XRay.logger.debug("Unknown data value for block " + block.idStr + ": " + data);
 								}
 							}
 
@@ -4668,7 +4665,7 @@ public class Chunk {
 			info = MinecraftConstants.paintings.get(painting.name.toLowerCase());
 			if (info == null)
 			{
-				System.out.println("Unknown painting name: " + painting.name);
+				XRay.logger.warn("Unknown painting name: " + painting.name);
 				continue;
 			}
 			

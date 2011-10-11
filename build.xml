@@ -13,6 +13,9 @@
 	<property name="build" location="build"/>
 	<property name="dist_base" location="dist"/>
 	<property name="dist"  location="${dist_base}/${export_base}"/>
+
+	<!-- log4j configuration -->
+	<property name="log4j.properties.path" location="support/log4j.properties" />
 	
 	<!-- Would be nice if ant's "tar" task understood executable bits -->
 	<patternset id="all.files">
@@ -64,7 +67,8 @@
             </classpath>
             <jvmarg value="-Xms256m" />
             <jvmarg value="-Xmx1024m" />
-            <jvmarg value="-Djava.library.path=lib/native" />
+			<sysproperty key="java.library.path" value="lib/native" />
+			<sysproperty key="log4j.configuration" value="file:${log4j.properties.path}" />
         </java>
     </target>
 	
@@ -89,6 +93,7 @@
 				<include name="README.txt" />
 				<include name="COPYING.txt" />
 				<include name="COPYING-lwjgl.txt" />
+				<include name="COPYING-log4j.txt" />
 				<include name="COPYING-jsmooth.txt" />
 				<include name="COPYING-snakeyaml.txt" />
 			</fileset>

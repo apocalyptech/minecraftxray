@@ -99,7 +99,7 @@ public class Texture {
 
 	public Texture(BufferedImage image, int frameNum, long playTime,
 			long delayTime) {
-		// System.out.println(image.hashCode());
+		// XRay.logger.trace(image.hashCode());
 		this.image = image;
 		this.frameNum = frameNum;
 		this.playTime = playTime;
@@ -108,7 +108,7 @@ public class Texture {
 	}
 	
 	public Texture(BufferedImage image) {
-		// System.out.println(image.hashCode());
+		// XRay.logger.trace(image.hashCode());
 		this.image = image;
 		this.frameNum = -1;
 		this.playTime = -1;

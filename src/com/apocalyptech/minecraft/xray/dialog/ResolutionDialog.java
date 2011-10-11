@@ -695,7 +695,7 @@ public class ResolutionDialog extends JFrame {
 				int hash = res[0]*10000+res[1];
 				if (fallbackMap.containsKey(hash))
 				{
-					//System.out.println(res[0] + "x" + res[1] + ": " + preferredMap.get(hash));
+					//XRay.logger.trace(res[0] + "x" + res[1] + ": " + preferredMap.get(hash));
 					if (!fallbackMap.get(hash))
 					{
 						if (res[0] <= curMode.getWidth() && res[1] <= curMode.getHeight())
