@@ -191,10 +191,9 @@ file it finds in the blockdefs directory, and it will display which ones
 it was able to load on the opening dialog.  If your file doesn't show up
 in the list, there's probably an error in it - you should be able to
 find that error in the file minecraft_xray_output_log.txt in the root
-X-Ray directory, unless you launched X-Ray from the EXE version.  To
-get the error report on Windows, launch X-Ray using the .BAT instead.
-Linux and OSX users will see the errors on the console X-Ray was launched
-from, as well.
+X-Ray directory.  Linux and OSX users (and Windows users who use the .BAT
+file instead of the .EXE) will see the errors on the console X-Ray was
+launched from, as well.
 
 
 RENDERING DETAILS
@@ -311,20 +310,26 @@ order:
 
   2) From the texture pack that Minecraft itself is set to use.
 
-  3) From the builtin texture that Minecraft itself uses. This might
-     be a custom texture pack if you've patched the Minecraft JAR file directly
-     with a texture pack.
+  3) From Minecraft's builtin texture pack. This could be a custom texture pack
+     if you've patched the Minecraft JAR file directly with a texture pack,
+     rather than using Minecraft's builtin texture-loading mechanisms
 
   4) From a bundled, built-in texturepack included with X-Ray itself.  This
      method should theoretically never fail, unless the X-Ray install directory
      has been modified.
 
 The override texture directory mirrors the internal structure of the
-texturepacks, but should not be a zipfile. Right now there's really only two
-files that X-Ray will end up reading from this directory: terrain.png and
-misc/water.png. So, rather than packing those inside a zipfile, just put them
-inside the "textures" directory and restart X-Ray, if you wanted to manually
-override a texture.
+texturepacks, but should not be a zipfile. Right now there are four files
+that X-Ray could end up reading from this directory:
+
+    terrain.png
+    particles.png (for the "fire" texture)
+    misc/water.png
+    art/kz.png (this is the Paintings texture file)
+
+So, rather than packing those inside a zipfile, just put them inside the
+"textures" directory and restart X-Ray, if you wanted to manually override a
+texture.
 
 Note that this *will* work for files specified in custom block definition
 files (as described above).  For instance, if you're using Aethermod and want
