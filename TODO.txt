@@ -61,3 +61,5 @@
    least on my WM.  This could potentially have something to do with my
    focus-follows-mouse type setup, but it works totally fine in both Java5 and
    Java6, so...
+
+ * Slime-spawn highlighting should probably only be available in dimension 0
