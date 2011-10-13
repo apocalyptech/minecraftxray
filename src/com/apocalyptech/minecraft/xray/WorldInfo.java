@@ -55,6 +55,7 @@ public class WorldInfo implements Comparable<WorldInfo>
 	{
 		known_dimensions = new HashMap<Integer, String>();
 		known_dimensions.put(-1, "Nether");
+		known_dimensions.put(1, "The End");
 	}
 	
 	// Couple of variables to determine whether our chunks are stored in the new
