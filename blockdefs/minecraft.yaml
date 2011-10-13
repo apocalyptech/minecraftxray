@@ -235,6 +235,12 @@
 #            The main texture should be the main texture
 #            "base" should be the base that potions reside on
 #
+#        AIR_PORTAL_FRAME
+#            The main texture should be the top texture
+#            "sides" should be the side texture
+#            "bottom" should be the bottom texture
+#            "eye" should be the texture for an inserted Eye of Ender
+#
 name: Vanilla Minecraft Block Types
 blocks:
   
@@ -1210,10 +1216,17 @@ blocks:
     idStr: AIR_PORTAL_FRAME
     name: Portal Frame
     mapcolor: [55, 142, 215]
-    tex: [15, 9]
-    tex_data:
-      0: [15, 9]
-      1: [14, 9]
+    tex: [14, 9]
     type: AIR_PORTAL_FRAME
+    tex_extra:
+      sides: [15, 9]
+      bottom: [15, 10]
+      eye: [14, 10]
+
+  - id: 121
+    idStr: ENDER_STONE
+    name: Ender Stone
+    mapcolor: [235, 248, 182]
+    tex: [15, 10]
 
 ...

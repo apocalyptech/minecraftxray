@@ -143,6 +143,7 @@ public class MinecraftConstants {
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.ENCHANTMENT_TABLE, new String[] {"sides", "bottom"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.BREWING_STAND, new String[] {"base"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.LEVER, new String[] {"base"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.AIR_PORTAL_FRAME, new String[] {"sides", "bottom", "eye"});
 	}
 
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file

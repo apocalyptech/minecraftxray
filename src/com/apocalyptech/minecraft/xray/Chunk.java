@@ -3673,7 +3673,7 @@ public class Chunk {
 		float z = zzz + this.z*16;
 		float y = yyy;
 		
-		renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.4375f);
+		renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.25f);
 	}
 
 	/**
@@ -3687,16 +3687,61 @@ public class Chunk {
 	 * @param blockOffset
 	 * @param blockId
 	 */
-	public void renderAirPortalFrame(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
+	public void renderAirPortalFrame(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+		float side_height = .8125f;
+		float side = .5f;
+		float side_top = .3125f;
+		float eye_side = .25f;
+		float eye_height = .1875f;
 		byte data = getData(xxx, yyy, zzz);
-		if (data == 0)
+		boolean eye = ((data & 0x4) == 0x4);
+		short adj;
+
+		int tex_side = block.texture_extra_map.get("sides")+tex_offset;
+		int tex_bottom = block.texture_extra_map.get("bottom")+tex_offset;
+		int tex_eye = block.texture_extra_map.get("eye")+tex_offset;
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		// First draw the base, regardless of eye state
+		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != block.id && !isSolid(adj))
 		{
-			this.renderSemisolid(textureId, xxx, yyy, zzz, blockOffset, blockId);
+			renderVertical(tex_side, -side, -side, -side, side, -side, side_height, 16, 13, 0, 3);
 		}
-		else
+		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != block.id && !isSolid(adj))
 		{
-			this.renderCrossDecoration(textureId, xxx, yyy, zzz);
+			renderVertical(tex_side, side, -side, side, side, -side, side_height, 16, 13, 0, 3);
 		}
+		adj = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != block.id && !isSolid(adj))
+		{
+			renderVertical(tex_side, side, side, -side, side, -side, side_height, 16, 13, 0, 3);
+		}
+		adj = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != block.id && !isSolid(adj))
+		{
+			renderVertical(tex_side, side, -side, -side, -side, -side, side_height, 16, 13, 0, 3);
+		}
+		renderHorizontal(textureId, -side, -side, side, side, side_top);
+		renderHorizontal(tex_bottom, -side, -side, side, side, -side);
+
+		// Now the Eye of Ender, if we should
+		if (eye)
+		{
+			renderVertical(tex_eye, eye_side, eye_side, -eye_side, eye_side, side_top, eye_height, 8, 3, 4, 0);
+			renderVertical(tex_eye, eye_side, -eye_side, -eye_side, -eye_side, side_top, eye_height, 8, 3, 4, 0);
+			renderVertical(tex_eye, eye_side, eye_side, eye_side, -eye_side, side_top, eye_height, 8, 3, 4, 0);
+			renderVertical(tex_eye, -eye_side, eye_side, -eye_side, -eye_side, side_top, eye_height, 8, 3, 4, 0);
+			renderHorizontal(tex_eye, -eye_side, -eye_side, eye_side, eye_side, side, 8, 8, 4, 4, false);
+		}
+
+		GL11.glPopMatrix();
 	}
 	
 	/**
@@ -4379,7 +4424,7 @@ public class Chunk {
 									renderAirPortal(textureId,x,y,z);
 									break;
 								case AIR_PORTAL_FRAME:
-									renderAirPortalFrame(textureId,x,y,z,blockOffset,t);
+									renderAirPortalFrame(textureId,x,y,z,blockOffset,block,tex_offset);
 									break;
 
 								case NORMAL:
