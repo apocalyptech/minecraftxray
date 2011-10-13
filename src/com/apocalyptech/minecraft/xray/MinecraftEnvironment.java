@@ -801,8 +801,8 @@ public class MinecraftEnvironment {
 		g2d.fillRect(nether_start_x, nether_start_y, square_width, square_width);
 
 		// Create an air portal texture
-		BLOCK_AIR_PORTAL.setTexIdx(blockCollection.reserveTexture());
-		int[] air_tex = BLOCK_AIR_PORTAL.getTexCoordsArr();
+		BLOCK_ENDER_PORTAL.setTexIdx(blockCollection.reserveTexture());
+		int[] air_tex = BLOCK_ENDER_PORTAL.getTexCoordsArr();
 		int air_start_x = square_width*air_tex[0];
 		int air_start_y = square_width*air_tex[1];
 		g2d.setColor(new Color(0f, 0f, 0f));

@@ -3659,7 +3659,7 @@ public class Chunk {
 	}
 
 	/**
-	 * Renders an Air Portal block.
+	 * Renders an Ender Portal block.
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -3668,7 +3668,7 @@ public class Chunk {
 	 * @param blockOffset
 	 * @param blockId
 	 */
-	public void renderAirPortal(int textureId, int xxx, int yyy, int zzz) {
+	public void renderEnderPortal(int textureId, int xxx, int yyy, int zzz) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -3677,8 +3677,7 @@ public class Chunk {
 	}
 
 	/**
-	 * Renders an Air Portal Frame block.  Will call out to either renderSemisolid or
-	 * renderCrossDecoration depending on the data value.
+	 * Renders an Ender Portal Frame block.
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -3687,7 +3686,7 @@ public class Chunk {
 	 * @param blockOffset
 	 * @param blockId
 	 */
-	public void renderAirPortalFrame(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset) {
+	public void renderEnderPortalFrame(int textureId, int xxx, int yyy, int zzz, int blockOffset, BlockType block, int tex_offset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
@@ -4420,11 +4419,11 @@ public class Chunk {
 								case GLASS:
 									renderSemisolid(textureId,x,y,z,blockOffset,t);
 									break;
-								case AIR_PORTAL:
-									renderAirPortal(textureId,x,y,z);
+								case ENDER_PORTAL:
+									renderEnderPortal(textureId,x,y,z);
 									break;
-								case AIR_PORTAL_FRAME:
-									renderAirPortalFrame(textureId,x,y,z,blockOffset,block,tex_offset);
+								case ENDER_PORTAL_FRAME:
+									renderEnderPortalFrame(textureId,x,y,z,blockOffset,block,tex_offset);
 									break;
 
 								case NORMAL:

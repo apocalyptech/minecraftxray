@@ -112,8 +112,8 @@ public class MinecraftConstants {
 		CHEST,
 		NETHER_WART,
 		STEM,
-		AIR_PORTAL,
-		AIR_PORTAL_FRAME,
+		ENDER_PORTAL,
+		ENDER_PORTAL_FRAME,
 		CAULDRON,
 		ENCHANTMENT_TABLE,
 		BREWING_STAND
@@ -143,7 +143,7 @@ public class MinecraftConstants {
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.ENCHANTMENT_TABLE, new String[] {"sides", "bottom"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.BREWING_STAND, new String[] {"base"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.LEVER, new String[] {"base"});
-		blockTypeExtraTexturesReq.put(BLOCK_TYPE.AIR_PORTAL_FRAME, new String[] {"sides", "bottom", "eye"});
+		blockTypeExtraTexturesReq.put(BLOCK_TYPE.ENDER_PORTAL_FRAME, new String[] {"sides", "bottom", "eye"});
 	}
 
 	// Our BLOCK structure is no longer an Enum, since we're reading it from a file
@@ -157,7 +157,7 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_BEDROCK;
 	public static BlockType BLOCK_GRASS;
 	public static BlockType BLOCK_PORTAL;
-	public static BlockType BLOCK_AIR_PORTAL;
+	public static BlockType BLOCK_ENDER_PORTAL;
 	public static BlockType BLOCK_SAPLING;
 	public static BlockType BLOCK_FIRE;
 	public static BlockType BLOCK_WATER;
@@ -180,7 +180,7 @@ public class MinecraftConstants {
 	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
 		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS,
 		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART, BLOCK_TYPE.STEM,
-		BLOCK_TYPE.AIR_PORTAL_FRAME, BLOCK_TYPE.BREWING_STAND
+		BLOCK_TYPE.ENDER_PORTAL_FRAME, BLOCK_TYPE.BREWING_STAND
 	};
 	
 	// HIGHLIGHT_ORES defines the kinds of blocks that we'll highlight.
@@ -377,10 +377,10 @@ public class MinecraftConstants {
 		{
 			throw new BlockTypeLoadException("PORTAL block definition not found");
 		}
-		BLOCK_AIR_PORTAL = blockCollection.getByName("AIR_PORTAL");
-		if (BLOCK_AIR_PORTAL == null)
+		BLOCK_ENDER_PORTAL = blockCollection.getByName("ENDER_PORTAL");
+		if (BLOCK_ENDER_PORTAL == null)
 		{
-			throw new BlockTypeLoadException("AIR_PORTAL block definition not found");
+			throw new BlockTypeLoadException("ENDER_PORTAL block definition not found");
 		}
 		BLOCK_SAPLING = blockCollection.getByName("SAPLING");
 		if (BLOCK_SAPLING == null)
