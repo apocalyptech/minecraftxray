@@ -4093,9 +4093,9 @@ public class Chunk {
 						}
 
 						// Doublecheck for glass stuffs
-						if ((pass == RENDER_PASS.GLASS && (block.type != BLOCK_TYPE.GLASS && block.type != BLOCK_TYPE.SOLID_PANE && block.type != BLOCK_TYPE.AIR_PORTAL)) ||
+						if ((pass == RENDER_PASS.GLASS && (block.type != BLOCK_TYPE.GLASS && block.type != BLOCK_TYPE.SOLID_PANE)) ||
 								(pass != RENDER_PASS.SELECTED &&
-								 pass != RENDER_PASS.GLASS && (block.type == BLOCK_TYPE.GLASS || block.type == BLOCK_TYPE.SOLID_PANE || block.type == BLOCK_TYPE.AIR_PORTAL)))
+								 pass != RENDER_PASS.GLASS && (block.type == BLOCK_TYPE.GLASS || block.type == BLOCK_TYPE.SOLID_PANE)))
 						{
 							continue;
 						}
