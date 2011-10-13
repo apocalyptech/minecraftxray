@@ -318,7 +318,7 @@ public class Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjSouthBlockId(int x, int y, int z, int blockOffset)
+	private short getAdjNorthBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (z > 0)
 		{
@@ -343,7 +343,7 @@ public class Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private byte getAdjSouthBlockData(int x, int y, int z)
+	private byte getAdjNorthBlockData(int x, int y, int z)
 	{
 		if (z > 0)
 		{
@@ -368,7 +368,7 @@ public class Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjNorthBlockId(int x, int y, int z, int blockOffset)
+	private short getAdjSouthBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (z < 15)
 		{
@@ -393,7 +393,7 @@ public class Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private byte getAdjNorthBlockData(int x, int y, int z)
+	private byte getAdjSouthBlockData(int x, int y, int z)
 	{
 		if (z < 15)
 		{
@@ -1605,11 +1605,11 @@ public class Chunk {
 		 switch(data)
 		 {
 		 	case 2:
-		 		// North
+		 		// South
 		 		this.renderNorthSouth(textureId, x, y, z+1.0f-TEX64);
 		 		break;
 		 	case 3:
-		 		// South
+		 		// North
 		 		this.renderNorthSouth(textureId, x, y, z+TEX64);
 		 		break;
 		 	case 4:
@@ -1642,7 +1642,7 @@ public class Chunk {
 		 boolean rendered = false;
 		 if ((data & 1) == 1)
 		 {
-			// North
+			// South
 			this.renderNorthSouth(textureId, x, y, z+1.0f-TEX64);
 			rendered = true;
 		 }
@@ -1654,7 +1654,7 @@ public class Chunk {
 		 }
 		 if ((data & 4) == 4)
 		 {
-			// South
+			// North
 			this.renderNorthSouth(textureId, x, y, z+TEX64);
 			rendered = true;
 		 }
@@ -1926,12 +1926,12 @@ public class Chunk {
 		}
 		else if (data == 1)
 		{
-			// Pointing North
+			// Pointing South
 			GL11.glRotatef(90f, 0f, 1f, 0f);
 		}
 		else if (data == 3)
 		{
-			// Pointing South
+			// Pointing North
 			GL11.glRotatef(-90f, 0f, 1f, 0f);
 		}
 
@@ -2006,7 +2006,7 @@ public class Chunk {
 		}
 		else if ((dir == 0 && swung) || (dir == 1 && !swung))
 		{
-			// South
+			// North
 			this.renderNorthSouth(textureId, x, y, z);
 		}
 		else if ((dir == 1 && swung) || (dir == 2 && !swung))
@@ -2016,7 +2016,7 @@ public class Chunk {
 		}
 		else
 		{
-			// North
+			// South
 			this.renderNorthSouth(textureId, x, y, z+1);
 		}
 		
@@ -2058,22 +2058,22 @@ public class Chunk {
 		{
 			if (dir == 0)
 			{
-				// West
+				// South
 				GL11.glRotatef(-90f, 1f, 0f, 0f);
 			}
 			else if (dir == 1)
 			{
-				// East
+				// North
 				GL11.glRotatef(90f, 1f, 0f, 0f);
 			}
 			else if (dir == 2)
 			{
-				// South
+				// East
 				GL11.glRotatef(90f, 0f, 0f, 1f);
 			}
 			else
 			{
-				// North
+				// West
 				GL11.glRotatef(-90f, 0f, 0f, 1f);
 			}
 		}
@@ -2145,7 +2145,7 @@ public class Chunk {
 		}
 		else
 		{
-			// 2 is ascending-north, 3 is ascending-south
+			// 2 is ascending-south, 3 is ascending-north
 			
 			// Sides
 			this.renderStairSideNorthSouth(textureId, x+.05f, y, z, swap);
@@ -2202,7 +2202,7 @@ public class Chunk {
 		// Now we continue to draw the sign itself.
 		byte data = getData(xxx, yyy, zzz);
 		data &= 0xF;
-		// data: 0 is North, increasing numbers add 22.5 degrees (so 4 is West, 8 East, etc)
+		// data: 0 is South, increasing numbers add 22.5 degrees (so 4 is West, 8 East, etc)
 		// Because we're not actually drawing the message (yet), as far as we're concerned
 		// West is the same as East, etc.
 		float angle = (data % 8) * 22.5f;
@@ -2261,7 +2261,7 @@ public class Chunk {
 		switch(data)
 		{
 		 	case 2:
-		 		// East
+		 		// North
 	 			faceX1 = x-sign_length;
 	 			faceX2 = x+sign_length;
 	 			faceZ1 = z+0.45f;
@@ -2270,7 +2270,7 @@ public class Chunk {
 	 			back_dZ = 0.05f;
 		 		break;
 		 	case 3:
-		 		// West
+		 		// South
 	 			faceX1 = x-sign_length;
 	 			faceX2 = x+sign_length;
 	 			faceZ1 = z-0.45f;
@@ -2279,7 +2279,7 @@ public class Chunk {
 	 			back_dZ = -0.05f;
 		 		break;
 		 	case 4:
-		 		// North
+		 		// West
 	 			faceX1 = x+0.45f;
 	 			faceX2 = x+0.45f;
 	 			faceZ1 = z-sign_length;
@@ -2289,7 +2289,7 @@ public class Chunk {
 		 		break;
 		 	case 5:
 	 		default:
-	 			// South
+	 			// East
 	 			faceX1 = x-0.45f;
 	 			faceX2 = x-0.45f;
 	 			faceZ1 = z-sign_length;
@@ -2444,7 +2444,7 @@ public class Chunk {
 		}
 		
 		// Check for adjacent fences / fence gates in the -z direction
-		adj_id = this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		adj_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
 		if (adj_id == blockId)
 		{
 			// Bottom slat
@@ -2461,7 +2461,7 @@ public class Chunk {
 		}
 		else if (beta19_fences && this.isSolid(adj_id))
 		{
-			// Solid block to the South
+			// Solid block to the North
 
 			// Bottom slat
 			this.renderVertical(textureId, x+fence_postsize_h, z-fence_postsize, x+fence_postsize_h, z-.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
@@ -2477,8 +2477,8 @@ public class Chunk {
 		}
 		else if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
 		{
-			// Fence Gate to the South
-			adj_data = this.getAdjSouthBlockData(xxx, yyy, zzz);
+			// Fence Gate to the North
+			adj_data = this.getAdjNorthBlockData(xxx, yyy, zzz);
 			if (adj_data != -1)
 			{
 				adj_data &= 0x3;
@@ -2500,11 +2500,11 @@ public class Chunk {
 		}
 
 		// Check for adjacent fence gates in the +z direction
-		adj_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		adj_id = this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
 		if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
 		{
-			// Fence Gate to the North
-			adj_data = this.getAdjNorthBlockData(xxx, yyy, zzz);
+			// Fence Gate to the South
+			adj_data = this.getAdjSouthBlockData(xxx, yyy, zzz);
 			if (adj_data != -1)
 			{
 				adj_data &= 0x3;
@@ -2526,7 +2526,7 @@ public class Chunk {
 		}
 		else if (beta19_fences && this.isSolid(adj_id))
 		{
-			// Solid block to the North
+			// Solid block to the South
 
 			// Bottom slat
 			this.renderVertical(textureId, x+fence_postsize_h, z+fence_postsize, x+fence_postsize_h, z+.5f, slat_start, fence_slat_height, 6, 3, 0, 5);
@@ -2708,7 +2708,7 @@ public class Chunk {
 		 		back_dZ = 0;
 		 		break;
 		 	case 3:
-		 		// North
+		 		// South
 		 		faceX1 = x-button_radius;
 		 		faceX2 = x+button_radius;
 		 		faceZ1 = z-0.5f+button_radius;
@@ -2718,7 +2718,7 @@ public class Chunk {
 		 		break;
 		 	case 4:
 	 		default:
-		 		// South
+		 		// North
 		 		faceX1 = x-button_radius;
 		 		faceX2 = x+button_radius;
 		 		faceZ1 = z+0.5f-button_radius;
@@ -2841,7 +2841,7 @@ public class Chunk {
 		GL11.glPushMatrix();
 		GL11.glTranslatef(x, y, z);
 
-		// This routine draws the piston facing west, which is direction value 3
+		// This routine draws the piston facing south, which is direction value 3
 		if (direction == 1)
 		{
 			// Up
@@ -2849,7 +2849,7 @@ public class Chunk {
 		}
 		else if (direction == 2)
 		{
-			// South
+			// North
 			GL11.glRotatef(180f, 0f, 1f, 0f);
 		}
 		else if (direction == 4)
@@ -2924,7 +2924,7 @@ public class Chunk {
 		GL11.glPushMatrix();
 		GL11.glTranslatef(x, y, z);
 
-		// This routine draws the piston facing north, which is direction value 3
+		// This routine draws the piston facing south, which is direction value 3
 		if (direction == 1)
 		{
 			// Up
@@ -2932,7 +2932,7 @@ public class Chunk {
 		}
 		else if (direction == 2)
 		{
-			// South
+			// North
 			GL11.glRotatef(180f, 0f, 1f, 0f);
 		}
 		else if (direction == 4)
@@ -3113,15 +3113,15 @@ public class Chunk {
 		{
 			has_east = true;
 		}
-		temp_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
-		if (temp_id == blockId || this.isSolid(temp_id))
-		{
-			has_north = true;
-		}
 		temp_id = this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
 		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_south = true;
+		}
+		temp_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		if (temp_id == blockId || this.isSolid(temp_id))
+		{
+			has_north = true;
 		}
 
 		if (!has_north && !has_south && !has_west && !has_east)
@@ -3165,21 +3165,21 @@ public class Chunk {
 		}
 		else
 		{
-			if (has_north)
+			if (has_south)
 			{
 				this.renderVertical(textureId, x, z, x, z+.5f, y-.5f, .98f, 8, 16, 8, 0);
 			}
-			if (has_south)
+			if (has_north)
 			{
 				this.renderVertical(textureId, x, z, x, z-.5f, y-.5f, .98f, 8, 16, 8, 0);
 			}
 		}
-		if (has_north)
+		if (has_south)
 		{
 			this.renderHorizontal(textureId, x+top_width, z+.5f, x, z+top_width, y+.48f, 1, 7, top_row_1, 0, true);
 			this.renderHorizontal(textureId, x-top_width, z+.5f, x, z+top_width, y+.48f, 1, 7, top_row_2, 0, true);
 		}
-		if (has_south)
+		if (has_north)
 		{
 			this.renderHorizontal(textureId, x+top_width, z-.5f, x, z-top_width, y+.48f, 1, 7, top_row_1, 0, true);
 			this.renderHorizontal(textureId, x-top_width, z-.5f, x, z-top_width, y+.48f, 1, 7, top_row_2, 0, true);
@@ -3224,25 +3224,25 @@ public class Chunk {
 		{
 			case 4:
 				// Facing West
-				have_right = (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
-				have_left = (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
+				have_right = (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
+				have_left = (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
 				GL11.glRotatef(270f, 0f, 1f, 0f);
 				break;
 			case 5:
 				// Facing East
-				have_right = (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
-				have_left = (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
+				have_right = (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
+				have_left = (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
 				GL11.glRotatef(90f, 0f, 1f, 0f);
 				break;
 			case 2:
-				// Facing South
+				// Facing North
 				have_right = (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == block.id);
 				have_left = (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == block.id);
 				GL11.glRotatef(180f, 0f, 1f, 0f);
 				break;
 			case 3:
 			default:
-				// Facing North (this is what chests with a data of "0" will show up as,
+				// Facing South (this is what chests with a data of "0" will show up as,
 				// weirdly, in Minecraft itself)
 				have_right = (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == block.id);
 				have_left = (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == block.id);
@@ -3314,7 +3314,7 @@ public class Chunk {
 			if (nameparts != null && nameparts.length > 1)
 			{
 				short adjblock;
-				// Stems will prefer: West, East, South, North
+				// Stems will prefer: West, East, North, South
 				adjblock = getAdjWestBlockId(xxx,yyy,zzz,blockOffset);
 				if (adjblock > 0 && blockArray[adjblock] != null &&
 						blockArray[adjblock].idStr.equals(nameparts[0]))
@@ -3333,7 +3333,7 @@ public class Chunk {
 				}
 				if (!connected)
 				{
-					adjblock = getAdjSouthBlockId(xxx,yyy,zzz,blockOffset);
+					adjblock = getAdjNorthBlockId(xxx,yyy,zzz,blockOffset);
 					if (adjblock > 0 && blockArray[adjblock] != null &&
 							blockArray[adjblock].idStr.equals(nameparts[0]))
 					{
@@ -3343,7 +3343,7 @@ public class Chunk {
 				}
 				if (!connected)
 				{
-					adjblock = getAdjNorthBlockId(xxx,yyy,zzz,blockOffset);
+					adjblock = getAdjSouthBlockId(xxx,yyy,zzz,blockOffset);
 					if (adjblock > 0 && blockArray[adjblock] != null &&
 							blockArray[adjblock].idStr.equals(nameparts[0]))
 					{
@@ -3521,11 +3521,11 @@ public class Chunk {
 		float y = yyy;
 
 		// Sides
-		if (shouldRenderHalfHeightAdj(getAdjSouthBlockId(xxx, yyy, zzz, blockOffset)))
+		if (shouldRenderHalfHeightAdj(getAdjNorthBlockId(xxx, yyy, zzz, blockOffset)))
 		{
 			this.renderNorthSouth(textureId, x, y, z, 0f, .5f);
 		}
-		if (shouldRenderHalfHeightAdj(getAdjNorthBlockId(xxx, yyy, zzz, blockOffset)))
+		if (shouldRenderHalfHeightAdj(getAdjSouthBlockId(xxx, yyy, zzz, blockOffset)))
 		{
 			this.renderNorthSouth(textureId, x, y, z+1, 0f, .5f);
 		}
@@ -3582,7 +3582,7 @@ public class Chunk {
 		short adj;
 
 		// Sides
-		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
 		if (adj != blockId)
 		{
 			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
@@ -3595,7 +3595,7 @@ public class Chunk {
 				this.renderVertical(textureId, x-.5f, z-.5f, x+.5f, z-.5f, y-.5f, 1f);
 			}
 		}
-		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
 		if (adj != blockId)
 		{
 			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
@@ -3718,12 +3718,12 @@ public class Chunk {
 		{
 			renderVertical(tex_side, side, -side, side, side, -side, side_height, 16, 13, 0, 3);
 		}
-		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
 		if (adj != block.id && !isSolid(adj))
 		{
 			renderVertical(tex_side, side, side, -side, side, -side, side_height, 16, 13, 0, 3);
 		}
-		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
 		if (adj != block.id && !isSolid(adj))
 		{
 			renderVertical(tex_side, side, -side, -side, -side, -side, side_height, 16, 13, 0, 3);
@@ -4451,75 +4451,75 @@ public class Chunk {
 											case 0:
 												west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												top_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 1:
 												east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 2:
 												west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 3:
 												west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 4:
 												east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 5:
 												west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 6:
 												west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 7:
 												east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 8:
 												west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 9:
 												west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											case 10:
 												west_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
 												east_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
 												south_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_STEM + tex_offset;
 												top_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
 											default:
 												west_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												east_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
-												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												south_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
+												north_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												top_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												bottom_t = TEX_HUGE_MUSHROOM_PORES + tex_offset;
 												break;
@@ -4677,8 +4677,8 @@ public class Chunk {
 										case NORTHSOUTH:
 											if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.NORTHSOUTH)
 											{
-												if(!north) this.renderNorthSouth(north_t, worldX+x, y, worldZ+z+1);
-												if(!south) this.renderNorthSouth(south_t, worldX+x, y, worldZ+z);
+												if(!north) this.renderNorthSouth(north_t, worldX+x, y, worldZ+z);
+												if(!south) this.renderNorthSouth(south_t, worldX+x, y, worldZ+z+1);
 											}
 											break;
 									}
