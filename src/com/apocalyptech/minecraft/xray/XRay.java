@@ -2108,8 +2108,8 @@ public class XRay
 		Graphics2D g = minimapGraphics;
 
 		CameraPreset spawn = level.getSpawnPoint();
-		int sy = getMinimapBaseY(spawn.block.cx) - (spawn.block.x % 16);
-		int sx = (getMinimapBaseX(spawn.block.cz) + (spawn.block.z % 16)) % minimap_dim;
+		int sy = getMinimapBaseY(spawn.block.cz) + (spawn.block.x % 16);
+		int sx = (getMinimapBaseX(spawn.block.cx) + (spawn.block.z % 16)) % minimap_dim;
 
 		g.setStroke(new BasicStroke(2));
 		g.setColor(Color.red.brighter());
@@ -2127,8 +2127,8 @@ public class XRay
 		Graphics2D g = minimapGraphics;
 
 		CameraPreset player = level.getPlayerPosition();
-		int py = getMinimapBaseY(player.block.cx) - (player.block.x % 16);
-		int px = getMinimapBaseX(player.block.cz) + (player.block.z % 16);
+		int py = getMinimapBaseY(player.block.cz) + (player.block.x % 16);
+		int px = getMinimapBaseX(player.block.cx) + (player.block.z % 16);
 
 		g.setStroke(new BasicStroke(2));
 		g.setColor(Color.yellow.brighter());
@@ -2788,8 +2788,8 @@ public class XRay
 
 			float vSizeFactor = .5f;
 
-			float vTexX = -(1.0f / minimap_dim_f) * currentCameraPosZ;
-			float vTexY = (1.0f / minimap_dim_f) * currentCameraPosX;
+			float vTexX = (1.0f / minimap_dim_f) * currentCameraPosX;
+			float vTexY = (1.0f / minimap_dim_f) * currentCameraPosZ;
 			float vTexZ = vSizeFactor;
 
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
@@ -2813,7 +2813,8 @@ public class XRay
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 
-			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth / 2.0f, screenHeight / 2.0f, camera.getYaw() + 90, 0.5f);
+			//SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth / 2.0f, screenHeight / 2.0f, camera.getYaw() + 90, 0.5f);
+			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth / 2.0f, screenHeight / 2.0f, camera.getYaw(), 0.5f);
 		}
 		else
 		{
@@ -2826,8 +2827,8 @@ public class XRay
 			// us. Sweet!
 			float vSizeFactor = 200.0f / minimap_dim_f;
 
-			float vTexX = -(1.0f / minimap_dim_f) * currentCameraPosZ;
-			float vTexY = (1.0f / minimap_dim_f) * currentCameraPosX;
+			float vTexX = (1.0f / minimap_dim_f) * currentCameraPosX;
+			float vTexY = (1.0f / minimap_dim_f) * currentCameraPosZ;
 			float vTexZ = vSizeFactor;
 
 			minimapTexture.bind();
@@ -2852,53 +2853,41 @@ public class XRay
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 
-			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth - 100, 100, camera.getYaw() + 90, 0.5f);
+			//SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth - 100, 100, camera.getYaw() + 90, 0.5f);
+			SpriteTool.drawSpriteAndRotateAndScale(minimapArrowTexture, screenWidth - 100, 100, camera.getYaw(), 0.5f);
 		}
 	}
 
 	/**
-	 * Returns the "base" minimap X coordinate, given chunk coordinate Z. The
-	 * "base" will be the upper right corner.
+	 * Returns the "base" minimap X coordinate, given chunk coordinate X. The
+	 * "base" will be the upper left corner.
 	 * 
-	 * In Minecraft, Z increases to the West, and decreases to the East, so our
-	 * minimap X coordinate will go up as chunkZ goes down.
+	 * As of Beta 1.9-pre4, X increases to the east (decreasing to the west),
+	 * and Z increases to the South (decreasing to the North).  This is much nicer
+	 * to deal with then the way we were pretending things worked previously.
 	 * 
 	 * @param chunkZ
 	 * @return
 	 */
-	private int getMinimapBaseX(int chunkZ)
+	private int getMinimapBaseX(int chunkX)
 	{
-		if (chunkZ < 0)
-		{
-			return ((Math.abs(chunkZ + 1) * 16) % minimap_dim) + 15;
-		}
-		else
-		{
-			return minimap_dim - (((chunkZ * 16) + 1) % minimap_dim);
-		}
+		return (((chunkX*16) % minimap_dim) + minimap_dim) % minimap_dim;
 	}
 
 	/**
-	 * Returns the "base" minimap Y coordinate, given chunk coordinate X. The
-	 * "base" will be the upper right corner.
+	 * Returns the "base" minimap Y coordinate, given chunk coordinate Z. The
+	 * "base" will be the upper left corner.
 	 * 
-	 * In Minecraft, X increases to the South, and decreases to the North, so
-	 * our minimap Y coordinate will go up as chunkX goes up (since the origin
-	 * of a texture is in the upper-left).
+	 * As of Beta 1.9-pre4, X increases to the east (decreasing to the west),
+	 * and Z increases to the South (decreasing to the North).  This is much nicer
+	 * to deal with then the way we were pretending things worked previously.
 	 * 
-	 * @param chunkX
+	 * @param chunkZ
 	 * @return
 	 */
-	private int getMinimapBaseY(int chunkX)
+	private int getMinimapBaseY(int chunkZ)
 	{
-		if (chunkX < 0)
-		{
-			return (minimap_dim - ((Math.abs(chunkX) * 16) % minimap_dim)) % minimap_dim;
-		}
-		else
-		{
-			return (chunkX * 16) % minimap_dim;
-		}
+		return (((chunkZ*16) % minimap_dim) + minimap_dim) % minimap_dim;
 	}
 
 	/**
@@ -2911,7 +2900,7 @@ public class XRay
 	{
 		// minimapGraphics.setColor(new Color(0f, 0f, 0f, 1f));
 		// minimapGraphics.setComposite(AlphaComposite.Src);
-		minimapGraphics.fillRect(getMinimapBaseX(z) - 15, getMinimapBaseY(x), 16, 16);
+		minimapGraphics.fillRect(getMinimapBaseX(x), getMinimapBaseY(z), 16, 16);
 		level.getChunk(x, z).isOnMinimap = false;
 	}
 
@@ -2952,8 +2941,8 @@ public class XRay
 		}
 		short[] chunkData = level.getChunkData(x, z);
 
-		int base_x = getMinimapBaseX(z);
-		int base_y = getMinimapBaseY(x);
+		int base_x = getMinimapBaseX(x);
+		int base_y = getMinimapBaseY(z);
 
 		boolean in_nether = world.isDimension(-1);
 		boolean found_air;
@@ -3001,7 +2990,7 @@ public class XRay
 								// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
 								// to behave, but c'est la vie!
 								g.setColor(blockColor);
-								g.fillRect(base_x - zz, base_y + xx, 1, 1);
+								g.fillRect(base_x + xx, base_y + zz, 1, 1);
 							}
 							drew_block = true;
 							break;
@@ -3017,7 +3006,7 @@ public class XRay
 				if (in_nether && found_solid && !drew_block)
 				{
 					g.setColor(MinecraftConstants.BLOCK_BEDROCK.color);
-					g.fillRect(base_x - zz, base_y + xx, 1, 1);
+					g.fillRect(base_x + xx, base_y + xx, 1, 1);
 				}
 			}
 		}

@@ -3,6 +3,9 @@
   * Set "The End" as a known dimension, for the level list
   * Rename AIR_PORTAL and AIR_PORTAL_FRAME to ENDER_PORTAL and
     ENDER_PORTAL_FRAME
+  * Change minimap orientation to match the official internal Minecraft
+    directions in Beta 1.9-pre4 (when the sunrise was changed from
+	North to East)
 
 Minecraft X-Ray 3.4.0 (2011.10.11)
 
