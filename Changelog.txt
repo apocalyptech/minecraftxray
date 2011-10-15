@@ -1,3 +1,5 @@
+Minecraft X-Ray 3.4.1 (2011.10.15)
+
   * Updated Air Portal rendering to Beta 1.9-pre4
   * Added Ender Stone block from Beta 1.9-pre4
   * Set "The End" as a known dimension, for the level list
