@@ -2284,7 +2284,7 @@ public class XRay
 						last_tex = i;
 					}
 					k.renderSolid(i);
-					if (toggle.highlightOres != HIGHLIGHT_TYPE.OFF)
+					if (toggle.highlightOres == HIGHLIGHT_TYPE.OFF)
 					{
 						k.renderSelected(i, this.mineralToggle);
 					}
