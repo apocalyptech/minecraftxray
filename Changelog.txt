@@ -1,3 +1,7 @@
+  * Updated ore-highlighting toggle ("H" by default) to switch between
+    old-style (white) and new-style (disco) highlighting, in addition to
+	turning it off.
+
 Minecraft X-Ray 3.4.1 (2011.10.15)
 
   * Updated Air Portal rendering to Beta 1.9-pre4

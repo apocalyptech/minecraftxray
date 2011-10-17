@@ -146,6 +146,22 @@ public class XRay
 	private Texture minimapArrowTexture;
 	private Graphics2D minimapGraphics;
 
+	public enum HIGHLIGHT_TYPE
+	{
+		DISCO ("Disco", Color.GREEN.darker()),
+		WHITE ("White", Color.GREEN.darker()),
+		OFF ("Off", Color.RED.darker())
+		;
+		public String reportText;
+		public Color reportColor;
+		HIGHLIGHT_TYPE(String reportText, Color reportColor)
+		{
+			this.reportText = reportText;
+			this.reportColor = reportColor;
+		}
+	}
+	private static final HIGHLIGHT_TYPE defaultHighlightOre = HIGHLIGHT_TYPE.DISCO;
+
 	// Toggles that need to be available to the renderers
 	public static class RenderToggles
 	{
@@ -153,7 +169,7 @@ public class XRay
 		public boolean render_water = true;
 		public boolean highlight_explored = false;
 		public boolean beta19_fences = true;
-		public boolean highlightOres = true;
+		public HIGHLIGHT_TYPE highlightOres = defaultHighlightOre;
 	}
 	public static RenderToggles toggle = new RenderToggles();
 
@@ -1743,9 +1759,39 @@ public class XRay
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING))
 				{
 					// Toggle ore highlighting
-					toggle.highlightOres = !toggle.highlightOres;
+					boolean found = false;
+					boolean set = false;
+					boolean have_off = false;
+					for (HIGHLIGHT_TYPE type : HIGHLIGHT_TYPE.values())
+					{
+						if (type == toggle.highlightOres)
+						{
+							found = true;
+							if (type == HIGHLIGHT_TYPE.OFF)
+							{
+								have_off = true;
+							}
+						}
+						else if (found)
+						{
+							toggle.highlightOres = type;
+							set = true;
+							if (type == HIGHLIGHT_TYPE.OFF)
+							{
+								have_off = true;
+							}
+							break;
+						}
+					}
+					if (!set)
+					{
+						toggle.highlightOres = HIGHLIGHT_TYPE.DISCO;
+					}
 					updateRenderDetails();
-					invalidateSelectedChunks();
+					if (have_off)
+					{
+						invalidateSelectedChunks();
+					}
 				}
 				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ACCURATE_GRASS))
 				{
@@ -2238,7 +2284,7 @@ public class XRay
 						last_tex = i;
 					}
 					k.renderSolid(i);
-					if (!toggle.highlightOres)
+					if (toggle.highlightOres != HIGHLIGHT_TYPE.OFF)
 					{
 						k.renderSelected(i, this.mineralToggle);
 					}
@@ -2303,15 +2349,33 @@ public class XRay
 		}
 
 		// And now, if we're highlighting ores, highlight them.
-		if (toggle.highlightOres)
+		if (toggle.highlightOres != HIGHLIGHT_TYPE.OFF)
 		{
 
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
-			float timeidx = (System.currentTimeMillis() % 1000) * 6.28318f / 1000.0f;
-			float red = (float)Math.sin(timeidx)*.5f+.5f;
-			float green = (float)Math.sin(timeidx+2.09439f)*.5f+.5f;
-			float blue = (float)Math.sin(timeidx+4.18878f)*.5f+.5f;
-			GL11.glColor4f(red, green, blue, 1f);
+			switch (toggle.highlightOres)
+			{
+				// Old-style; at least one person prefers it
+				case WHITE:
+					long time = System.currentTimeMillis();
+					float alpha = (time % 1000) / 1000.0f;
+					if (time % 2000 > 1000)
+					{
+						alpha = 1.0f - alpha;
+					}
+					alpha = 0.1f + (alpha * 0.8f);
+					GL11.glColor4f(alpha, alpha, alpha, alpha); 
+					break;
+
+				// New style disco-y highlighting
+				case DISCO:
+					float timeidx = (System.currentTimeMillis() % 1000) * 6.28318f / 1000.0f;
+					float red = (float)Math.sin(timeidx)*.5f+.5f;
+					float green = (float)Math.sin(timeidx+2.09439f)*.5f+.5f;
+					float blue = (float)Math.sin(timeidx+4.18878f)*.5f+.5f;
+					GL11.glColor4f(red, green, blue, 1f);
+					break;
+			}
 			setLightLevel(20);
 			GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 			// TODO: could check for specific textures here, rather than looping over all
@@ -2548,11 +2612,8 @@ public class XRay
 		infoboxSlider(g, x_off, line_count * line_h, "Render Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentChunkRange, CHUNK_RANGES.length);
 		line_count++;
 		infoboxSlider(g, x_off, line_count * line_h, "Highlight Dist:", Color.BLACK, DETAILFONT, line_h, 90, currentHighlightDistance, HIGHLIGHT_RANGES.length);
-		if (!toggle.highlightOres)
-		{
-			line_count++;
-			infoboxTextLabel(g, x_off, line_count * line_h, "Ore Highlight: ", Color.BLACK, DETAILFONT, "Off", Color.RED.darker(), DETAILVALUEFONT);
-		}
+		line_count++;
+		infoboxTextLabel(g, x_off, line_count * line_h, "Ore Highlight: ", Color.BLACK, DETAILFONT, toggle.highlightOres.reportText, toggle.highlightOres.reportColor, DETAILVALUEFONT);
 		if (toggle.highlight_explored)
 		{
 			line_count++;
@@ -3046,7 +3107,7 @@ public class XRay
 		xray_properties.setBooleanProperty("STATE_WATER", toggle.render_water);
 		xray_properties.setBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
 		xray_properties.setBooleanProperty("STATE_BETA19_FENCES", toggle.beta19_fences);
-		xray_properties.setBooleanProperty("STATE_HIGHLIGHT_ORES", toggle.highlightOres);
+		xray_properties.setProperty("STATE_HIGHLIGHT_ORES", toggle.highlightOres.toString());
 		xray_properties.setBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
 		xray_properties.setBooleanProperty("STATE_LIGHTING", lightMode);
 		xray_properties.setBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);
@@ -3074,7 +3135,26 @@ public class XRay
 		toggle.render_water = xray_properties.getBooleanProperty("STATE_WATER", toggle.render_water);
 		toggle.highlight_explored = xray_properties.getBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
 		toggle.beta19_fences = xray_properties.getBooleanProperty("STATE_BETA19_FENCES", toggle.beta19_fences);
-		toggle.highlightOres = xray_properties.getBooleanProperty("STATE_HIGHLIGHT_ORES", toggle.highlightOres);
+		String highlight = xray_properties.getProperty("STATE_HIGHLIGHT_ORES");
+		if (highlight.equals("1"))
+		{
+			toggle.highlightOres = defaultHighlightOre;
+		}
+		else if (highlight.equals("0"))
+		{
+			toggle.highlightOres = HIGHLIGHT_TYPE.OFF;
+		}
+		else
+		{
+			try
+			{
+				toggle.highlightOres = Enum.valueOf(HIGHLIGHT_TYPE.class, highlight);
+			}
+			catch (IllegalArgumentException e)
+			{
+				toggle.highlightOres = defaultHighlightOre;
+			}
+		}
 		camera_lock = xray_properties.getBooleanProperty("STATE_CAMERA_LOCK", camera_lock);
 		lightMode = xray_properties.getBooleanProperty("STATE_LIGHTING", lightMode);
 		levelInfoToggle = xray_properties.getBooleanProperty("STATE_LEVEL_INFO", levelInfoToggle);

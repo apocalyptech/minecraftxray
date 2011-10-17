@@ -4009,7 +4009,7 @@ public class Chunk {
 		int tex_offset = 0;
 		BlockType block;
 		boolean adj_torch;
-		boolean highlightingOres = XRay.toggle.highlightOres;
+		boolean highlightingOres = (XRay.toggle.highlightOres != XRay.HIGHLIGHT_TYPE.OFF);
 		short t;
 		int xOff, zOff, blockOffset;
 		int x, y, z;

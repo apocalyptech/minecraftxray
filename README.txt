@@ -211,10 +211,7 @@ Often (with more common resources) you'll want to keep this value very
 low.  Otherwise it becomes quite difficult to tell where you're actually
 going.  For less common resources (like pumpkins or clay), you'll want
 to have it set as high as possible, though.  Note that this will never
-be able to highlight ores outside the set visibility range.  This
-option does nothing if you've toggled ore highlighting off (which is
-useful to do sometimes, because even without the glow, X-Ray will
-render all instances of the resources you've selected).
+be able to highlight ores outside the set visibility range.
 
 Lighting just determines the OpenGL "fog" value.  This is useful to have
 a better sense of scale while moving around.  You can toggle into
@@ -224,6 +221,14 @@ In addition to the sliders, there are a few toggles which let you set
 whether to always draw water and bedrock.  Water is on by default, and
 bedrock is off by default (though it will of course show up if necessary,
 regardless of this setting).
+
+The ore highlighting glow can be toggled using the "H" key.  This will
+cycle between the three states of ore highlighting glow.  The default is a
+rainbow effect which one user has described as "disco."  The next selection
+is a plain white highlighting which was the default until version 3.4.0.
+Finally, the glow will be turned off entirely.  Note that with the glow
+turned off, every instance of the specified ore will still be rendered
+onscreen, so this toggle is still quite useful for tracking down ores.
 
 The "explored" area toggle, basically just tints any blocks around torches with
 a green color.  This makes it very easy to see where you've explored in
