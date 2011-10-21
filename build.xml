@@ -5,7 +5,7 @@
 	</description>
 
 	<!-- Project attributes -->
-	<property name="version" value="3.4.1"/>
+	<property name="version" value="3.4.2"/>
 	<property name="export_base" value="minecraft_xray_${version}"/>
 	
 	<!-- set global properties for this build -->
