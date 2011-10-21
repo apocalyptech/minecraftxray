@@ -108,7 +108,7 @@ public class XRay
 	// are we inverting the mouse
 	private boolean invertMouse = false;
 	// window title
-	public static String app_version = "3.4.2";
+	public static String app_version = "3.4.3";
 	public static String app_name    = "Minecraft X-Ray";
 	public static String windowTitle = app_name + " " + app_version;
 
@@ -3136,7 +3136,7 @@ public class XRay
 		toggle.highlight_explored = xray_properties.getBooleanProperty("STATE_EXPLORED", toggle.highlight_explored);
 		toggle.beta19_fences = xray_properties.getBooleanProperty("STATE_BETA19_FENCES", toggle.beta19_fences);
 		String highlight = xray_properties.getProperty("STATE_HIGHLIGHT_ORES");
-		if (highlight.equals("1"))
+		if (highlight == null || highlight.equals("1"))
 		{
 			toggle.highlightOres = defaultHighlightOre;
 		}
