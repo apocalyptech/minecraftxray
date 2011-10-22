@@ -134,6 +134,7 @@ public class ResolutionDialog extends JFrame {
 		
 	public static final int DIALOG_BUTTON_EXIT = 0;
 	public static final int DIALOG_BUTTON_GO = 1;
+	public static final int DIALOG_BUTTON_KEY = 2;
 
 	private JComboBox resolutionsList;
 	private JComboBox bitDepthList;
@@ -613,7 +614,7 @@ public class ResolutionDialog extends JFrame {
 		keyButton 	= new JButton("Edit Key Bindings");
 		keyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                editKey();
+                dialogKey();
 			}
 		});
 		
@@ -653,10 +654,9 @@ public class ResolutionDialog extends JFrame {
     /**
      * Actions to perform if the "Go" button is hit, or otherwise triggered.
      */
-    private void editKey()
+    private void dialogKey()
     {
-        exitCode = ResolutionDialog.DIALOG_BUTTON_GO;
-        setSelectedValues();
+        exitCode = ResolutionDialog.DIALOG_BUTTON_KEY;
         setVisible(false);
         dispose();
         synchronized(ResolutionDialog.this) {

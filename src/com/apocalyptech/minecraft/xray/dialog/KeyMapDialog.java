@@ -73,42 +73,20 @@ public class KeyMapDialog extends JFrame {
 	private static final int FRAMEWIDTH = 500;
 	private static final int FRAMEHEIGHT = 620;
 
-	private static String window_title = "X-Ray Keyboard Reference";
-	private JButton okButton;
+	private static String window_title = "X-Ray Keyboard Binding Editor";
+	private JButton saveButton;
+	private JButton cancelButton;
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
 
 	private static boolean dialog_showing = false;
-	private static KeyMapDialog keyhelp_dialog;
+	private static KeyMapDialog keymap_dialog;
 	
 	public static Image iconImage;
 
 	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
 
-	private class JUrlLabel extends JLabel
-	{
-		private String url;
-
-		public JUrlLabel(String url)
-		{
-			super();
-			this.url = url;
-			setup();
-		}
-
-		private void setup()
-		{
-			setText("<html><span style=\"color: #000099;\"><u>" + this.url + "</u></span></html>");
-			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent e)
-				{
-					BareBonesBrowserLaunch.openURL(url);
-				}
-			});
-		}
-	}
 	
 	/***
 	 * Centers this dialog on the screen
@@ -265,19 +243,6 @@ public class KeyMapDialog extends JFrame {
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.CENTER;
 		addComponent(this.getContentPane(), titleLabel, c);
-
-		// Link
-		current_grid_y++;
-		c.gridx = 0; c.gridy = current_grid_y;
-		c.anchor = GridBagConstraints.CENTER;
-		c.insets = noBottomInsets;
-		addComponent(this.getContentPane(), new JLabel("For information on setting your own keybindings, see:"), c);
-		current_grid_y++;
-		c.gridx = 0; c.gridy = current_grid_y;
-		c.anchor = GridBagConstraints.CENTER;
-		c.insets = noTopInsets;
-		addComponent(this.getContentPane(), new JUrlLabel("http://apocalyptech.com/minecraft/xray/config.php"), c);
-		c.insets = standardInsets;
 		
 		// Add our scrollpane to the window
 		current_grid_y++;
@@ -296,7 +261,15 @@ public class KeyMapDialog extends JFrame {
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		addComponent(this.getContentPane(), okButton,c);
+		addComponent(this.getContentPane(), saveButton,c);
+		
+		current_grid_y++;
+		c.weightx = flist; 
+		c.weighty = 0f; 
+		c.gridx = 0; c.gridy = current_grid_y;
+		c.anchor = GridBagConstraints.EAST;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		addComponent(this.getContentPane(), cancelButton,c);
 	}
 	
 	/***
@@ -328,31 +301,48 @@ public class KeyMapDialog extends JFrame {
 	private void buildButtons() {
         JRootPane rootPane = this.getRootPane();
 		
-        // The "OK" button
-		okButton	= new JButton("OK");
-		okButton.addActionListener(new ActionListener() {
+        // The "Save" button
+		saveButton	= new JButton("Save");
+		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dialogOK();
+				dialogSave();
 			}
 		});
 
-		// Key mapping for the Jump button
+		// Key mapping for the Save button. Enter is Save
 		KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enterStroke, "ENTER");
-		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ENTER");
 		rootPane.getActionMap().put("ENTER", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				dialogOK();
+				dialogSave();
 			}
 		});
+		
+        // The "Cancel" button
+		cancelButton	= new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialogExit();
+			}
+		});
+
+		// Key mapping for the Save button. Enter is Save
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ESCAPE");
+		rootPane.getActionMap().put("ESCAPE", new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				dialogExit();
+			}
+		});
+		
 	}
 
 	/**
 	 * Actions to perform if the "Jump" button is hit, or otherwise triggered.
 	 */
-	private void dialogOK()
+	private void dialogSave()
 	{
+		System.out.println("Pressed Save");
 		setVisible(false);
 		dispose();
 		KeyMapDialog.dialog_showing = false;
@@ -360,6 +350,18 @@ public class KeyMapDialog extends JFrame {
 			KeyMapDialog.this.notify();
 		}
 	}
+	
+	private void dialogExit()
+	{
+		System.out.println("Pressed Cancel");
+		setVisible(false);
+		dispose();
+		KeyMapDialog.dialog_showing = false;
+		synchronized(KeyMapDialog.this) {
+			KeyMapDialog.this.notify();
+		}
+	}
+	
 	
 	/***
 	 * Creates a new KeyMapDialog
@@ -379,7 +381,7 @@ public class KeyMapDialog extends JFrame {
 			public void windowClosed(WindowEvent e) {}
 			public void windowClosing(WindowEvent e)
 			{
-				dialogOK();
+				dialogSave();
 			}
 			public void windowDeactivated(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
@@ -406,22 +408,31 @@ public class KeyMapDialog extends JFrame {
 	{
 		if (dialog_showing)
 		{
-			KeyMapDialog.keyhelp_dialog.toFront();
-			KeyMapDialog.keyhelp_dialog.requestFocus();
+			KeyMapDialog.keymap_dialog.toFront();
+			KeyMapDialog.keymap_dialog.requestFocus();
 		}
 		else
 		{
 			KeyMapDialog.key_mapping = key_mapping;
 			KeyMapDialog.dialog_showing = true;
-			KeyMapDialog.keyhelp_dialog = new KeyMapDialog();
+			KeyMapDialog.keymap_dialog = new KeyMapDialog();
+		}
+		
+		try {
+			synchronized(keymap_dialog) {
+				keymap_dialog.wait();
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	public static void closeDialog()
 	{
-		if (KeyMapDialog.dialog_showing && KeyMapDialog.keyhelp_dialog != null)
+		if (KeyMapDialog.dialog_showing && KeyMapDialog.keymap_dialog != null)
 		{
-			KeyMapDialog.keyhelp_dialog.dialogOK();
+			KeyMapDialog.keymap_dialog.dialogExit();
 		}
 	}
 }
