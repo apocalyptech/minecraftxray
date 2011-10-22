@@ -26,6 +26,7 @@
  */
 package com.apocalyptech.minecraft.xray;
 
+import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTIONS;
 import com.apocalyptech.minecraft.xray.dialog.JumpDialog;
 import com.apocalyptech.minecraft.xray.dialog.KeyMapDialog;
 import com.apocalyptech.minecraft.xray.dialog.WarningDialog;
@@ -1088,6 +1089,8 @@ public class XRay
 	private void createWindow() throws Exception
 	{
 
+		//Temporary map to hold new key bindings
+		HashMap<KEY_ACTIONS, Integer> newMap = null;
 		// set icon buffers
 		// stupid conversions needed
 		File iconFile = new File("xray_icon.png");
@@ -1152,7 +1155,18 @@ public class XRay
 
 			else if (dialogReturn == ResolutionDialog.DIALOG_BUTTON_KEY)
 			{
-				KeyMapDialog.presentDialog(key_mapping);
+				newMap = KeyMapDialog.presentDialog(key_mapping);
+				if(newMap != null)
+				{
+					//set our new mappings
+					key_mapping = newMap;
+					//save preferences
+					for (KEY_ACTIONS action : key_mapping.keySet())
+					{
+						xray_properties.setProperty("KEY_" + action.toString(), Keyboard.getKeyName(this.key_mapping.get(action)));
+					}
+					this.savePreferences();
+				}
 			}
 			else
 			{

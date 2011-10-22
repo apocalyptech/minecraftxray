@@ -86,6 +86,7 @@ public class KeyMapDialog extends JFrame {
 	public static Image iconImage;
 
 	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
+	private HashMap<KEY_ACTIONS, Integer> newMap;
 
 	
 	/***
@@ -342,7 +343,7 @@ public class KeyMapDialog extends JFrame {
 	 */
 	private void dialogSave()
 	{
-		System.out.println("Pressed Save");
+		newMap = buildHashMap();
 		setVisible(false);
 		dispose();
 		KeyMapDialog.dialog_showing = false;
@@ -353,7 +354,7 @@ public class KeyMapDialog extends JFrame {
 	
 	private void dialogExit()
 	{
-		System.out.println("Pressed Cancel");
+		newMap = null;
 		setVisible(false);
 		dispose();
 		KeyMapDialog.dialog_showing = false;
@@ -381,7 +382,7 @@ public class KeyMapDialog extends JFrame {
 			public void windowClosed(WindowEvent e) {}
 			public void windowClosing(WindowEvent e)
 			{
-				dialogSave();
+				dialogExit();
 			}
 			public void windowDeactivated(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
@@ -404,7 +405,7 @@ public class KeyMapDialog extends JFrame {
 	 * Pops up the dialog window
 	 * @param windowName the title of the dialog
 	 */
-	public static void presentDialog(HashMap<KEY_ACTIONS, Integer> key_mapping)
+	public static HashMap<KEY_ACTIONS, Integer> presentDialog(HashMap<KEY_ACTIONS, Integer> key_mapping)
 	{
 		if (dialog_showing)
 		{
@@ -426,6 +427,8 @@ public class KeyMapDialog extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return keymap_dialog.newMap;
 	}
 
 	public static void closeDialog()
