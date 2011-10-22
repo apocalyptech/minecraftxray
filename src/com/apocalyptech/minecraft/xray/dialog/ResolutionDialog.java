@@ -140,6 +140,7 @@ public class ResolutionDialog extends JFrame {
 	private JComboBox refreshRateList;
 	private JButton runButton;
 	private JButton exitButton;
+	private JButton keyButton;
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
 	private JCheckBox fullScreenCheckBox;
@@ -544,17 +545,24 @@ public class ResolutionDialog extends JFrame {
 		
 		c.weightx = flabel; 
 		c.weighty = 0f; 
-		c.gridx = 0; c.gridy = 1;
+		c.gridx = 0; c.gridy = 2;
 		c.anchor = GridBagConstraints.WEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(this.getContentPane(), exitButton,c);
 		
 		c.weightx = flist; 
 		c.weighty = 0f; 
-		c.gridx = 1; c.gridy = 1;
+		c.gridx = 1; c.gridy = 2;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(this.getContentPane(), runButton,c);
+		
+		c.weightx = flist; 
+		c.weighty = 0f; 
+		c.gridx = 1; c.gridy = 1;
+		c.anchor = GridBagConstraints.EAST;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		addComponent(this.getContentPane(), keyButton,c);
 	}
 	
 	/***
@@ -600,6 +608,14 @@ public class ResolutionDialog extends JFrame {
                 dialogGo();
 			}
         });
+        
+        // The Edit Keys Button
+		keyButton 	= new JButton("Edit Key Bindings");
+		keyButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                editKey();
+			}
+		});
 		
         // The Exit button
 		exitButton 	= new JButton("Exit");
@@ -633,6 +649,22 @@ public class ResolutionDialog extends JFrame {
         }
     }
 
+    
+    /**
+     * Actions to perform if the "Go" button is hit, or otherwise triggered.
+     */
+    private void editKey()
+    {
+        exitCode = ResolutionDialog.DIALOG_BUTTON_GO;
+        setSelectedValues();
+        setVisible(false);
+        dispose();
+        synchronized(ResolutionDialog.this) {
+            ResolutionDialog.this.notify();
+        }
+    }
+    
+    
     /**
      * Actions to perform if the "Exit" button is hit, or otherwise triggered.
      */
