@@ -49,6 +49,7 @@ import java.awt.event.WindowListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -84,6 +85,8 @@ public class KeyMapDialog extends JFrame {
 	private static KeyMapDialog keymap_dialog;
 	
 	public static Image iconImage;
+	
+	private List<OneCharField> keyBoxes;
 
 	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
 	private HashMap<KEY_ACTIONS, Integer> newMap;
@@ -114,6 +117,8 @@ public class KeyMapDialog extends JFrame {
 		
 		float flabel = 0.1f;
 		float flist = 1.9f;
+		
+		keyBoxes = new ArrayList<OneCharField>();
 
 		JLabel titleLabel = new JLabel(window_title);
 		titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -125,6 +130,7 @@ public class KeyMapDialog extends JFrame {
 		JLabel sectionLabel;
 		JLabel descLabel;
 		JLabel keyLabel;
+		OneCharField keyBox;
 		
 		Insets standardInsets = new Insets(5, 5, 5, 5);
 		Insets categoryInsets = new Insets(20, 5, 5, 5);
@@ -183,7 +189,7 @@ public class KeyMapDialog extends JFrame {
 			c.anchor = GridBagConstraints.WEST;
 			switch (key)
 			{
-				case SPEED_INCREASE:
+	/*			case SPEED_INCREASE:
 					keyLabel = new JLabel(Keyboard.getKeyName(bound_key) + " / Left Mouse Button (hold)");
 					break;
 
@@ -194,25 +200,26 @@ public class KeyMapDialog extends JFrame {
 				case QUIT:
 					keyLabel = new JLabel("CTRL-" + Keyboard.getKeyName(bound_key));
 					break;
-
+*/
 				default:
 					if (Keyboard.getKeyName(bound_key).startsWith("NUMPAD"))
 					{
-						keyLabel = new JLabel(Keyboard.getKeyName(bound_key) + " (numlock must be on)");
+						keyBox = new OneCharField(key, Keyboard.getKeyName(bound_key) + " (numlock must be on)");
 					}
 					else if (Keyboard.getKeyName(bound_key).equals("GRAVE"))
 					{
-						keyLabel = new JLabel("` (grave accent)");
+						keyBox = new OneCharField(key, "` (grave accent)");
 					}
 					else
 					{
-						keyLabel = new JLabel(Keyboard.getKeyName(bound_key));
+						keyBox = new OneCharField(key , Keyboard.getKeyName(bound_key));
 					}
 					break;
 			}
-			keyLabel.setFont(keyFont);
-			addComponent(keyPanel, keyLabel, c, keyLayout);
-
+			keyBox.setFont(keyFont);
+			addComponent(keyPanel, keyBox, c, keyLayout);
+			keyBoxes.add(keyBox);
+			
 			// One extra note for slime chunks
 			if (key == KEY_ACTIONS.TOGGLE_SLIME_CHUNKS)
 			{
@@ -337,6 +344,8 @@ public class KeyMapDialog extends JFrame {
 		});
 		
 	}
+	
+
 
 	/**
 	 * Actions to perform if the "Jump" button is hit, or otherwise triggered.
@@ -350,6 +359,14 @@ public class KeyMapDialog extends JFrame {
 		synchronized(KeyMapDialog.this) {
 			KeyMapDialog.this.notify();
 		}
+	}
+	
+	private HashMap<KEY_ACTIONS, Integer> buildHashMap() {
+		HashMap<KEY_ACTIONS, Integer> map = new HashMap<KEY_ACTIONS, Integer> ();
+		for(OneCharField ocf :  keyBoxes) {
+			map.put(ocf.getKeyAction(), ocf.getKeyAsInt());
+		}
+		return map;
 	}
 	
 	private void dialogExit()

@@ -29,10 +29,11 @@ package com.apocalyptech.minecraft.xray;
 import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTIONS;
 import com.apocalyptech.minecraft.xray.dialog.JumpDialog;
 import com.apocalyptech.minecraft.xray.dialog.KeyMapDialog;
+import com.apocalyptech.minecraft.xray.dialog.ResolutionDialog;
 import com.apocalyptech.minecraft.xray.dialog.WarningDialog;
 import com.apocalyptech.minecraft.xray.dialog.KeyHelpDialog;
 import com.apocalyptech.minecraft.xray.dialog.ExceptionDialog;
-import com.apocalyptech.minecraft.xray.dialog.ResolutionDialog;
+
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
