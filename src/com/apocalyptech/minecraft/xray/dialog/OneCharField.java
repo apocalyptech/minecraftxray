@@ -39,9 +39,55 @@ public class OneCharField extends JTextField{
 		}
 		
 		private String getKeyText(KeyEvent ke) {
-			//TODO: Deal with cases where AWT and LWJGL Strings are not the same
-			//for example: CTRL vs. LCONTROL
-			return KeyEvent.getKeyText(ke.getKeyCode()).toUpperCase();
+			int keyCode = ke.getKeyCode();
+			int keyLocation = ke.getKeyLocation();
+			switch(keyCode) {
+			case KeyEvent.VK_NUMPAD0:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD0);
+			case KeyEvent.VK_NUMPAD1:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD1);
+			case KeyEvent.VK_NUMPAD2:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD2);
+			case KeyEvent.VK_NUMPAD3:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD3);
+			case KeyEvent.VK_NUMPAD4:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD4);
+			case KeyEvent.VK_NUMPAD5:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD5);
+			case KeyEvent.VK_NUMPAD6:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD6);
+			case KeyEvent.VK_NUMPAD7:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD7);
+			case KeyEvent.VK_NUMPAD8:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD8);
+			case KeyEvent.VK_NUMPAD9:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMPAD9);
+			case KeyEvent.VK_NUM_LOCK:
+				return Keyboard.getKeyName(Keyboard.KEY_NUMLOCK);
+			case KeyEvent.VK_QUOTE:
+				return Keyboard.getKeyName(Keyboard.KEY_APOSTROPHE);
+			case KeyEvent.VK_OPEN_BRACKET:
+				return Keyboard.getKeyName(Keyboard.KEY_LBRACKET);
+			case KeyEvent.VK_CLOSE_BRACKET:
+				return Keyboard.getKeyName(Keyboard.KEY_RBRACKET);
+			case KeyEvent.VK_BACK_QUOTE:
+				return Keyboard.getKeyName(Keyboard.KEY_GRAVE);
+			case KeyEvent.VK_BACK_SLASH:
+				return Keyboard.getKeyName(Keyboard.KEY_BACKSLASH);
+			case KeyEvent.VK_CONTROL:
+				return Keyboard.getKeyName( keyLocation==2 ? 
+						Keyboard.KEY_LCONTROL : Keyboard.KEY_RCONTROL);  
+			case KeyEvent.VK_SHIFT:
+				return Keyboard.getKeyName( keyLocation==2 ? 
+						Keyboard.KEY_LSHIFT : Keyboard.KEY_RSHIFT);
+			case KeyEvent.VK_ALT:
+				return Keyboard.getKeyName( keyLocation==2 ? 
+						Keyboard.KEY_LMETA: Keyboard.KEY_RMETA);
+			default:
+				if(Keyboard.getKeyIndex(KeyEvent.getKeyText(ke.getKeyCode()).toUpperCase()) <= 0)
+					System.out.println("KE " +ke.getKeyCode()+ " " + KeyEvent.getKeyText(ke.getKeyCode()) + " " + ke.getKeyLocation());
+				return KeyEvent.getKeyText(ke.getKeyCode()).toUpperCase();
+			}
 		}
 	}
 
