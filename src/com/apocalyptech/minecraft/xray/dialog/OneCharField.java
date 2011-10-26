@@ -35,7 +35,8 @@ public class OneCharField extends JTextField{
 		}
 		
 		public void keyPressed(KeyEvent ke){
-			ocf.setText(getKeyText(ke));
+			String text = getKeyText(ke); 
+			if(text != null)	ocf.setText(text);
 		}
 		
 		private String getKeyText(KeyEvent ke) {
@@ -84,9 +85,9 @@ public class OneCharField extends JTextField{
 				return Keyboard.getKeyName( keyLocation==2 ? 
 						Keyboard.KEY_LMETA: Keyboard.KEY_RMETA);
 			default:
-				if(Keyboard.getKeyIndex(KeyEvent.getKeyText(ke.getKeyCode()).toUpperCase()) <= 0)
-					System.out.println("KE " +ke.getKeyCode()+ " " + KeyEvent.getKeyText(ke.getKeyCode()) + " " + ke.getKeyLocation());
-				return KeyEvent.getKeyText(ke.getKeyCode()).toUpperCase();
+				if(Keyboard.getKeyIndex(KeyEvent.getKeyText(ke.getKeyCode()).toUpperCase()) != 0)
+					return KeyEvent.getKeyText(ke.getKeyCode()).toUpperCase();
+				return null;
 			}
 		}
 	}
