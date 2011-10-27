@@ -86,7 +86,7 @@ public class KeyMapDialog extends JFrame {
 	
 	public static Image iconImage;
 	
-	private List<OneCharField> keyBoxes;
+	private List<KeyField> keyBoxes;
 
 	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
 	private HashMap<KEY_ACTIONS, Integer> newMap;
@@ -118,7 +118,7 @@ public class KeyMapDialog extends JFrame {
 		float flabel = 0.1f;
 		float flist = 1.9f;
 		
-		keyBoxes = new ArrayList<OneCharField>();
+		keyBoxes = new ArrayList<KeyField>();
 
 		JLabel titleLabel = new JLabel(window_title);
 		titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -130,7 +130,7 @@ public class KeyMapDialog extends JFrame {
 		JLabel sectionLabel;
 		JLabel descLabel;
 		JLabel keyLabel;
-		OneCharField keyBox;
+		KeyField keyBox;
 		
 		Insets standardInsets = new Insets(5, 5, 5, 5);
 		Insets categoryInsets = new Insets(20, 5, 5, 5);
@@ -204,15 +204,15 @@ public class KeyMapDialog extends JFrame {
 				default:
 					if (Keyboard.getKeyName(bound_key).startsWith("NUMPAD"))
 					{
-						keyBox = new OneCharField(key, Keyboard.getKeyName(bound_key) + " (numlock must be on)");
+						keyBox = new KeyField(key, Keyboard.getKeyName(bound_key) + " (numlock must be on)");
 					}
 					else if (Keyboard.getKeyName(bound_key).equals("GRAVE"))
 					{
-						keyBox = new OneCharField(key, "` (grave accent)");
+						keyBox = new KeyField(key, "` (grave accent)");
 					}
 					else
 					{
-						keyBox = new OneCharField(key , Keyboard.getKeyName(bound_key));
+						keyBox = new KeyField(key , Keyboard.getKeyName(bound_key));
 					}
 					break;
 			}
@@ -363,8 +363,8 @@ public class KeyMapDialog extends JFrame {
 	
 	private HashMap<KEY_ACTIONS, Integer> buildHashMap() {
 		HashMap<KEY_ACTIONS, Integer> map = new HashMap<KEY_ACTIONS, Integer> ();
-		for(OneCharField ocf :  keyBoxes) {
-			map.put(ocf.getKeyAction(), ocf.getKeyAsInt());
+		for(KeyField kf :  keyBoxes) {
+			map.put(kf.getKeyAction(), kf.getKeyAsInt());
 		}
 		return map;
 	}

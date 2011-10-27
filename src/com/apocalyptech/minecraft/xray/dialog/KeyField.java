@@ -1,5 +1,6 @@
 package com.apocalyptech.minecraft.xray.dialog;
 
+import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -15,30 +16,78 @@ import org.lwjgl.input.Keyboard;
 
 import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTIONS;
 
-
-public class OneCharField extends JTextField{
+/***
+ * KeyField class is used for the KeyMapDialog. It is a Field that 
+ * will contain the LWJGL string for the keyboard button that is pressed
+ * while the field is in focus.
+ * 
+ * @author Eleazar
+ */
+public class KeyField extends JTextField{
 	private KEY_ACTIONS keyAction;
 
-	public OneCharField(KEY_ACTIONS ka, String s) {
+	/**
+	 * Constructs a new KeyField given the string to populate it with
+	 * and the KEY_ACTION it represents 
+	 * @param ka
+	 * @param s
+	 */
+	public KeyField(KEY_ACTIONS ka, String s) {
 		super(10);
 		keyAction = ka;
 		this.setEditable(false);
 		this.setText(s);
-		this.addKeyListener(new KeyAdapterK(this));
+		this.setBackground(Color.WHITE);
+		this.addKeyListener(new OneKeyAdapter(this));
 	}
 	
-	private class KeyAdapterK extends KeyAdapter{
-		OneCharField ocf;
+	/**
+	 * Gets the KEY_ACTION
+	 * @return The KEY_ACTION this matches with
+	 */
+	public KEY_ACTIONS getKeyAction() {
+		return keyAction;
+	}
+
+	/**
+	 * Returns the LWJGL index for the key this represents
+	 * @return The LWJGL index for the key this represent
+	 */
+	public Integer getKeyAsInt() {
+		String text = this.getText();
+		return Keyboard.getKeyIndex(text);
+	}
+
+	/*Inner classes below*/
+	
+	/**
+	 * OneKeyAdapter is a custom KeyAdapter for the KeyField
+	 */
+	private class OneKeyAdapter extends KeyAdapter{
+		KeyField kf;
 		
-		public KeyAdapterK(OneCharField ocf) {
-			this.ocf = ocf;
+		/**
+		 * Constructor
+		 * @param kf
+		 */
+		public OneKeyAdapter(KeyField kf) {
+			this.kf = kf;
 		}
 		
+		/**
+		 * Updates the text with the relevant string based on ke
+		 * @param ke 
+		 */
 		public void keyPressed(KeyEvent ke){
 			String text = getKeyText(ke); 
-			if(text != null)	ocf.setText(text);
+			if(text != null)	kf.setText(text);
 		}
 		
+		/**
+		 * Get the appropriate LWJGL String for the KeyEvent.
+		 * @param ke
+		 * @return Relevant string. Null if n/a.
+		 */
 		private String getKeyText(KeyEvent ke) {
 			int keyCode = ke.getKeyCode();
 			int keyLocation = ke.getKeyLocation();
@@ -89,53 +138,6 @@ public class OneCharField extends JTextField{
 					return KeyEvent.getKeyText(ke.getKeyCode()).toUpperCase();
 				return null;
 			}
-		}
-	}
-
-	public KEY_ACTIONS getKeyAction() {
-		return keyAction;
-	}
-
-	public Integer getKeyAsInt() {
-		String text = this.getText();
-		char ch = text.charAt(0);
-		switch(ch) {
-		case ';':  return Keyboard.KEY_SEMICOLON;
-		case '\'': return Keyboard.KEY_APOSTROPHE;
-		case '@':  return Keyboard.KEY_AT;
-		case '\\': return Keyboard.KEY_BACKSLASH;
-		case ':':  return Keyboard.KEY_COLON;
-		case ',':  return Keyboard.KEY_COMMA;
-		case '.':  return Keyboard.KEY_PERIOD;
-		case '=':  return Keyboard.KEY_EQUALS;
-		case '[':  return Keyboard.KEY_LBRACKET;
-		case ']':  return Keyboard.KEY_RBRACKET;
-		case '-':  return Keyboard.KEY_MINUS;
-		case '+':  return Keyboard.KEY_ADD;
-		default:
-			return Keyboard.getKeyIndex(text);
-		}
-	}
-
-	protected Document createDefaultModel() {
-		return new OneCharDocument();
-	}
-
-	static class OneCharDocument extends PlainDocument {
-
-		public void insertString(int offs, String str, AttributeSet a) 
-		throws BadLocationException {
-
-			if (str == null) {
-				return;
-			}
-			
-			try{
-				super.remove(0, 1);
-			} catch (BadLocationException ble) {
-				//The Document was empty
-			}
-			super.insertString(0, str, a);
 		}
 	}
 }
