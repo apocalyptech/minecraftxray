@@ -53,7 +53,7 @@
 #               SILVERFISH (the "silverfish highlighting" toggle uses it)
 #               SAPLING (some special data handling is needed)
 #               PORTAL (we generate the texture to use for this one)
-#               ENDER_PORTAL (we generate the texture to use for this one)
+#               END_PORTAL (we generate the texture to use for this one)
 #               FIRE (we generate the texture to use for this one)
 #               WATER (we do extra processing on the texture)
 #               STATIONARY_WATER (we do extra processing on the texture)
@@ -137,8 +137,8 @@
 #             CHEST
 #             NETHER_WART
 #             STEM
-#             ENDER_PORTAL
-#             ENDER_PORTAL_FRAME
+#             END_PORTAL
+#             END_PORTAL_FRAME
 #             CAULDRON
 #             ENCHANTMENT_TABLE
 #             BREWING_STAND
@@ -235,7 +235,7 @@
 #            The main texture should be the main texture
 #            "base" should be the base that potions reside on
 #
-#        ENDER_PORTAL_FRAME
+#        END_PORTAL_FRAME
 #            The main texture should be the top texture
 #            "sides" should be the side texture
 #            "bottom" should be the bottom texture
@@ -1207,26 +1207,32 @@ blocks:
       top: [10, 8]
 
   - id: 119
-    idStr: ENDER_PORTAL
-    name: Ender Portal
+    idStr: END_PORTAL
+    name: End Portal
     mapcolor: [0, 0, 0]
-    type: ENDER_PORTAL
+    type: END_PORTAL
 
   - id: 120
-    idStr: ENDER_PORTAL_FRAME
+    idStr: END_PORTAL_FRAME
     name: Portal Frame
     mapcolor: [55, 142, 215]
     tex: [14, 9]
-    type: ENDER_PORTAL_FRAME
+    type: END_PORTAL_FRAME
     tex_extra:
       sides: [15, 9]
       bottom: [15, 10]
       eye: [14, 10]
 
   - id: 121
-    idStr: ENDER_STONE
-    name: Ender Stone
+    idStr: END_STONE
+    name: End Stone
     mapcolor: [235, 248, 182]
     tex: [15, 10]
+
+  - id: 122
+    idStr: DRAGON_EGG
+    name: Dragon Egg
+    mapcolor: [45, 1, 51]
+    tex: [7, 10]
 
 ...

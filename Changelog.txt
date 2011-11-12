@@ -1,3 +1,9 @@
+  * Dialog to change keybindings in-game, courtesy Eleazar Vega-Gonzalez
+    and Saxon Parker.
+  * Renamed ENDER_PORTAL and ENDER_PORTAL_FRAME to END_PORTAL and
+    END_PORTAL_FRAME
+  * Added new Beta 1.9-pre6 block definition: Dragon Egg
+
 Minecraft X-Ray 3.4.3 (2011.10.21)
 
   * Fixed a NullPointerException which occurs when xray.properties

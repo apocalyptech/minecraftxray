@@ -800,13 +800,13 @@ public class MinecraftEnvironment {
 		g2d.setColor(new Color(.839f, .203f, .952f, .4f));
 		g2d.fillRect(nether_start_x, nether_start_y, square_width, square_width);
 
-		// Create an air portal texture
-		BLOCK_ENDER_PORTAL.setTexIdx(blockCollection.reserveTexture());
-		int[] air_tex = BLOCK_ENDER_PORTAL.getTexCoordsArr();
-		int air_start_x = square_width*air_tex[0];
-		int air_start_y = square_width*air_tex[1];
+		// Create an end portal texture
+		BLOCK_END_PORTAL.setTexIdx(blockCollection.reserveTexture());
+		int[] end_tex = BLOCK_END_PORTAL.getTexCoordsArr();
+		int end_start_x = square_width*end_tex[0];
+		int end_start_y = square_width*end_tex[1];
 		g2d.setColor(new Color(0f, 0f, 0f));
-		g2d.fillRect(air_start_x, air_start_y, square_width, square_width);
+		g2d.fillRect(end_start_x, end_start_y, square_width, square_width);
 
 		// Send our processed texture 
 		blockCollection.setInitialTexture(bi);
