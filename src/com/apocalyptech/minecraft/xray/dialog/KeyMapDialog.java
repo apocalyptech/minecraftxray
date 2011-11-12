@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2010-2011, Vincent Vollers and Christopher J. Kucera
+ * Copyright (c) 2010-2011, Vincent Vollers, Christopher J. Kucera,
+ * 		Eleazar Vega-Gonzalez, and Saxon Parker
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -22,6 +22,9 @@ list of changes since X-Ray 2.7.  X-Ray uses various third-party libraries
 for other tasks.  See COPYING.txt for details on their licensing, and
 COPYING-*.txt for copies of the licenses themselves.
 
+X-Ray includes code kindly provided by Eleazar Vega-Gonzalez and Saxon Parker.
+Thanks a bunch!
+
 See TODO.txt for a list of known bugs and things that I'd like to
 implement, and BUILDING.txt if you wanted some info on building the project
 yourself.
