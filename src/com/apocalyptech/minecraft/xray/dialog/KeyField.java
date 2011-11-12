@@ -31,6 +31,8 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -66,6 +68,7 @@ public class KeyField extends JTextField{
 		this.setText(s);
 		this.setBackground(Color.WHITE);
 		this.addKeyListener(new OneKeyAdapter(this));
+		this.addFocusListener(new KeyFieldFocusListener(this, new Color(144, 204, 255), Color.WHITE));
 	}
 	
 	/**
@@ -86,6 +89,45 @@ public class KeyField extends JTextField{
 	}
 
 	/*Inner classes below*/
+
+	/**
+	 * KeyFieldFocusListener is a focus listener for our KeyField
+	 */
+	private class KeyFieldFocusListener implements FocusListener
+	{
+		KeyField kf;
+		Color focusedColor;
+		Color defocusedColor;
+
+		/**
+		 * Constructor
+		 * @param kf Our KeyField
+		 */
+		public KeyFieldFocusListener(KeyField kf, Color focusedColor, Color defocusedColor)
+		{
+			this.kf = kf;
+			this.focusedColor = focusedColor;
+			this.defocusedColor = defocusedColor;
+		}
+
+		/**
+		 * Updates our background color when we have focus
+		 * @param e our FocusEvent
+		 */
+		public void focusGained(FocusEvent e)
+		{
+			this.kf.setBackground(this.focusedColor);
+		}
+
+		/**
+		 * Updates our background color when we lose focus
+		 * @param e our FocusEvent
+		 */
+		public void focusLost(FocusEvent e)
+		{
+			this.kf.setBackground(this.defocusedColor);
+		}
+	}
 	
 	/**
 	 * OneKeyAdapter is a custom KeyAdapter for the KeyField
