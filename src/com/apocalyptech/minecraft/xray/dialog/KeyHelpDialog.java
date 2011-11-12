@@ -89,8 +89,8 @@ public class KeyHelpDialog extends JFrame {
 
 	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
 
-	private ArrayList<JPanel> displayKeys;
-	private ArrayList<JPanel> setKeys;
+	private ArrayList<KeyPanel> displayKeys;
+	private ArrayList<KeyPanel> setKeys;
 
 	private enum STATE
 	{
@@ -122,6 +122,121 @@ public class KeyHelpDialog extends JFrame {
 			});
 		}
 	}
+
+	private class KeyPanel extends JPanel
+	{
+		private String beforeStr;
+		private String keyStr;
+		private String afterStr;
+
+
+		private KEY_ACTIONS key;
+		private int bound_key;
+		private boolean edit;
+
+		private JLabel beforeLabel;
+		private JLabel afterLabel;
+		private JLabel keyLabel;
+		private KeyField keyEdit;
+
+		public KeyPanel(Font keyFont, KEY_ACTIONS key, int bound_key)
+		{
+			this(keyFont, key, bound_key, false);
+		}
+
+		public KeyPanel(Font keyFont, KEY_ACTIONS key, int bound_key, boolean edit)
+		{
+			super();
+			this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+			this.key = key;
+			this.edit = edit;
+
+			this.beforeLabel = new JLabel();
+			this.beforeLabel.setFont(keyFont);
+			this.afterLabel = new JLabel();
+			this.afterLabel.setFont(keyFont);
+			this.keyLabel = new JLabel();
+			this.keyLabel.setFont(keyFont);
+			this.keyEdit = new KeyField(key, "");
+
+			this.add(this.beforeLabel);
+			if (this.edit)
+			{
+				this.add(this.keyEdit);
+			}
+			else
+			{
+				this.add(this.keyLabel);
+			}
+			this.add(this.afterLabel);
+
+			this.setBoundKey(bound_key);
+
+			if (this.edit)
+			{
+				this.setVisible(false);
+			}
+		}
+
+		public void setBoundKey(int bound_key)
+		{
+			this.bound_key = bound_key;
+			this.keyStr = this.getKeyEnglish();
+			this.beforeStr = this.getKeyExtraBefore();
+			this.afterStr = this.getKeyExtraAfter();
+
+			this.beforeLabel.setText(this.beforeStr);
+			this.afterLabel.setText(this.afterStr);
+			this.keyLabel.setText(this.keyStr);
+			this.keyEdit.setText(this.keyStr);
+		}
+
+		private String getKeyEnglish()
+		{
+			if (Keyboard.getKeyName(this.bound_key).equals("GRAVE"))
+			{
+				return "`";
+			}
+			else
+			{
+				return Keyboard.getKeyName(this.bound_key);
+			}
+		}
+
+		private String getKeyExtraAfter()
+		{
+			switch (this.key)
+			{
+				case SPEED_INCREASE:
+					return " / Left Mouse Button (hold)";
+
+				case SPEED_DECREASE:
+					return " / Right Mouse Button (hold)";
+
+				default:
+					if (Keyboard.getKeyName(this.bound_key).startsWith("NUMPAD"))
+					{
+						return " (numlock must be on)";
+					}
+					else if (Keyboard.getKeyName(this.bound_key).equals("GRAVE"))
+					{
+						return " (grave accent)";
+					}
+					break;
+			}
+			return "";
+		}
+
+		private String getKeyExtraBefore()
+		{
+			switch (this.key)
+			{
+				case QUIT:
+					return "CTRL-";
+			}
+			return "";
+		}
+	}
 	
 	/***
 	 * Centers this dialog on the screen
@@ -136,52 +251,6 @@ public class KeyHelpDialog extends JFrame {
 		gridBagLayoutManager = new GridBagLayout();
 		
 		this.setLocation(x,y);
-	}
-
-	private String getKeyEnglish(KEY_ACTIONS key, int bound_key)
-	{
-		if (Keyboard.getKeyName(bound_key).equals("GRAVE"))
-		{
-			return "`";
-		}
-		else
-		{
-			return Keyboard.getKeyName(bound_key);
-		}
-	}
-
-	private String getKeyExtraAfter(KEY_ACTIONS key, int bound_key)
-	{
-		switch (key)
-		{
-			case SPEED_INCREASE:
-				return " / Left Mouse Button (hold)";
-
-			case SPEED_DECREASE:
-				return " / Right Mouse Button (hold)";
-
-			default:
-				if (Keyboard.getKeyName(bound_key).startsWith("NUMPAD"))
-				{
-					return " (numlock must be on)";
-				}
-				else if (Keyboard.getKeyName(bound_key).equals("GRAVE"))
-				{
-					return " (grave accent)";
-				}
-				break;
-		}
-		return null;
-	}
-
-	private String getKeyExtraBefore(KEY_ACTIONS key, int bound_key)
-	{
-		switch (key)
-		{
-			case QUIT:
-				return "CTRL-";
-		}
-		return null;
 	}
 	
 	/***
@@ -215,8 +284,8 @@ public class KeyHelpDialog extends JFrame {
 		c.insets = standardInsets;
 		c.weighty = .1f;
 
-		displayKeys = new ArrayList<JPanel>();
-		setKeys = new ArrayList<JPanel>();
+		displayKeys = new ArrayList<KeyPanel>();
+		setKeys = new ArrayList<KeyPanel>();
 
 		// Scrollpane to put stuff into
 		JPanel keyPanel = new JPanel();
@@ -266,57 +335,16 @@ public class KeyHelpDialog extends JFrame {
 
 			c.gridx = 1;
 			c.anchor = GridBagConstraints.WEST;
-			JPanel indPanel = new JPanel();
-			indPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-
-			String before = this.getKeyExtraBefore(key, bound_key);
-			if (before == null)
-			{
-				keyLabelBefore = null;
-			}
-			else
-			{
-				keyLabelBefore = new JLabel(before);
-				keyLabelBefore.setFont(keyFont);
-				indPanel.add(keyLabelBefore);
-			}
-
-			keyLabel = new JLabel(this.getKeyEnglish(key, bound_key));
-			keyLabel.setFont(keyFont);
-			indPanel.add(keyLabel);
-
-			String after = this.getKeyExtraAfter(key, bound_key);
-			if (after == null)
-			{
-				keyLabelAfter = null;
-			}
-			else
-			{
-				keyLabelAfter = new JLabel(after);
-				keyLabelAfter.setFont(keyFont);
-				indPanel.add(keyLabelAfter);
-			}
-
+			KeyPanel indPanel = new KeyPanel(keyFont, key, bound_key);
 			addComponent(keyPanel, indPanel, c, keyLayout);
 			displayKeys.add(indPanel);
+
 			c.gridx = 2;
-
-			this.showDisplay();
-
-			indPanel = new JPanel();
-			indPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			if (keyLabelBefore != null)
-			{
-				indPanel.add(keyLabelBefore);
-			}
-			KeyField foo = new KeyField(key, this.getKeyEnglish(key, bound_key));
-			indPanel.add(foo);
-			if (keyLabelAfter != null)
-			{
-				indPanel.add(keyLabelAfter);
-			}
+			indPanel = new KeyPanel(keyFont, key, bound_key, true);
 			addComponent(keyPanel, indPanel, c, keyLayout);
 			setKeys.add(indPanel);
+
+			this.showDisplay();
 
 			// One extra note for slime chunks
 			if (key == KEY_ACTIONS.TOGGLE_SLIME_CHUNKS)
