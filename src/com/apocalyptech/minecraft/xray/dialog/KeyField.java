@@ -67,7 +67,7 @@ public class KeyField extends JTextField{
 		this.setEditable(false);
 		this.setText(s);
 		this.setBackground(Color.WHITE);
-		this.addKeyListener(new OneKeyAdapter(this));
+		//this.addKeyListener(new OneKeyAdapter(this));
 		this.addFocusListener(new KeyFieldFocusListener(this, new Color(144, 204, 255), Color.WHITE));
 	}
 	

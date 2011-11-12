@@ -134,14 +134,12 @@ public class ResolutionDialog extends JFrame {
 		
 	public static final int DIALOG_BUTTON_EXIT = 0;
 	public static final int DIALOG_BUTTON_GO = 1;
-	public static final int DIALOG_BUTTON_KEY = 2;
 
 	private JComboBox resolutionsList;
 	private JComboBox bitDepthList;
 	private JComboBox refreshRateList;
 	private JButton runButton;
 	private JButton exitButton;
-	private JButton keyButton;
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
 	private JCheckBox fullScreenCheckBox;
@@ -557,13 +555,6 @@ public class ResolutionDialog extends JFrame {
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(this.getContentPane(), runButton,c);
-		
-		c.weightx = flist; 
-		c.weighty = 0f; 
-		c.gridx = 1; c.gridy = 1;
-		c.anchor = GridBagConstraints.EAST;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		addComponent(this.getContentPane(), keyButton,c);
 	}
 	
 	/***
@@ -609,14 +600,6 @@ public class ResolutionDialog extends JFrame {
                 dialogGo();
 			}
         });
-        
-        // The Edit Keys Button
-		keyButton 	= new JButton("Edit Key Bindings");
-		keyButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-                dialogKey();
-			}
-		});
 		
         // The Exit button
 		exitButton 	= new JButton("Exit");
@@ -649,21 +632,6 @@ public class ResolutionDialog extends JFrame {
             ResolutionDialog.this.notify();
         }
     }
-
-    
-    /**
-     * Actions to perform if the "Go" button is hit, or otherwise triggered.
-     */
-    private void dialogKey()
-    {
-        exitCode = ResolutionDialog.DIALOG_BUTTON_KEY;
-        setVisible(false);
-        dispose();
-        synchronized(ResolutionDialog.this) {
-            ResolutionDialog.this.notify();
-        }
-    }
-    
     
     /**
      * Actions to perform if the "Exit" button is hit, or otherwise triggered.

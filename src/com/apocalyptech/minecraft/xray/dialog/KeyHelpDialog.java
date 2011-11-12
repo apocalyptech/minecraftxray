@@ -38,9 +38,11 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.util.List;
+import java.util.ArrayList;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,11 +72,12 @@ import org.lwjgl.input.Keyboard;
 /**
  */
 public class KeyHelpDialog extends JFrame {
-	private static final int FRAMEWIDTH = 500;
+	private static final int FRAMEWIDTH = 540;
 	private static final int FRAMEHEIGHT = 620;
 
 	private static String window_title = "X-Ray Keyboard Reference";
 	private JButton okButton;
+	private JButton actionButton;
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
@@ -85,6 +88,16 @@ public class KeyHelpDialog extends JFrame {
 	public static Image iconImage;
 
 	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
+
+	private ArrayList<JPanel> displayKeys;
+	private ArrayList<JPanel> setKeys;
+
+	private enum STATE
+	{
+		DISPLAY,
+		SET
+	}
+	private STATE curState = STATE.DISPLAY;
 
 	private class JUrlLabel extends JLabel
 	{
@@ -124,6 +137,52 @@ public class KeyHelpDialog extends JFrame {
 		
 		this.setLocation(x,y);
 	}
+
+	private String getKeyEnglish(KEY_ACTIONS key, int bound_key)
+	{
+		if (Keyboard.getKeyName(bound_key).equals("GRAVE"))
+		{
+			return "`";
+		}
+		else
+		{
+			return Keyboard.getKeyName(bound_key);
+		}
+	}
+
+	private String getKeyExtraAfter(KEY_ACTIONS key, int bound_key)
+	{
+		switch (key)
+		{
+			case SPEED_INCREASE:
+				return " / Left Mouse Button (hold)";
+
+			case SPEED_DECREASE:
+				return " / Right Mouse Button (hold)";
+
+			default:
+				if (Keyboard.getKeyName(bound_key).startsWith("NUMPAD"))
+				{
+					return " (numlock must be on)";
+				}
+				else if (Keyboard.getKeyName(bound_key).equals("GRAVE"))
+				{
+					return " (grave accent)";
+				}
+				break;
+		}
+		return null;
+	}
+
+	private String getKeyExtraBefore(KEY_ACTIONS key, int bound_key)
+	{
+		switch (key)
+		{
+			case QUIT:
+				return "CTRL-";
+		}
+		return null;
+	}
 	
 	/***
 	 * Layouts all the controls and labels on the dialog using a gridbaglayout
@@ -146,6 +205,8 @@ public class KeyHelpDialog extends JFrame {
 		JLabel sectionLabel;
 		JLabel descLabel;
 		JLabel keyLabel;
+		JLabel keyLabelBefore;
+		JLabel keyLabelAfter;
 		
 		Insets standardInsets = new Insets(5, 5, 5, 5);
 		Insets categoryInsets = new Insets(20, 5, 5, 5);
@@ -153,6 +214,9 @@ public class KeyHelpDialog extends JFrame {
 		Insets noTopInsets = new Insets(0, 5, 5, 5);
 		c.insets = standardInsets;
 		c.weighty = .1f;
+
+		displayKeys = new ArrayList<JPanel>();
+		setKeys = new ArrayList<JPanel>();
 
 		// Scrollpane to put stuff into
 		JPanel keyPanel = new JPanel();
@@ -176,7 +240,7 @@ public class KeyHelpDialog extends JFrame {
 				curCat = key.category;
 
 				c.gridx = 0;
-				c.gridwidth = 2;
+				c.gridwidth = 3;
 				c.anchor = GridBagConstraints.WEST;
 				c.insets = categoryInsets;
 				sectionLabel = new JLabel(curCat.title);
@@ -202,37 +266,57 @@ public class KeyHelpDialog extends JFrame {
 
 			c.gridx = 1;
 			c.anchor = GridBagConstraints.WEST;
-			switch (key)
+			JPanel indPanel = new JPanel();
+			indPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+			String before = this.getKeyExtraBefore(key, bound_key);
+			if (before == null)
 			{
-				case SPEED_INCREASE:
-					keyLabel = new JLabel(Keyboard.getKeyName(bound_key) + " / Left Mouse Button (hold)");
-					break;
-
-				case SPEED_DECREASE:
-					keyLabel = new JLabel(Keyboard.getKeyName(bound_key) + " / Right Mouse Button (hold)");
-					break;
-
-				case QUIT:
-					keyLabel = new JLabel("CTRL-" + Keyboard.getKeyName(bound_key));
-					break;
-
-				default:
-					if (Keyboard.getKeyName(bound_key).startsWith("NUMPAD"))
-					{
-						keyLabel = new JLabel(Keyboard.getKeyName(bound_key) + " (numlock must be on)");
-					}
-					else if (Keyboard.getKeyName(bound_key).equals("GRAVE"))
-					{
-						keyLabel = new JLabel("` (grave accent)");
-					}
-					else
-					{
-						keyLabel = new JLabel(Keyboard.getKeyName(bound_key));
-					}
-					break;
+				keyLabelBefore = null;
 			}
+			else
+			{
+				keyLabelBefore = new JLabel(before);
+				keyLabelBefore.setFont(keyFont);
+				indPanel.add(keyLabelBefore);
+			}
+
+			keyLabel = new JLabel(this.getKeyEnglish(key, bound_key));
 			keyLabel.setFont(keyFont);
-			addComponent(keyPanel, keyLabel, c, keyLayout);
+			indPanel.add(keyLabel);
+
+			String after = this.getKeyExtraAfter(key, bound_key);
+			if (after == null)
+			{
+				keyLabelAfter = null;
+			}
+			else
+			{
+				keyLabelAfter = new JLabel(after);
+				keyLabelAfter.setFont(keyFont);
+				indPanel.add(keyLabelAfter);
+			}
+
+			addComponent(keyPanel, indPanel, c, keyLayout);
+			displayKeys.add(indPanel);
+			c.gridx = 2;
+
+			this.showDisplay();
+
+			indPanel = new JPanel();
+			indPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+			if (keyLabelBefore != null)
+			{
+				indPanel.add(keyLabelBefore);
+			}
+			KeyField foo = new KeyField(key, this.getKeyEnglish(key, bound_key));
+			indPanel.add(foo);
+			if (keyLabelAfter != null)
+			{
+				indPanel.add(keyLabelAfter);
+			}
+			addComponent(keyPanel, indPanel, c, keyLayout);
+			setKeys.add(indPanel);
 
 			// One extra note for slime chunks
 			if (key == KEY_ACTIONS.TOGGLE_SLIME_CHUNKS)
@@ -247,6 +331,7 @@ public class KeyHelpDialog extends JFrame {
 				addComponent(keyPanel, descLabel, c, keyLayout);
 
 				c.gridx = 1;
+				c.gridwidth = 2;
 				c.anchor = GridBagConstraints.WEST;
 				keyLabel = new JLabel("May not be accurate for all Minecraft Versions");
 				keyLabel.setFont(noteFont);
@@ -296,6 +381,14 @@ public class KeyHelpDialog extends JFrame {
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		addComponent(this.getContentPane(), actionButton,c);
+		
+		current_grid_y++;
+		c.weightx = flist; 
+		c.weighty = 0f; 
+		c.gridx = 0; c.gridy = current_grid_y;
+		c.anchor = GridBagConstraints.EAST;
+		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(this.getContentPane(), okButton,c);
 	}
 	
@@ -336,6 +429,14 @@ public class KeyHelpDialog extends JFrame {
 			}
 		});
 
+		// The "Action" button
+		actionButton = new JButton("Edit");
+		actionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				processAction();
+			}
+		});
+
 		// Key mapping for the Jump button
 		KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enterStroke, "ENTER");
@@ -359,6 +460,50 @@ public class KeyHelpDialog extends JFrame {
 		synchronized(KeyHelpDialog.this) {
 			KeyHelpDialog.this.notify();
 		}
+	}
+
+	private void processAction()
+	{
+		switch (this.curState)
+		{
+			case DISPLAY:
+				this.showSet();
+				break;
+
+			case SET:
+				this.showDisplay();
+				break;
+		}
+	}
+
+	private void showSet()
+	{
+		for (JPanel label : this.displayKeys)
+		{
+			label.setVisible(false);
+		}
+		for (JPanel label : this.setKeys)
+		{
+			label.setVisible(true);
+		}
+		this.curState = STATE.SET;
+		this.actionButton.setText("Save Key Bindings");
+		this.okButton.setEnabled(false);
+	}
+	private void showDisplay()
+	{
+		for (JPanel label : this.setKeys)
+		{
+			label.setVisible(false);
+		}
+		for (JPanel label : this.displayKeys)
+		{
+			label.setVisible(true);
+		}
+		this.okButton.requestFocus();
+		this.curState = STATE.DISPLAY;
+		this.actionButton.setText("Edit Key Bindings");
+		this.okButton.setEnabled(true);
 	}
 	
 	/***
