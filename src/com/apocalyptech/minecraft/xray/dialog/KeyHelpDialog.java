@@ -89,8 +89,7 @@ public class KeyHelpDialog extends JFrame {
 
 	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
 
-	private ArrayList<KeyPanel> displayKeys;
-	private ArrayList<KeyPanel> setKeys;
+	private ArrayList<KeyPanel> keyPanels;
 
 	private enum STATE
 	{
@@ -132,7 +131,6 @@ public class KeyHelpDialog extends JFrame {
 
 		private KEY_ACTIONS key;
 		private int bound_key;
-		private boolean edit;
 
 		private JLabel beforeLabel;
 		private JLabel afterLabel;
@@ -141,15 +139,9 @@ public class KeyHelpDialog extends JFrame {
 
 		public KeyPanel(Font keyFont, KEY_ACTIONS key, int bound_key)
 		{
-			this(keyFont, key, bound_key, false);
-		}
-
-		public KeyPanel(Font keyFont, KEY_ACTIONS key, int bound_key, boolean edit)
-		{
 			super();
 			this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 			this.key = key;
-			this.edit = edit;
 
 			this.beforeLabel = new JLabel();
 			this.beforeLabel.setFont(keyFont);
@@ -160,22 +152,12 @@ public class KeyHelpDialog extends JFrame {
 			this.keyEdit = new KeyField(key, "");
 
 			this.add(this.beforeLabel);
-			if (this.edit)
-			{
-				this.add(this.keyEdit);
-			}
-			else
-			{
-				this.add(this.keyLabel);
-			}
+			this.add(this.keyLabel);
+			this.add(this.keyEdit);
 			this.add(this.afterLabel);
 
 			this.setBoundKey(bound_key);
-
-			if (this.edit)
-			{
-				this.setVisible(false);
-			}
+			this.finishEdit();
 		}
 
 		public void setBoundKey(int bound_key)
@@ -236,6 +218,18 @@ public class KeyHelpDialog extends JFrame {
 			}
 			return "";
 		}
+
+		public void startEdit()
+		{
+			this.keyLabel.setVisible(false);
+			this.keyEdit.setVisible(true);
+		}
+
+		public void finishEdit()
+		{
+			this.keyEdit.setVisible(false);
+			this.keyLabel.setVisible(true);
+		}
 	}
 	
 	/***
@@ -284,8 +278,7 @@ public class KeyHelpDialog extends JFrame {
 		c.insets = standardInsets;
 		c.weighty = .1f;
 
-		displayKeys = new ArrayList<KeyPanel>();
-		setKeys = new ArrayList<KeyPanel>();
+		keyPanels = new ArrayList<KeyPanel>();
 
 		// Scrollpane to put stuff into
 		JPanel keyPanel = new JPanel();
@@ -309,7 +302,7 @@ public class KeyHelpDialog extends JFrame {
 				curCat = key.category;
 
 				c.gridx = 0;
-				c.gridwidth = 3;
+				c.gridwidth = 2;
 				c.anchor = GridBagConstraints.WEST;
 				c.insets = categoryInsets;
 				sectionLabel = new JLabel(curCat.title);
@@ -337,12 +330,7 @@ public class KeyHelpDialog extends JFrame {
 			c.anchor = GridBagConstraints.WEST;
 			KeyPanel indPanel = new KeyPanel(keyFont, key, bound_key);
 			addComponent(keyPanel, indPanel, c, keyLayout);
-			displayKeys.add(indPanel);
-
-			c.gridx = 2;
-			indPanel = new KeyPanel(keyFont, key, bound_key, true);
-			addComponent(keyPanel, indPanel, c, keyLayout);
-			setKeys.add(indPanel);
+			keyPanels.add(indPanel);
 
 			this.showDisplay();
 
@@ -359,7 +347,6 @@ public class KeyHelpDialog extends JFrame {
 				addComponent(keyPanel, descLabel, c, keyLayout);
 
 				c.gridx = 1;
-				c.gridwidth = 2;
 				c.anchor = GridBagConstraints.WEST;
 				keyLabel = new JLabel("May not be accurate for all Minecraft Versions");
 				keyLabel.setFont(noteFont);
@@ -506,13 +493,9 @@ public class KeyHelpDialog extends JFrame {
 
 	private void showSet()
 	{
-		for (JPanel label : this.displayKeys)
+		for (KeyPanel panel : this.keyPanels)
 		{
-			label.setVisible(false);
-		}
-		for (JPanel label : this.setKeys)
-		{
-			label.setVisible(true);
+			panel.startEdit();
 		}
 		this.curState = STATE.SET;
 		this.actionButton.setText("Save Key Bindings");
@@ -520,13 +503,9 @@ public class KeyHelpDialog extends JFrame {
 	}
 	private void showDisplay()
 	{
-		for (JPanel label : this.setKeys)
+		for (KeyPanel panel : this.keyPanels)
 		{
-			label.setVisible(false);
-		}
-		for (JPanel label : this.displayKeys)
-		{
-			label.setVisible(true);
+			panel.finishEdit();
 		}
 		this.okButton.requestFocus();
 		this.curState = STATE.DISPLAY;

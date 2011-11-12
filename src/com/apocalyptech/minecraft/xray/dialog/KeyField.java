@@ -33,6 +33,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -67,8 +69,10 @@ public class KeyField extends JTextField{
 		this.setEditable(false);
 		this.setText(s);
 		this.setBackground(Color.WHITE);
+		this.setFocusable(false);
 		//this.addKeyListener(new OneKeyAdapter(this));
-		this.addFocusListener(new KeyFieldFocusListener(this, new Color(144, 204, 255), Color.WHITE));
+		//this.addFocusListener(new KeyFieldFocusListener(this, new Color(144, 204, 255), Color.WHITE));
+		this.addMouseListener(new KeyFieldMouseListener(this, new Color(144, 204, 255)));
 	}
 	
 	/**
@@ -89,6 +93,33 @@ public class KeyField extends JTextField{
 	}
 
 	/*Inner classes below*/
+
+	private class KeyFieldMouseListener implements MouseListener
+	{
+		KeyField kf;
+		Color selectedColor;
+		KeyFieldMouseListener(KeyField kf, Color selectedColor)
+		{
+			this.kf = kf;
+			this.selectedColor = selectedColor;
+		}
+		public void mouseClicked(MouseEvent e)
+		{
+			this.kf.setBackground(this.selectedColor);
+		}
+		public void mouseEntered(MouseEvent e)
+		{
+		}
+		public void mouseExited(MouseEvent e)
+		{
+		}
+		public void mousePressed(MouseEvent e)
+		{
+		}
+		public void mouseReleased(MouseEvent e)
+		{
+		}
+	}
 
 	/**
 	 * KeyFieldFocusListener is a focus listener for our KeyField
