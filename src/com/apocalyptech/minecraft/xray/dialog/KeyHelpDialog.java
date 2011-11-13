@@ -29,8 +29,6 @@ package com.apocalyptech.minecraft.xray.dialog;
 import com.apocalyptech.minecraft.xray.XRay;
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
-import com.centerkey.utils.BareBonesBrowserLaunch;
-
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -92,6 +90,8 @@ public class KeyHelpDialog
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
+	private JLabel statusLabel;
+	private String defaultStatusText;
 
 	private static boolean dialog_showing = false;
 	private static KeyHelpDialog keyhelp_dialog;
@@ -113,128 +113,127 @@ public class KeyHelpDialog
 
 	/* Key mapping code taken from LWJGL, specifically
        org.lwjgl.opengl.KeyboardEventQueue
+	   I've added a few, though.
     */
-    private static final int[] KEY_MAP = new int[0xffff];
+    //private static final int[] KEY_MAP = new int[0xffff];
+	private static final HashMap<Integer, Integer> KEY_MAP = new HashMap<Integer, Integer>();
     static {
-        KEY_MAP[KeyEvent.VK_0] = Keyboard.KEY_0;
-        KEY_MAP[KeyEvent.VK_1] = Keyboard.KEY_1;
-        KEY_MAP[KeyEvent.VK_2] = Keyboard.KEY_2;
-        KEY_MAP[KeyEvent.VK_3] = Keyboard.KEY_3;
-        KEY_MAP[KeyEvent.VK_4] = Keyboard.KEY_4;
-        KEY_MAP[KeyEvent.VK_5] = Keyboard.KEY_5;
-        KEY_MAP[KeyEvent.VK_6] = Keyboard.KEY_6;
-        KEY_MAP[KeyEvent.VK_7] = Keyboard.KEY_7;
-        KEY_MAP[KeyEvent.VK_8] = Keyboard.KEY_8;
-        KEY_MAP[KeyEvent.VK_9] = Keyboard.KEY_9;
-        KEY_MAP[KeyEvent.VK_A] = Keyboard.KEY_A;
-        KEY_MAP[KeyEvent.VK_ADD] = Keyboard.KEY_ADD;
-        KEY_MAP[KeyEvent.VK_ALT_GRAPH] = Keyboard.KEY_RMENU;
-        KEY_MAP[KeyEvent.VK_AT] = Keyboard.KEY_AT;
-        KEY_MAP[KeyEvent.VK_B] = Keyboard.KEY_B;
-        KEY_MAP[KeyEvent.VK_BACK_SLASH] = Keyboard.KEY_BACKSLASH;
-        KEY_MAP[KeyEvent.VK_BACK_SPACE] = Keyboard.KEY_BACK;
-        KEY_MAP[KeyEvent.VK_C] = Keyboard.KEY_C;
-        KEY_MAP[KeyEvent.VK_CAPS_LOCK] = Keyboard.KEY_CAPITAL;
-        KEY_MAP[KeyEvent.VK_CIRCUMFLEX] = Keyboard.KEY_CIRCUMFLEX;
-        KEY_MAP[KeyEvent.VK_CLOSE_BRACKET] = Keyboard.KEY_RBRACKET;
-        KEY_MAP[KeyEvent.VK_COLON] = Keyboard.KEY_COLON;
-        KEY_MAP[KeyEvent.VK_COMMA] = Keyboard.KEY_COMMA;
-        KEY_MAP[KeyEvent.VK_CONVERT] = Keyboard.KEY_CONVERT;
-        KEY_MAP[KeyEvent.VK_D] = Keyboard.KEY_D;
-        KEY_MAP[KeyEvent.VK_DECIMAL] = Keyboard.KEY_DECIMAL;
-        KEY_MAP[KeyEvent.VK_DELETE] = Keyboard.KEY_DELETE;
-        KEY_MAP[KeyEvent.VK_DIVIDE] = Keyboard.KEY_DIVIDE;
-        KEY_MAP[KeyEvent.VK_DOWN] = Keyboard.KEY_DOWN;
-        KEY_MAP[KeyEvent.VK_KP_DOWN] = Keyboard.KEY_DOWN;
-        KEY_MAP[KeyEvent.VK_E] = Keyboard.KEY_E;
-        KEY_MAP[KeyEvent.VK_END] = Keyboard.KEY_END;
-        KEY_MAP[KeyEvent.VK_ENTER] = Keyboard.KEY_RETURN;
-        KEY_MAP[KeyEvent.VK_EQUALS] = Keyboard.KEY_EQUALS;
-        KEY_MAP[KeyEvent.VK_ESCAPE] = Keyboard.KEY_ESCAPE;
-        KEY_MAP[KeyEvent.VK_F] = Keyboard.KEY_F;
-        KEY_MAP[KeyEvent.VK_F1] = Keyboard.KEY_F1;
-        KEY_MAP[KeyEvent.VK_F10] = Keyboard.KEY_F10;
-        KEY_MAP[KeyEvent.VK_F11] = Keyboard.KEY_F11;
-        KEY_MAP[KeyEvent.VK_F12] = Keyboard.KEY_F12;
-        KEY_MAP[KeyEvent.VK_F13] = Keyboard.KEY_F13;
-        KEY_MAP[KeyEvent.VK_F14] = Keyboard.KEY_F14;
-        KEY_MAP[KeyEvent.VK_F15] = Keyboard.KEY_F15;
-        KEY_MAP[KeyEvent.VK_F2] = Keyboard.KEY_F2;
-        KEY_MAP[KeyEvent.VK_F3] = Keyboard.KEY_F3;
-        KEY_MAP[KeyEvent.VK_F4] = Keyboard.KEY_F4;
-        KEY_MAP[KeyEvent.VK_F5] = Keyboard.KEY_F5;
-        KEY_MAP[KeyEvent.VK_F6] = Keyboard.KEY_F6;
-        KEY_MAP[KeyEvent.VK_F7] = Keyboard.KEY_F7;
-        KEY_MAP[KeyEvent.VK_F8] = Keyboard.KEY_F8;
-        KEY_MAP[KeyEvent.VK_F9] = Keyboard.KEY_F9;
-        KEY_MAP[KeyEvent.VK_G] = Keyboard.KEY_G;
-        KEY_MAP[KeyEvent.VK_H] = Keyboard.KEY_H;
-        KEY_MAP[KeyEvent.VK_HOME] = Keyboard.KEY_HOME;
-        KEY_MAP[KeyEvent.VK_I] = Keyboard.KEY_I;
-        KEY_MAP[KeyEvent.VK_INSERT] = Keyboard.KEY_INSERT;
-        KEY_MAP[KeyEvent.VK_J] = Keyboard.KEY_J;
-        KEY_MAP[KeyEvent.VK_K] = Keyboard.KEY_K;
-        KEY_MAP[KeyEvent.VK_KANA] = Keyboard.KEY_KANA;
-        KEY_MAP[KeyEvent.VK_KANJI] = Keyboard.KEY_KANJI;
-        KEY_MAP[KeyEvent.VK_L] = Keyboard.KEY_L;
-        KEY_MAP[KeyEvent.VK_LEFT] = Keyboard.KEY_LEFT;
-        KEY_MAP[KeyEvent.VK_KP_LEFT] = Keyboard.KEY_LEFT;
-        KEY_MAP[KeyEvent.VK_M] = Keyboard.KEY_M;
-        KEY_MAP[KeyEvent.VK_MINUS] = Keyboard.KEY_MINUS;
-        KEY_MAP[KeyEvent.VK_MULTIPLY] = Keyboard.KEY_MULTIPLY;
-        KEY_MAP[KeyEvent.VK_N] = Keyboard.KEY_N;
-        KEY_MAP[KeyEvent.VK_NUM_LOCK] = Keyboard.KEY_NUMLOCK;
-        KEY_MAP[KeyEvent.VK_NUMPAD0] = Keyboard.KEY_NUMPAD0;
-        KEY_MAP[KeyEvent.VK_NUMPAD1] = Keyboard.KEY_NUMPAD1;
-        KEY_MAP[KeyEvent.VK_NUMPAD2] = Keyboard.KEY_NUMPAD2;
-        KEY_MAP[KeyEvent.VK_NUMPAD3] = Keyboard.KEY_NUMPAD3;
-        KEY_MAP[KeyEvent.VK_NUMPAD4] = Keyboard.KEY_NUMPAD4;
-        KEY_MAP[KeyEvent.VK_NUMPAD5] = Keyboard.KEY_NUMPAD5;
-        KEY_MAP[KeyEvent.VK_NUMPAD6] = Keyboard.KEY_NUMPAD6;
-        KEY_MAP[KeyEvent.VK_NUMPAD7] = Keyboard.KEY_NUMPAD7;
-        KEY_MAP[KeyEvent.VK_NUMPAD8] = Keyboard.KEY_NUMPAD8;
-        KEY_MAP[KeyEvent.VK_NUMPAD9] = Keyboard.KEY_NUMPAD9;
-        KEY_MAP[KeyEvent.VK_O] = Keyboard.KEY_O;
-        KEY_MAP[KeyEvent.VK_OPEN_BRACKET] = Keyboard.KEY_LBRACKET;
-        KEY_MAP[KeyEvent.VK_P] = Keyboard.KEY_P;
-        KEY_MAP[KeyEvent.VK_PAGE_DOWN] = Keyboard.KEY_NEXT;
-        KEY_MAP[KeyEvent.VK_PAGE_UP] = Keyboard.KEY_PRIOR;
-        KEY_MAP[KeyEvent.VK_PAUSE] = Keyboard.KEY_PAUSE;
-        KEY_MAP[KeyEvent.VK_PERIOD] = Keyboard.KEY_PERIOD;
-        KEY_MAP[KeyEvent.VK_Q] = Keyboard.KEY_Q;
-        KEY_MAP[KeyEvent.VK_R] = Keyboard.KEY_R;
-        KEY_MAP[KeyEvent.VK_RIGHT] = Keyboard.KEY_RIGHT;
-        KEY_MAP[KeyEvent.VK_KP_RIGHT] = Keyboard.KEY_RIGHT;
-        KEY_MAP[KeyEvent.VK_S] = Keyboard.KEY_S;
-        KEY_MAP[KeyEvent.VK_SCROLL_LOCK] = Keyboard.KEY_SCROLL;
-        KEY_MAP[KeyEvent.VK_SEMICOLON] = Keyboard.KEY_SEMICOLON;
-        KEY_MAP[KeyEvent.VK_SEPARATOR] = Keyboard.KEY_DECIMAL;
-        KEY_MAP[KeyEvent.VK_SLASH] = Keyboard.KEY_SLASH;
-        KEY_MAP[KeyEvent.VK_SPACE] = Keyboard.KEY_SPACE;
-        KEY_MAP[KeyEvent.VK_STOP] = Keyboard.KEY_STOP;
-        KEY_MAP[KeyEvent.VK_SUBTRACT] = Keyboard.KEY_SUBTRACT;
-        KEY_MAP[KeyEvent.VK_T] = Keyboard.KEY_T;
-        KEY_MAP[KeyEvent.VK_TAB] = Keyboard.KEY_TAB;
-        KEY_MAP[KeyEvent.VK_U] = Keyboard.KEY_U;
-        KEY_MAP[KeyEvent.VK_UP] = Keyboard.KEY_UP;
-        KEY_MAP[KeyEvent.VK_KP_UP] = Keyboard.KEY_UP;
-        KEY_MAP[KeyEvent.VK_V] = Keyboard.KEY_V;
-        KEY_MAP[KeyEvent.VK_W] = Keyboard.KEY_W;
-        KEY_MAP[KeyEvent.VK_X] = Keyboard.KEY_X;
-        KEY_MAP[KeyEvent.VK_Y] = Keyboard.KEY_Y;
-        KEY_MAP[KeyEvent.VK_Z] = Keyboard.KEY_Z;
-        KEY_MAP[KeyEvent.VK_BACK_QUOTE] = Keyboard.KEY_GRAVE;
-        KEY_MAP[KeyEvent.VK_QUOTE] = Keyboard.KEY_APOSTROPHE;
-        KEY_MAP[KeyEvent.VK_PRINTSCREEN] = Keyboard.KEY_SYSRQ;
+        KEY_MAP.put(KeyEvent.VK_0, Keyboard.KEY_0);
+        KEY_MAP.put(KeyEvent.VK_1, Keyboard.KEY_1);
+        KEY_MAP.put(KeyEvent.VK_2, Keyboard.KEY_2);
+        KEY_MAP.put(KeyEvent.VK_3, Keyboard.KEY_3);
+        KEY_MAP.put(KeyEvent.VK_4, Keyboard.KEY_4);
+        KEY_MAP.put(KeyEvent.VK_5, Keyboard.KEY_5);
+        KEY_MAP.put(KeyEvent.VK_6, Keyboard.KEY_6);
+        KEY_MAP.put(KeyEvent.VK_7, Keyboard.KEY_7);
+        KEY_MAP.put(KeyEvent.VK_8, Keyboard.KEY_8);
+        KEY_MAP.put(KeyEvent.VK_9, Keyboard.KEY_9);
+        KEY_MAP.put(KeyEvent.VK_A, Keyboard.KEY_A);
+        KEY_MAP.put(KeyEvent.VK_ADD, Keyboard.KEY_ADD);
+        KEY_MAP.put(KeyEvent.VK_ALT_GRAPH, Keyboard.KEY_RMENU);
+        KEY_MAP.put(KeyEvent.VK_AT, Keyboard.KEY_AT);
+        KEY_MAP.put(KeyEvent.VK_B, Keyboard.KEY_B);
+        KEY_MAP.put(KeyEvent.VK_BACK_SLASH, Keyboard.KEY_BACKSLASH);
+        KEY_MAP.put(KeyEvent.VK_BACK_SPACE, Keyboard.KEY_BACK);
+        KEY_MAP.put(KeyEvent.VK_C, Keyboard.KEY_C);
+        KEY_MAP.put(KeyEvent.VK_CAPS_LOCK, Keyboard.KEY_CAPITAL);
+        KEY_MAP.put(KeyEvent.VK_CIRCUMFLEX, Keyboard.KEY_CIRCUMFLEX);
+        KEY_MAP.put(KeyEvent.VK_CLOSE_BRACKET, Keyboard.KEY_RBRACKET);
+        KEY_MAP.put(KeyEvent.VK_COLON, Keyboard.KEY_COLON);
+        KEY_MAP.put(KeyEvent.VK_COMMA, Keyboard.KEY_COMMA);
+        KEY_MAP.put(KeyEvent.VK_CONVERT, Keyboard.KEY_CONVERT);
+        KEY_MAP.put(KeyEvent.VK_D, Keyboard.KEY_D);
+        KEY_MAP.put(KeyEvent.VK_DECIMAL, Keyboard.KEY_DECIMAL);
+        KEY_MAP.put(KeyEvent.VK_DELETE, Keyboard.KEY_DELETE);
+        KEY_MAP.put(KeyEvent.VK_DIVIDE, Keyboard.KEY_DIVIDE);
+        KEY_MAP.put(KeyEvent.VK_DOWN, Keyboard.KEY_DOWN);
+        KEY_MAP.put(KeyEvent.VK_KP_DOWN, Keyboard.KEY_DOWN);
+        KEY_MAP.put(KeyEvent.VK_E, Keyboard.KEY_E);
+        KEY_MAP.put(KeyEvent.VK_END, Keyboard.KEY_END);
+        KEY_MAP.put(KeyEvent.VK_ENTER, Keyboard.KEY_RETURN);
+        KEY_MAP.put(KeyEvent.VK_EQUALS, Keyboard.KEY_EQUALS);
+        KEY_MAP.put(KeyEvent.VK_ESCAPE, Keyboard.KEY_ESCAPE);
+        KEY_MAP.put(KeyEvent.VK_F, Keyboard.KEY_F);
+        KEY_MAP.put(KeyEvent.VK_F1, Keyboard.KEY_F1);
+        KEY_MAP.put(KeyEvent.VK_F10, Keyboard.KEY_F10);
+        KEY_MAP.put(KeyEvent.VK_F11, Keyboard.KEY_F11);
+        KEY_MAP.put(KeyEvent.VK_F12, Keyboard.KEY_F12);
+        KEY_MAP.put(KeyEvent.VK_F13, Keyboard.KEY_F13);
+        KEY_MAP.put(KeyEvent.VK_F14, Keyboard.KEY_F14);
+        KEY_MAP.put(KeyEvent.VK_F15, Keyboard.KEY_F15);
+        KEY_MAP.put(KeyEvent.VK_F2, Keyboard.KEY_F2);
+        KEY_MAP.put(KeyEvent.VK_F3, Keyboard.KEY_F3);
+        KEY_MAP.put(KeyEvent.VK_F4, Keyboard.KEY_F4);
+        KEY_MAP.put(KeyEvent.VK_F5, Keyboard.KEY_F5);
+        KEY_MAP.put(KeyEvent.VK_F6, Keyboard.KEY_F6);
+        KEY_MAP.put(KeyEvent.VK_F7, Keyboard.KEY_F7);
+        KEY_MAP.put(KeyEvent.VK_F8, Keyboard.KEY_F8);
+        KEY_MAP.put(KeyEvent.VK_F9, Keyboard.KEY_F9);
+        KEY_MAP.put(KeyEvent.VK_G, Keyboard.KEY_G);
+        KEY_MAP.put(KeyEvent.VK_H, Keyboard.KEY_H);
+        KEY_MAP.put(KeyEvent.VK_HOME, Keyboard.KEY_HOME);
+        KEY_MAP.put(KeyEvent.VK_I, Keyboard.KEY_I);
+        KEY_MAP.put(KeyEvent.VK_INSERT, Keyboard.KEY_INSERT);
+        KEY_MAP.put(KeyEvent.VK_J, Keyboard.KEY_J);
+        KEY_MAP.put(KeyEvent.VK_K, Keyboard.KEY_K);
+        KEY_MAP.put(KeyEvent.VK_KANA, Keyboard.KEY_KANA);
+        KEY_MAP.put(KeyEvent.VK_KANJI, Keyboard.KEY_KANJI);
+        KEY_MAP.put(KeyEvent.VK_L, Keyboard.KEY_L);
+        KEY_MAP.put(KeyEvent.VK_LEFT, Keyboard.KEY_LEFT);
+        KEY_MAP.put(KeyEvent.VK_KP_LEFT, Keyboard.KEY_LEFT);
+        KEY_MAP.put(KeyEvent.VK_M, Keyboard.KEY_M);
+        KEY_MAP.put(KeyEvent.VK_MINUS, Keyboard.KEY_MINUS);
+        KEY_MAP.put(KeyEvent.VK_MULTIPLY, Keyboard.KEY_MULTIPLY);
+        KEY_MAP.put(KeyEvent.VK_N, Keyboard.KEY_N);
+        KEY_MAP.put(KeyEvent.VK_NUM_LOCK, Keyboard.KEY_NUMLOCK);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD0, Keyboard.KEY_NUMPAD0);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD1, Keyboard.KEY_NUMPAD1);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD2, Keyboard.KEY_NUMPAD2);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD3, Keyboard.KEY_NUMPAD3);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD4, Keyboard.KEY_NUMPAD4);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD5, Keyboard.KEY_NUMPAD5);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD6, Keyboard.KEY_NUMPAD6);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD7, Keyboard.KEY_NUMPAD7);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD8, Keyboard.KEY_NUMPAD8);
+        KEY_MAP.put(KeyEvent.VK_NUMPAD9, Keyboard.KEY_NUMPAD9);
+        KEY_MAP.put(KeyEvent.VK_O, Keyboard.KEY_O);
+        KEY_MAP.put(KeyEvent.VK_OPEN_BRACKET, Keyboard.KEY_LBRACKET);
+        KEY_MAP.put(KeyEvent.VK_P, Keyboard.KEY_P);
+        KEY_MAP.put(KeyEvent.VK_PAGE_DOWN, Keyboard.KEY_NEXT);
+        KEY_MAP.put(KeyEvent.VK_PAGE_UP, Keyboard.KEY_PRIOR);
+        KEY_MAP.put(KeyEvent.VK_PAUSE, Keyboard.KEY_PAUSE);
+        KEY_MAP.put(KeyEvent.VK_PERIOD, Keyboard.KEY_PERIOD);
+        KEY_MAP.put(KeyEvent.VK_Q, Keyboard.KEY_Q);
+        KEY_MAP.put(KeyEvent.VK_R, Keyboard.KEY_R);
+        KEY_MAP.put(KeyEvent.VK_RIGHT, Keyboard.KEY_RIGHT);
+        KEY_MAP.put(KeyEvent.VK_KP_RIGHT, Keyboard.KEY_RIGHT);
+        KEY_MAP.put(KeyEvent.VK_S, Keyboard.KEY_S);
+        KEY_MAP.put(KeyEvent.VK_SCROLL_LOCK, Keyboard.KEY_SCROLL);
+        KEY_MAP.put(KeyEvent.VK_SEMICOLON, Keyboard.KEY_SEMICOLON);
+        KEY_MAP.put(KeyEvent.VK_SEPARATOR, Keyboard.KEY_DECIMAL);
+        KEY_MAP.put(KeyEvent.VK_SLASH, Keyboard.KEY_SLASH);
+        KEY_MAP.put(KeyEvent.VK_SPACE, Keyboard.KEY_SPACE);
+        KEY_MAP.put(KeyEvent.VK_STOP, Keyboard.KEY_STOP);
+        KEY_MAP.put(KeyEvent.VK_SUBTRACT, Keyboard.KEY_SUBTRACT);
+        KEY_MAP.put(KeyEvent.VK_T, Keyboard.KEY_T);
+        KEY_MAP.put(KeyEvent.VK_TAB, Keyboard.KEY_TAB);
+        KEY_MAP.put(KeyEvent.VK_U, Keyboard.KEY_U);
+        KEY_MAP.put(KeyEvent.VK_UP, Keyboard.KEY_UP);
+        KEY_MAP.put(KeyEvent.VK_KP_UP, Keyboard.KEY_UP);
+        KEY_MAP.put(KeyEvent.VK_V, Keyboard.KEY_V);
+        KEY_MAP.put(KeyEvent.VK_W, Keyboard.KEY_W);
+        KEY_MAP.put(KeyEvent.VK_X, Keyboard.KEY_X);
+        KEY_MAP.put(KeyEvent.VK_Y, Keyboard.KEY_Y);
+        KEY_MAP.put(KeyEvent.VK_Z, Keyboard.KEY_Z);
+        KEY_MAP.put(KeyEvent.VK_BACK_QUOTE, Keyboard.KEY_GRAVE);
+        KEY_MAP.put(KeyEvent.VK_QUOTE, Keyboard.KEY_APOSTROPHE);
+        KEY_MAP.put(KeyEvent.VK_PRINTSCREEN, Keyboard.KEY_SYSRQ);
 	}
 
 	public static int awtKeyToLWJGL(KeyEvent e)
 	{
-		return awtKeyToLWJGL(e.getKeyCode(), e.getKeyLocation());
-	}
-
-	public static int awtKeyToLWJGL(int key_code, int position)
-	{
+		int key_code = e.getKeyCode();
+		int position = e.getKeyLocation();
 		/* Code taken from LWJGL, specifically org.lwjgl.opengl.KeyboardEventQueue */
 		switch (key_code)
 		{
@@ -259,34 +258,17 @@ public class KeyHelpDialog
 				else
 					return Keyboard.KEY_LCONTROL;
 			default:
-				return KEY_MAP[key_code];
-		}
-	}
-
-	private class JUrlLabel extends JLabel
-	{
-		private String url;
-
-		public JUrlLabel(String url)
-		{
-			super();
-			this.url = url;
-			setup();
-		}
-
-		private void setup()
-		{
-			setText("<html><span style=\"color: #000099;\"><u>" + this.url + "</u></span></html>");
-			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent e)
+				if (KEY_MAP.containsKey(key_code))
 				{
-					BareBonesBrowserLaunch.openURL(url);
+					return KEY_MAP.get(key_code);
 				}
-			});
+				else
+				{
+					return Keyboard.KEY_NONE;
+				}
 		}
 	}
-	
+
 	/***
 	 * Centers this dialog on the screen
 	 */
@@ -320,6 +302,8 @@ public class KeyHelpDialog
 		Font descFont = new Font("Arial", Font.PLAIN, 12);
 		Font keyFont = new Font("Arial", Font.BOLD, 12);
 		Font noteFont = new Font("Arial", Font.ITALIC, 10);
+		this.defaultStatusText = "Use the \"Edit Bindings\" button to change bindings.";
+		this.statusLabel = new JLabel(defaultStatusText);
 		JLabel sectionLabel;
 		JLabel descLabel;
 		JLabel keyLabel;
@@ -425,13 +409,8 @@ public class KeyHelpDialog
 		current_grid_y++;
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.CENTER;
-		c.insets = noBottomInsets;
-		addComponent(this.getContentPane(), new JLabel("For information on setting your own keybindings, see:"), c);
-		current_grid_y++;
-		c.gridx = 0; c.gridy = current_grid_y;
-		c.anchor = GridBagConstraints.CENTER;
 		c.insets = noTopInsets;
-		addComponent(this.getContentPane(), new JUrlLabel("http://apocalyptech.com/minecraft/xray/config.php"), c);
+		addComponent(this.getContentPane(), this.statusLabel, c);
 		c.insets = standardInsets;
 		
 		// Add our scrollpane to the window
@@ -561,6 +540,7 @@ public class KeyHelpDialog
 		this.curState = STATE.EDITING;
 		this.actionButton.setText("Save Key Bindings");
 		this.okButton.setEnabled(false);
+		this.statusLabel.setText("Select a key to edit.");
 	}
 	private void showDisplay()
 	{
@@ -572,6 +552,7 @@ public class KeyHelpDialog
 		this.curState = STATE.DISPLAY;
 		this.actionButton.setText("Edit Key Bindings");
 		this.okButton.setEnabled(true);
+		this.statusLabel.setText(this.defaultStatusText);
 	}
 	private void stopKeySet()
 	{
@@ -601,6 +582,7 @@ public class KeyHelpDialog
 		this.okButton.setEnabled(false);
 		this.requestFocus();
 		this.setFocusTraversalKeysEnabled(false);
+		this.statusLabel.setText("Choose a new key, or  use the Cancel button to cancel.");
 	}
 	
 	/***

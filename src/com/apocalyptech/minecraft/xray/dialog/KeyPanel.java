@@ -126,6 +126,16 @@ public class KeyPanel extends JPanel
 		this.keyEdit.setText(this.keyStr);
 	}
 
+	public KEY_ACTION getKey()
+	{
+		return this.key;
+	}
+
+	public int getBoundKey()
+	{
+		return this.bound_key;
+	}
+
 	public void notifyClicked()
 	{
 		this.kh.notifyKeyPanelClicked(this);
@@ -163,16 +173,21 @@ public class KeyPanel extends JPanel
 				return " / Right Mouse Button (hold)";
 
 			default:
-				if (Keyboard.getKeyName(this.bound_key).startsWith("NUMPAD") ||
-						Keyboard.getKeyName(this.bound_key).equals("DECIMAL"))
+				String key_name = Keyboard.getKeyName(this.bound_key);
+				if (key_name.startsWith("NUMPAD") || key_name.equals("DECIMAL"))
 				{
 					return " (numlock must be on)";
 				}
-				else if (Keyboard.getKeyName(this.bound_key).equals("GRAVE"))
+				else if (key_name.equals("DIVIDE") || key_name.equals("MULTIPLY") ||
+						key_name.equals("SUBTRACT") || key_name.equals("ADD"))
+				{
+					return " (on numeric keypad)";
+				}
+				else if (key_name.equals("GRAVE"))
 				{
 					return " (grave accent)";
 				}
-				else if (Keyboard.getKeyName(this.bound_key).equals("SYSRQ"))
+				else if (key_name.equals("SYSRQ"))
 				{
 					return " (also called SYSRQ)";
 				}

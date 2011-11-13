@@ -25,10 +25,6 @@ X-Ray redistributes the following components:
     Also available under the Apache License 2.0.  See COPYING-log4j.txt for
     more details on that.
 
-  * Bare Bones Browser Launch
-    http://www.centerkey.com/java/browser/
-    Available in the public domain.  See COPYING-bbb.txt for more details.
-
   * "Faithful 32x32" Minecraft Texture Pack, by Vattic
     http://www.minecraftforum.net/topic/72747-
     As mentioned in the first post: "If anyone wants to use anything I've made
