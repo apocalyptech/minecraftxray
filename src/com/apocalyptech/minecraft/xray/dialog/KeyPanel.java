@@ -142,6 +142,10 @@ public class KeyPanel extends JPanel
 		{
 			return "`";
 		}
+		else if (Keyboard.getKeyName(this.bound_key).equals("SYSRQ"))
+		{
+			return "PRINTSCREEN";
+		}
 		else
 		{
 			return Keyboard.getKeyName(this.bound_key);
@@ -159,13 +163,18 @@ public class KeyPanel extends JPanel
 				return " / Right Mouse Button (hold)";
 
 			default:
-				if (Keyboard.getKeyName(this.bound_key).startsWith("NUMPAD"))
+				if (Keyboard.getKeyName(this.bound_key).startsWith("NUMPAD") ||
+						Keyboard.getKeyName(this.bound_key).equals("DECIMAL"))
 				{
 					return " (numlock must be on)";
 				}
 				else if (Keyboard.getKeyName(this.bound_key).equals("GRAVE"))
 				{
 					return " (grave accent)";
+				}
+				else if (Keyboard.getKeyName(this.bound_key).equals("SYSRQ"))
+				{
+					return " (also called SYSRQ)";
 				}
 				break;
 		}

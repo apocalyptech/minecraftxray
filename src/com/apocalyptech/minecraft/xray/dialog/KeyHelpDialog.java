@@ -42,7 +42,6 @@ import java.awt.GridBagLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.AWTKeyStroke;
 import java.util.List;
 import java.util.ArrayList;
 import java.awt.Toolkit;
@@ -146,6 +145,7 @@ public class KeyHelpDialog
         KEY_MAP[KeyEvent.VK_DELETE] = Keyboard.KEY_DELETE;
         KEY_MAP[KeyEvent.VK_DIVIDE] = Keyboard.KEY_DIVIDE;
         KEY_MAP[KeyEvent.VK_DOWN] = Keyboard.KEY_DOWN;
+        KEY_MAP[KeyEvent.VK_KP_DOWN] = Keyboard.KEY_DOWN;
         KEY_MAP[KeyEvent.VK_E] = Keyboard.KEY_E;
         KEY_MAP[KeyEvent.VK_END] = Keyboard.KEY_END;
         KEY_MAP[KeyEvent.VK_ENTER] = Keyboard.KEY_RETURN;
@@ -178,6 +178,7 @@ public class KeyHelpDialog
         KEY_MAP[KeyEvent.VK_KANJI] = Keyboard.KEY_KANJI;
         KEY_MAP[KeyEvent.VK_L] = Keyboard.KEY_L;
         KEY_MAP[KeyEvent.VK_LEFT] = Keyboard.KEY_LEFT;
+        KEY_MAP[KeyEvent.VK_KP_LEFT] = Keyboard.KEY_LEFT;
         KEY_MAP[KeyEvent.VK_M] = Keyboard.KEY_M;
         KEY_MAP[KeyEvent.VK_MINUS] = Keyboard.KEY_MINUS;
         KEY_MAP[KeyEvent.VK_MULTIPLY] = Keyboard.KEY_MULTIPLY;
@@ -203,6 +204,7 @@ public class KeyHelpDialog
         KEY_MAP[KeyEvent.VK_Q] = Keyboard.KEY_Q;
         KEY_MAP[KeyEvent.VK_R] = Keyboard.KEY_R;
         KEY_MAP[KeyEvent.VK_RIGHT] = Keyboard.KEY_RIGHT;
+        KEY_MAP[KeyEvent.VK_KP_RIGHT] = Keyboard.KEY_RIGHT;
         KEY_MAP[KeyEvent.VK_S] = Keyboard.KEY_S;
         KEY_MAP[KeyEvent.VK_SCROLL_LOCK] = Keyboard.KEY_SCROLL;
         KEY_MAP[KeyEvent.VK_SEMICOLON] = Keyboard.KEY_SEMICOLON;
@@ -215,11 +217,15 @@ public class KeyHelpDialog
         KEY_MAP[KeyEvent.VK_TAB] = Keyboard.KEY_TAB;
         KEY_MAP[KeyEvent.VK_U] = Keyboard.KEY_U;
         KEY_MAP[KeyEvent.VK_UP] = Keyboard.KEY_UP;
+        KEY_MAP[KeyEvent.VK_KP_UP] = Keyboard.KEY_UP;
         KEY_MAP[KeyEvent.VK_V] = Keyboard.KEY_V;
         KEY_MAP[KeyEvent.VK_W] = Keyboard.KEY_W;
         KEY_MAP[KeyEvent.VK_X] = Keyboard.KEY_X;
         KEY_MAP[KeyEvent.VK_Y] = Keyboard.KEY_Y;
         KEY_MAP[KeyEvent.VK_Z] = Keyboard.KEY_Z;
+        KEY_MAP[KeyEvent.VK_BACK_QUOTE] = Keyboard.KEY_GRAVE;
+        KEY_MAP[KeyEvent.VK_QUOTE] = Keyboard.KEY_APOSTROPHE;
+        KEY_MAP[KeyEvent.VK_PRINTSCREEN] = Keyboard.KEY_SYSRQ;
 	}
 
 	public static int awtKeyToLWJGL(KeyEvent e)
@@ -667,60 +673,6 @@ public class KeyHelpDialog
 
 	public void keyPressed(KeyEvent e)
 	{
-		XRay.logger.debug("Key pressed: " + e.getKeyText(e.getKeyCode()) + ", char: " + e.getKeyChar() + " (int: " + (int)e.getKeyChar() + ")");
-		// We override the numpad because the Typed event they get is
-		// indistinguishable from the non-numpad equivalents
-		if (this.curKeyPanel != null)
-		{
-			int key_code = e.getKeyCode();
-			switch (key_code)
-			{
-				case KeyEvent.VK_NUMPAD0:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD0);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD1:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD1);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD2:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD2);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD3:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD3);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD4:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD4);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD5:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD5);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD6:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD6);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD7:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD7);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD8:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD8);
-					this.stopKeySet();
-					break;
-				case KeyEvent.VK_NUMPAD9:
-					this.curKeyPanel.setBoundKey(Keyboard.KEY_NUMPAD9);
-					this.stopKeySet();
-					break;
-			}
-		}
-	}
-	public void keyReleased(KeyEvent e)
-	{
-		XRay.logger.debug("Key released: " + e.getKeyText(e.getKeyCode()) + ", char: " + e.getKeyChar() + " (int: " + (int)e.getKeyChar() + ")");
 		if (this.curState == STATE.KEYSET)
 		{
 			if (this.curKeyPanel != null)
@@ -731,21 +683,10 @@ public class KeyHelpDialog
 			this.stopKeySet();
 		}
 	}
+	public void keyReleased(KeyEvent e)
+	{
+	}
 	public void keyTyped(KeyEvent e)
 	{
-		XRay.logger.debug("Key typed: " + e.getKeyText(e.getKeyCode()) + ", char: " + e.getKeyChar() + " (int: " + (int)e.getKeyChar() + ")");
-		if (this.curState == STATE.KEYSET)
-		{
-			/*
-			if (this.curKeyPanel != null)
-			{
-				int key_code = AWTKeyStroke.getAWTKeyStroke(e.getKeyChar()).getKeyCode();
-				XRay.logger.debug("key_code: " + key_code);
-				int key = awtKeyToLWJGL(AWTKeyStroke.getAWTKeyStroke(e.getKeyChar()).getKeyCode(), KeyEvent.KEY_LOCATION_STANDARD);
-				this.curKeyPanel.setBoundKey(key);
-			}
-			*/
-			this.stopKeySet();
-		}
 	}
 }
