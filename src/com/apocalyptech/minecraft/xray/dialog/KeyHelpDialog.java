@@ -32,6 +32,7 @@ import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 import com.centerkey.utils.BareBonesBrowserLaunch;
 
 import java.awt.Font;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Component;
 import java.awt.Container;
@@ -51,6 +52,10 @@ import java.awt.event.WindowListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -63,6 +68,7 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.AbstractAction;
@@ -90,11 +96,13 @@ public class KeyHelpDialog extends JFrame {
 	public static HashMap<KEY_ACTION, Integer> key_mapping;
 
 	private ArrayList<KeyPanel> keyPanels;
+	private KeyPanel curKeyPanel;
 
 	private enum STATE
 	{
 		DISPLAY,
-		SET
+		EDITING,
+		KEYSET
 	}
 	private STATE curState = STATE.DISPLAY;
 
@@ -119,116 +127,6 @@ public class KeyHelpDialog extends JFrame {
 					BareBonesBrowserLaunch.openURL(url);
 				}
 			});
-		}
-	}
-
-	private class KeyPanel extends JPanel
-	{
-		private String beforeStr;
-		private String keyStr;
-		private String afterStr;
-
-
-		private KEY_ACTION key;
-		private int bound_key;
-
-		private JLabel beforeLabel;
-		private JLabel afterLabel;
-		private JLabel keyLabel;
-		private KeyField keyEdit;
-
-		public KeyPanel(Font keyFont, KEY_ACTION key, int bound_key)
-		{
-			super();
-			this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			this.key = key;
-
-			this.beforeLabel = new JLabel();
-			this.beforeLabel.setFont(keyFont);
-			this.afterLabel = new JLabel();
-			this.afterLabel.setFont(keyFont);
-			this.keyLabel = new JLabel();
-			this.keyLabel.setFont(keyFont);
-			this.keyEdit = new KeyField(key, "");
-
-			this.add(this.beforeLabel);
-			this.add(this.keyLabel);
-			this.add(this.keyEdit);
-			this.add(this.afterLabel);
-
-			this.setBoundKey(bound_key);
-			this.finishEdit();
-		}
-
-		public void setBoundKey(int bound_key)
-		{
-			this.bound_key = bound_key;
-			this.keyStr = this.getKeyEnglish();
-			this.beforeStr = this.getKeyExtraBefore();
-			this.afterStr = this.getKeyExtraAfter();
-
-			this.beforeLabel.setText(this.beforeStr);
-			this.afterLabel.setText(this.afterStr);
-			this.keyLabel.setText(this.keyStr);
-			this.keyEdit.setText(this.keyStr);
-		}
-
-		private String getKeyEnglish()
-		{
-			if (Keyboard.getKeyName(this.bound_key).equals("GRAVE"))
-			{
-				return "`";
-			}
-			else
-			{
-				return Keyboard.getKeyName(this.bound_key);
-			}
-		}
-
-		private String getKeyExtraAfter()
-		{
-			switch (this.key)
-			{
-				case SPEED_INCREASE:
-					return " / Left Mouse Button (hold)";
-
-				case SPEED_DECREASE:
-					return " / Right Mouse Button (hold)";
-
-				default:
-					if (Keyboard.getKeyName(this.bound_key).startsWith("NUMPAD"))
-					{
-						return " (numlock must be on)";
-					}
-					else if (Keyboard.getKeyName(this.bound_key).equals("GRAVE"))
-					{
-						return " (grave accent)";
-					}
-					break;
-			}
-			return "";
-		}
-
-		private String getKeyExtraBefore()
-		{
-			switch (this.key)
-			{
-				case QUIT:
-					return "CTRL-";
-			}
-			return "";
-		}
-
-		public void startEdit()
-		{
-			this.keyLabel.setVisible(false);
-			this.keyEdit.setVisible(true);
-		}
-
-		public void finishEdit()
-		{
-			this.keyEdit.setVisible(false);
-			this.keyLabel.setVisible(true);
 		}
 	}
 	
@@ -328,7 +226,7 @@ public class KeyHelpDialog extends JFrame {
 
 			c.gridx = 1;
 			c.anchor = GridBagConstraints.WEST;
-			KeyPanel indPanel = new KeyPanel(keyFont, key, bound_key);
+			KeyPanel indPanel = new KeyPanel(this, keyFont, key, bound_key);
 			addComponent(keyPanel, indPanel, c, keyLayout);
 			keyPanels.add(indPanel);
 
@@ -485,7 +383,7 @@ public class KeyHelpDialog extends JFrame {
 				this.showSet();
 				break;
 
-			case SET:
+			case EDITING:
 				this.showDisplay();
 				break;
 		}
@@ -497,7 +395,7 @@ public class KeyHelpDialog extends JFrame {
 		{
 			panel.startEdit();
 		}
-		this.curState = STATE.SET;
+		this.curState = STATE.EDITING;
 		this.actionButton.setText("Save Key Bindings");
 		this.okButton.setEnabled(false);
 	}
@@ -511,6 +409,15 @@ public class KeyHelpDialog extends JFrame {
 		this.curState = STATE.DISPLAY;
 		this.actionButton.setText("Edit Key Bindings");
 		this.okButton.setEnabled(true);
+	}
+
+	public void notifyKeyPanelClicked(KeyPanel keypanel)
+	{
+		if (this.curKeyPanel != null)
+		{
+			this.curKeyPanel.clickFinish();
+		}
+		this.curKeyPanel = keypanel;
 	}
 	
 	/***

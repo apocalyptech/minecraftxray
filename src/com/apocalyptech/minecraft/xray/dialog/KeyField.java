@@ -56,6 +56,9 @@ import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTION;
  */
 public class KeyField extends JTextField{
 	private KEY_ACTION keyAction;
+	private KeyPanel panel;
+	private Color bgColorNormal;
+	private Color bgColorActive;
 
 	/**
 	 * Constructs a new KeyField given the string to populate it with
@@ -63,16 +66,29 @@ public class KeyField extends JTextField{
 	 * @param ka
 	 * @param s
 	 */
-	public KeyField(KEY_ACTION ka, String s) {
+	public KeyField(KEY_ACTION ka, KeyPanel panel) {
 		super(10);
-		keyAction = ka;
+		this.keyAction = ka;
+		this.panel = panel;
 		this.setEditable(false);
-		this.setText(s);
-		this.setBackground(Color.WHITE);
+		this.bgColorNormal = Color.WHITE;
+		this.bgColorActive = new Color(144, 204, 255);
+		this.setBackground(this.bgColorNormal);
 		this.setFocusable(false);
 		//this.addKeyListener(new OneKeyAdapter(this));
 		//this.addFocusListener(new KeyFieldFocusListener(this, new Color(144, 204, 255), Color.WHITE));
-		this.addMouseListener(new KeyFieldMouseListener(this, new Color(144, 204, 255)));
+		this.addMouseListener(new KeyFieldMouseListener(this));
+	}
+
+	public void clicked()
+	{
+		this.panel.notifyClicked();
+		this.setBackground(this.bgColorActive);
+	}
+
+	public void clickFinish()
+	{
+		this.setBackground(this.bgColorNormal);
 	}
 	
 	/**
@@ -97,15 +113,13 @@ public class KeyField extends JTextField{
 	private class KeyFieldMouseListener implements MouseListener
 	{
 		KeyField kf;
-		Color selectedColor;
-		KeyFieldMouseListener(KeyField kf, Color selectedColor)
+		KeyFieldMouseListener(KeyField kf)
 		{
 			this.kf = kf;
-			this.selectedColor = selectedColor;
 		}
 		public void mouseClicked(MouseEvent e)
 		{
-			this.kf.setBackground(this.selectedColor);
+			this.kf.clicked();
 		}
 		public void mouseEntered(MouseEvent e)
 		{
