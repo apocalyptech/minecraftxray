@@ -81,7 +81,7 @@ public class KeyPanel extends JPanel
 
 	private KeyHelpDialog kh;
 
-	private KEY_ACTION key;
+	private KEY_ACTION action;
 	private int bound_key;
 
 	private JLabel beforeLabel;
@@ -89,12 +89,12 @@ public class KeyPanel extends JPanel
 	private JLabel keyLabel;
 	private KeyField keyEdit;
 
-	public KeyPanel(KeyHelpDialog kh, Font keyFont, KEY_ACTION key, int bound_key)
+	public KeyPanel(KeyHelpDialog kh, Font keyFont, KEY_ACTION action, int bound_key)
 	{
 		super();
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		this.kh = kh;
-		this.key = key;
+		this.action = action;
 
 		this.beforeLabel = new JLabel();
 		this.beforeLabel.setFont(keyFont);
@@ -102,7 +102,7 @@ public class KeyPanel extends JPanel
 		this.afterLabel.setFont(keyFont);
 		this.keyLabel = new JLabel();
 		this.keyLabel.setFont(keyFont);
-		this.keyEdit = new KeyField(key, this);
+		this.keyEdit = new KeyField(action, this);
 
 		this.add(this.beforeLabel);
 		this.add(this.keyLabel);
@@ -126,9 +126,9 @@ public class KeyPanel extends JPanel
 		this.keyEdit.setText(this.keyStr);
 	}
 
-	public KEY_ACTION getKey()
+	public KEY_ACTION getAction()
 	{
-		return this.key;
+		return this.action;
 	}
 
 	public int getBoundKey()
@@ -164,7 +164,7 @@ public class KeyPanel extends JPanel
 
 	private String getKeyExtraAfter()
 	{
-		switch (this.key)
+		switch (this.action)
 		{
 			case SPEED_INCREASE:
 				return " / Left Mouse Button (hold)";
@@ -198,7 +198,7 @@ public class KeyPanel extends JPanel
 
 	private String getKeyExtraBefore()
 	{
-		switch (this.key)
+		switch (this.action)
 		{
 			case QUIT:
 				return "CTRL-";

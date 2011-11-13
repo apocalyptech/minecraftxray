@@ -362,7 +362,7 @@ public class XRay
 
 
 			// temp, testing
-			KeyHelpDialog.presentDialog(key_mapping);
+			KeyHelpDialog.presentDialog(key_mapping, this);
 
 			// prompt for the resolution and initialize the window
 			createWindow();
@@ -549,6 +549,18 @@ public class XRay
 
 		// Return
 		return errors;
+	}
+
+	/***
+	 * Updates our key-mapping preferences and saves out the config file.
+	 */
+	public void updateKeyMapping()
+	{
+		for (Map.Entry<KEY_ACTION, Integer> entry : key_mapping.entrySet())
+		{
+			xray_properties.setProperty("KEY_" + entry.getKey().toString(), Keyboard.getKeyName(entry.getValue()));
+		}
+		this.savePreferences();
 	}
 
 	/**
@@ -1426,7 +1438,7 @@ public class XRay
 	private void launchKeyHelpDialog()
 	{
 		Mouse.setGrabbed(false);
-		KeyHelpDialog.presentDialog(key_mapping);
+		KeyHelpDialog.presentDialog(key_mapping, this);
 	}
 
 	/**

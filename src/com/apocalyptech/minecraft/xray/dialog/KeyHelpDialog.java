@@ -99,10 +99,12 @@ public class KeyHelpDialog
 	
 	public static Image iconImage;
 
-	public static HashMap<KEY_ACTION, Integer> key_mapping;
+	private HashMap<KEY_ACTION, Integer> key_mapping;
 
 	private ArrayList<KeyPanel> keyPanels;
 	private KeyPanel curKeyPanel;
+	
+	private XRay xrayInstance;
 
 	private enum STATE
 	{
@@ -335,7 +337,7 @@ public class KeyHelpDialog
 		ACTION_CAT curCat = null;
 		for (KEY_ACTION key : KEY_ACTION.values())
 		{
-			bound_key = key_mapping.get(key);
+			bound_key = this.key_mapping.get(key);
 			current_grid_y++;
 			c.gridy = current_grid_y;
 
@@ -558,14 +560,15 @@ public class KeyHelpDialog
 				break;
 
 			case EDITING:
-				// TODO: Break out without saving; revert to stored.
+				// Break out without saving
 				if (this.setEscapeKey)
 				{
 					this.setEscapeKey = false;
 				}
 				else
 				{
-					processAction();
+					this.revertMapping();
+					this.showDisplay();
 				}
 				break;
 				
@@ -584,6 +587,7 @@ public class KeyHelpDialog
 				break;
 
 			case EDITING:
+				this.saveMapping();
 				this.showDisplay();
 				break;
 
@@ -647,13 +651,54 @@ public class KeyHelpDialog
 		this.statusLabel.setText("Choose a new key, or  use the Cancel button to cancel.");
 	}
 	
+	private void revertMapping()
+	{
+		KEY_ACTION action;
+		int bound_key;
+		for (KeyPanel panel : this.keyPanels)
+		{
+			action = panel.getAction();
+			bound_key = this.key_mapping.get(action);
+			panel.setBoundKey(bound_key);
+		}
+	}
+
+	private void saveMapping()
+	{
+		KEY_ACTION action;
+		int bound_key_orig;
+		int bound_key_new;
+		boolean changed = false;
+		for (KeyPanel panel : this.keyPanels)
+		{
+			action = panel.getAction();
+			bound_key_orig = this.key_mapping.get(action);
+			bound_key_new = panel.getBoundKey();
+			if (bound_key_orig != bound_key_new)
+			{
+				changed = true;
+				XRay.logger.debug("Action " + action.toString() + " has changed from " +
+						Keyboard.getKeyName(bound_key_orig) + " to " +
+						Keyboard.getKeyName(bound_key_new));
+				this.key_mapping.put(action, bound_key_new);
+			}
+		}
+
+		if (changed)
+		{
+			this.xrayInstance.updateKeyMapping();
+		}
+	}
+
 	/***
 	 * Creates a new KeyHelpDialog
 	 * @param windowName the title of the dialog
 	 */
-	protected KeyHelpDialog()
+	protected KeyHelpDialog(HashMap<KEY_ACTION, Integer> key_mapping, XRay xrayInstance)
 	{
 		super(window_title);
+		this.key_mapping = key_mapping;
+		this.xrayInstance = xrayInstance;
 		
 		if(KeyHelpDialog.iconImage != null)
 			this.setIconImage(KeyHelpDialog.iconImage);
@@ -688,7 +733,7 @@ public class KeyHelpDialog
 	 * Pops up the dialog window
 	 * @param windowName the title of the dialog
 	 */
-	public static void presentDialog(HashMap<KEY_ACTION, Integer> key_mapping)
+	public static void presentDialog(HashMap<KEY_ACTION, Integer> key_mapping, XRay xrayInstance)
 	{
 		if (dialog_showing)
 		{
@@ -697,9 +742,8 @@ public class KeyHelpDialog
 		}
 		else
 		{
-			KeyHelpDialog.key_mapping = key_mapping;
 			KeyHelpDialog.dialog_showing = true;
-			KeyHelpDialog.keyhelp_dialog = new KeyHelpDialog();
+			KeyHelpDialog.keyhelp_dialog = new KeyHelpDialog(key_mapping, xrayInstance);
 		}
 	}
 
