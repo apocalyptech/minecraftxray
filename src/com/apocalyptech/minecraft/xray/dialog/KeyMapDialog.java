@@ -89,8 +89,8 @@ public class KeyMapDialog extends JFrame {
 	
 	private List<KeyField> keyBoxes;
 
-	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
-	private HashMap<KEY_ACTIONS, Integer> newMap;
+	public static HashMap<KEY_ACTION, Integer> key_mapping;
+	private HashMap<KEY_ACTION, Integer> newMap;
 
 	
 	/***
@@ -151,7 +151,7 @@ public class KeyMapDialog extends JFrame {
 		int current_grid_y = 0;
 		int bound_key;
 		ACTION_CAT curCat = null;
-		for (KEY_ACTIONS key : KEY_ACTIONS.values())
+		for (KEY_ACTION key : KEY_ACTION.values())
 		{
 			bound_key = key_mapping.get(key);
 			current_grid_y++;
@@ -175,7 +175,7 @@ public class KeyMapDialog extends JFrame {
 				c.insets = standardInsets;
 			}
 
-			if (key == KEY_ACTIONS.TOGGLE_SLIME_CHUNKS)
+			if (key == KEY_ACTION.TOGGLE_SLIME_CHUNKS)
 			{
 				c.insets = noBottomInsets;
 			}
@@ -222,7 +222,7 @@ public class KeyMapDialog extends JFrame {
 			keyBoxes.add(keyBox);
 			
 			// One extra note for slime chunks
-			if (key == KEY_ACTIONS.TOGGLE_SLIME_CHUNKS)
+			if (key == KEY_ACTION.TOGGLE_SLIME_CHUNKS)
 			{
 				current_grid_y++;
 				c.gridy = current_grid_y;
@@ -362,8 +362,8 @@ public class KeyMapDialog extends JFrame {
 		}
 	}
 	
-	private HashMap<KEY_ACTIONS, Integer> buildHashMap() {
-		HashMap<KEY_ACTIONS, Integer> map = new HashMap<KEY_ACTIONS, Integer> ();
+	private HashMap<KEY_ACTION, Integer> buildHashMap() {
+		HashMap<KEY_ACTION, Integer> map = new HashMap<KEY_ACTION, Integer> ();
 		for(KeyField kf :  keyBoxes) {
 			map.put(kf.getKeyAction(), kf.getKeyAsInt());
 		}
@@ -423,7 +423,7 @@ public class KeyMapDialog extends JFrame {
 	 * Pops up the dialog window
 	 * @param windowName the title of the dialog
 	 */
-	public static HashMap<KEY_ACTIONS, Integer> presentDialog(HashMap<KEY_ACTIONS, Integer> key_mapping)
+	public static HashMap<KEY_ACTION, Integer> presentDialog(HashMap<KEY_ACTION, Integer> key_mapping)
 	{
 		if (dialog_showing)
 		{

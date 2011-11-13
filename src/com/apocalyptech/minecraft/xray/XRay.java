@@ -26,7 +26,7 @@
  */
 package com.apocalyptech.minecraft.xray;
 
-import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTIONS;
+import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTION;
 import com.apocalyptech.minecraft.xray.dialog.JumpDialog;
 import com.apocalyptech.minecraft.xray.dialog.KeyMapDialog;
 import com.apocalyptech.minecraft.xray.dialog.ResolutionDialog;
@@ -287,7 +287,7 @@ public class XRay
 	private CameraPreset currentPosition;
 	private String cameraTextOverride = null;
 
-	private HashMap<KEY_ACTIONS, Integer> key_mapping;
+	private HashMap<KEY_ACTION, Integer> key_mapping;
 	private XRayProperties xray_properties;
 
 	public boolean jump_dialog_trigger = false;
@@ -459,7 +459,7 @@ public class XRay
 		String error;
 
 		// First load our defaults into the prefs object
-		for (KEY_ACTIONS action : KEY_ACTIONS.values())
+		for (KEY_ACTION action : KEY_ACTION.values())
 		{
 			xray_properties.setProperty("KEY_" + action.toString(), Keyboard.getKeyName(this.key_mapping.get(action)));
 		}
@@ -482,7 +482,7 @@ public class XRay
 		// Loop through the key mappings that we just loaded
 		int newkey;
 		String prefskey;
-		for (KEY_ACTIONS action : KEY_ACTIONS.values())
+		for (KEY_ACTION action : KEY_ACTION.values())
 		{
 			prefskey = xray_properties.getProperty("KEY_" + action.toString());
 			if (prefskey.equalsIgnoreCase("none"))
@@ -510,15 +510,15 @@ public class XRay
 		int i;
 		for (i = 0; i < CHUNK_RANGES.length; i++)
 		{
-			CHUNK_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("CHUNK_RANGE_" + (i + 1)));
+			CHUNK_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTION.valueOf("CHUNK_RANGE_" + (i + 1)));
 		}
 		for (i = 0; i < HIGHLIGHT_RANGES.length; i++)
 		{
-			HIGHLIGHT_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("HIGHLIGHT_RANGE_" + (i + 1)));
+			HIGHLIGHT_RANGES_KEYS[i] = this.key_mapping.get(KEY_ACTION.valueOf("HIGHLIGHT_RANGE_" + (i + 1)));
 		}
 		for (i = 0; i < HIGHLIGHT_ORES.length; i++)
 		{
-			HIGHLIGHT_ORE_KEYS[i] = this.key_mapping.get(KEY_ACTIONS.valueOf("TOGGLE_ORE_" + (i + 1)));
+			HIGHLIGHT_ORE_KEYS[i] = this.key_mapping.get(KEY_ACTION.valueOf("TOGGLE_ORE_" + (i + 1)));
 		}
 
 		// Populate our list of ores to highlight
@@ -576,8 +576,8 @@ public class XRay
 	public void setPreferenceDefaults()
 	{
 		// First do the default key mappings
-		key_mapping = new HashMap<KEY_ACTIONS, Integer>();
-		for (KEY_ACTIONS action : KEY_ACTIONS.values())
+		key_mapping = new HashMap<KEY_ACTION, Integer>();
+		for (KEY_ACTION action : KEY_ACTION.values())
 		{
 			key_mapping.put(action, action.def_key);
 		}
@@ -1095,7 +1095,7 @@ public class XRay
 	{
 
 		//Temporary map to hold new key bindings
-		HashMap<KEY_ACTIONS, Integer> newMap = null;
+		HashMap<KEY_ACTION, Integer> newMap = null;
 		// set icon buffers
 		// stupid conversions needed
 		File iconFile = new File("xray_icon.png");
@@ -1685,11 +1685,11 @@ public class XRay
 		//
 
 		// Speed shifting
-		if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.SPEED_INCREASE)))
+		if (Mouse.isButtonDown(0) || Keyboard.isKeyDown(key_mapping.get(KEY_ACTION.SPEED_INCREASE)))
 		{
 			MOVEMENT_SPEED = 30.0f;
 		}
-		else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.SPEED_DECREASE)))
+		else if (Mouse.isButtonDown(1) || Keyboard.isKeyDown(key_mapping.get(KEY_ACTION.SPEED_DECREASE)))
 		{
 			MOVEMENT_SPEED = 3.0f;
 		}
@@ -1699,42 +1699,42 @@ public class XRay
 		}
 
 		// Move forward
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_FORWARD)))
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTION.MOVE_FORWARD)))
 		{
 			camera.walkForward(MOVEMENT_SPEED * timeDelta, camera_lock);
 			triggerChunkLoads();
 		}
 
 		// Move backwards
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_BACKWARD)))
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTION.MOVE_BACKWARD)))
 		{
 			camera.walkBackwards(MOVEMENT_SPEED * timeDelta, camera_lock);
 			triggerChunkLoads();
 		}
 
 		// Strafe Left
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_LEFT)))
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTION.MOVE_LEFT)))
 		{
 			camera.strafeLeft(MOVEMENT_SPEED * timeDelta);
 			triggerChunkLoads();
 		}
 
 		// Strafe right
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_RIGHT)))
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTION.MOVE_RIGHT)))
 		{
 			camera.strafeRight(MOVEMENT_SPEED * timeDelta);
 			triggerChunkLoads();
 		}
 
 		// Fly Up
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_UP)))
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTION.MOVE_UP)))
 		{
 			camera.moveUp(MOVEMENT_SPEED * timeDelta);
 			triggerChunkLoads();
 		}
 
 		// Fly Down
-		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTIONS.MOVE_DOWN)))
+		if (Keyboard.isKeyDown(key_mapping.get(KEY_ACTION.MOVE_DOWN)))
 		{
 			camera.moveUp(-MOVEMENT_SPEED * timeDelta);
 			triggerChunkLoads();
@@ -1749,23 +1749,23 @@ public class XRay
 			{
 				key = Keyboard.getEventKey();
 
-				if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_MINIMAP))
+				if (key == key_mapping.get(KEY_ACTION.TOGGLE_MINIMAP))
 				{
 					// Toggle minimap/largemap
 					mapBig = !mapBig;
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_FULLSCREEN))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_FULLSCREEN))
 				{
 					// Fullscreen
 					switchFullScreenMode();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_FULLBRIGHT))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_FULLBRIGHT))
 				{
 					// Toggle fullbright
 					setLightMode(!lightMode);
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ORE_HIGHLIGHTING))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_ORE_HIGHLIGHTING))
 				{
 					// Toggle ore highlighting
 					boolean found = false;
@@ -1802,7 +1802,7 @@ public class XRay
 						invalidateSelectedChunks();
 					}
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_ACCURATE_GRASS))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_ACCURATE_GRASS))
 				{
 					// Toggle the drawing of accurate grass
 					accurateGrass = !accurateGrass;
@@ -1810,82 +1810,82 @@ public class XRay
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_TO_SPAWN))
+				else if (key == key_mapping.get(KEY_ACTION.MOVE_TO_SPAWN))
 				{
 					// Move camera to spawn point
 					moveCameraToSpawnPoint();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_TO_PLAYER))
+				else if (key == key_mapping.get(KEY_ACTION.MOVE_TO_PLAYER))
 				{
 					// Move camera to player position
 					moveCameraToPlayerPos();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_NEXT_CAMERAPOS))
+				else if (key == key_mapping.get(KEY_ACTION.MOVE_NEXT_CAMERAPOS))
 				{
 					// Switch to the next available camera preset
 					moveCameraToNextPlayer();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.MOVE_PREV_CAMERAPOS))
+				else if (key == key_mapping.get(KEY_ACTION.MOVE_PREV_CAMERAPOS))
 				{
 					// Switch to the previous camera preset
 					moveCameraToPreviousPlayer();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.RELOAD))
+				else if (key == key_mapping.get(KEY_ACTION.RELOAD))
 				{
 					// Reload from disk
 					reloadFromDisk();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.LIGHT_INCREASE))
+				else if (key == key_mapping.get(KEY_ACTION.LIGHT_INCREASE))
 				{
 					// Increase light level
 					incLightLevel();
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.LIGHT_DECREASE))
+				else if (key == key_mapping.get(KEY_ACTION.LIGHT_DECREASE))
 				{
 					// Decrease light level
 					decLightLevel();
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_POSITION_INFO))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_POSITION_INFO))
 				{
 					// Toggle position info popup
 					levelInfoToggle = !levelInfoToggle;
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_RENDER_DETAILS))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_RENDER_DETAILS))
 				{
 					// Toggle rendering info popup
 					renderDetailsToggle = !renderDetailsToggle;
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_BEDROCK))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_BEDROCK))
 				{
 					// Toggle bedrock rendering
 					toggle.render_bedrock = !toggle.render_bedrock;
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_HIGHLIGHT_EXPLORED))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_HIGHLIGHT_EXPLORED))
 				{
 					// Toggle explored-area highlighting
 					toggle.highlight_explored = !toggle.highlight_explored;
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_WATER))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_WATER))
 				{
 					// Toggle water rendering
 					toggle.render_water = !toggle.render_water;
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_BETA19_FENCES))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_BETA19_FENCES))
 				{
 					// Toggle "new" fence rendering
 					toggle.beta19_fences = !toggle.beta19_fences;
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_SILVERFISH))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_SILVERFISH))
 				{
 					// Toggle silverfish highlighting
 					silverfishHighlight = !silverfishHighlight;
@@ -1893,44 +1893,44 @@ public class XRay
 					invalidateSelectedChunks(true);
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_CAMERA_LOCK))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_CAMERA_LOCK))
 				{
 					// Toggle camera lock
 					camera_lock = !camera_lock;
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_CHUNK_BORDERS))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_CHUNK_BORDERS))
 				{
 					renderChunkBorders = !renderChunkBorders;
 					// I think this one should be obvious enough not to bother with wording in the info box
 					//updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.TOGGLE_SLIME_CHUNKS))
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_SLIME_CHUNKS))
 				{
 					renderSlimeChunks = !renderSlimeChunks;
 					updateRenderDetails();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.DIMENSION_NEXT))
+				else if (key == key_mapping.get(KEY_ACTION.DIMENSION_NEXT))
 				{
 					// Toggle between dimenaions
 					switchDimension();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.DIMENSION_PREV))
+				else if (key == key_mapping.get(KEY_ACTION.DIMENSION_PREV))
 				{
 					// Toggle between dimenaions
 					switchDimension(-1);
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.KEY_HELP))
+				else if (key == key_mapping.get(KEY_ACTION.KEY_HELP))
 				{
 					// Launch the dialog
 					launchKeyHelpDialog();
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.RELEASE_MOUSE))
+				else if (key == key_mapping.get(KEY_ACTION.RELEASE_MOUSE))
 				{
 					// Release the mouse
 					Mouse.setGrabbed(false);
 				}
-				else if (key == key_mapping.get(KEY_ACTIONS.QUIT))
+				else if (key == key_mapping.get(KEY_ACTION.QUIT))
 				{
 					// Quit
 					if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
@@ -2004,7 +2004,7 @@ public class XRay
 
 				key = Keyboard.getEventKey();
 
-				if (key == key_mapping.get(KEY_ACTIONS.JUMP))
+				if (key == key_mapping.get(KEY_ACTION.JUMP))
 				{
 					// Launch the Jump dialog
 					launchJumpDialog();
@@ -2666,7 +2666,7 @@ public class XRay
 
 		// Add a note about our keyboard reference, since we have that now.
 		line_count++;
-		infoboxTextNote(g, x_off, line_count * line_h, "Keyboard Reference: " + Keyboard.getKeyName(key_mapping.get(KEY_ACTIONS.KEY_HELP)), Color.BLACK, SMALLFONT);
+		infoboxTextNote(g, x_off, line_count * line_h, "Keyboard Reference: " + Keyboard.getKeyName(key_mapping.get(KEY_ACTION.KEY_HELP)), Color.BLACK, SMALLFONT);
 
 		cur_renderDetails_h = (line_count + 1) * line_h - 8;
 		g.setColor(Color.BLUE);

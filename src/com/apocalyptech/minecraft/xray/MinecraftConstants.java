@@ -203,7 +203,7 @@ public class MinecraftConstants {
 	}
 
 	// Keyboard actions
-	public static enum KEY_ACTIONS {
+	public static enum KEY_ACTION {
 		MOVE_FORWARD   (ACTION_CAT.MOVEMENT, Keyboard.KEY_W, "Move Forward"),
 		MOVE_BACKWARD  (ACTION_CAT.MOVEMENT, Keyboard.KEY_S, "Move Backward"),
 		MOVE_LEFT      (ACTION_CAT.MOVEMENT, Keyboard.KEY_A, "Strafe Left"),
@@ -270,7 +270,7 @@ public class MinecraftConstants {
 		public final ACTION_CAT category;
 		public final int def_key;
 		public final String desc;
-		KEY_ACTIONS(ACTION_CAT category, int def_key, String desc)
+		KEY_ACTION(ACTION_CAT category, int def_key, String desc)
 		{
 			this.category = category;
 			this.def_key = def_key;

@@ -87,7 +87,7 @@ public class KeyHelpDialog extends JFrame {
 	
 	public static Image iconImage;
 
-	public static HashMap<KEY_ACTIONS, Integer> key_mapping;
+	public static HashMap<KEY_ACTION, Integer> key_mapping;
 
 	private ArrayList<KeyPanel> keyPanels;
 
@@ -129,7 +129,7 @@ public class KeyHelpDialog extends JFrame {
 		private String afterStr;
 
 
-		private KEY_ACTIONS key;
+		private KEY_ACTION key;
 		private int bound_key;
 
 		private JLabel beforeLabel;
@@ -137,7 +137,7 @@ public class KeyHelpDialog extends JFrame {
 		private JLabel keyLabel;
 		private KeyField keyEdit;
 
-		public KeyPanel(Font keyFont, KEY_ACTIONS key, int bound_key)
+		public KeyPanel(Font keyFont, KEY_ACTION key, int bound_key)
 		{
 			super();
 			this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -291,7 +291,7 @@ public class KeyHelpDialog extends JFrame {
 		int current_grid_y = 0;
 		int bound_key;
 		ACTION_CAT curCat = null;
-		for (KEY_ACTIONS key : KEY_ACTIONS.values())
+		for (KEY_ACTION key : KEY_ACTION.values())
 		{
 			bound_key = key_mapping.get(key);
 			current_grid_y++;
@@ -315,7 +315,7 @@ public class KeyHelpDialog extends JFrame {
 				c.insets = standardInsets;
 			}
 
-			if (key == KEY_ACTIONS.TOGGLE_SLIME_CHUNKS)
+			if (key == KEY_ACTION.TOGGLE_SLIME_CHUNKS)
 			{
 				c.insets = noBottomInsets;
 			}
@@ -335,7 +335,7 @@ public class KeyHelpDialog extends JFrame {
 			this.showDisplay();
 
 			// One extra note for slime chunks
-			if (key == KEY_ACTIONS.TOGGLE_SLIME_CHUNKS)
+			if (key == KEY_ACTION.TOGGLE_SLIME_CHUNKS)
 			{
 				current_grid_y++;
 				c.gridy = current_grid_y;
@@ -554,7 +554,7 @@ public class KeyHelpDialog extends JFrame {
 	 * Pops up the dialog window
 	 * @param windowName the title of the dialog
 	 */
-	public static void presentDialog(HashMap<KEY_ACTIONS, Integer> key_mapping)
+	public static void presentDialog(HashMap<KEY_ACTION, Integer> key_mapping)
 	{
 		if (dialog_showing)
 		{

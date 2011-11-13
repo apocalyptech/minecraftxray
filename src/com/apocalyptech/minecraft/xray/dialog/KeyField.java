@@ -45,7 +45,7 @@ import javax.swing.text.PlainDocument;
 
 import org.lwjgl.input.Keyboard;
 
-import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTIONS;
+import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTION;
 
 /***
  * KeyField class is used for the KeyMapDialog. It is a Field that 
@@ -55,7 +55,7 @@ import com.apocalyptech.minecraft.xray.MinecraftConstants.KEY_ACTIONS;
  * @author Eleazar
  */
 public class KeyField extends JTextField{
-	private KEY_ACTIONS keyAction;
+	private KEY_ACTION keyAction;
 
 	/**
 	 * Constructs a new KeyField given the string to populate it with
@@ -63,7 +63,7 @@ public class KeyField extends JTextField{
 	 * @param ka
 	 * @param s
 	 */
-	public KeyField(KEY_ACTIONS ka, String s) {
+	public KeyField(KEY_ACTION ka, String s) {
 		super(10);
 		keyAction = ka;
 		this.setEditable(false);
@@ -79,7 +79,7 @@ public class KeyField extends JTextField{
 	 * Gets the KEY_ACTION
 	 * @return The KEY_ACTION this matches with
 	 */
-	public KEY_ACTIONS getKeyAction() {
+	public KEY_ACTION getKeyAction() {
 		return keyAction;
 	}
 
