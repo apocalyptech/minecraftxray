@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2010-2011, Vincent Vollers and Christopher J. Kucera
+ * Copyright (c) 2010-2011, Vincent Vollers, Christopher J. Kucera,
+ *      Eleazar Vega-Gonzalez and Saxon Parker
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,6 +111,8 @@ public class KeyHelpDialog
 		KEYSET
 	}
 	private STATE curState = STATE.DISPLAY;
+	private boolean setEnterKey = false;
+	private boolean setEscapeKey = false;
 
 	/* Key mapping code taken from LWJGL, specifically
        org.lwjgl.opengl.KeyboardEventQueue
@@ -487,21 +490,25 @@ public class KeyHelpDialog
 		});
 
 		// Key mapping for the Jump button
-		/*
 		KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enterStroke, "ENTER");
-		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ENTER");
 		rootPane.getActionMap().put("ENTER", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				dialogOK();
+				processEnter();
 			}
 		});
-		*/
+
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ESCAPE");
+		rootPane.getActionMap().put("ESCAPE", new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				processEscape();
+			}
+		});
 	}
 
 	/**
-	 * Actions to perform if the "Jump" button is hit, or otherwise triggered.
+	 * Actions to perform if our master "OK" button has been hit
 	 */
 	private void dialogOK()
 	{
@@ -510,6 +517,61 @@ public class KeyHelpDialog
 		KeyHelpDialog.dialog_showing = false;
 		synchronized(KeyHelpDialog.this) {
 			KeyHelpDialog.this.notify();
+		}
+	}
+
+	private void processEnter()
+	{
+		switch (this.curState)
+		{
+			case DISPLAY:
+				// We're displaying, just hit our "OK" button
+				dialogOK();
+				break;
+
+			case EDITING:
+				// We're editing keys, hit the Action button
+				// (which will incidentally move us back to display mode)
+				if (this.setEnterKey)
+				{
+					this.setEnterKey = false;
+				}
+				else
+				{
+					processAction();
+				}
+				break;
+
+			case KEYSET:
+				// We're setting a key and have no business being here
+				break;
+		}
+	}
+
+	private void processEscape()
+	{
+		switch (this.curState)
+		{
+			case DISPLAY:
+				// We're displaying, just pretend we're closing the dialog
+				dialogOK();
+				break;
+
+			case EDITING:
+				// TODO: Break out without saving; revert to stored.
+				if (this.setEscapeKey)
+				{
+					this.setEscapeKey = false;
+				}
+				else
+				{
+					processAction();
+				}
+				break;
+				
+			case KEYSET:
+				// We're setting a key and have no business being here
+				break;
 		}
 	}
 
@@ -661,6 +723,16 @@ public class KeyHelpDialog
 			{
 				int key = awtKeyToLWJGL(e);
 				this.curKeyPanel.setBoundKey(key);
+				this.setEnterKey = false;
+				this.setEscapeKey = false;
+				if (key == Keyboard.KEY_RETURN)
+				{
+					this.setEnterKey = true;
+				}
+				else if (key == Keyboard.KEY_ESCAPE)
+				{
+					this.setEscapeKey = true;
+				}
 			}
 			this.stopKeySet();
 		}
