@@ -360,10 +360,6 @@ public class XRay
 				WarningDialog.presentDialog("Errors in xray.properties", errorText.toString(), false, 600, 250);
 			}
 
-
-			// temp, testing
-			KeyHelpDialog.presentDialog(key_mapping, this);
-
 			// prompt for the resolution and initialize the window
 			createWindow();
 

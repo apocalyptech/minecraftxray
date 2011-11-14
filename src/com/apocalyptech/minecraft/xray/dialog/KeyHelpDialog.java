@@ -597,6 +597,21 @@ public class KeyHelpDialog
 		}
 	}
 
+	private void processWindowClose()
+	{
+		switch (this.curState)
+		{
+			case KEYSET:
+				this.stopKeySet();
+			case EDITING:
+				this.revertMapping();
+				this.showDisplay();
+			case DISPLAY:
+				this.dialogOK();
+				break;
+		}
+	}
+
 	private void showSet()
 	{
 		for (KeyPanel panel : this.keyPanels)
@@ -710,7 +725,7 @@ public class KeyHelpDialog
 			public void windowClosed(WindowEvent e) {}
 			public void windowClosing(WindowEvent e)
 			{
-				dialogOK();
+				processWindowClose();
 			}
 			public void windowDeactivated(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
