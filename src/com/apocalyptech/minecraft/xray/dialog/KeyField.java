@@ -66,12 +66,18 @@ public class KeyField extends JTextField{
 		this.addMouseListener(new KeyFieldMouseListener(this));
 	}
 
+	/**
+	 * What to do when we're clicked
+	 */
 	public void clicked()
 	{
 		this.panel.notifyClicked();
 		this.setBackground(this.bgColorActive);
 	}
 
+	/**
+	 * What to do when we're no longer in a "clicked" state
+	 */
 	public void clickFinish()
 	{
 		this.setBackground(this.bgColorNormal);

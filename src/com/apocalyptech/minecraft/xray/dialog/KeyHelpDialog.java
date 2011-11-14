@@ -31,17 +31,13 @@ import com.apocalyptech.minecraft.xray.XRay;
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 import java.awt.Font;
-import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.util.List;
 import java.util.ArrayList;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -49,34 +45,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.KeyAdapter;
-import java.util.Map;
 import java.util.HashMap;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
-import javax.swing.JSeparator;
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 import javax.swing.AbstractAction;
 
 import org.lwjgl.input.Keyboard;
 
 /**
+ * A dialog to both show and set keybindings
  */
 public class KeyHelpDialog
 	extends JFrame 
@@ -235,6 +220,11 @@ public class KeyHelpDialog
         KEY_MAP.put(KeyEvent.VK_PRINTSCREEN, Keyboard.KEY_SYSRQ);
 	}
 
+	/**
+	 * Given an AWT KeyEvent, return the matching LWJGL Keyboard constant, if possible.
+	 * @param e A KeyEvent
+	 * @return The LWJGL key, or KEY_NONE
+	 */
 	public static int awtKeyToLWJGL(KeyEvent e)
 	{
 		int key_code = e.getKeyCode();
@@ -522,6 +512,9 @@ public class KeyHelpDialog
 		}
 	}
 
+	/**
+	 * Actions to perform when the "Enter" key is hit on the dialog
+	 */
 	private void processEnter()
 	{
 		switch (this.curState)
@@ -550,6 +543,9 @@ public class KeyHelpDialog
 		}
 	}
 
+	/**
+	 * Actions to perform when the Escape key is hit
+	 */
 	private void processEscape()
 	{
 		switch (this.curState)
@@ -578,6 +574,10 @@ public class KeyHelpDialog
 		}
 	}
 
+	/**
+	 * Process our "action" button, which will depend on the state of
+	 * the dialog
+	 */
 	private void processAction()
 	{
 		switch (this.curState)
@@ -597,6 +597,9 @@ public class KeyHelpDialog
 		}
 	}
 
+	/**
+	 * Process a window close event
+	 */
 	private void processWindowClose()
 	{
 		switch (this.curState)
@@ -612,6 +615,9 @@ public class KeyHelpDialog
 		}
 	}
 
+	/**
+	 * Flips the dialog to its key-editing mode
+	 */
 	private void showSet()
 	{
 		for (KeyPanel panel : this.keyPanels)
@@ -623,6 +629,10 @@ public class KeyHelpDialog
 		this.okButton.setEnabled(false);
 		this.statusLabel.setText("Select a key to edit.");
 	}
+
+	/**
+	 * Flips the dialog to its keyboard reference mode
+	 */
 	private void showDisplay()
 	{
 		for (KeyPanel panel : this.keyPanels)
@@ -635,6 +645,10 @@ public class KeyHelpDialog
 		this.okButton.setEnabled(true);
 		this.statusLabel.setText(this.defaultStatusText);
 	}
+
+	/**
+	 * Cancels an active key-set action and returns to the main key-editing mode
+	 */
 	private void stopKeySet()
 	{
 		this.showSet();
@@ -647,6 +661,10 @@ public class KeyHelpDialog
 		this.removeKeyListener(this);
 	}
 
+	/**
+	 * Called by one of our KeyPanels, this notifies the main dialog that
+	 * a new key has been selected for editing.
+	 */
 	public void notifyKeyPanelClicked(KeyPanel keypanel)
 	{
 		if (this.curKeyPanel == null)
@@ -666,6 +684,10 @@ public class KeyHelpDialog
 		this.statusLabel.setText("Choose a new key, or  use the Cancel button to cancel.");
 	}
 	
+	/**
+	 * Reverts our key mappings back to the master key_mapping HashMap - a "Cancel" action,
+	 * basically.
+	 */
 	private void revertMapping()
 	{
 		KEY_ACTION action;
@@ -678,6 +700,10 @@ public class KeyHelpDialog
 		}
 	}
 
+	/**
+	 * Saves the mapping stored in our dialog to the master XRay class, and write out our
+	 * properties file if need be.
+	 */
 	private void saveMapping()
 	{
 		KEY_ACTION action;
@@ -707,6 +733,7 @@ public class KeyHelpDialog
 
 	/***
 	 * Creates a new KeyHelpDialog
+	 * @param key_mapping the current keymap
 	 * @param windowName the title of the dialog
 	 */
 	protected KeyHelpDialog(HashMap<KEY_ACTION, Integer> key_mapping, XRay xrayInstance)
@@ -746,6 +773,7 @@ public class KeyHelpDialog
 	
 	/***
 	 * Pops up the dialog window
+	 * @param key_mapping the current key map
 	 * @param windowName the title of the dialog
 	 */
 	public static void presentDialog(HashMap<KEY_ACTION, Integer> key_mapping, XRay xrayInstance)
@@ -762,11 +790,14 @@ public class KeyHelpDialog
 		}
 	}
 
+	/**
+	 * Closes out our dialog
+	 */
 	public static void closeDialog()
 	{
 		if (KeyHelpDialog.dialog_showing && KeyHelpDialog.keyhelp_dialog != null)
 		{
-			KeyHelpDialog.keyhelp_dialog.dialogOK();
+			KeyHelpDialog.keyhelp_dialog.processWindowClose();
 		}
 	}
 

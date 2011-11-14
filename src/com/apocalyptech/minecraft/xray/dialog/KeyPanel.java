@@ -30,49 +30,20 @@ import com.apocalyptech.minecraft.xray.XRay;
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 import java.awt.Font;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.FlowLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.util.List;
-import java.util.ArrayList;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.util.Map;
-import java.util.HashMap;
 
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-import javax.swing.JSeparator;
-import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
-import javax.swing.AbstractAction;
 
 import org.lwjgl.input.Keyboard;
 
+/**
+ * This is a custom JPanel for our key-binding dialog.  It consists of four
+ * elements: a JLabel for the key, an "edit" box for the key, and two JLabels for
+ * "before" and "after" informational text.  By default, only the labels are
+ * shown, but the panel can be switched from display to edit (and vice versa) at
+ * will.
+ */
 public class KeyPanel extends JPanel
 {
 	private String beforeStr;
@@ -89,6 +60,12 @@ public class KeyPanel extends JPanel
 	private JLabel keyLabel;
 	private KeyField keyEdit;
 
+	/**
+	 * Create a new KeyPanel
+	 * @param kh Our master dialog
+	 * @param action The action this KeyPanel represents
+	 * @param bound_key The currently-bound key
+	 */
 	public KeyPanel(KeyHelpDialog kh, Font keyFont, KEY_ACTION action, int bound_key)
 	{
 		super();
@@ -113,6 +90,10 @@ public class KeyPanel extends JPanel
 		this.finishEdit();
 	}
 
+	/**
+	 * Sets a new bound key for this panel.  Will update all the labels, etc.
+	 * @param bound_key The new bound key
+	 */
 	public void setBoundKey(int bound_key)
 	{
 		this.bound_key = bound_key;
@@ -126,26 +107,47 @@ public class KeyPanel extends JPanel
 		this.keyEdit.setText(this.keyStr);
 	}
 
+	/**
+	 * Get the action this Panel represents
+	 * @return The action
+	 */
 	public KEY_ACTION getAction()
 	{
 		return this.action;
 	}
 
+	/**
+	 * Get the currently-bound key for the Panel
+	 * @return The LWJGL key ID
+	 */
 	public int getBoundKey()
 	{
 		return this.bound_key;
 	}
 
+	/**
+	 * Called from our inner KeyField, this is how we
+	 * receive notification that we've been clicked.  Passes that
+	 * information back up to the master dialog
+	 */
 	public void notifyClicked()
 	{
 		this.kh.notifyKeyPanelClicked(this);
 	}
 
+	/**
+	 * Called from the master dialog, a notification that we are no
+	 * longer the actively-clicked Panel.
+	 */
 	public void clickFinish()
 	{
 		this.keyEdit.clickFinish();
 	}
 
+	/**
+	 * Get the text of the key that we want to display to the user
+	 * @return The text to display for the key
+	 */
 	private String getKeyEnglish()
 	{
 		if (Keyboard.getKeyName(this.bound_key).equals("GRAVE"))
@@ -162,6 +164,10 @@ public class KeyPanel extends JPanel
 		}
 	}
 
+	/**
+	 * Get any text which should be displayed after the key
+	 * @return Text
+	 */
 	private String getKeyExtraAfter()
 	{
 		switch (this.action)
@@ -196,6 +202,10 @@ public class KeyPanel extends JPanel
 		return "";
 	}
 
+	/**
+	 * Get any text which should be displayed before the key
+	 * @return Text
+	 */
 	private String getKeyExtraBefore()
 	{
 		switch (this.action)
@@ -206,12 +216,18 @@ public class KeyPanel extends JPanel
 		return "";
 	}
 
+	/**
+	 * Called to move the Panel into "edit" mode
+	 */
 	public void startEdit()
 	{
 		this.keyLabel.setVisible(false);
 		this.keyEdit.setVisible(true);
 	}
 
+	/**
+	 * Called to move the Panel back into "display" mode
+	 */
 	public void finishEdit()
 	{
 		this.keyEdit.setVisible(false);
