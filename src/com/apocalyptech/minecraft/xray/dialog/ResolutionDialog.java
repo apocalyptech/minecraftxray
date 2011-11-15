@@ -940,45 +940,42 @@ public class ResolutionDialog extends JFrame {
 	/***
 	 * Creates a new Resolutions Dialog
 	 * @param windowName the title of the dialog
-	 * @param advancedPanel an optional advanced panel
 	 * @param preferredResolutions a list of resolutions, in order of preference, which will be looked for
 	 * @param preferredBitDepths a list of color depths, in order of preference, which will be looked for
 	 * @param preferredRefreshRates a list of refresh rates, in order of preference, which will be looked for
 	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
 	 */
-	protected ResolutionDialog(String windowName, Container advancedPanel,
-			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
+	protected ResolutionDialog(String windowName,
 			ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
 		super(windowName);
 		
 		this.xray_properties		= xray_properties;
-		this.preferredResolutions	= preferredResolutions;
-		this.preferredBitDepths 	= preferredBitDepths;
-		this.preferredRefreshRates 	= preferredRefreshRates;
-		this.preferredFullScreenValue = preferredFullScreenValue;
-		this.preferredInvertMouseValue = preferredInvertMouseValue;
+		this.preferredResolutions	= defaultPreferredResolutions;
+		this.preferredBitDepths 	= defaultPreferredBitDepths;
+		this.preferredRefreshRates 	= defaultPreferredRefreshRates;
+		this.preferredFullScreenValue = defaultPreferredFullScreenValue;
+		this.preferredInvertMouseValue = defaultPreferredInvertMouseValue;
 		
 		// Load last-used resolution/display information from our properties file
 		String val_1 = this.xray_properties.getProperty("LAST_RESOLUTION_X");
 		String val_2 = this.xray_properties.getProperty("LAST_RESOLUTION_Y");
 		if (val_1 != null && val_2 != null)
 		{
-			this.preferredResolutions = new int[preferredResolutions.length+1][];
+			this.preferredResolutions = new int[defaultPreferredResolutions.length+1][];
 			this.preferredResolutions[0] = new int[2];
 			this.preferredResolutions[0][0] = Integer.valueOf(val_1);
 			this.preferredResolutions[0][1] = Integer.valueOf(val_2);
-			for (int i=0; i<preferredResolutions.length; i++)
+			for (int i=0; i<defaultPreferredResolutions.length; i++)
 			{
-				this.preferredResolutions[i+1] = preferredResolutions[i];
+				this.preferredResolutions[i+1] = defaultPreferredResolutions[i];
 			}
 		}
-		this.preferredBitDepths = this.prepend_int_array("LAST_BPP", this.preferredBitDepths, preferredBitDepths);
-		this.preferredRefreshRates = this.prepend_int_array("LAST_REFRESH_RATE", this.preferredRefreshRates, preferredRefreshRates);
+		this.preferredBitDepths = this.prepend_int_array("LAST_BPP", this.preferredBitDepths, defaultPreferredBitDepths);
+		this.preferredRefreshRates = this.prepend_int_array("LAST_REFRESH_RATE", this.preferredRefreshRates, defaultPreferredRefreshRates);
 		this.preferredWorld = this.xray_properties.getProperty("LAST_WORLD");
 		
-		this.preferredFullScreenValue = this.xray_properties.getBooleanProperty("LAST_FULLSCREEN", preferredFullScreenValue);
-		this.preferredInvertMouseValue = this.xray_properties.getBooleanProperty("LAST_INVERT_MOUSE", preferredInvertMouseValue);
+		this.preferredFullScreenValue = this.xray_properties.getBooleanProperty("LAST_FULLSCREEN", defaultPreferredFullScreenValue);
+		this.preferredInvertMouseValue = this.xray_properties.getBooleanProperty("LAST_INVERT_MOUSE", defaultPreferredInvertMouseValue);
 		
 		if(ResolutionDialog.iconImage != null)
 			this.setIconImage(ResolutionDialog.iconImage);
@@ -1010,29 +1007,12 @@ public class ResolutionDialog extends JFrame {
 	/***
 	 * Pops up the dialog window
 	 * @param windowName the title of the dialog
-	 * @param advancedPanel an optional advanced panel
-	 * @param preferredResolutions a list of resolutions, in order of preference, which will be looked for
-	 * @param preferredBitDepths a list of color depths, in order of preference, which will be looked for
-	 * @param preferredRefreshRates a list of refresh rates, in order of preference, which will be looked for
-	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
-	 * @param preferredInvertMouseValue the initial value of the invert mouse checkbox
+	 * @param availableWorlds our list of available worlds
+	 * @param xray_properties our properties object
 	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
 	 */
-	public static int presentDialog(String windowName, Container advancedPanel,
-			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
-			ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
-		ResolutionDialog dialog = new ResolutionDialog(
-				windowName,
-				advancedPanel,
-				preferredResolutions,
-				preferredBitDepths,
-				preferredRefreshRates,
-				preferredFullScreenValue,
-				preferredInvertMouseValue,
-				availableWorlds,
-				xray_properties
-		);
+	public static int presentDialog(String windowName, ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
+		ResolutionDialog dialog = new ResolutionDialog(windowName, availableWorlds, xray_properties);
 		try {
 			synchronized(dialog) {
 				dialog.wait();
@@ -1043,50 +1023,5 @@ public class ResolutionDialog extends JFrame {
 		}
 		
 		return dialog.exitCode;
-	}
-	
-	/***
-	 * Pops up the dialog window using the default preffered values
-	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
-	 */
-	public static int presentDialog(String windowName, ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
-		return presentDialog(windowName, null, availableWorlds, xray_properties);
-	}
-	
-	/***
-	 * Pops up the dialog window using the default preffered values and an
-	 * advanced panel
-	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
-	 */
-	public static int presentDialog(String windowName, Container advancedPanel,
-			ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
-		return presentDialog(windowName,advancedPanel,
-				defaultPreferredResolutions,
-				defaultPreferredBitDepths,
-				defaultPreferredRefreshRates,
-				defaultPreferredFullScreenValue,
-				defaultPreferredInvertMouseValue,
-				availableWorlds,
-				xray_properties
-		);
-	}
-	
-	/***
-	 * Pops up the dialog window
-	 * @param windowName the title of the dialog
-	 * @param preferredResolutions a list of resolutions, in order of preference, which will be looked for
-	 * @param preferredBitDepths a list of color depths, in order of preference, which will be looked for
-	 * @param preferredRefreshRates a list of refresh rates, in order of preference, which will be looked for
-	 * @param preferredFullScreenValue the initial value of the full-screen checkbox
-	 * @return an integer value which represents which button was clicked (DIALOG_BUTTON_EXIT or DIALOG_BUTTON_GO)
-	 */
-	public static int presentDialog(String windowName,
-			int[][] preferredResolutions, int[] preferredBitDepths, int[] preferredRefreshRates,
-			boolean preferredFullScreenValue, boolean preferredInvertMouseValue,
-			ArrayList<WorldInfo> availableWorlds, XRayProperties xray_properties) {
-		return presentDialog(windowName, null,
-				preferredResolutions, preferredBitDepths, preferredRefreshRates,
-				preferredFullScreenValue, preferredInvertMouseValue,
-				availableWorlds, xray_properties);
 	}
 }
