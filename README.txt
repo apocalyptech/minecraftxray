@@ -162,6 +162,7 @@ overridden, though.  The default keybindings are as follows:
         Toggle Level Info:       ` (grave accent)
         Toggle Rendering Info:   R (on by default)
         Reload Map from Disk:    =
+        Open New Map:            O
         Show large map:          TAB
         Release Mouse:           ESC
         Show Keyboard Reference: Y

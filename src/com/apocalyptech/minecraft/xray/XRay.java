@@ -1439,6 +1439,29 @@ public class XRay
 		this.currentPosition = playerPos;
 	}
 
+	private void launchNewMapDialog()
+	{
+		Mouse.setGrabbed(false);
+		if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, xray_properties, false) == ResolutionDialog.DIALOG_BUTTON_EXIT)
+		{
+			Mouse.setGrabbed(true);
+			return;
+		}
+
+		this.selectedWorld = ResolutionDialog.selectedWorld;
+		// TODO: "other" processing
+		this.xray_properties.setProperty("LAST_WORLD", availableWorlds.get(this.selectedWorld).getBasePath());
+		this.savePreferences();
+
+		// A full reinitialization is kind of overkill, but whatever.
+		// TODO: code duplicated from switchDimension
+		this.prepareNewWorld();
+		this.setMinecraftWorld(availableWorlds.get(this.selectedWorld));
+		this.updateRenderDetails();
+		this.triggerChunkLoads();
+		Mouse.setGrabbed(true);
+	}
+
 	private void launchJumpDialog()
 	{
 		Mouse.setGrabbed(false);
@@ -2029,6 +2052,11 @@ public class XRay
 				{
 					// Launch the Jump dialog
 					launchJumpDialog();
+				}
+				else if (key == key_mapping.get(KEY_ACTION.OPEN_NEW_MAP))
+				{
+					// Launch a New Map dialog
+					launchNewMapDialog();
 				}
 			}
 		}

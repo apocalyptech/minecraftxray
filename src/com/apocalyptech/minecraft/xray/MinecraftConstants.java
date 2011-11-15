@@ -261,6 +261,7 @@ public class MinecraftConstants {
 		TOGGLE_FULLSCREEN     (ACTION_CAT.OTHER, Keyboard.KEY_BACK, "Toggle Fullscreen"),
 		TOGGLE_POSITION_INFO  (ACTION_CAT.OTHER, Keyboard.KEY_GRAVE, "Toggle Level Info"),
 		TOGGLE_RENDER_DETAILS (ACTION_CAT.OTHER, Keyboard.KEY_R, "Toggle Rendering Info"),
+		OPEN_NEW_MAP          (ACTION_CAT.OTHER, Keyboard.KEY_O, "Open New Map"),
 		RELOAD                (ACTION_CAT.OTHER, Keyboard.KEY_EQUALS, "Reload Map from Disk"),
 		TOGGLE_MINIMAP        (ACTION_CAT.OTHER, Keyboard.KEY_TAB, "Toggle Minimap"),
 		RELEASE_MOUSE         (ACTION_CAT.OTHER, Keyboard.KEY_ESCAPE, "Release Mouse"),

@@ -3,6 +3,8 @@
   * Renamed ENDER_PORTAL and ENDER_PORTAL_FRAME to END_PORTAL and
     END_PORTAL_FRAME
   * Added new Beta 1.9-pre6 block definition: Dragon Egg
+  * The "O" key can now be used to open a new map without having to quit
+    X-Ray and start over.
   * (internal) update to LWJGL 2.8.2
   * (internal) removed quite a few unneeded LWJGL Jar files
 
