@@ -3,6 +3,7 @@
   * Renamed ENDER_PORTAL and ENDER_PORTAL_FRAME to END_PORTAL and
     END_PORTAL_FRAME
   * Added new Beta 1.9-pre6 block definition: Dragon Egg
+  * (internal) update to LWJGL 2.8.2
 
 Minecraft X-Ray 3.4.3 (2011.10.21)
 
