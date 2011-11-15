@@ -6,6 +6,7 @@
   * The "O" key can now be used to open a new map without having to quit
     X-Ray and start over.
   * Slime-spawn highlighting will only display in the Overworld
+  * Slime-spawn highlighting will go up to y=40, as per Beta 1.9-pre5
   * (internal) update to LWJGL 2.8.2
   * (internal) removed quite a few unneeded LWJGL Jar files
 

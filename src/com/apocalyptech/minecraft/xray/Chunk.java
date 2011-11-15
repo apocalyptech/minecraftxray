@@ -4874,7 +4874,7 @@ public class Chunk {
 	{
 		float x = this.x*16-.48f;
 		float z = this.z*16-.48f;
-		float top = 16.51f;
+		float top = 40.51f;
 		float bottom = .49f;
 		float width = 15.94f;
 		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z, x+width, bottom, z);

@@ -267,8 +267,11 @@ capable of spawning.  The equation used to calculate this was taken from
 http://www.minecraftwiki.net/wiki/Slime#Spawning in early October, 2011,
 when Beta 1.9-pre2 was out.  The equation may or may not be valid for
 earlier or later versions of Minecraft, but should be at least valid
-for Minecraft Beta 1.6 through Beta 1.9.  The default key to toggle this
-highlighting is "M".
+for Minecraft Beta 1.6 through Minecraft 1.0.  The default key to toggle
+this highlighting is "M".  Note that in Minecraft versions prior to
+Beta 1.9-pre5, slimes would spawn only under y=16, whereas from that point
+on, slimes will spawn under y=40.  X-Ray will highlight up to y=40 for
+all maps.
 
 The rendering information popup can be toggled with "R" and is on by
 default.  This will let you know what these various settings are set to.
