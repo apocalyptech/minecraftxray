@@ -92,7 +92,6 @@
 				<include name="TODO.txt" />
 				<include name="README.txt" />
 				<include name="COPYING.txt" />
-				<include name="COPYING-bbb.txt" />
 				<include name="COPYING-lwjgl.txt" />
 				<include name="COPYING-log4j.txt" />
 				<include name="COPYING-jsmooth.txt" />
