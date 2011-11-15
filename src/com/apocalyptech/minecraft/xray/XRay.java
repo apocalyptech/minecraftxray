@@ -248,6 +248,7 @@ public class XRay
 	private int renderDetails_w = 160;
 	private int cur_renderDetails_h;
 	private int levelInfoTexture_h = 144;
+	private boolean regenerateRenderDetailsTexture = false;
 
 	// light level
 	private int[] lightLevelEnd = new int[] { 30, 50, 70, 100, 130 };
@@ -401,6 +402,12 @@ public class XRay
 				if (mapChunksToLoad != null)
 				{
 					loadPendingChunks();
+				}
+
+				// Regenerate our rendering details window if we've been told to
+				if (this.regenerateRenderDetailsTexture)
+				{
+					updateRenderDetails();
 				}
 
 				// render whatever we need to render
@@ -557,6 +564,13 @@ public class XRay
 			xray_properties.setProperty("KEY_" + entry.getKey().toString(), Keyboard.getKeyName(entry.getValue()));
 		}
 		this.savePreferences();
+
+		// It's entirely possible that we changed the key to bring up
+		// the key dialog itself, so let's force a redraw of that.
+		// Because this is called directly from the AWT dialog itself,
+		// though, we can't call it directly.  Instead just set a boolean
+		// and it'll get picked up in the mainloop.
+		this.regenerateRenderDetailsTexture = true;
 	}
 
 	/**
@@ -2680,6 +2694,8 @@ public class XRay
 		g.setStroke(new BasicStroke(2));
 		g.drawRect(1, 1, renderDetails_w - 2, cur_renderDetails_h - 2);
 		renderDetailsTexture.update();
+
+		this.regenerateRenderDetailsTexture = false;
 	}
 
 	/***
