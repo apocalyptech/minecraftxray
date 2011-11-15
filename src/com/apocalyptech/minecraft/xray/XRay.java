@@ -2385,7 +2385,7 @@ public class XRay
 		}
 
 		// Slime chunks!
-		if (renderSlimeChunks)
+		if (world.isDimension(0) && renderSlimeChunks)
 		{
 			for (Chunk k : chunkList)
 			{
