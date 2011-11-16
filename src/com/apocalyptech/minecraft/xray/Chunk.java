@@ -1537,55 +1537,6 @@ public class Chunk {
 				 x-side_offset, top, z-width_h,
 				 x-side_offset, bottom, z+width_h);
 	}
-	
-	/**
-	 * Renders crops.
-	 * 
-	 * @param textureId
-	 * @param xxx
-	 * @param yyy
-	 * @param zzz
-	 */
-	public void renderCrops(int textureId, int xxx, int yyy, int zzz, BlockType block, int main_tex_offset) {
-		 
-		 // Adjust for crop size
-		 byte data = getData(xxx, yyy, zzz);
-		 if (data > 7)
-		 {
-			 data = 7;
-		 }
-		 int tex_offset = (7-data);
-		 if (tex_offset > 0)
-		 {
-			 textureId = block.texture_extra_map.get("smaller_" + tex_offset) + main_tex_offset;
-		 }
-		 renderGridDecoration(textureId, xxx, yyy, zzz);
-	}
-	
-	/**
-	 * Renders netherwart.
-	 *
-	 * @param textureId
-	 * @param xxx
-	 * @param yyy
-	 * @param zzz
-	 */
-	public void renderNetherWart(int textureId, int xxx, int yyy, int zzz, BlockType block, int main_tex_offset) {
-
-		 // Adjust for size
-		 byte data = getData(xxx, yyy, zzz);
-		 //XRay.logger.trace("Netherwart data: " + data);
-		 if (data > 3)
-		 {
-			 data = 3;
-		 }
-		 int tex_offset = 2-((data+1)/2);
-		 if (tex_offset > 0)
-		 {
-			 textureId = block.texture_extra_map.get("smaller_" + tex_offset) + main_tex_offset;
-		 }
-		 renderGridDecoration(textureId, xxx, yyy, zzz);
-	}
     
 	/**
 	 * Renders a ladder, given its attached-side data.  We still take in textureId just so
@@ -4360,11 +4311,8 @@ public class Chunk {
 								case DECORATION_CROSS:
 									renderCrossDecoration(textureId,x,y,z);
 									break;
-								case CROPS:
-									renderCrops(textureId,x,y,z,block,tex_offset);
-									break;
-								case NETHER_WART:
-									renderNetherWart(textureId,x,y,z,block,tex_offset);
+								case DECORATION_GRID:
+									renderGridDecoration(textureId,x,y,z);
 									break;
 								case LADDER:
 									renderLadder(textureId,x,y,z);

@@ -81,7 +81,7 @@ public class MinecraftConstants {
 		NORMAL,
 		TORCH,
 		DECORATION_CROSS,
-		CROPS,
+		DECORATION_GRID,
 		LADDER,
 		FLOOR,
 		PRESSURE_PLATE,
@@ -110,7 +110,6 @@ public class MinecraftConstants {
 		HUGE_MUSHROOM,
 		SOLID_PANE,
 		CHEST,
-		NETHER_WART,
 		STEM,
 		END_PORTAL,
 		END_PORTAL_FRAME,
@@ -135,9 +134,6 @@ public class MinecraftConstants {
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CHEST, new String[] {"side_small", "top",
 			"front_big_left", "front_big_right",
 			"back_big_left", "back_big_right"});
-		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CROPS, new String[] {"smaller_1", "smaller_2", "smaller_3", "smaller_4",
-			"smaller_5", "smaller_6", "smaller_7"});
-		blockTypeExtraTexturesReq.put(BLOCK_TYPE.NETHER_WART, new String[] {"smaller_1", "smaller_2"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.HUGE_MUSHROOM, new String[] {"stem", "pores"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.STEM, new String[] {"curve"});
 		blockTypeExtraTexturesReq.put(BLOCK_TYPE.CAULDRON, new String[] {"inside", "top"});
@@ -180,7 +176,7 @@ public class MinecraftConstants {
 	// Block types to compute decoration information for
 	public static final BLOCK_TYPE[] DECORATION_BLOCKS = new BLOCK_TYPE[] {
 		BLOCK_TYPE.LEVER, BLOCK_TYPE.TORCH, BLOCK_TYPE.DECORATION_CROSS,
-		BLOCK_TYPE.CROPS, BLOCK_TYPE.NETHER_WART, BLOCK_TYPE.STEM,
+		BLOCK_TYPE.DECORATION_GRID, BLOCK_TYPE.STEM,
 		BLOCK_TYPE.END_PORTAL_FRAME, BLOCK_TYPE.BREWING_STAND
 	};
 	

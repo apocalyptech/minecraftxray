@@ -106,8 +106,8 @@
 #             BED
 #             BUTTON
 #             CAKE
-#             CROPS
 #             DECORATION_CROSS
+#             DECORATION_GRID
 #             DOOR
 #             FENCE
 #             FENCE_GATE
@@ -135,7 +135,6 @@
 #             HUGE_MUSHROOM
 #             SOLID_PANE
 #             CHEST
-#             NETHER_WART
 #             STEM
 #             END_PORTAL
 #             END_PORTAL_FRAME
@@ -202,16 +201,6 @@
 #            The main texture should be the front face of the small chest.  The others
 #            should be self-explanatory:
 #            side_small, top, front_big_left, front_big_right, back_big_left, back_big_right
-#
-#        CROPS
-#            The main texture should be the fully-grown crop texture.
-#            "smaller_1" through "smaller_7" should be the various stages of growth, with
-#            "smaller_7" being the youngest.
-#
-#        NETHER_WART
-#            The main texture should be the fully-grown nether wart texture.
-#            "smaller_1" through "smaller_2" should be the various stages of growth, with
-#            "smaller_2" being the youngest.
 #
 #        HUGE_MUSHROOM
 #            The main texture should be the outward "skin" texture of the mushroom.
@@ -719,15 +708,16 @@ blocks:
     name: Crops
     mapcolor: [146, 192, 0]
     tex: [15, 5]
-    type: CROPS
-    tex_extra:
-      smaller_1: [14, 5]
-      smaller_2: [13, 5]
-      smaller_3: [12, 5]
-      smaller_4: [11, 5]
-      smaller_5: [10, 5]
-      smaller_6: [9, 5]
-      smaller_7: [8, 5]
+    type: DECORATION_GRID
+    tex_data:
+      0: [8, 5]
+      1: [9, 5]
+      2: [10, 5]
+      3: [11, 5]
+      4: [12, 5]
+      5: [13, 5]
+      6: [14, 5]
+      7: [15, 5]
   
   - id: 60
     idStr: FARMLAND
@@ -1173,10 +1163,12 @@ blocks:
     name: Nether Wart
     mapcolor: [112, 8, 28]
     tex: [4, 14]
-    type: NETHER_WART
-    tex_extra:
-      smaller_1: [3, 14]
-      smaller_2: [2, 14]
+    type: DECORATION_GRID
+    tex_data:
+      0: [2, 14]
+      1: [3, 14]
+      2: [3, 14]
+      3: [4, 14]
 
   - id: 116
     idStr: ENCHANTMENT_TABLE
