@@ -42,7 +42,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -55,20 +54,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Collections;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.*;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
