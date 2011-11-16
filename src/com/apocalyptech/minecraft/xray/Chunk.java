@@ -3875,6 +3875,42 @@ public class Chunk {
 
 		GL11.glPopMatrix();
 	}
+
+	/**
+	 * Renders a dragon egg.  Note that we're just drawing it as a slightly smaller, boxy object
+	 * for now.  Making it look like an actual egg looks like too much work.
+	 *
+	 * @param textureId
+	 * @param xxx
+	 * @param yyy
+	 * @param zzz
+	 */
+	public void renderDragonEgg(int textureId, int xxx, int yyy, int zzz) {
+		float x = xxx + this.x*16;
+		float z = zzz + this.z*16;
+		float y = yyy;
+
+		float bottom = -.5f;
+		float bottom_base = -.48f;
+		float top = .25f;
+		float height = .75f;
+		float sides = .4375f;
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+
+		// Sides
+		renderVertical(textureId, -sides, -sides, sides, -sides, bottom, height, 14, 12, 1, 4);
+		renderVertical(textureId, -sides, sides, sides, sides, bottom, height, 14, 12, 1, 4);
+		renderVertical(textureId, -sides, sides, -sides, -sides, bottom, height, 14, 12, 1, 4);
+		renderVertical(textureId, sides, sides, sides, -sides, bottom, height, 14, 12, 1, 4);
+
+		// Top + Bottom
+		renderHorizontal(textureId, -sides, -sides, sides, sides, top, 14, 14, 1, 1, false);
+		renderHorizontal(textureId, -sides, -sides, sides, sides, bottom_base, 14, 14, 1, 1, false);
+
+		GL11.glPopMatrix();
+	}
 	
 	/**
 	 * Tests if the given source block has a torch nearby.  This is, I'm willing
@@ -4424,6 +4460,9 @@ public class Chunk {
 									break;
 								case END_PORTAL_FRAME:
 									renderEndPortalFrame(textureId,x,y,z,blockOffset,block,tex_offset);
+									break;
+								case DRAGON_EGG:
+									renderDragonEgg(textureId,x,y,z);
 									break;
 
 								case NORMAL:

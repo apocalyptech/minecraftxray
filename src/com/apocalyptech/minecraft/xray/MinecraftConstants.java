@@ -116,7 +116,8 @@ public class MinecraftConstants {
 		END_PORTAL_FRAME,
 		CAULDRON,
 		ENCHANTMENT_TABLE,
-		BREWING_STAND
+		BREWING_STAND,
+		DRAGON_EGG
 	}
 
 	// Extra textures specified by various block types

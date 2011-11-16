@@ -142,6 +142,7 @@
 #             CAULDRON
 #             ENCHANTMENT_TABLE
 #             BREWING_STAND
+#             DRAGON_EGG
 #
 #         "SEMISOLID" refers to blocks which are cube-shaped but shouldn't
 #         be considered fully solid by X-Ray's rendering engine.  Examples
@@ -1234,5 +1235,6 @@ blocks:
     name: Dragon Egg
     mapcolor: [45, 1, 51]
     tex: [7, 10]
+    type: DRAGON_EGG
 
 ...
