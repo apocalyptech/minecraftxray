@@ -94,6 +94,7 @@ public class BlockType
 	public short id;
 	public String idStr;
 	public String name;
+	public String aka;
 	public BLOCK_TYPE type;
 	private ArrayList<Integer> mapcolor;
 	private String texpath;
@@ -112,6 +113,7 @@ public class BlockType
 	// Other attributes
 	public String texfile;
 	public int texSheet;
+	private String searchMatch;
 
 	public BlockType()
 	{
@@ -150,6 +152,16 @@ public class BlockType
 	public String getName()
 	{
 		return this.name;
+	}
+
+	public void setAka(String aka)
+	{
+		this.aka = aka;
+	}
+
+	public String getAka()
+	{
+		return this.aka;
 	}
 
 	public void setMapcolor(ArrayList<Integer> mapcolor)
@@ -367,6 +379,13 @@ public class BlockType
 				}
 			}
 		}
+
+		// Matching String
+		this.searchMatch = this.idStr.toLowerCase().replace("_", " ") + ", " + this.name.toLowerCase();
+		if (this.aka != null)
+		{
+			this.searchMatch = this.searchMatch.concat(", " + this.aka.toLowerCase());
+		}
 	}
 
 	/**
@@ -507,6 +526,23 @@ public class BlockType
 					throw new BlockTypeLoadException("Could not convert direction map");
 				}
 			}
+		}
+	}
+
+	/**
+	 * Checks to see if this block matches a given search "pattern."
+	 * And by "pattern" I mean "substring."  Will check versus idStr,
+	 * name, and aka.
+	 */
+	public boolean matches(String search)
+	{
+		if (this.searchMatch == null)
+		{
+			return false;
+		}
+		else
+		{
+			return this.searchMatch.contains(search.toLowerCase());
 		}
 	}
 }
