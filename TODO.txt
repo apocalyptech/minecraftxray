@@ -11,7 +11,7 @@
  
  * Draw messages on signs like you'd expect.
  
- * GUI to set custom key bindings and custom ore highlights
+ * GUI to set custom ore highlights
  
  * Find a way to eliminate the stuttering when new map chunks are loading
  
@@ -61,3 +61,6 @@
    least on my WM.  This could potentially have something to do with my
    focus-follows-mouse type setup, but it works totally fine in both Java5 and
    Java6, so...
+
+ * One of these days I need to just break down and start using some GUI library
+   like TWL, rather than calling out to AWT windows.  Alas.
