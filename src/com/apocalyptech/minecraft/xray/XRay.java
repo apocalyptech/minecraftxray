@@ -296,18 +296,6 @@ public class XRay
 
 	public static Logger logger = Logger.getLogger(XRay.class);
 
-	// A class to provide filename filtering on our "Other" dialog
-	private class LevelDatFileFilter extends FileFilter
-	{
-		public boolean accept(File file) {
-			return (file.isDirectory() || file.getName().equalsIgnoreCase("level.dat"));
-		}
-
-		public String getDescription() {
-			return "Minecraft Levels";
-		}
-	}
-
 	// lets start with the program
 	public static void main(String args[])
 	{
@@ -1169,113 +1157,14 @@ public class XRay
 			}
 		}
 
-		// We loop on this dialog "forever" because we may have to re-draw it
-		// if the directory chosen by the "Other..." option isn't valid.
-		while (true)
+		// Open our main dialog and see how it turns out.
+		if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, xray_properties) == ResolutionDialog.DIALOG_BUTTON_EXIT)
 		{
-			if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, xray_properties) == ResolutionDialog.DIALOG_BUTTON_EXIT)
-			{
-				System.exit(0);
-			}
-
-			// Mark which world to load (which will happen later during initialize()
-			this.selectedWorld = ResolutionDialog.selectedWorld;
-
-			// The last option will always be "Other..." If that's been chosen, open a chooser dialog.
-			if (this.selectedWorld == availableWorlds.size() - 1)
-			{
-				JFileChooser chooser = new JFileChooser();
-				chooser.setFileHidingEnabled(false);
-				chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				chooser.setFileFilter(new LevelDatFileFilter());
-				chooser.setAcceptAllFileFilterUsed(false);
-				if (xray_properties.getProperty("LAST_WORLD") != null)
-				{
-					chooser.setCurrentDirectory(new File(xray_properties.getProperty("LAST_WORLD")));
-				}
-				else
-				{
-					chooser.setCurrentDirectory(new File("."));
-				}
-				try
-				{
-					chooser.setSelectedFile(chooser.getCurrentDirectory());
-				}
-				catch (java.lang.IndexOutOfBoundsException e)
-				{
-					// TODO:
-					// For some reason, on some systems (so far only Windows, and I haven't been able
-					// to reproduce it on my VMs), the setSelectedFile method ends up throwing this
-					// exception:
-					//
-					// java.lang.IndexOutOfBoundsException: Invalid index
-					//    at javax.swing.DefaultRowSorter.convertRowIndexToModel(Unknown Source)
-					//    at sun.swing.FilePane$SortableListModel.getElementAt(Unknown Source)
-					//    at javax.swing.plaf.basic.BasicListUI.updateLayoutState(Unknown Source)
-					//    at javax.swing.plaf.basic.BasicListUI.maybeUpdateLayoutState(Unknown Source)
-					//    at javax.swing.plaf.basic.BasicListUI.getCellBounds(Unknown Source)
-					//    at javax.swing.JList.getCellBounds(Unknown Source)
-					//    at javax.swing.JList.ensureIndexIsVisible(Unknown Source)
-					//    at sun.swing.FilePane.ensureIndexIsVisible(Unknown Source)
-					//    at sun.swing.FilePane.doDirectoryChanged(Unknown Source)
-					//    at sun.swing.FilePane.propertyChange(Unknown Source)
-					//    at java.beans.PropertyChangeSupport.fire(Unknown Source)
-					//    at java.beans.PropertyChangeSupport.firePropertyChange(Unknown Source)
-					//    at java.beans.PropertyChangeSupport.firePropertyChange(Unknown Source)
-					//    at java.awt.Component.firePropertyChange(Unknown Source)
-					//    at javax.swing.JFileChooser.setCurrentDirectory(Unknown Source)
-					//    at javax.swing.JFileChooser.setSelectedFile(Unknown Source)
-					//    at com.apocalyptech.minecraft.xray.XRay.createWindow(XRay.java:1000)
-					//    at com.apocalyptech.minecraft.xray.XRay.run(XRay.java:310)
-					//    at com.apocalyptech.minecraft.xray.XRay.main(XRay.java:276)
-					//
-					// In both cases that I've found, chooser.getCurrentDirectory().getPath()
-					// ends up returning "C:\Users\(username)\Desktop
-					//
-					// I'd love to figure out why this actually happens, and prevent having to
-					// catch this Exception in the first place.
-				}
-				chooser.setDialogTitle("Select a Minecraft World Directory");
-				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
-				{
-					WorldInfo customWorld = availableWorlds.get(this.selectedWorld);
-					File chosenFile = chooser.getSelectedFile();
-					if (chosenFile.isFile())
-					{
-						if (chosenFile.getName().equalsIgnoreCase("level.dat"))
-						{
-							chosenFile = chosenFile.getCanonicalFile().getParentFile();
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Please choose a directory or a level.dat file", "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
-							continue;
-						}
-					}
-					customWorld.finalizeWorldLocation(chosenFile);
-					File leveldat = customWorld.getLevelDatFile();
-					if (leveldat.exists() && leveldat.canRead())
-					{
-						// We appear to have a valid level; break and continue.
-						break;
-					}
-					else
-					{
-						// Invalid, show an error and then re-open the main
-						// dialog.
-						JOptionPane.showMessageDialog(null, "Couldn't find a valid level.dat file for the specified directory", "Minecraft X-Ray Error", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-			else
-			{
-				// We chose one of the auto-detected worlds, continue.
-				break;
-			}
+			System.exit(0);
 		}
 
-		// Update our preferences
-		this.xray_properties.setProperty("LAST_WORLD", availableWorlds.get(this.selectedWorld).getBasePath());
+		// Mark which world to load (which will happen later during initialize()
+		this.selectedWorld = ResolutionDialog.selectedWorld;
 
 		// set fullscreen from the dialog
 		fullscreen = ResolutionDialog.selectedFullScreenValue;
@@ -1449,8 +1338,6 @@ public class XRay
 		}
 
 		this.selectedWorld = ResolutionDialog.selectedWorld;
-		// TODO: "other" processing
-		this.xray_properties.setProperty("LAST_WORLD", availableWorlds.get(this.selectedWorld).getBasePath());
 		this.savePreferences();
 
 		// A full reinitialization is kind of overkill, but whatever.
