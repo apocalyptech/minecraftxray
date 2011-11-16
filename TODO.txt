@@ -64,3 +64,5 @@
 
  * One of these days I need to just break down and start using some GUI library
    like TWL, rather than calling out to AWT windows.  Alas.
+
+ * Shadow for various text (ore highlights on bottom of screen, "loading" text)
