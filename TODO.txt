@@ -67,3 +67,8 @@
    like TWL, rather than calling out to AWT windows.  Alas.
 
  * Shadow for various text (ore highlights on bottom of screen, "loading" text)
+
+ * Some way to specify "NONE" in the keybinding dialog
+
+ * It's entirely possible I should be calling .dispose() on Graphics2D objects
+   I don't need anymore, and vice-versa.  Possibly cut back on memory a bit?

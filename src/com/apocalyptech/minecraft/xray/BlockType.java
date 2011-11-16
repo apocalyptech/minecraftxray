@@ -29,6 +29,7 @@ package com.apocalyptech.minecraft.xray;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.lang.Comparable;
 import java.lang.StringBuffer;
 import java.awt.Color;
 
@@ -73,6 +74,7 @@ import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
  * normalization.
  */
 public class BlockType
+	implements Comparable<BlockType>
 {
 
 	public enum DIRECTION_REL {
@@ -544,5 +546,13 @@ public class BlockType
 		{
 			return this.searchMatch.contains(search.toLowerCase());
 		}
+	}
+
+	/**
+	 * Method for sorting BlockType objects, as needed by implementing Comparable
+	 */
+	public int compareTo(BlockType anotherInstance)
+	{
+		return this.name.compareTo(anotherInstance.name);
 	}
 }

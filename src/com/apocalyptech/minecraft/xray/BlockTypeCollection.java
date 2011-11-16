@@ -33,6 +33,7 @@ import java.io.FileReader;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
@@ -250,6 +251,13 @@ public class BlockTypeCollection
 		{
 			blocks.add((BlockType)block);
 		}
+		return blocks;
+	}
+
+	public ArrayList<BlockType> getBlocksFullSorted()
+	{
+		ArrayList<BlockType> blocks = this.getBlocksFull();
+		Collections.sort(blocks);
 		return blocks;
 	}
 

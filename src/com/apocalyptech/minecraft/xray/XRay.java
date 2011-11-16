@@ -31,6 +31,7 @@ import com.apocalyptech.minecraft.xray.dialog.JumpDialog;
 import com.apocalyptech.minecraft.xray.dialog.ResolutionDialog;
 import com.apocalyptech.minecraft.xray.dialog.WarningDialog;
 import com.apocalyptech.minecraft.xray.dialog.KeyHelpDialog;
+import com.apocalyptech.minecraft.xray.dialog.BlockBindDialog;
 import com.apocalyptech.minecraft.xray.dialog.ExceptionDialog;
 
 
@@ -1136,6 +1137,7 @@ public class XRay
 			ResolutionDialog.iconImage = iconTexture128;
 			JumpDialog.iconImage = iconTexture128;
 			KeyHelpDialog.iconImage = iconTexture128;
+			BlockBindDialog.iconImage = iconTexture128;
 			WarningDialog.iconImage = iconTexture128;
 			ExceptionDialog.iconImage = iconTexture128;
 		}
@@ -1353,6 +1355,12 @@ public class XRay
 	{
 		Mouse.setGrabbed(false);
 		KeyHelpDialog.presentDialog(key_mapping, this);
+	}
+
+	private void launchBlockBindDialog()
+	{
+		Mouse.setGrabbed(false);
+		BlockBindDialog.presentDialog(HIGHLIGHT_ORES, minecraftTextures);
 	}
 
 	/**
@@ -1849,6 +1857,11 @@ public class XRay
 				{
 					// Launch the dialog
 					launchKeyHelpDialog();
+				}
+				else if (key == key_mapping.get(KEY_ACTION.SET_ORE_BINDS))
+				{
+					// Launch the ore-binding dialog
+					launchBlockBindDialog();
 				}
 				else if (key == key_mapping.get(KEY_ACTION.RELEASE_MOUSE))
 				{
@@ -3120,6 +3133,7 @@ public class XRay
 	{
 		JumpDialog.closeDialog();
 		KeyHelpDialog.closeDialog();
+		BlockBindDialog.closeDialog();
 		Display.destroy();
 	}
 

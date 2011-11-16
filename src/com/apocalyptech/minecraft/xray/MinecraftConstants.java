@@ -263,6 +263,7 @@ public class MinecraftConstants {
 		TOGGLE_MINIMAP        (ACTION_CAT.OTHER, Keyboard.KEY_TAB, "Toggle Minimap"),
 		RELEASE_MOUSE         (ACTION_CAT.OTHER, Keyboard.KEY_ESCAPE, "Release Mouse"),
 		KEY_HELP              (ACTION_CAT.OTHER, Keyboard.KEY_Y, "Show Keyboard Reference"),
+		SET_ORE_BINDS         (ACTION_CAT.OTHER, Keyboard.KEY_RBRACKET, "Set Ore Highlight Binds"),
 		QUIT                  (ACTION_CAT.OTHER, Keyboard.KEY_Q, "Quit")
 		;
 		public final ACTION_CAT category;
