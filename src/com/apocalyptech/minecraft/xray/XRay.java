@@ -56,6 +56,13 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import java.awt.Shape;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
@@ -650,9 +657,7 @@ public class XRay
 				this.cameraTextOverride = null;
 			}
 			Rectangle2D bounds = HEADERFONT.getStringBounds(statusmessage, g.getFontRenderContext());
-			g.setFont(HEADERFONT);
-			g.setColor(Color.white);
-			g.drawString(statusmessage, (1024 / 2) - ((float) bounds.getWidth() / 2), 40f);
+			this.renderOutlineText(statusmessage, HEADERFONT, g, Color.black, Color.white, (int)((1024 / 2) - ((float) bounds.getWidth() / 2)), 40);
 			loadingTextTexture.update();
 		}
 
@@ -709,8 +714,27 @@ public class XRay
 					float ey = (screenHeight / 2.0f) + 50;
 
 					float px = ((ex - bx) * progress) + bx;
+					int border = 5;
 
-					// progress bar outer box
+					// progress bar outer box, first the border
+					// I'd love to figure out why I can't just set glLineWidth
+					// and use the same coords as the white line.
+					GL11.glColor4f(0f, 0f, 0f, 1f);
+					GL11.glBegin(GL11.GL_LINE_LOOP);
+					GL11.glVertex2f(bx-border, by-border);
+					GL11.glVertex2f(ex+border, by-border);
+					GL11.glVertex2f(ex+border, ey+border);
+					GL11.glVertex2f(bx-border, ey+border);
+					GL11.glEnd();
+					GL11.glBegin(GL11.GL_LINE_LOOP);
+					GL11.glVertex2f(bx+border, by+border);
+					GL11.glVertex2f(ex-border, by+border);
+					GL11.glVertex2f(ex-border, ey-border);
+					GL11.glVertex2f(bx+border, ey-border);
+					GL11.glEnd();
+
+					// progress bar outer box, now the white border itself
+					GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 					GL11.glBegin(GL11.GL_LINE_LOOP);
 					GL11.glVertex2f(bx, by);
 					GL11.glVertex2f(ex, by);
@@ -718,7 +742,17 @@ public class XRay
 					GL11.glVertex2f(bx, ey);
 					GL11.glEnd();
 
+					// progress bar end black highlight
+					GL11.glColor4f(0f, 0f, 0f, 1f);
+					GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+					GL11.glVertex2f(px, by+5);
+					GL11.glVertex2f(px+border, by+5);
+					GL11.glVertex2f(px, ey-5);
+					GL11.glVertex2f(px+border, ey-5);
+					GL11.glEnd();
+
 					// progress bar 'progress'
+					GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 					GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 					GL11.glVertex2f(bx, by);
 					GL11.glVertex2f(px, by);
@@ -1090,12 +1124,42 @@ public class XRay
 		{
 			mineralToggleTextures[i] = TextureTool.allocateTexture(128, 32);
 			Graphics2D g = mineralToggleTextures[i].getImage().createGraphics();
-			g.setFont(ARIALFONT);
-			g.setColor(Color.white);
-			g.drawString("[F" + (i + 1) + "] " + blockArray[HIGHLIGHT_ORES[i]].name, 10, 16);
+
+			String oretext = "[F" + (i + 1) + "] " + blockArray[HIGHLIGHT_ORES[i]].name;
+			this.renderOutlineText(oretext, ARIALFONT, g, Color.black, Color.white, 0, 16);
 			mineralToggleTextures[i].update();
 		}
 		this.regenerateOreHighlightTexture = false;
+	}
+
+	/**
+	 * Renders some text to a Graphics2D context with an outline.
+	 *
+	 * @param message The text
+	 * @param font The font
+	 * @param g The Graphics2D Context
+	 * @param bgcolor Background (outline) color
+	 * @param fgcolor Color of the message itself
+	 * @param x Location inside the graphic
+	 * @param y Location inside the graphic
+	 */
+	private void renderOutlineText(String message, Font font, Graphics2D g, Color bgcolor, Color fgcolor, int x, int y)
+	{
+			FontRenderContext frc = g.getFontRenderContext();
+			TextLayout tl = new TextLayout(message, font, frc);
+			float sw = (float)tl.getBounds().getWidth();
+			AffineTransform transform = new AffineTransform();
+			transform.setToTranslation(x, y);
+			Shape s = tl.getOutline(transform);
+			Rectangle r = s.getBounds();
+			g.setColor(bgcolor);
+			g.setStroke(new BasicStroke(5, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.draw(s);
+
+			g.setFont(font);
+			g.setColor(fgcolor);
+			g.drawString(message, x, y);
 	}
 
 	private BufferedImage resizeImage(Image baseImage, int newWidth, int newHeight)
