@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -52,7 +53,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
@@ -67,14 +68,14 @@ import org.lwjgl.input.Keyboard;
 /**
  * A dialog to both show and set keybindings
  */
-public class BlockBindDialog
-	extends JFrame 
+public class BlockBindChooserDialog
+	extends JDialog 
 {
 	private static final int FRAMEWIDTH = 540;
 	private static final int FRAMEHEIGHT = 620;
 
-	private static String window_title = "X-Ray Block Highlight Binding";
-	private JButton okButton;
+	private static String window_title = "X-Ray Set Block Highlighting";
+	private JButton cancelButton;
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
@@ -82,11 +83,9 @@ public class BlockBindDialog
 	private String defaultStatusText;
 
 	private static boolean dialog_showing = false;
-	private static BlockBindDialog keyhelp_dialog;
+	private static BlockBindChooserDialog keyhelp_dialog;
 	
 	public static Image iconImage;
-
-	private short[] ore_highlights;
 
 	private HashMap<Short, ImageIcon> ore_icons;
 
@@ -143,24 +142,17 @@ public class BlockBindDialog
 		blockScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		blockScroll.setBorder(null);
 
-		// Our list of assigned highlights
-		String blockText;
-		ImageIcon icon;
-		BlockType t;
 		int current_grid_y = 0;
-		for (int i=0; i<this.ore_highlights.length; i++)
+		// Our list of assigned highlights
+		for (BlockType block : blockCollection.getBlocksFullSorted())
 		{
 			current_grid_y++;
 			c.weightx = 1f;
 			c.weighty = 0f;
 			c.gridx = 0; c.gridy = current_grid_y;
 			c.insets = standardInsets;
-			c.anchor = GridBagConstraints.EAST;
-			addComponent(blockPanel, new JLabel("Block Highlight " + (i+1) + ": "), c, blockLayout);
-
 			c.anchor = GridBagConstraints.WEST;
-			c.gridx = 1;
-			BlockBindMainButton blockButton = new BlockBindMainButton(blockArray[this.ore_highlights[i]], this.ore_icons, this, i);
+			BlockBindButton blockButton = new BlockBindButton(block, this.ore_icons);
 			/*
 			blockButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -206,20 +198,9 @@ public class BlockBindDialog
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		addComponent(this.getContentPane(), okButton,c);
+		addComponent(this.getContentPane(), cancelButton,c);
 	}
 	
-	/**
-	 * One of our highlighting buttons has been clicked
-	 *
-	 * @param whichButton The button that was clicked
-	 */
-	public void notifyHighlightClicked(BlockBindMainButton whichButton)
-	{
-		int position = whichButton.getPosition();
-		BlockBindChooserDialog dialog = new BlockBindChooserDialog(this.ore_icons, this);
-	}
-
 	/***
 	 * Adds a component to the container and updates the constraints for that component
 	 * @param root The contiainer to add the component to
@@ -250,10 +231,10 @@ public class BlockBindDialog
         JRootPane rootPane = this.getRootPane();
 		
         // The "OK" button
-		okButton	= new JButton("OK");
-		okButton.addActionListener(new ActionListener() {
+		cancelButton	= new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dialogOK();
+				dialogCancel();
 			}
 		});
 
@@ -264,7 +245,7 @@ public class BlockBindDialog
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ENTER");
 		rootPane.getActionMap().put("ENTER", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				dialogOK();
+				dialogCancel();
 			}
 		});
 	}
@@ -272,13 +253,13 @@ public class BlockBindDialog
 	/**
 	 * Actions to perform if our master "OK" button has been hit
 	 */
-	private void dialogOK()
+	private void dialogCancel()
 	{
 		setVisible(false);
 		dispose();
-		BlockBindDialog.dialog_showing = false;
-		synchronized(BlockBindDialog.this) {
-			BlockBindDialog.this.notify();
+		BlockBindChooserDialog.dialog_showing = false;
+		synchronized(BlockBindChooserDialog.this) {
+			BlockBindChooserDialog.this.notify();
 		}
 	}
 
@@ -298,52 +279,27 @@ public class BlockBindDialog
 	}
 
 	/***
-	 * Creates a new BlockBindDialog
+	 * Creates a new BlockBindChooserDialog
 	 * @param ore_highlights the current ore highlight settings
 	 * @param windowName the title of the dialog
 	 */
-	protected BlockBindDialog(short[] ore_highlights, ArrayList<Texture> ore_textures)
+	protected BlockBindChooserDialog(HashMap<Short, ImageIcon> ore_icons, Frame parent)
 	{
-		super(window_title);
-		this.ore_highlights = ore_highlights;
-
-		// First up, let's create a bunch of ImageIcons
-		this.ore_icons = new HashMap<Short, ImageIcon>();
-		for (int texnum = 0; texnum < ore_textures.size(); texnum++)
-		{
-			BufferedImage image = ore_textures.get(texnum).getImage();
-			if (image.getWidth() > 256)
-			{
-				// Resize the image down so its blocks are 16x16
-				BufferedImage newImage = new BufferedImage(256, 512, image.getType());
-				Graphics2D g = newImage.createGraphics();
-				g.drawImage(image, 0, 0, 256, 512, null);
-				g.dispose();
-				image = newImage;
-			}
-
-			for (BlockType block : blockCollection.getBlocksFull())
-			{
-				if (block.getTexSheet() == texnum)
-				{
-					int[] coords = block.getTexCoordsArr();
-					this.ore_icons.put(block.getId(), new ImageIcon(image.getSubimage(coords[0]*16, coords[1]*16, 16, 16)));
-				}
-			}
-		}
+		super(parent, window_title, true);
+		this.ore_icons = ore_icons;
 
 		// Now continue
-		if(BlockBindDialog.iconImage != null)
-			this.setIconImage(BlockBindDialog.iconImage);
+		if(BlockBindChooserDialog.iconImage != null)
+			this.setIconImage(BlockBindChooserDialog.iconImage);
 		
 		this.setSize(FRAMEWIDTH,FRAMEHEIGHT);
-		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		this.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		this.addWindowListener(new WindowListener() {
 			public void windowActivated(WindowEvent e) {}
 			public void windowClosed(WindowEvent e) {}
 			public void windowClosing(WindowEvent e)
 			{
-				dialogOK();
+				dialogCancel();
 			}
 			public void windowDeactivated(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
@@ -360,35 +316,5 @@ public class BlockBindDialog
 		validate();
 		
 		this.setVisible(true);
-	}
-	
-	/***
-	 * Pops up the dialog window
-	 * @param ore_highlights the current ore highlight settings
-	 * @param windowName the title of the dialog
-	 */
-	public static void presentDialog(short[] ore_highlights, ArrayList<Texture> ore_textures)
-	{
-		if (dialog_showing)
-		{
-			BlockBindDialog.keyhelp_dialog.toFront();
-			BlockBindDialog.keyhelp_dialog.requestFocus();
-		}
-		else
-		{
-			BlockBindDialog.dialog_showing = true;
-			BlockBindDialog.keyhelp_dialog = new BlockBindDialog(ore_highlights, ore_textures);
-		}
-	}
-
-	/**
-	 * Closes out our dialog
-	 */
-	public static void closeDialog()
-	{
-		if (BlockBindDialog.dialog_showing && BlockBindDialog.keyhelp_dialog != null)
-		{
-			BlockBindDialog.keyhelp_dialog.dialogOK();
-		}
 	}
 }
