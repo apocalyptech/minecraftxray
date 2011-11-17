@@ -567,6 +567,13 @@ public class XRay
 	 */
 	public void updateHighlightBindings()
 	{
+		for (int i=0; i < HIGHLIGHT_ORES.length; i++)
+		{
+			xray_properties.setProperty("HIGHLIGHT_" + (i+1), blockArray[HIGHLIGHT_ORES[i]].idStr);
+		}
+		this.savePreferences();
+
+		this.regenerateOreHighlightTexture = true;
 		this.invalidateSelectedChunks();
 	}
 
