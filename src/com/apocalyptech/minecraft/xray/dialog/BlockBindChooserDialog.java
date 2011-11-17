@@ -45,6 +45,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -62,6 +63,9 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 
 import org.lwjgl.input.Keyboard;
 
@@ -70,8 +74,9 @@ import org.lwjgl.input.Keyboard;
  */
 public class BlockBindChooserDialog
 	extends JDialog 
+	implements DocumentListener
 {
-	private static final int FRAMEWIDTH = 540;
+	private static final int FRAMEWIDTH = 450;
 	private static final int FRAMEHEIGHT = 620;
 
 	private static String window_title = "X-Ray Set Block Highlighting";
@@ -88,6 +93,8 @@ public class BlockBindChooserDialog
 	public static Image iconImage;
 
 	private HashMap<Short, ImageIcon> ore_icons;
+	private JTextField searchField;
+	private ArrayList<BlockBindButton> blockButtons;
 
 	/***
 	 * Centers this dialog on the screen
@@ -130,6 +137,7 @@ public class BlockBindChooserDialog
 		Insets categoryInsets = new Insets(20, 5, 5, 5);
 		Insets noBottomInsets = new Insets(5, 5, 0, 5);
 		Insets noTopInsets = new Insets(0, 5, 5, 5);
+		Insets buttonInsets = new Insets(5, 20, 5, 20);
 		c.insets = standardInsets;
 		c.weighty = .1f;
 
@@ -144,24 +152,27 @@ public class BlockBindChooserDialog
 
 		int current_grid_y = 0;
 		// Our list of assigned highlights
+		this.blockButtons = new ArrayList<BlockBindButton>();
 		for (BlockType block : blockCollection.getBlocksFullSorted())
 		{
 			current_grid_y++;
 			c.weightx = 1f;
 			c.weighty = 0f;
 			c.gridx = 0; c.gridy = current_grid_y;
-			c.insets = standardInsets;
-			c.anchor = GridBagConstraints.WEST;
+			c.insets = buttonInsets;
+			c.anchor = GridBagConstraints.NORTHWEST;
 			BlockBindButton blockButton = new BlockBindButton(block, this.ore_icons);
-			/*
-			blockButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					launchChooser(i);
-				}
-			});
-			*/
+			this.blockButtons.add(blockButton);
 			addComponent(blockPanel, blockButton, c, blockLayout);
 		}
+
+		// This empty JLabel is only here because I wasn't finding an actual reasonable
+		// way to have the various buttons stay at the top of the scrollpane when
+		// searching (when there weren't enough to fill up the entire pane)
+		current_grid_y++;
+		c.gridy = current_grid_y;
+		c.weighty = 1f;
+		addComponent(blockPanel, new JLabel(""), c, blockLayout);
 
 		current_grid_y = 0;
 
@@ -180,6 +191,22 @@ public class BlockBindChooserDialog
 		c.insets = noTopInsets;
 		addComponent(this.getContentPane(), this.statusLabel, c);
 		c.insets = standardInsets;
+
+		// Search pane
+		current_grid_y++;
+		c.gridx = 0; c.gridy = current_grid_y;
+		c.anchor = GridBagConstraints.CENTER;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 1f;
+		JPanel searchPanel = new JPanel();
+		searchPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		addComponent(this.getContentPane(), searchPanel, c);
+
+		// Contents of search pane
+		this.searchField = new JTextField(20);
+		this.searchField.getDocument().addDocumentListener(this);
+		searchPanel.add(new JLabel("Search: "));
+		searchPanel.add(this.searchField);
 		
 		// Add our scrollpane to the window
 		current_grid_y++;
@@ -187,6 +214,7 @@ public class BlockBindChooserDialog
 		c.weighty = 1f;
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.NORTHWEST;
 		addComponent(this.getContentPane(), blockScroll, c);
 		
 		// Now add the buttons
@@ -317,4 +345,31 @@ public class BlockBindChooserDialog
 		
 		this.setVisible(true);
 	}
+
+	/**
+	 * DocumentListener Functions
+	 */
+	public void changedUpdate(DocumentEvent e)
+	{
+	}
+	public void insertUpdate(DocumentEvent e)
+	{
+		String text = this.searchField.getText();
+		for (BlockBindButton button : this.blockButtons)
+		{
+			if (text.length() == 0 || button.getBlock().matches(text))
+			{
+				button.setVisible(true);
+			}
+			else
+			{
+				button.setVisible(false);
+			}
+		}
+	}
+	public void removeUpdate(DocumentEvent e)
+	{
+		this.insertUpdate(e);
+	}
+
 }

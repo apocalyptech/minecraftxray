@@ -70,7 +70,7 @@ import org.lwjgl.input.Keyboard;
 public class BlockBindDialog
 	extends JFrame 
 {
-	private static final int FRAMEWIDTH = 540;
+	private static final int FRAMEWIDTH = 450;
 	private static final int FRAMEHEIGHT = 620;
 
 	private static String window_title = "X-Ray Block Highlight Binding";
