@@ -71,7 +71,7 @@ public class BlockBindDialog
 	extends JFrame 
 {
 	private static final int FRAMEWIDTH = 450;
-	private static final int FRAMEHEIGHT = 620;
+	private static final int FRAMEHEIGHT = 520;
 
 	private static String window_title = "X-Ray Block Highlight Binding";
 	private JButton okButton;
