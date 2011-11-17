@@ -46,7 +46,9 @@
  
  * Pull the grass colorization color from a point on misc/grasscolor.png
 
- * Snow has data, as it turns out...
+ * Snow has data, as it turns out...  Also, it would be nice to have grass+mycelium
+   react to snow properly (by changing their side image).  It seems fairly awkward to
+   pull off with YAML definitions, though, so we'll just leave it for now.
 
  * Figure out why loading in nonexistant chunks seems to glitch the app so much
 
