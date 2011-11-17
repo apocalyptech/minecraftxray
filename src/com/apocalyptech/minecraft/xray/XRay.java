@@ -244,6 +244,7 @@ public class XRay
 	private int cur_renderDetails_h;
 	private int levelInfoTexture_h = 144;
 	private boolean regenerateRenderDetailsTexture = false;
+	private boolean regenerateOreHighlightTexture = false;
 
 	// light level
 	private int[] lightLevelEnd = new int[] { 30, 50, 70, 100, 130 };
@@ -391,6 +392,10 @@ public class XRay
 				if (this.regenerateRenderDetailsTexture)
 				{
 					updateRenderDetails();
+				}
+				if (this.regenerateOreHighlightTexture)
+				{
+					updateOreHighlightTextures();
 				}
 
 				// render whatever we need to render
@@ -554,6 +559,15 @@ public class XRay
 		// though, we can't call it directly.  Instead just set a boolean
 		// and it'll get picked up in the mainloop.
 		this.regenerateRenderDetailsTexture = true;
+	}
+
+	/***
+	 * Updates our ore-binding preferences and saves out the config file.
+	 * Will also invalidate our selection stuff.
+	 */
+	public void updateHighlightBindings()
+	{
+		this.invalidateSelectedChunks();
 	}
 
 	/**
@@ -1010,15 +1024,7 @@ public class XRay
 			paintingTexture.update();
 
 			// mineral textures
-			for (int i = 0; i < HIGHLIGHT_ORES.length; i++)
-			{
-				mineralToggleTextures[i] = TextureTool.allocateTexture(128, 32);
-				Graphics2D g = mineralToggleTextures[i].getImage().createGraphics();
-				g.setFont(ARIALFONT);
-				g.setColor(Color.white);
-				g.drawString("[F" + (i + 1) + "] " + blockArray[HIGHLIGHT_ORES[i]].name, 10, 16);
-				mineralToggleTextures[i].update();
-			}
+			this.updateOreHighlightTextures();
 
 			// Chunk border texture
 			int chunkBorderWidth = 256;
@@ -1065,6 +1071,24 @@ public class XRay
 
 		// Disable repeat key events
 		Keyboard.enableRepeatEvents(false);
+	}
+
+	/**
+	 * Generate our text labels for the ores we're highlighting
+	 */
+	private void updateOreHighlightTextures()
+		throws IOException
+	{
+		for (int i = 0; i < HIGHLIGHT_ORES.length; i++)
+		{
+			mineralToggleTextures[i] = TextureTool.allocateTexture(128, 32);
+			Graphics2D g = mineralToggleTextures[i].getImage().createGraphics();
+			g.setFont(ARIALFONT);
+			g.setColor(Color.white);
+			g.drawString("[F" + (i + 1) + "] " + blockArray[HIGHLIGHT_ORES[i]].name, 10, 16);
+			mineralToggleTextures[i].update();
+		}
+		this.regenerateOreHighlightTexture = false;
 	}
 
 	private BufferedImage resizeImage(Image baseImage, int newWidth, int newHeight)
@@ -1360,7 +1384,7 @@ public class XRay
 	private void launchBlockBindDialog()
 	{
 		Mouse.setGrabbed(false);
-		BlockBindDialog.presentDialog(HIGHLIGHT_ORES, minecraftTextures);
+		BlockBindDialog.presentDialog(HIGHLIGHT_ORES, minecraftTextures, this);
 	}
 
 	/**

@@ -75,6 +75,7 @@ public class BlockBindDialog
 
 	private static String window_title = "X-Ray Block Highlight Binding";
 	private JButton okButton;
+	private JButton cancelButton;
 
 	private GridBagLayout gridBagLayoutManager;
 	private JPanel basicPanel;
@@ -83,10 +84,13 @@ public class BlockBindDialog
 
 	private static boolean dialog_showing = false;
 	private static BlockBindDialog keyhelp_dialog;
+
+	private XRay xrayInstance;
 	
 	public static Image iconImage;
 
 	private short[] ore_highlights;
+	private BlockBindMainButton[] blockButtons;
 
 	private HashMap<Short, ImageIcon> ore_icons;
 
@@ -148,6 +152,7 @@ public class BlockBindDialog
 		ImageIcon icon;
 		BlockType t;
 		int current_grid_y = 0;
+		this.blockButtons = new BlockBindMainButton[this.ore_highlights.length];
 		for (int i=0; i<this.ore_highlights.length; i++)
 		{
 			current_grid_y++;
@@ -161,13 +166,7 @@ public class BlockBindDialog
 			c.anchor = GridBagConstraints.WEST;
 			c.gridx = 1;
 			BlockBindMainButton blockButton = new BlockBindMainButton(blockArray[this.ore_highlights[i]], this.ore_icons, this, i);
-			/*
-			blockButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					launchChooser(i);
-				}
-			});
-			*/
+			this.blockButtons[i] = blockButton;
 			addComponent(blockPanel, blockButton, c, blockLayout);
 		}
 
@@ -177,6 +176,7 @@ public class BlockBindDialog
 		current_grid_y++;
 		c.weightx = 1f;
 		c.weighty = 0f;
+		c.gridwidth = 2;
 		c.gridx = 0; c.gridy = current_grid_y;
 		c.anchor = GridBagConstraints.CENTER;
 		addComponent(this.getContentPane(), titleLabel, c);
@@ -201,11 +201,15 @@ public class BlockBindDialog
 		c.insets = new Insets(5,15,5,15);
 		
 		current_grid_y++;
-		c.weightx = flist; 
+		c.weightx = 1f; 
 		c.weighty = 0f; 
 		c.gridx = 0; c.gridy = current_grid_y;
+		c.gridwidth = 1;
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		addComponent(this.getContentPane(), cancelButton,c);
+
+		c.gridx = 1;
 		addComponent(this.getContentPane(), okButton,c);
 	}
 	
@@ -218,6 +222,14 @@ public class BlockBindDialog
 	{
 		int position = whichButton.getPosition();
 		BlockBindChooserDialog dialog = new BlockBindChooserDialog(this.ore_icons, this);
+		BlockBindButton newButton = dialog.getClickedButton();
+		if (newButton != null)
+		{
+			if (whichButton.getBlock() != newButton.getBlock())
+			{
+				whichButton.setBlock(newButton.getBlock());
+			}
+		}
 	}
 
 	/***
@@ -256,15 +268,30 @@ public class BlockBindDialog
 				dialogOK();
 			}
 		});
+		
+        // The "Cancel" button
+		cancelButton	= new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialogCancel();
+			}
+		});
 
 		// Key mapping for the Jump button
 		KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enterStroke, "ENTER");
-		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ENTER");
 		rootPane.getActionMap().put("ENTER", new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				dialogOK();
+			}
+		});
+
+		// Key mapping for the Cancel button
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "ESCAPE");
+		rootPane.getActionMap().put("ESCAPE", new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				dialogCancel();
 			}
 		});
 	}
@@ -273,6 +300,31 @@ public class BlockBindDialog
 	 * Actions to perform if our master "OK" button has been hit
 	 */
 	private void dialogOK()
+	{
+		boolean changed = false;
+		for (BlockBindMainButton button : this.blockButtons)
+		{
+			short new_id = button.getBlock().getId();
+			int position = button.getPosition();
+			if (new_id != ore_highlights[position])
+			{
+				changed = true;
+				ore_highlights[position] = new_id;
+			}
+		}
+
+		if (changed)
+		{
+			this.xrayInstance.updateHighlightBindings();
+		}
+
+		this.dialogCancel();
+	}
+
+	/**
+	 * Actions to perform if our master "Cancel" button has been hit
+	 */
+	private void dialogCancel()
 	{
 		setVisible(false);
 		dispose();
@@ -302,10 +354,11 @@ public class BlockBindDialog
 	 * @param ore_highlights the current ore highlight settings
 	 * @param windowName the title of the dialog
 	 */
-	protected BlockBindDialog(short[] ore_highlights, ArrayList<Texture> ore_textures)
+	protected BlockBindDialog(short[] ore_highlights, ArrayList<Texture> ore_textures, XRay xrayInstance)
 	{
 		super(window_title);
 		this.ore_highlights = ore_highlights;
+		this.xrayInstance = xrayInstance;
 
 		// First up, let's create a bunch of ImageIcons
 		this.ore_icons = new HashMap<Short, ImageIcon>();
@@ -367,7 +420,7 @@ public class BlockBindDialog
 	 * @param ore_highlights the current ore highlight settings
 	 * @param windowName the title of the dialog
 	 */
-	public static void presentDialog(short[] ore_highlights, ArrayList<Texture> ore_textures)
+	public static void presentDialog(short[] ore_highlights, ArrayList<Texture> ore_textures, XRay xrayInstance)
 	{
 		if (dialog_showing)
 		{
@@ -377,7 +430,7 @@ public class BlockBindDialog
 		else
 		{
 			BlockBindDialog.dialog_showing = true;
-			BlockBindDialog.keyhelp_dialog = new BlockBindDialog(ore_highlights, ore_textures);
+			BlockBindDialog.keyhelp_dialog = new BlockBindDialog(ore_highlights, ore_textures, xrayInstance);
 		}
 	}
 

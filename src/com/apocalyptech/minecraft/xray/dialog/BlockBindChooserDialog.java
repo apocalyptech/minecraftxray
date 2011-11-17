@@ -94,7 +94,9 @@ public class BlockBindChooserDialog
 
 	private HashMap<Short, ImageIcon> ore_icons;
 	private JTextField searchField;
-	private ArrayList<BlockBindButton> blockButtons;
+	private ArrayList<BlockBindChooserButton> blockButtons;
+
+	private BlockBindChooserButton clickedButton;
 
 	/***
 	 * Centers this dialog on the screen
@@ -152,7 +154,7 @@ public class BlockBindChooserDialog
 
 		int current_grid_y = 0;
 		// Our list of assigned highlights
-		this.blockButtons = new ArrayList<BlockBindButton>();
+		this.blockButtons = new ArrayList<BlockBindChooserButton>();
 		for (BlockType block : blockCollection.getBlocksFullSorted())
 		{
 			current_grid_y++;
@@ -161,7 +163,7 @@ public class BlockBindChooserDialog
 			c.gridx = 0; c.gridy = current_grid_y;
 			c.insets = buttonInsets;
 			c.anchor = GridBagConstraints.NORTHWEST;
-			BlockBindButton blockButton = new BlockBindButton(block, this.ore_icons);
+			BlockBindChooserButton blockButton = new BlockBindChooserButton(block, this.ore_icons, this);
 			this.blockButtons.add(blockButton);
 			addComponent(blockPanel, blockButton, c, blockLayout);
 		}
@@ -227,6 +229,25 @@ public class BlockBindChooserDialog
 		c.anchor = GridBagConstraints.EAST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		addComponent(this.getContentPane(), cancelButton,c);
+	}
+	
+	/**
+	 * One of our buttons has been clicked
+	 *
+	 * @param whichButton The button that was clicked
+	 */
+	public void notifyHighlightClicked(BlockBindChooserButton whichButton)
+	{
+		this.clickedButton = whichButton;
+		this.dialogCancel();
+	}
+
+	/**
+	 * Returns the selected block type
+	 */
+	public BlockBindButton getClickedButton()
+	{
+		return this.clickedButton;
 	}
 	
 	/***
@@ -315,6 +336,7 @@ public class BlockBindChooserDialog
 	{
 		super(parent, window_title, true);
 		this.ore_icons = ore_icons;
+		this.clickedButton = null;
 
 		// Now continue
 		if(BlockBindChooserDialog.iconImage != null)
@@ -355,7 +377,7 @@ public class BlockBindChooserDialog
 	public void insertUpdate(DocumentEvent e)
 	{
 		String text = this.searchField.getText();
-		for (BlockBindButton button : this.blockButtons)
+		for (BlockBindChooserButton button : this.blockButtons)
 		{
 			if (text.length() == 0 || button.getBlock().matches(text))
 			{
