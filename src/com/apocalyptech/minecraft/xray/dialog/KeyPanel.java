@@ -30,10 +30,14 @@ import com.apocalyptech.minecraft.xray.XRay;
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JButton;
 
 import org.lwjgl.input.Keyboard;
 
@@ -59,6 +63,8 @@ public class KeyPanel extends JPanel
 	private JLabel afterLabel;
 	private JLabel keyLabel;
 	private KeyField keyEdit;
+	private JLabel unbindSpacer;
+	private JButton unbindButton;
 
 	/**
 	 * Create a new KeyPanel
@@ -66,7 +72,7 @@ public class KeyPanel extends JPanel
 	 * @param action The action this KeyPanel represents
 	 * @param bound_key The currently-bound key
 	 */
-	public KeyPanel(KeyHelpDialog kh, Font keyFont, KEY_ACTION action, int bound_key)
+	public KeyPanel(KeyHelpDialog kh, Font keyFont, Font buttonFont, KEY_ACTION action, int bound_key)
 	{
 		super();
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -80,11 +86,23 @@ public class KeyPanel extends JPanel
 		this.keyLabel = new JLabel();
 		this.keyLabel.setFont(keyFont);
 		this.keyEdit = new KeyField(action, this);
+		this.unbindSpacer = new JLabel("  ");
+		this.unbindSpacer.setFont(keyFont);
+		this.unbindButton = new JButton("Unbind");
+		this.unbindButton.setFont(buttonFont);
+		this.unbindButton.setMargin(new Insets(0, 5, 0, 5));
+		this.unbindButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				notifyUnbindClicked();
+			}
+		});
 
 		this.add(this.beforeLabel);
 		this.add(this.keyLabel);
 		this.add(this.keyEdit);
 		this.add(this.afterLabel);
+		this.add(this.unbindSpacer);
+		this.add(this.unbindButton);
 
 		this.setBoundKey(bound_key);
 		this.finishEdit();
@@ -126,6 +144,15 @@ public class KeyPanel extends JPanel
 	}
 
 	/**
+	 * Called when our "Unbind" button is clicked.  Report back up
+	 * to our master dialog to process.
+	 */
+	public void notifyUnbindClicked()
+	{
+		this.kh.notifyUnbindClicked(this);
+	}
+
+	/**
 	 * Called from our inner KeyField, this is how we
 	 * receive notification that we've been clicked.  Passes that
 	 * information back up to the master dialog
@@ -133,6 +160,8 @@ public class KeyPanel extends JPanel
 	public void notifyClicked()
 	{
 		this.kh.notifyKeyPanelClicked(this);
+		this.unbindButton.setVisible(true);
+		this.unbindSpacer.setVisible(true);
 	}
 
 	/**
@@ -141,6 +170,8 @@ public class KeyPanel extends JPanel
 	 */
 	public void clickFinish()
 	{
+		this.unbindButton.setVisible(false);
+		this.unbindSpacer.setVisible(false);
 		this.keyEdit.clickFinish();
 	}
 
@@ -223,6 +254,9 @@ public class KeyPanel extends JPanel
 	{
 		this.keyLabel.setVisible(false);
 		this.keyEdit.setVisible(true);
+		this.afterLabel.setVisible(false);
+		this.unbindButton.setVisible(false);
+		this.unbindSpacer.setVisible(false);
 	}
 
 	/**
@@ -232,5 +266,8 @@ public class KeyPanel extends JPanel
 	{
 		this.keyEdit.setVisible(false);
 		this.keyLabel.setVisible(true);
+		this.afterLabel.setVisible(true);
+		this.unbindButton.setVisible(false);
+		this.unbindSpacer.setVisible(false);
 	}
 }

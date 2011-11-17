@@ -61,7 +61,11 @@ import javax.swing.AbstractAction;
 import org.lwjgl.input.Keyboard;
 
 /**
- * A dialog to both show and set keybindings
+ * A dialog to both show and set keybindings.  This includes the
+ * changes merged in from the key-setting dialog.  I'd like to take
+ * this opportunity to apologize to Eleazar and Saxon for mucking up
+ * their much better object model to do so, but this is how it ended
+ * up.  :)  Many apologies!
  */
 public class KeyHelpDialog
 	extends JFrame 
@@ -296,6 +300,7 @@ public class KeyHelpDialog
 		Font sectionFont = new Font("Arial", Font.BOLD, 14);
 		Font descFont = new Font("Arial", Font.PLAIN, 12);
 		Font keyFont = new Font("Arial", Font.BOLD, 12);
+		Font buttonFont = new Font("Arial", Font.PLAIN, 10);
 		Font noteFont = new Font("Arial", Font.ITALIC, 10);
 		this.defaultStatusText = "Use the \"Edit Bindings\" button to change bindings.";
 		this.statusLabel = new JLabel(defaultStatusText);
@@ -362,7 +367,7 @@ public class KeyHelpDialog
 
 			c.gridx = 1;
 			c.anchor = GridBagConstraints.WEST;
-			KeyPanel indPanel = new KeyPanel(this, keyFont, key, bound_key);
+			KeyPanel indPanel = new KeyPanel(this, keyFont, buttonFont, key, bound_key);
 			addComponent(keyPanel, indPanel, c, keyLayout);
 			keyPanels.add(indPanel);
 
@@ -682,6 +687,20 @@ public class KeyHelpDialog
 		this.requestFocus();
 		this.setFocusTraversalKeysEnabled(false);
 		this.statusLabel.setText("Choose a new key, or  use the Cancel button to cancel.");
+	}
+	/**
+	 * Called by one of our KeyPanels, this notifies the main dialog that
+	 * the "unbind" button for the current key was clicked.
+	 */
+	public void notifyUnbindClicked(KeyPanel keypanel)
+	{
+		if (this.curKeyPanel != null)
+		{
+			this.curKeyPanel.setBoundKey(Keyboard.KEY_NONE);
+			this.setEnterKey = false;
+			this.setEscapeKey = false;
+		}
+		this.stopKeySet();
 	}
 	
 	/**
