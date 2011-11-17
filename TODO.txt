@@ -11,8 +11,6 @@
  
  * Draw messages on signs like you'd expect.
  
- * GUI to set custom ore highlights
- 
  * Find a way to eliminate the stuttering when new map chunks are loading
  
  * Home/End will wipe the minimap and load chunks, even if we're already

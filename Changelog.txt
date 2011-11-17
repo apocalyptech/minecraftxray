@@ -5,6 +5,8 @@
   * Added new Beta 1.9-pre6 block definition: Dragon Egg
   * The "O" key can now be used to open a new map without having to quit
     X-Ray and start over.
+  * The "]" (right bracket) key can be used to change which block types
+    are highlighted.
   * Slime-spawn highlighting will only display in the Overworld
   * Slime-spawn highlighting will go up to y=40, as per Beta 1.9-pre5
   * (internal) update to LWJGL 2.8.2

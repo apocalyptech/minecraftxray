@@ -49,73 +49,6 @@ minecraft_xray.exe or minecraft_xray.bat.
 Linux and OSX users should be able to doubleclick on either minecraft_xray.sh
 or minecraft_xray_osx.command (the files are actually identical).
 
-PROPERTIES FILE
----------------
-
-When X-Ray starts up for the first time, it will write out a properties file
-which you can edit if you want to change the keybindings or which resources
-are available for highlighting.  This will be installed essentially right
-alongside the ".minecraft" directory that Minecraft itself uses.
-
-File locations:
-
-    Windows: %appdata%\.minecraft_xray\xray.properties
-    OSX: ~/Library/Application Support/.minecraft_xray/xray.properties
-    Linux: ~/.minecraft_xray/xray.properties 
-
-This is just a text file, and the format should be fairly obvious.  For the
-keyboard mappings, you should use the key names found at the LWJGL site:
-
-    http://www.lwjgl.org/javadoc/constant-values.html#org.lwjgl.input.Keyboard.KEY_1
-
-But without the "KEY_" prefix.
-
-You can also set which resources you want to be highlightable in the app.
-For specifying resource highlights, you should use the following names:
-
-    BED                     GRASS                  REDSTONE_REPEATER_OFF
-    BEDROCK                 GRAVEL                 REDSTONE_REPEATER_ON
-    BOOKSHELF               HUGE_BROWN_MUSHROOM    REDSTONE_TORCH_OFF
-    BREWING_STAND           HUGE_RED_MUSHROOM      REDSTONE_TORCH_ON
-    BRICK                   ICE                    REDSTONE_WIRE
-    BRICK_STAIRS            IRON_BARS              RED_MUSHROOM
-    BROWN_MUSHROOM          IRON_BLOCK             RED_ROSE
-    BURNING_FURNACE         IRON_DOOR              SAND
-    CACTUS                  IRON_ORE               SANDSTONE
-    CAKE                    JACK_O_LANTERN         SAPLING
-    CAULDRON                JUKEBOX                SIGNPOST
-    CHEST                   LADDER                 SILVERFISH
-    CLAY                    LAPIS_LAZULI_BLOCK     SLAB
-    COAL_ORE                LAPIS_LAZULI_ORE       SNOW
-    COBBLESTONE             LAVA                   SNOW_BLOCK
-    COBBLESTONE_STAIRS      LEAVES                 SOUL_SAND
-    CROPS                   LEVER                  SPONGE
-    DEAD_SHRUB              LILY_PAD               STATIONARY_LAVA
-    DETECTOR_RAIL           MELON                  STATIONARY_WATER
-    DIAMOND_BLOCK           MELON_STEM             STONE
-    DIAMOND_ORE             MINECART_TRACKS        STONE_BRICK
-    DIRT                    MOB_SPAWNER            STONE_BRICK_STAIRS
-    DISPENSER               MOSSY_COBBLESTONE      STONE_BUTTON
-    DOUBLE_SLAB             MYCELIUM               STONE_PRESSURE_PLATE
-    DRAGON_EGG              NETHER_BRICK           SUGARCANE
-    ENCHANTMENT_TABLE       NETHER_FENCE           TALL_GRASS
-    END_PORTAL              NETHER_STAIRS          TNT
-    END_PORTAL_FRAME        NETHER_WART            TORCH
-    END_STONE               NETHERRACK             TRAPDOOR
-    FARMLAND                NOTE_BLOCK             VINE
-    FENCE                   OBSIDIAN               WALL_SIGN
-    FENCE_GATE              PISTON_BODY            WATER
-    FIRE                    PISTON_HEAD            WEB
-    FURNACE                 PISTON_STICKY_BODY     WOOD
-    GLASS                   PLANK                  WOODEN_DOOR
-    GLASS_PANE              PORTAL                 WOODEN_PRESSURE_PLATE
-    GLOWING_REDSTONE_ORE    POWERED_RAIL           WOODEN_STAIRS
-    GLOWSTONE               PUMPKIN                WOOL
-    GOLD_BLOCK              PUMPKIN_STEM           WORKBENCH
-    GOLD_ORE                REDSTONE_ORE           YELLOW_FLOWER
-
-Perhaps someday there'll be an actual GUI for specifying all this.
-
 KEYS
 ----
 
@@ -166,6 +99,7 @@ overridden, though.  The default keybindings are as follows:
         Show large map:          TAB
         Release Mouse:           ESC
         Show Keyboard Reference: Y
+        Change Block Highlights: ] (right bracket)
         Quit:                    CTRL-Q
 
 EXTRA BLOCK DEFINITIONS
@@ -196,9 +130,8 @@ it was able to load on the opening dialog.  If your file doesn't show up
 in the list, there's probably an error in it - you should be able to
 find that error in the file minecraft_xray_output_log.txt in the root
 X-Ray directory.  Linux and OSX users (and Windows users who use the .BAT
-file instead of the .EXE) will see the errors on the console X-Ray was
-launched from, as well.
-
+file instead of the .EXE) will see the errors on the console from which
+X-Ray was launched, as well.
 
 RENDERING DETAILS
 -----------------
@@ -347,3 +280,18 @@ Note that this *will* work for files specified in custom block definition
 files (as described above).  For instance, if you're using Aethermod and want
 to override the "Icestone.png" file, you'd put your own Icestone.png file into
 .minecraft_xray/textures/aether/blocks/Icestone.png.
+
+PROPERTIES FILE
+---------------
+
+X-Ray keeps a properties file at the following location, essentially right alongside
+the ".minecraft" directory that Minecraft itself uses:
+
+    Windows: %appdata%\.minecraft_xray\xray.properties
+    OSX: ~/Library/Application Support/.minecraft_xray/xray.properties
+    Linux: ~/.minecraft_xray/xray.properties 
+
+As of X-Ray 3.5.0, all settings in this file can be set using the GUI, so there
+shouldn't be any reason to edit it by hand.  If you do want to edit it by hand,
+though, feel free - it's just a text file.  For some more information on the
+various constants used, see: http://apocalyptech.com/minecraft/xray/config.php
