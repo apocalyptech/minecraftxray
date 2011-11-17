@@ -88,7 +88,7 @@ public class MinecraftConstants {
 		HALFHEIGHT,
 		CAKE,
 		BED,
-		THINSLICE,
+		SNOW,
 		DOOR,
 		STAIRS,
 		SIGNPOST,

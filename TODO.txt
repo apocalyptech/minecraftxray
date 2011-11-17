@@ -46,8 +46,7 @@
  
  * Pull the grass colorization color from a point on misc/grasscolor.png
 
- * Snow has data, as it turns out...  Also, fix snow rendering in general so that it's
-   less stupid.
+ * Snow has data, as it turns out...
 
  * Figure out why loading in nonexistant chunks seems to glitch the app so much
 

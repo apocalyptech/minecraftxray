@@ -1813,28 +1813,56 @@ public class Chunk {
 	}
 
 	/**
-	 * Renders a thin slice of something on the ground (used for snow currently).  Practically
-	 * the same as renderPlate actually, just wider and a bit taller
+	 * Renders snow (the naturally-ocurring snow, not crafted snow blocks)
+	 *
+	 * TODO: Technically this has data, but I don't feel like getting the sides
+	 * to render properly.
 	 * 
 	 * @param textureId
 	 * @param xxx
 	 * @param yyy
 	 * @param zzz
+	 * @param blockOffset Should be passed in from our main draw loop so we don't have to recalculate
 	 */
-	public void renderThinslice(int textureId, int xxx, int yyy, int zzz) {
+	public void renderSnow(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
-		float radius = 0.48f;
+		float edge = 0.5f;
+		float top = -.375f;
+		float height = .125f;
+		short adj;
 		
 		// The top face
-		this.renderHorizontal(textureId, x+radius, z+radius, x-radius, z-radius, y-0.38f);
+		this.renderHorizontal(textureId, x+edge, z+edge, x-edge, z-edge, y+top);
 		
-		// Sides
-		this.renderVertical(textureId, x+radius, z+radius, x+radius, z-radius, y-0.48f, 0.1f);
-		this.renderVertical(textureId, x-radius, z+radius, x-radius, z-radius, y-0.48f, 0.1f);
-		this.renderVertical(textureId, x+radius, z+radius, x-radius, z+radius, y-0.48f, 0.1f);
-		this.renderVertical(textureId, x+radius, z-radius, x-radius, z-radius, y-0.48f, 0.1f);
+		// East
+		adj = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != blockId && !isSolid(adj))
+		{
+			this.renderVertical(textureId, x+edge, z+edge, x+edge, z-edge, y-.5f, height, 16, 2, 0, 14);
+		}
+
+		// West
+		adj = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != blockId && !isSolid(adj))
+		{
+			this.renderVertical(textureId, x-edge, z+edge, x-edge, z-edge, y-.5f, height, 16, 2, 0, 14);
+		}
+
+		// South
+		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != blockId && !isSolid(adj))
+		{
+			this.renderVertical(textureId, x+edge, z+edge, x-edge, z+edge, y-.5f, height, 16, 2, 0, 14);
+		}
+
+		// North
+		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		if (adj != blockId && !isSolid(adj))
+		{
+			this.renderVertical(textureId, x+edge, z-edge, x-edge, z-edge, y-.5f, height, 16, 2, 0, 14);
+		}
 	}
 
 	/**
@@ -2700,6 +2728,7 @@ public class Chunk {
 	 * @param yyy
 	 * @param zzz
 	 * @param blockOffset Should be passed in from our main draw loop so we don't have to recalculate
+	 * @param blockId The block ID we match on, to find out how to link up
 	 */
 	public void renderPortal(int textureId, int xxx, int yyy, int zzz, int blockOffset, int blockId) {
 		float x = xxx + this.x*16;
@@ -4356,8 +4385,8 @@ public class Chunk {
 								case PORTAL:
 									renderPortal(textureId,x,y,z,blockOffset,t);
 									break;
-								case THINSLICE:
-									renderThinslice(textureId,x,y,z);
+								case SNOW:
+									renderSnow(textureId,x,y,z,blockOffset,t);
 									break;
 								case BED:
 									renderBed(textureId,x,y,z,block,tex_offset);
