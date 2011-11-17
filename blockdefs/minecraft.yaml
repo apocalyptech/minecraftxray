@@ -296,18 +296,21 @@ blocks:
   - id: 8
     idStr: WATER
     name: Water
+    aka: Water (Moving)
     mapcolor: [38, 92, 255]
     type: WATER
   
   - id: 9
     idStr: STATIONARY_WATER
     name: Water
+    aka: Water (Stationary)
     mapcolor: [38, 92, 255]
     type: WATER
   
   - id: 10
     idStr: LAVA
     name: Lava
+    aka: Lava (Moving)
     mapcolor: [255, 90, 0]
     tex: [15, 14]
     type: SEMISOLID
@@ -315,6 +318,7 @@ blocks:
   - id: 11
     idStr: STATIONARY_LAVA
     name: Lava
+    aka: Lava (Stationary)
     mapcolor: [255, 90, 0]
     tex: [15, 14]
     type: SEMISOLID
@@ -334,12 +338,14 @@ blocks:
   - id: 14
     idStr: GOLD_ORE
     name: Gold
+    aka: Gold Ore
     mapcolor: [143, 140, 125]
     tex: [0, 2]
   
   - id: 15
     idStr: IRON_ORE
     name: Iron
+    aka: Iron Ore
     mapcolor: [136, 130, 127]
     tex: [1, 2]
   
@@ -422,6 +428,7 @@ blocks:
   - id: 25
     idStr: NOTE_BLOCK
     name: Note
+    aka: Note Block
     mapcolor: [114, 88, 56]
     tex: [10, 4]
   
@@ -540,6 +547,7 @@ blocks:
   - id: 37
     idStr: YELLOW_FLOWER
     name: Flower
+    aka: Yellow Flower
     mapcolor: [255, 255, 0]
     tex: [13, 0]
     type: DECORATION_CROSS
@@ -555,6 +563,7 @@ blocks:
   - id: 39
     idStr: BROWN_MUSHROOM
     name: Mushroom
+    aka: Brown Mushroom
     mapcolor: [145, 109, 85]
     tex: [13, 1]
     type: DECORATION_CROSS
@@ -562,6 +571,7 @@ blocks:
   - id: 40
     idStr: RED_MUSHROOM
     name: Mushroom
+    aka: Red Mushroom
     mapcolor: [226, 18, 18]
     tex: [12, 1]
     type: DECORATION_CROSS
@@ -569,12 +579,14 @@ blocks:
   - id: 41
     idStr: GOLD_BLOCK
     name: Gold
+    aka: Gold Block
     mapcolor: [231, 165, 45]
     tex: [7, 1]
   
   - id: 42
     idStr: IRON_BLOCK
     name: Iron
+    aka: Iron Block
     mapcolor: [191, 191, 191]
     tex: [6, 1]
   
@@ -671,6 +683,7 @@ blocks:
   - id: 53
     idStr: WOODEN_STAIRS
     name: Stairs
+    aka: Wooden Stairs
     mapcolor: [157, 128, 79]
     tex: [4, 0]
     type: STAIRS
@@ -692,6 +705,7 @@ blocks:
   - id: 55
     idStr: REDSTONE_WIRE
     name: Wire
+    aka: Redstone Wire
     mapcolor: [245, 50, 50]
     tex: [4, 10]
     type: FLOOR
@@ -699,12 +713,14 @@ blocks:
   - id: 56
     idStr: DIAMOND_ORE
     name: Diamond
+    aka: Diamond Ore
     mapcolor: [129, 140, 143]
     tex: [2, 3]
   
   - id: 57
     idStr: DIAMOND_BLOCK
     name: Diamond
+    aka: Diamond Block
     mapcolor: [45, 166, 152]
     tex: [8, 1]
   
@@ -751,7 +767,7 @@ blocks:
   - id: 61
     idStr: FURNACE
     name: Furnace
-    aka: Stove
+    aka: Stove (unused)
     mapcolor: [96, 96, 96]
     tex: [12, 2]
     tex_direction:
@@ -765,7 +781,7 @@ blocks:
   - id: 62
     idStr: BURNING_FURNACE
     name: Furnace
-    aka: Stove
+    aka: Stove (burning)
     mapcolor: [96, 96, 96]
     tex: [13, 3]
     tex_direction:
@@ -779,6 +795,7 @@ blocks:
   - id: 63
     idStr: SIGNPOST
     name: Sign
+    aka: Signpost
     mapcolor: [111, 91, 54]
     tex: [4, 0]
     type: SIGNPOST
@@ -786,6 +803,7 @@ blocks:
   - id: 64
     idStr: WOODEN_DOOR
     name: Door
+    aka: Wooden Door
     mapcolor: [136, 109, 67]
     tex: [1, 5]
     type: DOOR
@@ -812,6 +830,7 @@ blocks:
   - id: 67
     idStr: COBBLESTONE_STAIRS
     name: Stairs
+    aka: Cobblestone Stairs
     mapcolor: [115, 115, 115]
     tex: [0, 1]
     type: STAIRS
@@ -819,6 +838,7 @@ blocks:
   - id: 68
     idStr: WALL_SIGN
     name: Sign
+    aka: Wall Sign
     mapcolor: [111, 91, 54]
     tex: [4, 0]
     type: WALLSIGN
@@ -844,6 +864,7 @@ blocks:
   - id: 71
     idStr: IRON_DOOR
     name: Door
+    aka: Iron Door
     mapcolor: [191, 191, 191]
     tex: [2, 5]
     type: DOOR
@@ -867,12 +888,14 @@ blocks:
   - id: 74
     idStr: GLOWING_REDSTONE_ORE
     name: Redstone
+    aka: Glowing Redstone
     mapcolor: [131, 107, 107]
     tex: [3, 3]
   
   - id: 75
     idStr: REDSTONE_TORCH_OFF
     name: Torch
+    aka: Redstone Torch (off)
     mapcolor: [181, 140, 64]
     tex: [3, 7]
     type: TORCH
@@ -881,6 +904,7 @@ blocks:
   - id: 76
     idStr: REDSTONE_TORCH_ON
     name: Torch
+    aka: Redstone Torch (on)
     mapcolor: [255, 0, 0]
     tex: [3, 6]
     type: TORCH
@@ -910,6 +934,7 @@ blocks:
   - id: 80
     idStr: SNOW_BLOCK
     name: Snow
+    aka: Snow Block
     mapcolor: [250, 250, 250]
     tex: [2, 4]
   
@@ -993,6 +1018,7 @@ blocks:
   - id: 91
     idStr: JACK_O_LANTERN
     name: Jack
+    aka: Jack O Lantern
     mapcolor: [249, 255, 58]
     explored: true
     tex: [8, 7]
@@ -1059,6 +1085,7 @@ blocks:
   - id: 99
     idStr: HUGE_BROWN_MUSHROOM
     name: Mushroom
+    aka: Huge Brown Mushroom
     mapcolor: [145, 109, 85]
     tex: [14, 7]
     type: HUGE_MUSHROOM
@@ -1069,6 +1096,7 @@ blocks:
   - id: 100
     idStr: HUGE_RED_MUSHROOM
     name: Mushroom
+    aka: Huge Red Mushroom
     mapcolor: [181, 29, 27]
     tex: [13, 7]
     type: HUGE_MUSHROOM
@@ -1135,6 +1163,7 @@ blocks:
   - id: 108
     idStr: BRICK_STAIRS
     name: Stairs
+    aka: Brick Stairs
     mapcolor: [170, 86, 62]
     tex: [7, 0]
     type: STAIRS
@@ -1142,6 +1171,7 @@ blocks:
   - id: 109
     idStr: STONE_BRICK_STAIRS
     name: Stairs
+    aka: Stone Brick Stairs
     mapcolor: [120, 120, 120]
     tex: [6, 3]
     type: STAIRS
@@ -1179,7 +1209,8 @@ blocks:
 
   - id: 114
     idStr: NETHER_STAIRS
-    name: Nether Stairs
+    name: Stairs
+    aka: Nether Stairs
     mapcolor: [54, 24, 30]
     tex: [0, 14]
     type: STAIRS
@@ -1199,6 +1230,7 @@ blocks:
   - id: 116
     idStr: ENCHANTMENT_TABLE
     name: Table
+    aka: Enchantment Table
     mapcolor: [88, 23, 22]
     tex: [6, 10]
     type: ENCHANTMENT_TABLE
@@ -1217,7 +1249,7 @@ blocks:
 
   - id: 118
     idStr: CAULDRON
-    name: CAULDRON
+    name: Cauldron
     mapcolor: [79, 79, 79]
     tex: [10, 9]
     type: CAULDRON
