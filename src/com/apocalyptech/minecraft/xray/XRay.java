@@ -270,6 +270,7 @@ public class XRay
 	// vars to keep track of our current chunk coordinates
 	private int cur_chunk_x = 0;
 	private int cur_chunk_z = 0;
+	private boolean first_run = true;
 	private boolean initial_load_done = false;
 	private boolean initial_load_queued = false;
 
@@ -729,7 +730,10 @@ public class XRay
 					}
 
 					GL11.glEnable(GL11.GL_BLEND);
-					this.drawBgBox(boxBx, boxBy, boxWidth, boxHeight, false);
+					if (!first_run)
+					{
+						this.drawBgBox(boxBx, boxBy, boxWidth, boxHeight, false);
+					}
 					GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 					GL11.glLineWidth(20);
 
@@ -788,6 +792,7 @@ public class XRay
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			setOrthoOff();
+			first_run = false;
 		}
 		initial_load_done = true;
 	}
