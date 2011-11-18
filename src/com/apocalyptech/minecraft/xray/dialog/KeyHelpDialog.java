@@ -842,6 +842,19 @@ public class KeyHelpDialog
 				{
 					this.setEscapeKey = true;
 				}
+
+				// Also, loop through all other KeyPanels to see if we have
+				// the same key bound to something else.  If so, set it to NONE.
+				for (KeyPanel panel : this.keyPanels)
+				{
+					if (panel != curKeyPanel)
+					{
+						if (panel.getBoundKey() == key)
+						{
+							panel.setBoundKey(Keyboard.KEY_NONE);
+						}
+					}
+				}
 			}
 			this.stopKeySet();
 		}
