@@ -31,8 +31,6 @@
    with doing things the "right way."  The code could use cleanup in general.  Also
    I think most of the files are still using DOS line-endings.
  
- * Hotkey to re-open the "Open" dialog and load a new world
- 
  * And, of course, completing the mod support - UI to select extra mod files, etc.
    "override" to explicitly override a previously-defined blocktype (this is
    technically in there already but completely untested), "version" so that people
@@ -64,8 +62,6 @@
 
  * One of these days I need to just break down and start using some GUI library
    like TWL, rather than calling out to AWT windows.  Alas.
-
- * Shadow for various text (ore highlights on bottom of screen, "loading" text)
 
  * It's entirely possible I should be calling .dispose() on Graphics2D objects
    I don't need anymore, and vice-versa.  Possibly cut back on memory a bit?
