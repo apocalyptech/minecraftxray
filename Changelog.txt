@@ -12,6 +12,8 @@
   * Cleaned up snow rendering
   * Added a visual tint around the ore highlight toggle indicators,
     making them far easier to read in many circumstances.
+  * Resolutions with less than 800px of horizontal resolution have been
+    disabled.
   * (internal) update to LWJGL 2.8.2
   * (internal) removed quite a few unneeded LWJGL Jar files
 

@@ -705,6 +705,12 @@ public class ResolutionDialog extends JFrame {
 			DisplayMode[] modes = Display.getAvailableDisplayModes();
 		
 			for(DisplayMode mode : modes) {
+				// Skip any modes with less than 800px horizontal resolution.  X-Ray doesn't
+				// even really render *that* very well, much less anything below that.
+				if (mode.getWidth() < 800)
+				{
+					continue;
+				}
 				IntegerPair modePair = new IntegerPair(mode.getWidth(), mode.getHeight());
 				
 				// Mark that we've seen our fallback resolution if it exists
