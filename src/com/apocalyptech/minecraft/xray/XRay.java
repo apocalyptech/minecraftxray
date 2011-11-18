@@ -60,6 +60,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 import org.lwjgl.Sys;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -142,6 +143,9 @@ public class XRay
 	private Texture minimapTexture;
 	private Texture minimapArrowTexture;
 	private Graphics2D minimapGraphics;
+
+	// Texture for screenshots
+	public Texture screenshotTexture;
 
 	public enum HIGHLIGHT_TYPE
 	{
@@ -703,12 +707,30 @@ public class XRay
 				{
 					float progress = ((float) counter / (float) total);
 
+					// TODO: Some duplicated code here, in takeLoadingBoxScreenshot()
 					float bx = 100;
 					float ex = screenWidth - 100;
 					float by = (screenHeight / 2.0f) - 50;
 					float ey = (screenHeight / 2.0f) + 50;
 
 					float px = ((ex - bx) * progress) + bx;
+
+					float boxBx = bx - 20;
+					float boxBy = by - 120;
+					int boxWidth = (int)ex-(int)bx+40;
+					int boxHeight = 300;
+
+					if (this.screenshotTexture != null)
+					{
+						GL11.glEnable(GL11.GL_TEXTURE_2D);
+						SpriteTool.drawSpriteAbsoluteXY(this.screenshotTexture, boxBx, boxBy);
+						GL11.glDisable(GL11.GL_TEXTURE_2D);
+					}
+
+					GL11.glEnable(GL11.GL_BLEND);
+					this.drawBgBox(boxBx, boxBy, boxWidth, boxHeight, false);
+					GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+					GL11.glLineWidth(20);
 
 					// progress bar outer box
 					GL11.glBegin(GL11.GL_LINE_LOOP);
@@ -1344,8 +1366,53 @@ public class XRay
 
 	}
 
+	/**
+	 * Take a screenshot of our current map, so that we can draw it "behind"
+	 * our loading map dialog.  This is a bit silly, really, but I do think it
+	 * looks nicer.
+	 * TODO: Duplicated code from loadPendingChunks()
+	 * TODO: For some reason "boxBy" here has to be 40 pixels larger than its
+	 * equivalent inside loadPendingChunks()
+	 */
+	private void takeLoadingBoxScreenshot()
+	{
+		float bx = 100;
+		float ex = screenWidth - 100;
+		float by = (screenHeight / 2.0f) - 50;
+		float boxBx = bx - 20;
+		float boxBy = by - 80;
+		int boxWidth = (int)ex-(int)bx+40;
+		int boxHeight = 300;
+
+		GL11.glReadBuffer(GL11.GL_FRONT);
+		ByteBuffer buffer = BufferUtils.createByteBuffer(boxWidth * boxHeight * 4);
+		GL11.glReadPixels((int)boxBx, (int)boxBy, boxWidth, boxHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+		BufferedImage screenshotImage = new BufferedImage(boxWidth, boxHeight, BufferedImage.TYPE_INT_RGB);
+		for(int x = 0; x < boxWidth; x++)
+		{
+			for(int y = 0; y < boxHeight; y++)
+			{
+				int i = (x + (boxWidth * y)) * 4;
+				int rVal = buffer.get(i) & 0xFF;
+				int gVal = buffer.get(i + 1) & 0xFF;
+				int bVal = buffer.get(i + 2) & 0xFF;
+				screenshotImage.setRGB(x, boxHeight - (y + 1), (0xFF << 24) | (rVal << 16) | (gVal << 8) | bVal);
+			}
+		}
+		try
+		{
+			this.screenshotTexture = TextureTool.allocateTexture(screenshotImage, GL11.GL_NEAREST);
+			this.screenshotTexture.update();
+		}
+		catch (IOException e)
+		{
+			this.screenshotTexture = null;
+		}
+	}
+
 	private void moveCameraToPosition(CameraPreset playerPos)
 	{
+		this.takeLoadingBoxScreenshot();
 		this.camera.getPosition().set(playerPos.block.x, playerPos.block.y, playerPos.block.z);
 		this.camera.setYawAndPitch(180 + playerPos.yaw, playerPos.pitch);
 		initial_load_queued = false;
@@ -2062,6 +2129,9 @@ public class XRay
 			return;
 		}
 
+		// Grab a screenshot of our current screen
+		this.takeLoadingBoxScreenshot();
+
 		// Now, do the actual change.
 		float camera_mult = 1.0f;
 		if (world.isDimension(-1))
@@ -2676,7 +2746,7 @@ public class XRay
 		SpriteTool.drawCurrentSprite(0, 48, renderDetails_w, cur_renderDetails_h, 0, 0, renderDetails_w / 256f, cur_renderDetails_h / 256f);
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 	}
-
+	
 	/**
 	 * Draws a 2d GL box over which we can show some info which might be
 	 * difficult to make out otherwise (used for our ore highlights,
@@ -2689,8 +2759,27 @@ public class XRay
 	 */
 	private void drawBgBox(float bgX, float bgY, float bgWidth, float bgHeight)
 	{
+		this.drawBgBox(bgX, bgY, bgWidth, bgHeight, true);
+	}
+
+	/**
+	 * Draws a 2d GL box over which we can show some info which might be
+	 * difficult to make out otherwise (used for our ore highlights,
+	 * "loading" messages, etc).
+	 *
+	 * @param bgX X coordinate to draw to
+	 * @param bgY Y coordinate to draw to
+	 * @param bgWidth Width of the box
+	 * @param bgHeight Height of the box
+	 * @param flipTex Whether to toggle 2D Textures or not
+	 */
+	private void drawBgBox(float bgX, float bgY, float bgWidth, float bgHeight, boolean flipTex)
+	{
 		GL11.glColor4f(0f, 0f, 0f, .6f);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		if (flipTex)
+		{
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+		}
 		GL11.glPushMatrix();
 		GL11.glTranslatef(bgX, bgY, 0.0f);
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
@@ -2708,7 +2797,10 @@ public class XRay
 		GL11.glVertex2f(0, bgHeight);
 		GL11.glEnd();
 		GL11.glPopMatrix();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		if (flipTex)
+		{
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+		}
 	}
 
 	/***
