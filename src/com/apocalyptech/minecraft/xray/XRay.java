@@ -291,6 +291,7 @@ public class XRay
 	private XRayProperties xray_properties;
 
 	public boolean jump_dialog_trigger = false;
+	public int open_dialog_trigger = 0;
 
 	public static HashMap<Integer, TextureDecorationStats> decorationStats;
 
@@ -1430,9 +1431,15 @@ public class XRay
 			Mouse.setGrabbed(true);
 			return;
 		}
+		this.open_dialog_trigger = 1;
+	}
 
+
+	private void openNewMap()
+	{
 		this.selectedWorld = ResolutionDialog.selectedWorld;
 		this.savePreferences();
+		this.open_dialog_trigger = 0;
 
 		// A full reinitialization is kind of overkill, but whatever.
 		// TODO: code duplicated from switchDimension
@@ -2065,10 +2072,30 @@ public class XRay
 			done = true;
 		}
 
-		// and finally, check to see if we should be jumping to a new position
+		// check to see if we should be jumping to a new position
 		if (this.jump_dialog_trigger)
 		{
 			moveCameraToArbitraryPosition();
+		}
+
+		// Also check to see if we should be opening a new map.  This is
+		// incredibly hokey...  We're using a counter-like var here only because
+		// we started doing that highlight "BgBox" thing around our text, for
+		// readability, and the bit which takes a screenshot in order to make
+		// it look nice and pretty would otherwise end up getting the Open dialog
+		// in with the screenshot, which looks ugly.  This way, we know that there's
+		// been one rendering pass since the dialog was closed, so it'll look nicer.
+		// Ah, vanity!
+		if (this.open_dialog_trigger > 0)
+		{
+			if (this.open_dialog_trigger == 2)
+			{
+				openNewMap();
+			}
+			else
+			{
+				this.open_dialog_trigger += 1;
+			}
 		}
 	}
 
