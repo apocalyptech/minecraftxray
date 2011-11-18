@@ -1092,7 +1092,7 @@ public class XRay
 			Graphics2D g = mineralToggleTextures[i].getImage().createGraphics();
 			g.setFont(ARIALFONT);
 			g.setColor(Color.white);
-			g.drawString("[F" + (i + 1) + "] " + blockArray[HIGHLIGHT_ORES[i]].name, 10, 16);
+			g.drawString("[F" + (i + 1) + "] " + blockArray[HIGHLIGHT_ORES[i]].name, 0, 16);
 			mineralToggleTextures[i].update();
 		}
 		this.regenerateOreHighlightTexture = false;
@@ -2677,6 +2677,40 @@ public class XRay
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1f);
 	}
 
+	/**
+	 * Draws a 2d GL box over which we can show some info which might be
+	 * difficult to make out otherwise (used for our ore highlights,
+	 * "loading" messages, etc).
+	 *
+	 * @param bgX X coordinate to draw to
+	 * @param bgY Y coordinate to draw to
+	 * @param bgWidth Width of the box
+	 * @param bgHeight Height of the box
+	 */
+	private void drawBgBox(float bgX, float bgY, float bgWidth, float bgHeight)
+	{
+		GL11.glColor4f(0f, 0f, 0f, .6f);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glPushMatrix();
+		GL11.glTranslatef(bgX, bgY, 0.0f);
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+		GL11.glVertex2f(0, 0);
+		GL11.glVertex2f(bgWidth, 0);
+		GL11.glVertex2f(0, bgHeight);
+		GL11.glVertex2f(bgWidth, bgHeight);
+		GL11.glEnd();
+		GL11.glColor4f(.4f, .4f, .4f, .9f);
+		GL11.glLineWidth(2);
+		GL11.glBegin(GL11.GL_LINE_LOOP);
+		GL11.glVertex2f(0, 0);
+		GL11.glVertex2f(bgWidth, 0);
+		GL11.glVertex2f(bgWidth, bgHeight);
+		GL11.glVertex2f(0, bgHeight);
+		GL11.glEnd();
+		GL11.glPopMatrix();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+	}
+
 	/***
 	 * Draw the mineral toggles
 	 */
@@ -2700,6 +2734,13 @@ public class XRay
 		{
 			curY -= barHeight;
 		}
+
+		// These are hard to read if we don't put a box behind 'em
+		float bgPadding = 10f;
+		this.drawBgBox(curX - bgPadding,
+				curY - bgPadding,
+				mineralTogglebarLength + (2f*bgPadding),
+				(barHeight * 2f) + bgPadding);
 
 		for (int i = 0; i < mineralToggleTextures.length; i++)
 		{
