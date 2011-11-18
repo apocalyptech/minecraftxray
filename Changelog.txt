@@ -1,12 +1,14 @@
+Minecraft X-Ray 3.5.0 (2011.11.18)
+
   * Dialog to change keybindings in-game, courtesy Eleazar Vega-Gonzalez
     and Saxon Parker.
-  * Renamed ENDER_PORTAL and ENDER_PORTAL_FRAME to END_PORTAL and
-    END_PORTAL_FRAME
-  * Added new Beta 1.9-pre6 block definition: Dragon Egg
   * The "O" key can now be used to open a new map without having to quit
     X-Ray and start over.
   * The "]" (right bracket) key can be used to change which block types
     are highlighted.
+  * Added new Beta 1.9-pre6 block definition: Dragon Egg
+  * Renamed ENDER_PORTAL and ENDER_PORTAL_FRAME to END_PORTAL and
+    END_PORTAL_FRAME
   * Slime-spawn highlighting will only display in the Overworld
   * Slime-spawn highlighting will go up to y=40, as per Beta 1.9-pre5
   * Cleaned up snow rendering
