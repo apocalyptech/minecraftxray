@@ -339,9 +339,6 @@ public class BlockBindChooserDialog
 		this.clickedButton = null;
 
 		// Now continue
-		if(BlockBindChooserDialog.iconImage != null)
-			this.setIconImage(BlockBindChooserDialog.iconImage);
-		
 		this.setSize(FRAMEWIDTH,FRAMEHEIGHT);
 		this.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		this.addWindowListener(new WindowListener() {
