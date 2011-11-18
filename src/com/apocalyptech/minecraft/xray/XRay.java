@@ -1963,16 +1963,6 @@ public class XRay
 					// Toggle between dimenaions
 					switchDimension(-1);
 				}
-				else if (key == key_mapping.get(KEY_ACTION.KEY_HELP))
-				{
-					// Launch the dialog
-					launchKeyHelpDialog();
-				}
-				else if (key == key_mapping.get(KEY_ACTION.SET_ORE_BINDS))
-				{
-					// Launch the ore-binding dialog
-					launchBlockBindDialog();
-				}
 				else if (key == key_mapping.get(KEY_ACTION.RELEASE_MOUSE))
 				{
 					// Release the mouse
@@ -2061,6 +2051,16 @@ public class XRay
 				{
 					// Launch a New Map dialog
 					launchNewMapDialog();
+				}
+				else if (key == key_mapping.get(KEY_ACTION.KEY_HELP))
+				{
+					// Launch the dialog
+					launchKeyHelpDialog();
+				}
+				else if (key == key_mapping.get(KEY_ACTION.SET_ORE_BINDS))
+				{
+					// Launch the ore-binding dialog
+					launchBlockBindDialog();
 				}
 			}
 		}
