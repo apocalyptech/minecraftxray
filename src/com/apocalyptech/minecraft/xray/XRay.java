@@ -652,7 +652,7 @@ public class XRay
 			Rectangle2D bounds = HEADERFONT.getStringBounds(statusmessage, g.getFontRenderContext());
 			g.setFont(HEADERFONT);
 			g.setColor(Color.white);
-			g.drawString(statusmessage, (1024 / 2) - ((float) bounds.getWidth() / 2), 40f);
+			g.drawString(statusmessage, (Display.getWidth() / 2) - ((float) bounds.getWidth() / 2), 40f);
 			loadingTextTexture.update();
 		}
 
