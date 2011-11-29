@@ -126,7 +126,7 @@ public class ResolutionDialog extends JFrame {
 	private static final int FRAMEWIDTH = 450;
 	private static final int FRAMEHEIGHT = 600;
 	private static final int[][] defaultPreferredResolutions = 
-		new int[][] {{1920,1080},{1600,900},{1280,720},{1024, 768}, {800, 600}, {666, 666}, {1280,1024}};
+		new int[][] {{1920,1080},{1600,900},{1280,720},{1024, 768}, {800, 600}, {1280,1024}};
 	// fallbackResolutions defines resolutions that we'll offer in the dropdown regardless of whether or not
 	// they show up in the list of detected resolutions
 	private static final int[][] fallbackResolutions =
