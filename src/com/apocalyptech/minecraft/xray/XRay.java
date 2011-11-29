@@ -1430,6 +1430,8 @@ public class XRay
 
 	private void launchNewMapDialog()
 	{
+		// Make sure our availableWorlds array has a "clean" "Other" option
+		availableWorlds.set(availableWorlds.size()-1, new WorldInfo());
 		Mouse.setGrabbed(false);
 		if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, xray_properties, false) == ResolutionDialog.DIALOG_BUTTON_EXIT)
 		{
