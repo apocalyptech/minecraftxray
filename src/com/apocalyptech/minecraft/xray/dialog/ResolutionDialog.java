@@ -29,6 +29,7 @@ package com.apocalyptech.minecraft.xray.dialog;
 
 import com.apocalyptech.minecraft.xray.XRay;
 import com.apocalyptech.minecraft.xray.WorldInfo;
+import com.apocalyptech.minecraft.xray.IntegerPair;
 import com.apocalyptech.minecraft.xray.XRayProperties;
 import com.apocalyptech.minecraft.xray.BlockTypeCollection;
 
@@ -181,52 +182,6 @@ public class ResolutionDialog extends JFrame {
 	public static int selectedWorld;
 	
 	public static Image iconImage;
-	
-	/***
-	 * Class holding a pair of two integers where the order is determined
-	 * first by the first integer and when these are equal, by the second
-	 * integer. This is used for holding resolution information
-	 * @author Vincent Vollers
-	 */
-	@SuppressWarnings("rawtypes")
-	private class IntegerPair implements Comparable {
-		private int valueOne;
-		private int valueTwo;
-		
-		public IntegerPair(int valueOne, int valueTwo) {
-			this.valueOne = valueOne;
-			this.valueTwo = valueTwo;
-		}
-		
-		public int getValueOne() {
-			return this.valueOne;
-		}
-		
-		public int getValueTwo() {
-			return this.valueTwo;
-		}
-
-		public int compareTo(Object o) {
-			if(!(o instanceof IntegerPair)) {
-				return -1;
-			}
-			IntegerPair i = (IntegerPair) o;
-			
-			if(i.getValueOne()>valueOne)
-				return 1;
-			
-			if(i.getValueOne()<valueOne)
-				return -1;
-			
-			if(i.getValueTwo()>valueTwo)
-				return 1;
-			
-			if(i.getValueTwo()<valueTwo)
-				return -1;
-
-			return 0;
-		}
-	}
 	
 	/***
 	 * Renders IntegerPairs ("[a] x [b]", so "1024 x 768" for example) 

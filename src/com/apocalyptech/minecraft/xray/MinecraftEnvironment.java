@@ -201,6 +201,14 @@ public class MinecraftEnvironment {
 		}
 		return worlds;
 	}
+
+	/**
+	 * Passthrough to stuff
+	 */
+	public static IntegerPair getClosestRegion(WorldInfo world, int chunkX, int chunkZ)
+	{
+		return RegionFileCache.getClosestRegion(world.getBasePath(), chunkX, chunkZ);
+	}
 	
 	/***
 	 * Returns a file handle to a chunk file in a world.  Will attempt to load
@@ -210,17 +218,17 @@ public class MinecraftEnvironment {
 	 * a mix, so we could be more strict about it, but whatever.
 	 *
 	 * @param world
-	 * @param x
-	 * @param z
+	 * @param chunkX The Chunk X coordinate
+	 * @param chunkZ The Chunk Z coordinate
 	 * @return
 	 */
-	public static DataInputStream getChunkInputStream(WorldInfo world, int x, int z) {
+	public static DataInputStream getChunkInputStream(WorldInfo world, int chunkX, int chunkZ) {
 		if (world.has_region_data)
 		{
-			RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), x, z);
+			RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), chunkX, chunkZ);
 			if (rf != null)
 			{
-				DataInputStream chunk = rf.getChunkDataInputStream(x & 31, z & 31);
+				DataInputStream chunk = rf.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
 				if (chunk != null)
 				{
 					return chunk;
@@ -229,13 +237,13 @@ public class MinecraftEnvironment {
 		}
 		if (!world.is_beta_1_3_level)
 		{
-			int xx = x % 64;
+			int xx = chunkX % 64;
 			if(xx<0) xx = 64+xx;
-			int zz = z % 64;
+			int zz = chunkZ % 64;
 			if(zz<0) zz = 64+zz;
 			String firstFolder 		= Integer.toString(xx, 36);
 			String secondFolder 	= Integer.toString(zz, 36);
-			String filename 		= "c." + Integer.toString(x, 36) + "." + Integer.toString(z, 36) + ".dat";
+			String filename 		= "c." + Integer.toString(chunkX, 36) + "." + Integer.toString(chunkZ, 36) + ".dat";
 			File chunk = new File(world.getBasePath(), firstFolder + "/" + secondFolder + "/" + filename);
 			if (chunk.exists())
 			{

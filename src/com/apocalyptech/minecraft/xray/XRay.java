@@ -138,6 +138,10 @@ public class XRay
 	public Texture loadingTextTexture;
 	public Texture chunkBorderTexture;
 	public Texture slimeChunkTexture;
+	public Texture outOfRangeTexture;
+
+	public double outOfRangeHeight;
+	public double outOfRangeWidth;
 
 	// the textures used by the minimap
 	private Texture minimapTexture;
@@ -1089,6 +1093,19 @@ public class XRay
 			g2d.drawRect(0, 0, slimeChunkWidth-1, slimeChunkWidth-1);
 			slimeChunkTexture = TextureTool.allocateTexture(slimeChunkImage, GL11.GL_NEAREST);
 			slimeChunkTexture.update();
+
+			// Out of Range texture
+			BufferedImage outOfRangeImage = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
+			g2d = outOfRangeImage.createGraphics();
+			String message = "Type whatever to do stuff";
+			Rectangle2D bounds = DETAILVALUEFONT.getStringBounds(message, g2d.getFontRenderContext());
+			outOfRangeHeight = bounds.getHeight();
+			outOfRangeWidth = bounds.getWidth();
+			g2d.setFont(DETAILVALUEFONT);
+			g2d.setColor(new Color(255, 200, 200));
+			g2d.drawString(message, 0, (int)(outOfRangeHeight + 5));
+			outOfRangeTexture = TextureTool.allocateTexture(outOfRangeImage, GL11.GL_NEAREST);
+			outOfRangeTexture.update();
 		}
 		catch (IOException e1)
 		{
@@ -1978,6 +1995,11 @@ public class XRay
 						done = true;
 					}
 				}
+				else if (key == key_mapping.get(KEY_ACTION.JUMP_NEAREST))
+				{
+					// Jump to the nearest actually-loaded chunk
+					jumpToNearestLoaded();
+				}
 				/*
 				else if (key == Keyboard.KEY_P)
 				{
@@ -2190,6 +2212,26 @@ public class XRay
 		this.setMinecraftWorld(newworld, cur_camera);
 		this.updateRenderDetails();
 		this.triggerChunkLoads();
+	}
+
+	/**
+	 * Jump to the nearest chunk that actually has data.  We're playing some stupid games with
+	 * JumpDialog to do this.
+	 * TODO: Stop playing stupid games with JumpDialog.
+	 */
+	private void jumpToNearestLoaded()
+	{
+		IntegerPair coords = MinecraftEnvironment.getClosestRegion(world, currentLevelX, currentLevelZ);
+		if (coords == null)
+		{
+			logger.error("Couldn't find a chunk to jump to for Nearest Chunk match");
+		}
+		else
+		{
+			JumpDialog.selectedX = (coords.getValueOne()*16)+8;
+			JumpDialog.selectedZ = (coords.getValueTwo()*16)+8;
+			this.moveCameraToArbitraryPosition();
+		}
 	}
 
 	private void invalidateSelectedChunks()
@@ -2488,6 +2530,14 @@ public class XRay
 		setLightLevel();
 
 		GL11.glPopMatrix();
+
+		// Stuff
+		if (curChunk == null)
+		{
+			setOrthoOn(); // 2d mode
+			SpriteTool.drawSpriteAbsoluteXY(outOfRangeTexture, 200, 200);
+			setOrthoOff(); // back to 3d mode
+		}
 
 		// draw the user interface (fps and map)
 		drawUI();

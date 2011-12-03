@@ -27,7 +27,6 @@
 package com.apocalyptech.minecraft.xray;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,17 +66,6 @@ public class MinecraftLevel {
 
 	public String levelName;
 	
-    private class RegionFileFilter implements FilenameFilter
-    {
-        public RegionFileFilter() {
-            // Nothing, really
-        }
-
-        public boolean accept(File directory, String filename) {
-            return (filename.endsWith(".mcr"));
-        }
-    }
-
 	/**
 	 * Given a WorldInfo object, return its user-defined name.  There's
 	 * some duplication here from the constructor object, but I think that's
@@ -403,8 +391,14 @@ public class MinecraftLevel {
 		}
 	}
 	
-	public Tag loadChunk(int x, int z) {
-		DataInputStream chunkInputStream = MinecraftEnvironment.getChunkInputStream(world, x,z);
+	/**
+	 * Loads a chunk given the chunk's x and z coordinates (not world coordinates)
+	 *
+	 * @param chunkX The Chunk X coordinate
+	 * @param chunkZ The Chunk Z coordinate
+	 */
+	public Tag loadChunk(int chunkX, int chunkZ) {
+		DataInputStream chunkInputStream = MinecraftEnvironment.getChunkInputStream(world, chunkX, chunkZ);
 		if(chunkInputStream == null) {
 			return null;
 		}
@@ -413,7 +407,7 @@ public class MinecraftLevel {
 			Tag t = DTFReader.readTagData(chunkInputStream);
 			if (t != null)
 			{
-				levelData[(x+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(z+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new Chunk(this, t);
+				levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new Chunk(this, t);
 			}	
 			return t;
 		}
