@@ -253,6 +253,7 @@ public class XRay
 	private int levelInfoTexture_h = 144;
 	private boolean regenerateRenderDetailsTexture = false;
 	private boolean regenerateOreHighlightTexture = false;
+	private boolean regenerateOutOfBoundsTexture = false;
 
 	// light level
 	private int[] lightLevelEnd = new int[] { 30, 50, 70, 100, 130 };
@@ -406,6 +407,10 @@ public class XRay
 				if (this.regenerateOreHighlightTexture)
 				{
 					updateOreHighlightTextures();
+				}
+				if (this.regenerateOutOfBoundsTexture)
+				{
+					updateOutOfBoundsTexture();
 				}
 
 				// render whatever we need to render
@@ -569,6 +574,7 @@ public class XRay
 		// though, we can't call it directly.  Instead just set a boolean
 		// and it'll get picked up in the mainloop.
 		this.regenerateRenderDetailsTexture = true;
+		this.regenerateOutOfBoundsTexture = true;
 	}
 
 	/***
@@ -1094,18 +1100,7 @@ public class XRay
 			slimeChunkTexture = TextureTool.allocateTexture(slimeChunkImage, GL11.GL_NEAREST);
 			slimeChunkTexture.update();
 
-			// Out of Range texture
-			BufferedImage outOfRangeImage = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
-			g2d = outOfRangeImage.createGraphics();
-			String message = "Type whatever to do stuff";
-			Rectangle2D bounds = DETAILVALUEFONT.getStringBounds(message, g2d.getFontRenderContext());
-			outOfRangeHeight = bounds.getHeight();
-			outOfRangeWidth = bounds.getWidth();
-			g2d.setFont(DETAILVALUEFONT);
-			g2d.setColor(new Color(255, 200, 200));
-			g2d.drawString(message, 0, (int)(outOfRangeHeight + 5));
-			outOfRangeTexture = TextureTool.allocateTexture(outOfRangeImage, GL11.GL_NEAREST);
-			outOfRangeTexture.update();
+			this.updateOutOfBoundsTexture();
 		}
 		catch (IOException e1)
 		{
@@ -2534,8 +2529,13 @@ public class XRay
 		// Stuff
 		if (curChunk == null)
 		{
+			int x = (int)(Display.getWidth() - outOfRangeWidth)/2;
+			// TODO: "104" comes from barHeight*2-20 from drawMineralToggle(), should be controlled
+			// with constants
+			int y = Display.getHeight() - (int)outOfRangeHeight - 104;
 			setOrthoOn(); // 2d mode
-			SpriteTool.drawSpriteAbsoluteXY(outOfRangeTexture, 200, 200);
+			this.drawBgBox((float)x, (float)y, (float)outOfRangeWidth, (float)outOfRangeHeight);
+			SpriteTool.drawSpriteAbsoluteXY(outOfRangeTexture, x, y);
 			setOrthoOff(); // back to 3d mode
 		}
 
@@ -2803,6 +2803,40 @@ public class XRay
 		renderDetailsTexture.update();
 
 		this.regenerateRenderDetailsTexture = false;
+	}
+
+	/**
+	 * Regenerates the texture we use when the camera goes outside of our actual chunks
+	 */
+	private void updateOutOfBoundsTexture()
+	{
+		try
+		{
+			// Out of Range texture
+			Font outFont = DETAILVALUEFONT;
+			BufferedImage outOfRangeImage = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = outOfRangeImage.createGraphics();
+			String message = "You are out of the existing map area.";
+			String message2 = "Press '" + Keyboard.getKeyName(this.key_mapping.get(KEY_ACTION.JUMP_NEAREST)) + "' to jump to the nearest valid chunk.";
+			Rectangle2D bounds = outFont.getStringBounds(message, g2d.getFontRenderContext());
+			Rectangle2D bounds2 = outFont.getStringBounds(message2, g2d.getFontRenderContext());
+			// We're assuming that the first string is shorter than the second.
+			outOfRangeHeight = bounds.getHeight() + bounds2.getHeight() + 15;
+			outOfRangeWidth = bounds2.getWidth() + 10;
+
+			g2d.setFont(outFont);
+			g2d.setColor(new Color(255, 100, 100));
+			g2d.drawString(message, 5 + (int)(bounds2.getWidth() - bounds.getWidth())/2, (int)(bounds.getHeight() + 5));
+			g2d.drawString(message2, 5, (int)(outOfRangeHeight-10));
+
+			outOfRangeTexture = TextureTool.allocateTexture(outOfRangeImage, GL11.GL_NEAREST);
+			outOfRangeTexture.update();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/***
