@@ -2531,7 +2531,7 @@ public class XRay
 		GL11.glPopMatrix();
 
 		// Stuff
-		if (curChunk == null)
+		if (curChunk == null && key_mapping.get(KEY_ACTION.JUMP_NEAREST) != Keyboard.KEY_NONE)
 		{
 			int x = (int)(Display.getWidth() - outOfRangeWidth)/2;
 			// TODO: "104" comes from barHeight*2-20 from drawMineralToggle(), should be controlled
@@ -2797,8 +2797,11 @@ public class XRay
 		}
 
 		// Add a note about our keyboard reference, since we have that now.
-		line_count++;
-		infoboxTextNote(g, x_off, line_count * line_h, "Keyboard Reference: " + Keyboard.getKeyName(key_mapping.get(KEY_ACTION.KEY_HELP)), Color.BLACK, SMALLFONT);
+		if (key_mapping.get(KEY_ACTION.KEY_HELP) != Keyboard.KEY_NONE)
+		{
+			line_count++;
+			infoboxTextNote(g, x_off, line_count * line_h, "Keyboard Reference: " + Keyboard.getKeyName(key_mapping.get(KEY_ACTION.KEY_HELP)), Color.BLACK, SMALLFONT);
+		}
 
 		cur_renderDetails_h = (line_count + 1) * line_h - 8;
 		g.setColor(Color.BLUE);
