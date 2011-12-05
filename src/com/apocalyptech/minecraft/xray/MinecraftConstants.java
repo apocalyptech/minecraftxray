@@ -543,4 +543,94 @@ public class MinecraftConstants {
 
 		paintingback = new PaintingInfo(4, 4, 12, 0);
 	}
+
+	/**
+	 * Get the text of the key that we want to display to the user
+	 * @return The text to display for the key
+	 */
+	public static String getKeyEnglish(KEY_ACTION action, int bound_key)
+	{
+		if (Keyboard.getKeyName(bound_key).equals("GRAVE"))
+		{
+			return "`";
+		}
+		else if (Keyboard.getKeyName(bound_key).equals("SYSRQ"))
+		{
+			return "PRINTSCREEN";
+		}
+		else if (Keyboard.getKeyName(bound_key).equals("MINUS"))
+		{
+			return "-";
+		}
+		else
+		{
+			return Keyboard.getKeyName(bound_key);
+		}
+	}
+
+	/**
+	 * Get any text which should be displayed after the key
+	 * @return Text
+	 */
+	public static String getKeyExtraAfter(KEY_ACTION action, int bound_key)
+	{
+		switch (action)
+		{
+			case SPEED_INCREASE:
+				return " / Left Mouse Button (hold)";
+
+			case SPEED_DECREASE:
+				return " / Right Mouse Button (hold)";
+
+			default:
+				String key_name = Keyboard.getKeyName(bound_key);
+				if (key_name.startsWith("NUMPAD") || key_name.equals("DECIMAL"))
+				{
+					return " (numlock must be on)";
+				}
+				else if (key_name.equals("DIVIDE") || key_name.equals("MULTIPLY") ||
+						key_name.equals("SUBTRACT") || key_name.equals("ADD"))
+				{
+					return " (on numeric keypad)";
+				}
+				else if (key_name.equals("GRAVE"))
+				{
+					return " (grave accent)";
+				}
+				else if (key_name.equals("SYSRQ"))
+				{
+					return " (also called SYSRQ)";
+				}
+				else if (key_name.equals("MINUS"))
+				{
+					return " (minus, dash)";
+				}
+				break;
+		}
+		return "";
+	}
+
+	/**
+	 * Get any text which should be displayed before the key
+	 * @return Text
+	 */
+	public static String getKeyExtraBefore(KEY_ACTION action, int bound_key)
+	{
+		switch (action)
+		{
+			case QUIT:
+				return "CTRL-";
+		}
+		return "";
+	}
+
+	/**
+	 * Returns a full text description of the given key
+	 */
+	public static String getKeyFullText(KEY_ACTION action, int bound_key)
+	{
+		return getKeyExtraBefore(action, bound_key) +
+			getKeyEnglish(action, bound_key) +
+			getKeyExtraAfter(action, bound_key);
+	}
 }

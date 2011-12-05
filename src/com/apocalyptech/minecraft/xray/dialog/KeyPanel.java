@@ -115,9 +115,9 @@ public class KeyPanel extends JPanel
 	public void setBoundKey(int bound_key)
 	{
 		this.bound_key = bound_key;
-		this.keyStr = this.getKeyEnglish();
-		this.beforeStr = this.getKeyExtraBefore();
-		this.afterStr = this.getKeyExtraAfter();
+		this.keyStr = getKeyEnglish(this.action, bound_key);
+		this.beforeStr = getKeyExtraBefore(this.action, bound_key);
+		this.afterStr = getKeyExtraAfter(this.action, bound_key);
 
 		this.beforeLabel.setText(this.beforeStr);
 		this.afterLabel.setText(this.afterStr);
@@ -173,78 +173,6 @@ public class KeyPanel extends JPanel
 		this.unbindButton.setVisible(false);
 		this.unbindSpacer.setVisible(false);
 		this.keyEdit.clickFinish();
-	}
-
-	/**
-	 * Get the text of the key that we want to display to the user
-	 * @return The text to display for the key
-	 */
-	private String getKeyEnglish()
-	{
-		if (Keyboard.getKeyName(this.bound_key).equals("GRAVE"))
-		{
-			return "`";
-		}
-		else if (Keyboard.getKeyName(this.bound_key).equals("SYSRQ"))
-		{
-			return "PRINTSCREEN";
-		}
-		else
-		{
-			return Keyboard.getKeyName(this.bound_key);
-		}
-	}
-
-	/**
-	 * Get any text which should be displayed after the key
-	 * @return Text
-	 */
-	private String getKeyExtraAfter()
-	{
-		switch (this.action)
-		{
-			case SPEED_INCREASE:
-				return " / Left Mouse Button (hold)";
-
-			case SPEED_DECREASE:
-				return " / Right Mouse Button (hold)";
-
-			default:
-				String key_name = Keyboard.getKeyName(this.bound_key);
-				if (key_name.startsWith("NUMPAD") || key_name.equals("DECIMAL"))
-				{
-					return " (numlock must be on)";
-				}
-				else if (key_name.equals("DIVIDE") || key_name.equals("MULTIPLY") ||
-						key_name.equals("SUBTRACT") || key_name.equals("ADD"))
-				{
-					return " (on numeric keypad)";
-				}
-				else if (key_name.equals("GRAVE"))
-				{
-					return " (grave accent)";
-				}
-				else if (key_name.equals("SYSRQ"))
-				{
-					return " (also called SYSRQ)";
-				}
-				break;
-		}
-		return "";
-	}
-
-	/**
-	 * Get any text which should be displayed before the key
-	 * @return Text
-	 */
-	private String getKeyExtraBefore()
-	{
-		switch (this.action)
-		{
-			case QUIT:
-				return "CTRL-";
-		}
-		return "";
 	}
 
 	/**

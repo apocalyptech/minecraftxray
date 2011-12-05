@@ -2816,8 +2816,9 @@ public class XRay
 			Font outFont = DETAILVALUEFONT;
 			BufferedImage outOfRangeImage = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2d = outOfRangeImage.createGraphics();
+			int key = this.key_mapping.get(KEY_ACTION.JUMP_NEAREST);
 			String message = "You are out of the existing map area.";
-			String message2 = "Press '" + Keyboard.getKeyName(this.key_mapping.get(KEY_ACTION.JUMP_NEAREST)) + "' to jump to the nearest valid chunk.";
+			String message2 = "Press '" + MinecraftConstants.getKeyFullText(KEY_ACTION.JUMP_NEAREST, key) + "' to jump to the nearest valid chunk.";
 			Rectangle2D bounds = outFont.getStringBounds(message, g2d.getFontRenderContext());
 			Rectangle2D bounds2 = outFont.getStringBounds(message2, g2d.getFontRenderContext());
 			// We're assuming that the first string is shorter than the second.
