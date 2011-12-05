@@ -138,6 +138,10 @@ public class XRay
 	public Texture loadingTextTexture;
 	public Texture chunkBorderTexture;
 	public Texture slimeChunkTexture;
+	public Texture outOfRangeTexture;
+
+	public double outOfRangeHeight;
+	public double outOfRangeWidth;
 
 	// the textures used by the minimap
 	private Texture minimapTexture;
@@ -249,6 +253,7 @@ public class XRay
 	private int levelInfoTexture_h = 144;
 	private boolean regenerateRenderDetailsTexture = false;
 	private boolean regenerateOreHighlightTexture = false;
+	private boolean regenerateOutOfBoundsTexture = false;
 
 	// light level
 	private int[] lightLevelEnd = new int[] { 30, 50, 70, 100, 130 };
@@ -402,6 +407,10 @@ public class XRay
 				if (this.regenerateOreHighlightTexture)
 				{
 					updateOreHighlightTextures();
+				}
+				if (this.regenerateOutOfBoundsTexture)
+				{
+					updateOutOfBoundsTexture();
 				}
 
 				// render whatever we need to render
@@ -565,6 +574,7 @@ public class XRay
 		// though, we can't call it directly.  Instead just set a boolean
 		// and it'll get picked up in the mainloop.
 		this.regenerateRenderDetailsTexture = true;
+		this.regenerateOutOfBoundsTexture = true;
 	}
 
 	/***
@@ -1089,6 +1099,8 @@ public class XRay
 			g2d.drawRect(0, 0, slimeChunkWidth-1, slimeChunkWidth-1);
 			slimeChunkTexture = TextureTool.allocateTexture(slimeChunkImage, GL11.GL_NEAREST);
 			slimeChunkTexture.update();
+
+			this.updateOutOfBoundsTexture();
 		}
 		catch (IOException e1)
 		{
@@ -1430,6 +1442,8 @@ public class XRay
 
 	private void launchNewMapDialog()
 	{
+		// Make sure our availableWorlds array has a "clean" "Other" option
+		availableWorlds.set(availableWorlds.size()-1, new WorldInfo());
 		Mouse.setGrabbed(false);
 		if (ResolutionDialog.presentDialog(windowTitle, availableWorlds, xray_properties, false) == ResolutionDialog.DIALOG_BUTTON_EXIT)
 		{
@@ -1976,6 +1990,11 @@ public class XRay
 						done = true;
 					}
 				}
+				else if (key == key_mapping.get(KEY_ACTION.JUMP_NEAREST))
+				{
+					// Jump to the nearest actually-loaded chunk
+					jumpToNearestLoaded();
+				}
 				/*
 				else if (key == Keyboard.KEY_P)
 				{
@@ -2188,6 +2207,26 @@ public class XRay
 		this.setMinecraftWorld(newworld, cur_camera);
 		this.updateRenderDetails();
 		this.triggerChunkLoads();
+	}
+
+	/**
+	 * Jump to the nearest chunk that actually has data.  We're playing some stupid games with
+	 * JumpDialog to do this.
+	 * TODO: Stop playing stupid games with JumpDialog.
+	 */
+	private void jumpToNearestLoaded()
+	{
+		IntegerPair coords = MinecraftEnvironment.getClosestRegion(world, currentLevelX, currentLevelZ);
+		if (coords == null)
+		{
+			logger.error("Couldn't find a chunk to jump to for Nearest Chunk match");
+		}
+		else
+		{
+			JumpDialog.selectedX = (coords.getValueOne()*16)+8;
+			JumpDialog.selectedZ = (coords.getValueTwo()*16)+8;
+			this.moveCameraToArbitraryPosition();
+		}
 	}
 
 	private void invalidateSelectedChunks()
@@ -2487,6 +2526,19 @@ public class XRay
 
 		GL11.glPopMatrix();
 
+		// Stuff
+		if (curChunk == null)
+		{
+			int x = (int)(Display.getWidth() - outOfRangeWidth)/2;
+			// TODO: "104" comes from barHeight*2-20 from drawMineralToggle(), should be controlled
+			// with constants
+			int y = Display.getHeight() - (int)outOfRangeHeight - 104;
+			setOrthoOn(); // 2d mode
+			this.drawBgBox((float)x, (float)y, (float)outOfRangeWidth, (float)outOfRangeHeight);
+			SpriteTool.drawSpriteAbsoluteXY(outOfRangeTexture, x, y);
+			setOrthoOff(); // back to 3d mode
+		}
+
 		// draw the user interface (fps and map)
 		drawUI();
 
@@ -2751,6 +2803,40 @@ public class XRay
 		renderDetailsTexture.update();
 
 		this.regenerateRenderDetailsTexture = false;
+	}
+
+	/**
+	 * Regenerates the texture we use when the camera goes outside of our actual chunks
+	 */
+	private void updateOutOfBoundsTexture()
+	{
+		try
+		{
+			// Out of Range texture
+			Font outFont = DETAILVALUEFONT;
+			BufferedImage outOfRangeImage = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = outOfRangeImage.createGraphics();
+			String message = "You are out of the existing map area.";
+			String message2 = "Press '" + Keyboard.getKeyName(this.key_mapping.get(KEY_ACTION.JUMP_NEAREST)) + "' to jump to the nearest valid chunk.";
+			Rectangle2D bounds = outFont.getStringBounds(message, g2d.getFontRenderContext());
+			Rectangle2D bounds2 = outFont.getStringBounds(message2, g2d.getFontRenderContext());
+			// We're assuming that the first string is shorter than the second.
+			outOfRangeHeight = bounds.getHeight() + bounds2.getHeight() + 15;
+			outOfRangeWidth = bounds2.getWidth() + 10;
+
+			g2d.setFont(outFont);
+			g2d.setColor(new Color(255, 100, 100));
+			g2d.drawString(message, 5 + (int)(bounds2.getWidth() - bounds.getWidth())/2, (int)(bounds.getHeight() + 5));
+			g2d.drawString(message2, 5, (int)(outOfRangeHeight-10));
+
+			outOfRangeTexture = TextureTool.allocateTexture(outOfRangeImage, GL11.GL_NEAREST);
+			outOfRangeTexture.update();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/***

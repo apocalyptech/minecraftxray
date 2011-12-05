@@ -215,6 +215,7 @@ public class MinecraftConstants {
 		MOVE_NEXT_CAMERAPOS (ACTION_CAT.CAMERA, Keyboard.KEY_INSERT, "Jump to Next Camera Preset"),
 		MOVE_PREV_CAMERAPOS (ACTION_CAT.CAMERA, Keyboard.KEY_DELETE, "Jump to Previous Camera Preset"),
 		JUMP                (ACTION_CAT.CAMERA, Keyboard.KEY_J, "Jump to Abritrary Position"),
+		JUMP_NEAREST        (ACTION_CAT.CAMERA, Keyboard.KEY_MINUS, "Jump to nearest existing chunk"),
 		DIMENSION_NEXT      (ACTION_CAT.CAMERA, Keyboard.KEY_N, "Jump to Next Dimension"),
 		DIMENSION_PREV      (ACTION_CAT.CAMERA, Keyboard.KEY_P, "Jump to Previous Dimension"),
 		TOGGLE_CAMERA_LOCK  (ACTION_CAT.CAMERA, Keyboard.KEY_L, "Lock Camera to Vertical Axis"),

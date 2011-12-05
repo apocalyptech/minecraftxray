@@ -1,3 +1,5 @@
+  * "Other" option on world-opening dialog should work more than once
+
 Minecraft X-Ray 3.5.0 (2011.11.18)
 
   * Dialog to change keybindings in-game, courtesy Eleazar Vega-Gonzalez

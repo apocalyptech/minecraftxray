@@ -66,5 +66,4 @@
  * It's entirely possible I should be calling .dispose() on Graphics2D objects
    I don't need anymore, and vice-versa.  Possibly cut back on memory a bit?
 
- * The "Other..." option can only be chosen once, once you're in X-Ray itself.
-   It glitches out, otherwise.
+ * Camera presets for bed positions
