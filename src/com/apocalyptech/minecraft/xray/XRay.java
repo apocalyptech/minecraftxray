@@ -2216,16 +2216,20 @@ public class XRay
 	 */
 	private void jumpToNearestLoaded()
 	{
-		IntegerPair coords = MinecraftEnvironment.getClosestRegion(world, currentLevelX, currentLevelZ);
-		if (coords == null)
+		Chunk k = level.getChunk(currentLevelX, currentLevelZ);
+		if (k == null)
 		{
-			logger.error("Couldn't find a chunk to jump to for Nearest Chunk match");
-		}
-		else
-		{
-			JumpDialog.selectedX = (coords.getValueOne()*16)+8;
-			JumpDialog.selectedZ = (coords.getValueTwo()*16)+8;
-			this.moveCameraToArbitraryPosition();
+			IntegerPair coords = MinecraftEnvironment.getClosestRegion(world, currentLevelX, currentLevelZ);
+			if (coords == null)
+			{
+				logger.error("Couldn't find a chunk to jump to for Nearest Chunk match");
+			}
+			else
+			{
+				JumpDialog.selectedX = (coords.getValueOne()*16)+8;
+				JumpDialog.selectedZ = (coords.getValueTwo()*16)+8;
+				this.moveCameraToArbitraryPosition();
+			}
 		}
 	}
 
@@ -2816,8 +2820,9 @@ public class XRay
 			Font outFont = DETAILVALUEFONT;
 			BufferedImage outOfRangeImage = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2d = outOfRangeImage.createGraphics();
+			int key = this.key_mapping.get(KEY_ACTION.JUMP_NEAREST);
 			String message = "You are out of the existing map area.";
-			String message2 = "Press '" + Keyboard.getKeyName(this.key_mapping.get(KEY_ACTION.JUMP_NEAREST)) + "' to jump to the nearest valid chunk.";
+			String message2 = "Press '" + MinecraftConstants.getKeyFullText(KEY_ACTION.JUMP_NEAREST, key) + "' to jump to the nearest valid chunk.";
 			Rectangle2D bounds = outFont.getStringBounds(message, g2d.getFontRenderContext());
 			Rectangle2D bounds2 = outFont.getStringBounds(message2, g2d.getFontRenderContext());
 			// We're assuming that the first string is shorter than the second.
@@ -2837,6 +2842,9 @@ public class XRay
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		// Make sure we only do this once, when we're told to.
+		this.regenerateOutOfBoundsTexture = false;
 	}
 
 	/***
