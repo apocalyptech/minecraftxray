@@ -2216,16 +2216,20 @@ public class XRay
 	 */
 	private void jumpToNearestLoaded()
 	{
-		IntegerPair coords = MinecraftEnvironment.getClosestRegion(world, currentLevelX, currentLevelZ);
-		if (coords == null)
+		Chunk k = level.getChunk(currentLevelX, currentLevelZ);
+		if (k == null)
 		{
-			logger.error("Couldn't find a chunk to jump to for Nearest Chunk match");
-		}
-		else
-		{
-			JumpDialog.selectedX = (coords.getValueOne()*16)+8;
-			JumpDialog.selectedZ = (coords.getValueTwo()*16)+8;
-			this.moveCameraToArbitraryPosition();
+			IntegerPair coords = MinecraftEnvironment.getClosestRegion(world, currentLevelX, currentLevelZ);
+			if (coords == null)
+			{
+				logger.error("Couldn't find a chunk to jump to for Nearest Chunk match");
+			}
+			else
+			{
+				JumpDialog.selectedX = (coords.getValueOne()*16)+8;
+				JumpDialog.selectedZ = (coords.getValueTwo()*16)+8;
+				this.moveCameraToArbitraryPosition();
+			}
 		}
 	}
 
