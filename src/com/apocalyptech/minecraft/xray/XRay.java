@@ -2837,6 +2837,9 @@ public class XRay
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		// Make sure we only do this once, when we're told to.
+		this.regenerateOutOfBoundsTexture = false;
 	}
 
 	/***
