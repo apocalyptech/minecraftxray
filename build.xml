@@ -160,6 +160,18 @@
 					</not>
 			</tarfileset>
 		</tar>
+		<tar destfile="${dist_base}/${export_base}.tgz" compression="gzip">
+			<tarfileset dir="${dist_base}" filemode="755">
+				<patternset refid="all.files" />
+				<selector refid="executable.files" />
+			</tarfileset>
+			<tarfileset dir="${dist_base}">
+				<patternset refid="all.files" />
+					<not>
+						<selector refid="executable.files" />
+					</not>
+			</tarfileset>
+		</tar>
 	
 	</target>
 		
