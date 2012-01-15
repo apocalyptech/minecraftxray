@@ -69,6 +69,7 @@ overridden, though.  The default keybindings are as follows:
         Cycle Up through Presets:   INS
         Cycle Down through Presets: DEL
         Jump to Arbitrary Position: J
+        Jump to Nearest Chunk:      - (dash, minus)
         Jump to next dimension:     N
         Jump to previous dimension: P
         Lock to Vertical Axis:      L
@@ -80,8 +81,8 @@ overridden, though.  The default keybindings are as follows:
         Toggle Fullbright:           F
         Toggle Bedrock:              B
         Toggle Water:                T
-        Increase Lighting Range:     +
-        Decrease Lighting Range:     -
+        Increase Lighting Range:     + (on numpad)
+        Decrease Lighting Range:     - (on numpad)
         Set visibility range:        NUMPAD1 - NUMPAD6 (remember numlock)
         Toggle "explored" areas:     E
         Toggle accurate grass sides: G
