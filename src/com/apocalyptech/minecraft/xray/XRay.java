@@ -1990,11 +1990,6 @@ public class XRay
 						done = true;
 					}
 				}
-				else if (key == key_mapping.get(KEY_ACTION.JUMP_NEAREST))
-				{
-					// Jump to the nearest actually-loaded chunk
-					jumpToNearestLoaded();
-				}
 				/*
 				else if (key == Keyboard.KEY_P)
 				{
@@ -2050,9 +2045,7 @@ public class XRay
 			}
 			else
 			{
-				// Here are keys which we process once they're RELEASED.
-				// Currently that's just the Jump menu; if we launch other dialogs
-				// in the future they'll probably be here as well.  The reason for
+				// Here are keys which we process once they're RELEASED.  The reason for
 				// this is because if we handle it and launch the dialog on the key
 				// PRESS event, it's the new dialog which receives the key-release
 				// event, not the main window, so the LWJGL context doesn't know
@@ -2080,6 +2073,13 @@ public class XRay
 				{
 					// Launch the ore-binding dialog
 					launchBlockBindDialog();
+				}
+				else if (key == key_mapping.get(KEY_ACTION.JUMP_NEAREST))
+				{
+					// Jump to the nearest actually-loaded chunk
+					// This actually only launches a dialog if there's no map
+					// data anywhere in our dir.
+					jumpToNearestLoaded();
 				}
 			}
 		}
@@ -2223,6 +2223,10 @@ public class XRay
 			if (coords == null)
 			{
 				logger.error("Couldn't find a chunk to jump to for Nearest Chunk match");
+				Mouse.setGrabbed(false);
+				WarningDialog.presentDialog("No Chunks Found",
+					"X-Ray couldn't find any chunks to jump to.  This generally means that the map doesn't actually have data in it yet.",
+					false, 400, 200);
 			}
 			else
 			{
