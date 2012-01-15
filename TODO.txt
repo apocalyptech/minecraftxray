@@ -17,9 +17,6 @@
    "in range" and might even have those chunks cached.  Should fix that.
    
  * Minimap effective size has been cut quite a bit, would like to increase that
- 
- * Would be nice to have a check when warping between Nether and Overworld
-   to make sure you don't end up off-map
    
  * There are various conditions where the player position and spawn position
    markers won't show up properly on the minimap; should fix those.
