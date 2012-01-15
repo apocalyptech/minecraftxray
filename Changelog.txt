@@ -1,3 +1,5 @@
+Minecraft X-Ray 3.5.1 (2012.01.15)
+
   * "Other" option on world-opening dialog should work more than once
   * If the camera is moved out of range of valid chunks, the "-" key can
     be used to jump back into valid space.  There will also be a visual
