@@ -362,6 +362,7 @@ blocks:
       0: [4, 1]   # Regular Log
       1: [4, 7]   # Spruce
       2: [5, 7]   # Birch
+      3: [9, 9]   # Swamp Tree
     tex_direction:
       TOP: [5, 1]
       BOTTOM: [5, 1]
@@ -372,7 +373,12 @@ blocks:
     mapcolor: [60, 192, 41]
     tex: [5, 3] # The "correct" one is actually [4, 3] but with the current
                 # transparency rendering issues, this one looks better.
-  
+    tex_data:
+      0: [5, 3]   # Regular
+      1: [5, 3]   # Spruce
+      2: [5, 3]   # Birch
+      3: [5, 12]  # Swamp Tree
+
   - id: 19
     idStr: SPONGE
     name: Sponge

@@ -690,6 +690,23 @@ public class MinecraftEnvironment {
 			}
 		}
 
+		// One extra data value of Leaves should get colorized
+		block = blockCollection.getByName("LEAVES");
+		if (block != null)
+		{
+			if (block.texture_data_map != null)
+			{
+				for (byte data : new byte[] { 3 })
+				{
+					if (block.texture_data_map.containsKey(data))
+					{
+						tintSquare(BlockType.getTexCoordsArr(block.texture_data_map.get(data)),
+								square_width, ac, Color.green, bi, g2d);
+					}
+				}
+			}
+		}
+
 		// Colorize redstone wire
 		block = blockCollection.getByName("REDSTONE_WIRE");
 		if (block != null)
