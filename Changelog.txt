@@ -1,4 +1,4 @@
-  * Added jungle tree texture data from weekly 12w03a
+  * Added jungle tree + sapling texture data from weekly 12w03a and 12w04a
   * (internal) update to LWJGL 2.8.3
 
 Minecraft X-Ray 3.5.1 (2012.01.15)

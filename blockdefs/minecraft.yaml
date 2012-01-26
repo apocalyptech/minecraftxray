@@ -281,6 +281,7 @@ blocks:
       0: [15, 0]  # Regular sapling
       1: [15, 3]  # Spruce
       2: [15, 4]  # Birch
+      3: [14, 1]  # Jungle
     type: DECORATION_CROSS
   
   - id: 7
@@ -362,7 +363,7 @@ blocks:
       0: [4, 1]   # Regular Log
       1: [4, 7]   # Spruce
       2: [5, 7]   # Birch
-      3: [9, 9]   # Swamp Tree
+      3: [9, 9]   # Jungle Tree
     tex_direction:
       TOP: [5, 1]
       BOTTOM: [5, 1]
