@@ -226,6 +226,8 @@ public class MinecraftEnvironment {
 		switch (world.data_format)
 		{
 			case MCREGION:
+			case ANVIL:
+				// The region file itself is unchanged in Anvil
 				RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), chunkX, chunkZ);
 				if (rf != null)
 				{
@@ -259,9 +261,6 @@ public class MinecraftEnvironment {
 						e.printStackTrace();
 					}
 				}
-				break;
-
-			case ANVIL:
 				break;
 
 		}

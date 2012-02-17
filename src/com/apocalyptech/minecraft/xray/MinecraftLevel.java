@@ -198,23 +198,35 @@ public class MinecraftLevel {
 			this.playerPos_idx = this.spawnPoint_idx;
 		}
 		
-		// Figure out what kind of data we'll be reading.  It turns out that Minecraft
-		// will convert worlds all at once before loading, rather than doing it on-the-fly
-		// as was previously thought, so technically we can be a little more strict here
-		// if we want, but I'll support hybrids just for obscure corner cases where
-		// someone might have been playing around with conversions.
+		// Figure out what sort of data we should be looking for
 		IntTag versionTag = (IntTag) levelDataData.getTagWithName("version");
-		StringTag levelNameTag = (StringTag) levelDataData.getTagWithName("LevelName");
-		if (versionTag != null && levelNameTag != null)
+		if (versionTag != null)
 		{
-			// Technically we should probably check for the magic version number "19132" here,
-			// but since it's a brand-new tag, we're just checking for its presence.
-			world.data_format = WorldInfo.MAP_TYPE.MCREGION;
-			this.levelName = levelNameTag.value;
+			switch (versionTag.value)
+			{
+				case 19133:
+					world.data_format = WorldInfo.MAP_TYPE.ANVIL;
+					break;
+					
+				case 19132:
+				default:
+					world.data_format = WorldInfo.MAP_TYPE.MCREGION;
+					break;
+			}
 		}
 		else
 		{
 			world.data_format = WorldInfo.MAP_TYPE.ORIGINAL;
+		}
+
+		// Grab the level name
+		StringTag levelNameTag = (StringTag) levelDataData.getTagWithName("LevelName");
+		if (levelNameTag != null)
+		{
+			this.levelName = levelNameTag.value;
+		}
+		else
+		{
 			this.levelName = null;
 		}
 
