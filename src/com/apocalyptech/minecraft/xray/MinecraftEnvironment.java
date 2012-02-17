@@ -207,7 +207,7 @@ public class MinecraftEnvironment {
 	 */
 	public static IntegerPair getClosestRegion(WorldInfo world, int chunkX, int chunkZ)
 	{
-		return RegionFileCache.getClosestRegion(world.getBasePath(), chunkX, chunkZ);
+		return RegionFileCache.getClosestRegion(world.getBasePath(), world.data_format, chunkX, chunkZ);
 	}
 	
 	/***
@@ -228,7 +228,7 @@ public class MinecraftEnvironment {
 			case MCREGION:
 			case ANVIL:
 				// The region file itself is unchanged in Anvil
-				RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), chunkX, chunkZ);
+				RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), world.data_format, chunkX, chunkZ);
 				if (rf != null)
 				{
 					DataInputStream chunk = rf.getChunkDataInputStream(chunkX & 31, chunkZ & 31);

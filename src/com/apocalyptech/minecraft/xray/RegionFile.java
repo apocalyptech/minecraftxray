@@ -158,13 +158,6 @@ public class RegionFile {
         return lastModified;
     }
 
-    /* gets how much the region file has grown since it was last checked */
-    public synchronized int getSizeDelta() {
-        int ret = sizeDelta;
-        sizeDelta = 0;
-        return ret;
-    }
-
     // various small debug printing helpers
     private void debug(String in) {
 //        XRay.logger.debug(in);

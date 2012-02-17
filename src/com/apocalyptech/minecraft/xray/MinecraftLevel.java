@@ -52,7 +52,7 @@ public class MinecraftLevel {
 	public static int LEVELDATA_OFFSET = Integer.MAX_VALUE/2;
 	public Chunk[][] levelData;
 	
-	private WorldInfo world;
+	public WorldInfo world;
 	
 	// This var holds the index of the player position we've most recently picked
 	private ArrayList<CameraPreset> playerPositions;

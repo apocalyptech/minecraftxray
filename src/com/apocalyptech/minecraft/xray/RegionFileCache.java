@@ -61,7 +61,7 @@ public class RegionFileCache {
 	 * @param chunkZ The current chunk Z coordinate of the camera
 	 * @return an IntegerPair describing the chunk coordinates
 	 */
-	public static synchronized IntegerPair getClosestRegion(String basePath, int chunkX, int chunkZ)
+	public static synchronized IntegerPair getClosestRegion(String basePath, WorldInfo.MAP_TYPE data_format, int chunkX, int chunkZ)
 	{
 		ArrayList<IntegerPair> available;
 		if (availableCache.containsKey(basePath))
@@ -163,7 +163,7 @@ public class RegionFileCache {
 			// This bit would fit better inside RegionFile itself, but the RegionFile
 			// class doesn't actually know anything about its absolute positioning,
 			// so we'll just do it here anyway.
-			RegionFile rf = getRegionFileByRegion(new File(basePath), closestPair.getValueOne(), closestPair.getValueTwo());
+			RegionFile rf = getRegionFileByRegion(new File(basePath), data_format, closestPair.getValueOne(), closestPair.getValueTwo());
 			if (rf != null)
 			{
 				int adjustedChunkX = chunkX - (closestPair.getValueOne()*32);
@@ -217,14 +217,25 @@ public class RegionFileCache {
 		return null;
 	}
 
-	public static synchronized RegionFile getRegionFileByRegion(File basePath, int regionX, int regionZ)
+	public static synchronized RegionFile getRegionFileByRegion(File basePath, WorldInfo.MAP_TYPE data_format, int regionX, int regionZ)
 	{
-		return getRegionFile(basePath, (regionX << 5), (regionZ << 5));
+		return getRegionFile(basePath, data_format, (regionX << 5), (regionZ << 5));
 	}
 
-    public static synchronized RegionFile getRegionFile(File basePath, int chunkX, int chunkZ) {
+    public static synchronized RegionFile getRegionFile(File basePath, WorldInfo.MAP_TYPE data_format, int chunkX, int chunkZ) {
         File regionDir = new File(basePath, "region");
-        File file = new File(regionDir, "r." + (chunkX >> 5) + "." + (chunkZ >> 5) + ".mcr");
+		String extension;
+		switch(data_format)
+		{
+			case ANVIL:
+				extension = ".mca";
+				break;
+
+			case MCREGION:
+			default:
+				extension = ".mcr";
+		}
+        File file = new File(regionDir, "r." + (chunkX >> 5) + "." + (chunkZ >> 5) + extension);
 
         Reference<RegionFile> ref = cache.get(file);
 
@@ -268,13 +279,8 @@ public class RegionFileCache {
         cache.clear();
     }
 
-    public static int getSizeDelta(File basePath, int chunkX, int chunkZ) {
-        RegionFile r = getRegionFile(basePath, chunkX, chunkZ);
-        return r.getSizeDelta();
-    }
-
-    public static DataInputStream getChunkDataInputStream(File basePath, int chunkX, int chunkZ) {
-        RegionFile r = getRegionFile(basePath, chunkX, chunkZ);
+    public static DataInputStream getChunkDataInputStream(File basePath, WorldInfo.MAP_TYPE data_format, int chunkX, int chunkZ) {
+        RegionFile r = getRegionFile(basePath, data_format, chunkX, chunkZ);
         return r.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
     }
     
