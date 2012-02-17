@@ -223,41 +223,47 @@ public class MinecraftEnvironment {
 	 * @return
 	 */
 	public static DataInputStream getChunkInputStream(WorldInfo world, int chunkX, int chunkZ) {
-		if (world.has_region_data)
+		switch (world.data_format)
 		{
-			RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), chunkX, chunkZ);
-			if (rf != null)
-			{
-				DataInputStream chunk = rf.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
-				if (chunk != null)
+			case MCREGION:
+				RegionFile rf = RegionFileCache.getRegionFile(new File(world.getBasePath()), chunkX, chunkZ);
+				if (rf != null)
 				{
-					return chunk;
+					DataInputStream chunk = rf.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
+					if (chunk != null)
+					{
+						return chunk;
+					}
 				}
-			}
-		}
-		if (!world.is_beta_1_3_level)
-		{
-			int xx = chunkX % 64;
-			if(xx<0) xx = 64+xx;
-			int zz = chunkZ % 64;
-			if(zz<0) zz = 64+zz;
-			String firstFolder 		= Integer.toString(xx, 36);
-			String secondFolder 	= Integer.toString(zz, 36);
-			String filename 		= "c." + Integer.toString(chunkX, 36) + "." + Integer.toString(chunkZ, 36) + ".dat";
-			File chunk = new File(world.getBasePath(), firstFolder + "/" + secondFolder + "/" + filename);
-			if (chunk.exists())
-			{
-				//  There's some code duplication here from DTFReader.readDTFFile()
-				try {
-					return new DataInputStream(new GZIPInputStream(new FileInputStream(chunk)));
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				break;
+
+			case ORIGINAL:
+				int xx = chunkX % 64;
+				if(xx<0) xx = 64+xx;
+				int zz = chunkZ % 64;
+				if(zz<0) zz = 64+zz;
+				String firstFolder 		= Integer.toString(xx, 36);
+				String secondFolder 	= Integer.toString(zz, 36);
+				String filename 		= "c." + Integer.toString(chunkX, 36) + "." + Integer.toString(chunkZ, 36) + ".dat";
+				File chunk = new File(world.getBasePath(), firstFolder + "/" + secondFolder + "/" + filename);
+				if (chunk.exists())
+				{
+					//  There's some code duplication here from DTFReader.readDTFFile()
+					try {
+						return new DataInputStream(new GZIPInputStream(new FileInputStream(chunk)));
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
+				break;
+
+			case ANVIL:
+				break;
+
 		}
 		return null;
 	}

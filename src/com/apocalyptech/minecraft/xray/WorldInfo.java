@@ -48,6 +48,12 @@ public class WorldInfo implements Comparable<WorldInfo>
 	private int dimension;
 	public TreeMap<String, File> mp_players;
 
+	public static enum MAP_TYPE {
+		ORIGINAL,
+		MCREGION,
+		ANVIL
+	}
+
 	public static HashMap<Integer, String> known_dimensions;
 
 	// Some static initializations
@@ -58,13 +64,8 @@ public class WorldInfo implements Comparable<WorldInfo>
 		known_dimensions.put(1, "The End");
 	}
 	
-	// Couple of variables to determine whether our chunks are stored in the new
-	// Region format introduced in Beta 1.3.  Minecraft converts chunks on the fly,
-	// so for a time a world directory will have chunks in both formats.  Once all
-	// the chunks have been converted, Minecraft will write out a few new tags in
-	// the main level data file, so we can stop looking for the old format.
-	public boolean has_region_data = false;
-	public boolean is_beta_1_3_level = false;
+	// Store what format our map is stored in
+	public MAP_TYPE data_format = MAP_TYPE.MCREGION;
 	
 	private class PlayerDatFilter implements FilenameFilter
 	{

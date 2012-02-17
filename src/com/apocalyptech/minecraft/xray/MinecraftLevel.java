@@ -209,21 +209,12 @@ public class MinecraftLevel {
 		{
 			// Technically we should probably check for the magic version number "19132" here,
 			// but since it's a brand-new tag, we're just checking for its presence.
-			world.is_beta_1_3_level = true;
-			world.has_region_data = true;
+			world.data_format = WorldInfo.MAP_TYPE.MCREGION;
 			this.levelName = levelNameTag.value;
 		}
 		else
 		{
-			File regionDir = new File(world.getBasePath(), "region");
-			if (regionDir.exists() && regionDir.isDirectory())
-			{
-				File[] mcrFiles = regionDir.listFiles(new RegionFileFilter());
-				if (mcrFiles.length > 0)
-				{
-					world.has_region_data = true;
-				}
-			}
+			world.data_format = WorldInfo.MAP_TYPE.ORIGINAL;
 			this.levelName = null;
 		}
 
