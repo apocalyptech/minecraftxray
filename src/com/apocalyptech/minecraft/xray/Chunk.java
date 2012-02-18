@@ -53,7 +53,7 @@ import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
  * up with the current implementation of renderVertical and renderHorizontal - I suspect
  * that much of the rendering code would be improved by moving to those if possible.
  */
-public class Chunk {
+public abstract class Chunk {
 	private HashMap<Integer, Integer> displayListNums;
 	private HashMap<Integer, Integer> nonstandardListNums;
 	private HashMap<Integer, Integer> glassListNums;
@@ -64,8 +64,6 @@ public class Chunk {
 	public HashMap<Integer, Boolean> isSelectedDirty;
 	public boolean isOnMinimap;
 	private CompoundTag chunkData;
-	private ShortArrayTag blockData;
-	private ByteArrayTag mapData;
 	private ArrayList<PaintingEntity> paintings;
 	
 	private MinecraftLevel level;
@@ -119,33 +117,6 @@ public class Chunk {
 		
 		this.x = xPosTag.value;
 		this.z = zPosTag.value;
-		
-		blockData = (ShortArrayTag) levelTag.getTagWithName("Blocks");
-		mapData = (ByteArrayTag) levelTag.getTagWithName("Data");
-
-		// Compute which texture sheets are in-use by this chunk
-		// Much of this is copied from our main render loop, way down below
-		this.usedTextureSheets = new HashMap<Integer, Boolean>();
-		for(int x=0; x<16; x++) {
-			int xOff = (x * 128 * 16);
-			for(int z=0; z<16; z++) {
-				int zOff = (z * 128);
-				int blockOffset = zOff + xOff-1;
-				for(int y=0; y<128; y++) {
-					blockOffset++;
-					int t = blockData.value[blockOffset];
-					if(t < 1) {
-						continue;
-					}
-					BlockType block = blockArray[t];
-					if (block == null)
-					{
-						block = BLOCK_UNKNOWN;
-					}
-					this.usedTextureSheets.put(block.getTexSheet(), true);
-				}
-			}
-		}
 
 		// And create all our necessary GL Lists (and other structures)
 		displayListNums = new HashMap<Integer, Integer>();
@@ -205,12 +176,14 @@ public class Chunk {
 		}
 	}
 	
+	/**
+	 * Will return an array of values which are suitable for feeding into a
+	 * minimap.
+	 */
+	public abstract short[] getMinimapValues(boolean nether);
+
 	public CompoundTag getChunkData() {
 		return this.chunkData;
-	}
-	
-	public ShortArrayTag getMapData() {
-		return this.blockData;
 	}
 
 	/**
@@ -218,25 +191,7 @@ public class Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjWestBlockId(int x, int y, int z, int blockOffset)
-	{
-		if (x > 0)
-		{
-			return blockData.value[blockOffset-BLOCKSPERCOLUMN];
-		}
-		else
-		{
-			Chunk otherChunk = level.getChunk(this.x-1, this.z);
-			if (otherChunk == null)
-			{
-				return -1;
-			}
-			else
-			{
-				return otherChunk.getBlock(15, y, z);
-			}
-		}
-	}
+	private abstract short getAdjWestBlockId(int x, int y, int z, int blockOffset);
 
 	/**
 	 * Gets the data value of the block immediately to the west.  This might
@@ -268,25 +223,7 @@ public class Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjEastBlockId(int x, int y, int z, int blockOffset)
-	{
-		if (x < 15)
-		{
-			return blockData.value[blockOffset+BLOCKSPERCOLUMN];
-		}
-		else
-		{
-			Chunk otherChunk = level.getChunk(this.x+1, this.z);
-			if (otherChunk == null)
-			{
-				return -1;
-			}
-			else
-			{
-				return otherChunk.getBlock(0, y, z);
-			}
-		}
-	}
+	private abstract short getAdjEastBlockId(int x, int y, int z, int blockOffset);
 
 	/**
 	 * Gets the data value of the block immediately to the east.  This might
@@ -318,25 +255,7 @@ public class Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjNorthBlockId(int x, int y, int z, int blockOffset)
-	{
-		if (z > 0)
-		{
-			return blockData.value[blockOffset-BLOCKSPERROW];
-		}
-		else
-		{
-			Chunk otherChunk = level.getChunk(this.x, this.z-1);
-			if (otherChunk == null)
-			{
-				return -1;
-			}
-			else
-			{
-				return otherChunk.getBlock(x, y, 15);
-			}
-		}
-	}
+	private short getAdjNorthBlockId(int x, int y, int z, int blockOffset);
 
 	/**
 	 * Gets the data value of the block immediately to the south.  This might
@@ -368,25 +287,7 @@ public class Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjSouthBlockId(int x, int y, int z, int blockOffset)
-	{
-		if (z < 15)
-		{
-			return blockData.value[blockOffset+BLOCKSPERROW];
-		}
-		else
-		{
-			Chunk otherChunk = level.getChunk(this.x, this.z+1);
-			if (otherChunk == null)
-			{
-				return -1;
-			}
-			else
-			{
-				return otherChunk.getBlock(x, y, 0);
-			}
-		}
-	}
+	private abstract short getAdjSouthBlockId(int x, int y, int z, int blockOffset);
 
 	/**
 	 * Gets the data value of the block immediately to the north.  This might
@@ -412,6 +313,18 @@ public class Chunk {
 			}
 		}
 	}
+
+	/**
+	 * Gets the Block ID of the block immediately up.
+	 * Will return -1 if we're already at the top
+	 */
+	private abstract short getAdjUpBlockId(int x, int y, int z, int blockOffset);
+
+	/**
+	 * Gets the Block ID of the block immediately down.
+	 * Will return -1 if we're already at the bottom
+	 */
+	private abstract short getAdjDownBlockId(int x, int y, int z, int blockOffset);
 	
 	/**
 	 * Render something which is a West/East face.
@@ -1167,24 +1080,12 @@ public class Chunk {
 	 * Gets the block ID at the specified coordinate in the chunk.  This is
 	 * only really used in the getAdj*BlockId() methods.
 	 */
-	public short getBlock(int x, int y, int z) {
-		return blockData.value[y + (z * 128) + (x * 128 * 16)];
-	}
+	public abstract short getBlock(int x, int y, int z);
 
 	/**
 	 * Gets the block data at the specified coordinates.
 	 */
-	public byte getData(int x, int y, int z) {
-		int offset = y + (z * 128) + (x * 128 * 16);
-		int halfOffset = offset / 2;
-		if(offset % 2 == 0) {
-			return (byte) (mapData.value[halfOffset] & 0xF);
-		} else {
-			// We shouldn't have to &0xF here, but if we don't the value
-			// returned could be negative, even though that would be silly.
-			return (byte) ((mapData.value[halfOffset] >> 4) & 0xF);
-		}
-	}
+	public abstract byte getData(int x, int y, int z);
 	
 	/**
 	 * Renders a torch, making an attempt to render properly given the wall face it's
@@ -1615,7 +1516,7 @@ public class Chunk {
 			this.renderWestEast(textureId, x+1.0f-TEX64, y, z);
 			rendered = true;
 		 }
-		 if (data == 0 || (rendered && yyy < 127 && isSolid(blockData.value[blockOffset+1])))
+		 if (data == 0 || (rendered && isSolid(this.getAdjUpBlockId(x, y, z, blockOffset))))
 		 {
 			// Top
 			this.renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.45f);
@@ -2314,7 +2215,7 @@ public class Chunk {
 		this.renderVertical(textureId, x+fence_postsize, z-fence_postsize, x-fence_postsize, z-fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
 		this.renderVertical(textureId, x-fence_postsize, z-fence_postsize, x-fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
 		this.renderVertical(textureId, x-fence_postsize, z+fence_postsize, x+fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
-		if (y == 127 || !isSolid(blockData.value[blockOffset+1]))
+		if (y == 127 || !isSolid(this.getAdjUpBlockId))
 		{
 			this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize, x-fence_postsize, z-fence_postsize, y+0.5f, 4, 4, 6, 6, false);
 		}
@@ -3455,7 +3356,7 @@ public class Chunk {
 		renderHorizontal(textureId, edge, edge, -edge, -edge, height+bottom);
 
 		// Bottom
-		if (y == 0 || !isSolid(blockData.value[blockOffset-1]))
+		if (y == 0 || !isSolid(getAdjDownBlockId(x, y, z, blockOffset)))
 		{
 			renderHorizontal(block.texture_extra_map.get("bottom")+tex_offset, edge, edge, -edge, -edge, bottom);
 		}
@@ -3522,7 +3423,7 @@ public class Chunk {
 		boolean render_bottom = true;
 		if (y > 0)
 		{
-			short bottom = blockData.value[blockOffset-1];
+			short bottom = getAdjDownBlockId(x, y, z, blockOffset);
 			render_bottom = (bottom == 0 || (bottom > 0 && blockArray[bottom] != null && !blockArray[bottom].isSolid()));
 		}
 		if (render_bottom)
@@ -3619,7 +3520,7 @@ public class Chunk {
 		boolean render_bottom = true;
 		if (y > 0)
 		{
-			render_bottom = blockData.value[blockOffset-1] != blockId;
+			render_bottom = this.getAdjDownBlockId(x, y, z, blockOffset) != blockId;
 		}
 		if (render_bottom)
 		{
@@ -3630,7 +3531,7 @@ public class Chunk {
 		boolean render_top = true;
 		if (y < 127)
 		{
-			render_top = blockData.value[blockOffset+1] != blockId;
+			render_top = this.getAdjUpBlockId(x, y, z, blockOffset) != blockId;
 		}
 		if (render_top)
 		{
@@ -3900,88 +3801,15 @@ public class Chunk {
 	 * stuff to be less stupid.  The one upside to doing it like this is that
 	 * we're not using any extra memory storing data about which block should be
 	 * highlighted...
+	 *
+	 * TODO: should implement this here, instead.
 	 * 
 	 * @param sx
 	 * @param sy
 	 * @param sz
 	 * @return
 	 */
-	public boolean hasAdjacentTorch(int sx, int sy, int sz)
-	{
-		int distance = 3;
-		int x, y, z;
-		int min_x = sx-distance;
-		int max_x = sx+distance;
-		int min_z = sz-distance;
-		int max_z = sz+distance;
-		int min_y = Math.max(0, sy-distance);
-		int max_y = Math.min(127, sy+distance);
-		Chunk otherChunk;
-		int cx, cz;
-		int tx, tz;
-		for (x = min_x; x<=max_x; x++)
-		{
-			for (y = min_y; y<=max_y; y++)
-			{
-				for (z = min_z; z<=max_z; z++)
-				{
-					otherChunk = null;
-					if (x < 0)
-					{
-						cx = this.x-1;
-						tx = 16+x;
-					}
-					else if (x > 15)
-					{
-						cx = this.x+1;
-						tx = x-16;
-					}
-					else
-					{
-						cx = this.x;
-						tx = x;
-					}
-
-					if (z < 0)
-					{
-						cz = this.z-1;
-						tz = 16+z;
-					}
-					else if (z > 15)
-					{
-						cz = this.z+1;
-						tz = z-16;
-					}
-					else
-					{
-						cz = this.z;
-						tz = z;
-					}
-					
-					if (cx != this.x || cz != this.z)
-					{
-						otherChunk = level.getChunk(cx, cz);
-						if (otherChunk == null)
-						{
-							continue;
-						}
-						else if (exploredBlocks.containsKey(otherChunk.blockData.value[(tz*128)+(tx*128*16)+y]))
-						{
-							return true;
-						}
-					}
-					else
-					{
-						if (exploredBlocks.containsKey(blockData.value[(z*128)+(x*128*16)+y]))
-						{
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
+	public abstract boolean hasAdjacentTorch(int sx, int sy, int sz);
 
 	public void renderWorldSolids(int sheet)
 	{
@@ -4149,7 +3977,7 @@ public class Chunk {
 									{
 										case TOP:
 											// check above
-											if(y<127 && blockData.value[blockOffset+1] != BLOCK_BEDROCK.id) {
+											if(this.getAdjUpBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 												draw = true;
 												above = false;
 											}
@@ -4157,7 +3985,7 @@ public class Chunk {
 
 										case BOTTOM:
 											// check below
-											if(y>0 && blockData.value[blockOffset-1] != BLOCK_BEDROCK.id) {
+											if(this.getAdjDownBlockId(x, y, z, blockOffset) != BLOCK_BEDROCK.id) {
 												draw = true;
 												below = false;
 											}
@@ -4198,7 +4026,7 @@ public class Chunk {
 									{
 										case TOP:
 											// check above
-											if(y<127 && checkSolid(blockData.value[blockOffset+1])) {
+											if(y<127 && checkSolid(this.getAdjUpBlockId(x, y, z, blockOffset))) {
 												draw = true;
 												above = false;
 											}
@@ -4206,7 +4034,7 @@ public class Chunk {
 
 										case BOTTOM:
 											// check below
-											if(y>0 && checkSolid(blockData.value[blockOffset-1])) {
+											if(y>0 && checkSolid(this.getAdjDownBlockId(x, y, z, blockOffset))) {
 												draw = true;
 												below = false;
 											}

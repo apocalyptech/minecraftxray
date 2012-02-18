@@ -331,39 +331,6 @@ public class MinecraftLevel {
 			return z % 16;
 		}
 	}
-	
-	/***
-	 * Returns a single byte representing the block data at the given universal coordinates
-	 * @param x
-	 * @param z
-	 * @param y
-	 * @return
-	 */
-	public short getBlockData(int x, int z, int y) {
-		int chunkX = getChunkX(x);
-		int chunkZ = getChunkZ(z);
-		
-		int blockX = getBlockX(x);
-		int blockZ = getBlockZ(z);
-		
-		Chunk chunk = this.getChunk(chunkX, chunkZ);
-		if(chunk == null) { // no chunk for the given coordinate
-			return 0;
-		}
-		int blockOffset = y + (blockZ * 128) + (blockX * 128 * 16);
-		
-		try {
-			return chunk.getMapData().value[blockOffset];
-		} catch(Exception e) {
-			// dirty, but there was an error with out of range blockvalues O_o
-			XRay.logger.fatal(blockOffset);
-			XRay.logger.fatal("" + x + ", " + y + ", " + z);
-			XRay.logger.fatal("" + blockX + ", " + blockZ );
-			System.exit(0);
-			return 0;
-		}
-	}
-	
 
 	public void invalidateSelected() {
 		this.invalidateSelected(false);
@@ -410,7 +377,7 @@ public class MinecraftLevel {
 			Tag t = DTFReader.readTagData(chunkInputStream);
 			if (t != null)
 			{
-				levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new Chunk(this, t);
+				levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new ChunkOriginal(this, t);
 			}	
 			return t;
 		}
@@ -504,29 +471,5 @@ public class MinecraftLevel {
 			}
 		}
 		return chunks;
-	}
-	
-	/***
-	 * gets the data for a given chunk (coordinates are CHUNK coordinates, not world coordinates!)
-	 * @param chunkX
-	 * @param chunkZ
-	 * @return
-	 */
-	public short[] getChunkData(int chunkX, int chunkZ) {
-		Chunk c = this.getChunk(chunkX, chunkZ);
-		if(c == null) {
-			return new short[32768];
-		} else {
-			return c.getMapData().value;
-		}
-	}
-		
-	
-	public Tag getFullChunk(int chunkX, int chunkZ) {
-		Chunk c = this.getChunk(chunkX, chunkZ);
-		if(c == null) {
-			return null;
-		}
-		return c.getChunkData();
 	}
 }

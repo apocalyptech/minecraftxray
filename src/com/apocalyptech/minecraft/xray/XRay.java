@@ -3261,7 +3261,8 @@ public class XRay
 	 */
 	public void drawChunkToMap(int x, int z)
 	{
-
+		/* TODO: Rewrite to use some kind of getMinimapValues() call instead */
+		/*
 		Chunk c = level.getChunk(x, z);
 		if (c != null)
 		{
@@ -3338,6 +3339,7 @@ public class XRay
 				}
 			}
 		}
+		*/
 	}
 
 	/***
