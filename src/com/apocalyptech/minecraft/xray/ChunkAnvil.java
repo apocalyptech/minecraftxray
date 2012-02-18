@@ -79,6 +79,27 @@ public class ChunkAnvil extends Chunk {
 			availableSectionsList.add(section);
 			blockData.put(section, (ShortArrayTag) sectionTag.getTagWithName("Blocks"));
 			mapData.put(section, (ByteArrayTag) sectionTag.getTagWithName("Data"));
+
+			// Merge in the AddBlocks tag, if present
+			ByteArrayTag addBlocksTag = (ByteArrayTag) sectionTag.getTagWithName("AddBlocks");
+			if (addBlocksTag != null)
+			{
+				ByteArrayTag dataTag = mapData.get(section);
+				int data_add;
+				for (int offset = 0; offset < 4096; offset++)
+				{
+					// TODO: Java's lack of unsigned datatypes is annoying.  We should
+					// really doublecheck to make sure that we're not doing things we
+					// shouldn't with negative values, here.  A little test app I wrote
+					// seems to say that this should Do The Right Thing here...
+					data_add = addBlocksTag.value[offset / 2];
+					if (offset % 2 == 1)
+					{
+						data_add = (data_add >> 4);
+					}
+					dataTag.value[offset] += ((data_add & 0xF) << 8);
+				}
+			}
 		}
 
 		// Make sure our list of available sections is ordered
