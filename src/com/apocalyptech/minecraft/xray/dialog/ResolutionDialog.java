@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2005-2006, The ParticleReality Project
- * Copyright (c) 2010-2011, Vincent Vollers and Christopher J. Kucera
+ * Copyright (c) 2010-2012, Vincent Vollers and Christopher J. Kucera
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

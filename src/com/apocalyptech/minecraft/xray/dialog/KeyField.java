@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2011, Christopher J. Kucera, Eleazar Vega-Gonzalez,
+ * Copyright (c) 2010-2012, Christopher J. Kucera, Eleazar Vega-Gonzalez,
  *      and Saxon Parker
  * All rights reserved.
  *

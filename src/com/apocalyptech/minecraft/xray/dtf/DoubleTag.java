@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2011, Vincent Vollers
+ * Copyright (c) 2010-2012, Vincent Vollers
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

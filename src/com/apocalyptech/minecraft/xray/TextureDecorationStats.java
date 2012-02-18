@@ -1,4 +1,4 @@
-/** * Copyright (c) 2010-2011, Christopher J. Kucera
+/** * Copyright (c) 2010-2012, Christopher J. Kucera
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
