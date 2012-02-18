@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.PatternSyntaxException;
 
 import org.lwjgl.opengl.GL11;
@@ -79,6 +80,9 @@ public class ChunkAnvil extends Chunk {
 			blockData.put(section, (ShortArrayTag) sectionTag.getTagWithName("Blocks"));
 			mapData.put(section, (ByteArrayTag) sectionTag.getTagWithName("Data"));
 		}
+
+		// Make sure our list of available sections is ordered
+		Collections.sort(availableSectionsList);
 
 		this.finishConstructor();
 	}
@@ -257,9 +261,9 @@ public class ChunkAnvil extends Chunk {
 		byte section = (byte)(y/16);
 		if ((y % 16) == 0)
 		{
-			if (blockData.containsKey(section - 1))
+			if (blockData.containsKey((byte)(section - 1)))
 			{
-				return blockData.get(section-1).value[3840 + x + (16*z)];
+				return blockData.get((byte)(section-1)).value[3840 + x + (16*z)];
 			}
 			else
 			{
