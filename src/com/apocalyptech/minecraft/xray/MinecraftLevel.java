@@ -377,7 +377,16 @@ public class MinecraftLevel {
 			Tag t = DTFReader.readTagData(chunkInputStream);
 			if (t != null)
 			{
-				levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new ChunkOriginal(this, t);
+				switch (world.data_format)
+				{
+					case ANVIL:
+						levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new ChunkAnvil(this, t);
+						break;
+
+					default:
+						levelData[(chunkX+LEVELDATA_OFFSET)%LEVELDATA_SIZE][(chunkZ+LEVELDATA_OFFSET)%LEVELDATA_SIZE] = new ChunkOriginal(this, t);
+						break;
+				}
 			}	
 			return t;
 		}

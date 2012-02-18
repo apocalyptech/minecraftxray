@@ -40,30 +40,45 @@ import com.apocalyptech.minecraft.xray.dtf.ByteArrayTag;
 import com.apocalyptech.minecraft.xray.dtf.CompoundTag;
 import com.apocalyptech.minecraft.xray.dtf.StringTag;
 import com.apocalyptech.minecraft.xray.dtf.ListTag;
+import com.apocalyptech.minecraft.xray.dtf.ByteTag;
 import com.apocalyptech.minecraft.xray.dtf.IntTag;
 import com.apocalyptech.minecraft.xray.dtf.Tag;
 
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 /**
- * Chunk functions, including the meat of our rendering stuffs
- *
- * TODO: There are a lot of functions that do very similar things in here, it would be
- * good to consolidate some of those.  I don't know why it took me so long to come
- * up with the current implementation of renderVertical and renderHorizontal - I suspect
- * that much of the rendering code would be improved by moving to those if possible.
+ * A new-style "Anvil" chunk.  Similar to the original, except that the
+ * data is split up into 16x16x16 "Sections"
  */
-public class ChunkOriginal extends Chunk {
+public class ChunkAnvil extends Chunk {
 
-	private ShortArrayTag blockData;
-	private ByteArrayTag mapData;
+	private HashMap<Byte, ShortArrayTag> blockData;
+	private HashMap<Byte, ByteArrayTag> mapData;
+	private HashMap<Byte, Boolean> availableSections;
+	private ArrayList<Byte> availableSectionsList;
+
+	private byte lSection;
 	
-	public ChunkOriginal(MinecraftLevel level, Tag data) {
+	public ChunkAnvil(MinecraftLevel level, Tag data) {
 
 		super(level, data);
+
+		blockData = new HashMap<Byte, ShortArrayTag>();
+		mapData = new HashMap<Byte, ByteArrayTag>();
+		availableSections = new HashMap<Byte, Boolean>();
+		availableSectionsList = new ArrayList<Byte>();
 		
-		blockData = (ShortArrayTag) this.levelTag.getTagWithName("Blocks");
-		mapData = (ByteArrayTag) this.levelTag.getTagWithName("Data");
+		ListTag sectionsTag = (ListTag) this.levelTag.getTagWithName("Sections");
+		for (Tag sectionTagTemp : sectionsTag.value)
+		{
+			CompoundTag sectionTag = (CompoundTag) sectionTagTemp;
+			ByteTag sectionNumTag = (ByteTag) sectionTag.getTagWithName("Y");
+			byte section = sectionNumTag.value;
+			availableSections.put(section, true);
+			availableSectionsList.add(section);
+			blockData.put(section, (ShortArrayTag) sectionTag.getTagWithName("Blocks"));
+			mapData.put(section, (ByteArrayTag) sectionTag.getTagWithName("Data"));
+		}
 
 		this.finishConstructor();
 	}
@@ -86,7 +101,15 @@ public class ChunkOriginal extends Chunk {
 	{
 		if (x > 0)
 		{
-			return blockData.value[blockOffset-BLOCKSPERCOLUMN];
+			byte section = (byte)(y/16);
+			if (this.blockData.containsKey(section))
+			{
+				return blockData.get(section).value[blockOffset-1];
+			}
+			else
+			{
+				return -1;
+			}
 		}
 		else
 		{
@@ -111,7 +134,15 @@ public class ChunkOriginal extends Chunk {
 	{
 		if (x < 15)
 		{
-			return blockData.value[blockOffset+BLOCKSPERCOLUMN];
+			byte section = (byte)(y/16);
+			if (this.blockData.containsKey(section))
+			{
+				return blockData.get(section).value[blockOffset+1];
+			}
+			else
+			{
+				return -1;
+			}
 		}
 		else
 		{
@@ -136,7 +167,15 @@ public class ChunkOriginal extends Chunk {
 	{
 		if (z > 0)
 		{
-			return blockData.value[blockOffset-BLOCKSPERROW];
+			byte section = (byte)(y/16);
+			if (blockData.containsKey(section))
+			{
+				return blockData.get(section).value[blockOffset-16];
+			}
+			else
+			{
+				return -1;
+			}
 		}
 		else
 		{
@@ -161,7 +200,15 @@ public class ChunkOriginal extends Chunk {
 	{
 		if (z < 15)
 		{
-			return blockData.value[blockOffset+BLOCKSPERROW];
+			byte section = (byte)(y/16);
+			if (blockData.containsKey(section))
+			{
+				return blockData.get(section).value[blockOffset+16];
+			}
+			else
+			{
+				return -1;
+			}
 		}
 		else
 		{
@@ -183,13 +230,21 @@ public class ChunkOriginal extends Chunk {
 	 */
 	protected short getAdjUpBlockId(int x, int y, int z, int blockOffset)
 	{
-		if (y >= 127)
+		byte section = (byte)(y/16);
+		if ((y % 16) == 15)
 		{
-			return -1;
+			if (blockData.containsKey((byte)(section + 1)))
+			{
+				return blockData.get((byte)(section+1)).value[x + (z*16)];
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
-			return blockData.value[blockOffset+1];
+			return blockData.get(section).value[blockOffset+256];
 		}
 	}
 
@@ -199,13 +254,21 @@ public class ChunkOriginal extends Chunk {
 	 */
 	protected short getAdjDownBlockId(int x, int y, int z, int blockOffset)
 	{
-		if (y <= 0)
+		byte section = (byte)(y/16);
+		if ((y % 16) == 0)
 		{
-			return -1;
+			if (blockData.containsKey(section - 1))
+			{
+				return blockData.get(section-1).value[3840 + x + (16*z)];
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
-			return blockData.value[blockOffset-1];
+			return blockData.get(section).value[blockOffset-256];
 		}
 	}
 	
@@ -214,21 +277,37 @@ public class ChunkOriginal extends Chunk {
 	 * only really used in the getAdj*BlockId() methods.
 	 */
 	public short getBlock(int x, int y, int z) {
-		return blockData.value[y + (z * 128) + (x * 128 * 16)];
+		byte section = (byte)(y/16);
+		if (blockData.containsKey(section))
+		{
+			return blockData.get(section).value[((y % 16) * 256) + (z * 16) + x];
+		}
+		else
+		{
+			return -1;
+		}
 	}
 
 	/**
 	 * Gets the block data at the specified coordinates.
 	 */
 	public byte getData(int x, int y, int z) {
-		int offset = y + (z * 128) + (x * 128 * 16);
-		int halfOffset = offset / 2;
-		if(offset % 2 == 0) {
-			return (byte) (mapData.value[halfOffset] & 0xF);
-		} else {
-			// We shouldn't have to &0xF here, but if we don't the value
-			// returned could be negative, even though that would be silly.
-			return (byte) ((mapData.value[halfOffset] >> 4) & 0xF);
+		byte section = (byte)(y/16);
+		if (mapData.containsKey(section))
+		{
+			int offset = ((y%16)*256) + (z * 16) + x;
+			int halfOffset = offset / 2;
+			if(offset % 2 == 0) {
+				return (byte) (mapData.get(section).value[halfOffset] & 0xF);
+			} else {
+				// We shouldn't have to &0xF here, but if we don't the value
+				// returned could be negative, even though that would be silly.
+				return (byte) ((mapData.get(section).value[halfOffset] >> 4) & 0xF);
+			}
+		}
+		else
+		{
+			return (byte)0;
 		}
 	}
 	
@@ -330,19 +409,44 @@ public class ChunkOriginal extends Chunk {
 	}
 
 	/**
+	 * Rewind our loop
+	 */
+	protected void rewindLoop()
+	{
+		super.rewindLoop();
+		this.lSection = -1;
+	}
+
+	/**
 	 * Advances our block loop
 	 */
 	protected short nextBlock()
 	{
-		this.lOffset++;
-		if (this.lOffset >= 32768)
+		boolean advance_to_next_section = false;
+		boolean found_next_section = false;
+		this.lOffset = ((this.lOffset+1) % 4096);
+		if (this.lOffset == 0)
+		{
+			advance_to_next_section = true;
+			for (byte section : this.availableSectionsList)
+			{
+				if (section > this.lSection)
+				{
+					found_next_section = true;
+					this.lSection = section;
+					break;
+				}
+			}
+		}
+		if (advance_to_next_section && !found_next_section)
 		{
 			return -2;
 		}
-		this.ly = this.lOffset % 128;
-		this.lz = (this.lOffset / 128) % 16;
-		this.lx = this.lOffset / 2048;
-		return this.blockData.value[this.lOffset];
+		this.lx = this.lOffset % 16;
+		this.lz = (this.lOffset / 16) % 16;
+		this.ly = (this.lOffset / 256) + (16*this.lSection);
+
+		return this.blockData.get(this.lSection).value[this.lOffset];
 	}
 
 }

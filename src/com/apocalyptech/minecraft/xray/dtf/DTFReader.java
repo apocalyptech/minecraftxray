@@ -39,6 +39,7 @@ import com.apocalyptech.minecraft.xray.XRay;
 public class DTFReader {
 	public static Tag readTag(byte tagType, String name, DataInputStream stream) throws IOException {
 		short twofiftysix = 256;
+		int len;
 		switch(tagType) {
 			case 0: // end
 				return new EndTag();
@@ -55,7 +56,7 @@ public class DTFReader {
 			case 6:
 				return new DoubleTag(name, stream.readDouble());
 			case 7:
-				int len = stream.readInt();
+				len = stream.readInt();
 
 				// This little hack is so that we store our block types as shorts, rather than
 				// bytes, so that we can more easily support blocks with IDs greater than 127.
@@ -114,6 +115,15 @@ public class DTFReader {
 					compound.add(tag);
 				}
 				return new CompoundTag(name, compound);
+			case 11:
+				len = stream.readInt();
+				int[] data = new int[len];
+				// This may not be the fastest way to do this...
+				for (int i=0; i<len; i++)
+				{
+					data[i] = stream.readInt();
+				}
+				return new IntArrayTag(name, data);
 		}
 		return null;
 	}

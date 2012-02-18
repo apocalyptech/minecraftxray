@@ -135,8 +135,31 @@ public abstract class Chunk {
 		this.willSpawnSlimes = (rnd.nextInt(10) == 0);
 	}
 
+	/**
+	 * Tasks in the constructor which need to be done after the implementing class has
+	 * finished loading in their chunks.
+	 */
 	protected void finishConstructor()
 	{
+		// Compute which texture sheets are in-use by this chunk
+		// Much of this is copied from our main render loop, way down below
+		this.usedTextureSheets = new HashMap<Integer, Boolean>();
+		this.rewindLoop();
+		int t = 0;
+		while (t != -2)
+		{
+			t = this.nextBlock();
+			if(t < 1) {
+				continue;
+			}
+			BlockType block = blockArray[t];
+			if (block == null)
+			{
+				block = BLOCK_UNKNOWN;
+			}
+			this.usedTextureSheets.put(block.getTexSheet(), true);
+		}
+
 		// And create all our necessary GL Lists (and other structures)
 		displayListNums = new HashMap<Integer, Integer>();
 		nonstandardListNums = new HashMap<Integer, Integer>();
@@ -4736,7 +4759,7 @@ public abstract class Chunk {
 	/**
 	 * "Rewinds" our looping over blocks.
 	 */
-	private void rewindLoop()
+	protected void rewindLoop()
 	{
 		this.lx = 0;
 		this.ly = 0;
