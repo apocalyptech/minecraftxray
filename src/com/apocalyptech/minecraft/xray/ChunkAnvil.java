@@ -53,28 +53,28 @@ import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
  */
 public class ChunkAnvil extends Chunk {
 
-	private HashMap<Byte, ShortArrayTag> blockData;
-	private HashMap<Byte, ByteArrayTag> mapData;
-	private HashMap<Byte, Boolean> availableSections;
-	private ArrayList<Byte> availableSectionsList;
+	private HashMap<Integer, ShortArrayTag> blockData;
+	private HashMap<Integer, ByteArrayTag> mapData;
+	private HashMap<Integer, Boolean> availableSections;
+	private ArrayList<Integer> availableSectionsList;
 
-	private byte lSection;
+	private int lSection;
 	
 	public ChunkAnvil(MinecraftLevel level, Tag data) {
 
 		super(level, data);
 
-		blockData = new HashMap<Byte, ShortArrayTag>();
-		mapData = new HashMap<Byte, ByteArrayTag>();
-		availableSections = new HashMap<Byte, Boolean>();
-		availableSectionsList = new ArrayList<Byte>();
+		blockData = new HashMap<Integer, ShortArrayTag>();
+		mapData = new HashMap<Integer, ByteArrayTag>();
+		availableSections = new HashMap<Integer, Boolean>();
+		availableSectionsList = new ArrayList<Integer>();
 		
 		ListTag sectionsTag = (ListTag) this.levelTag.getTagWithName("Sections");
 		for (Tag sectionTagTemp : sectionsTag.value)
 		{
 			CompoundTag sectionTag = (CompoundTag) sectionTagTemp;
 			ByteTag sectionNumTag = (ByteTag) sectionTag.getTagWithName("Y");
-			byte section = sectionNumTag.value;
+			int section = sectionNumTag.value;
 			availableSections.put(section, true);
 			availableSectionsList.add(section);
 			blockData.put(section, (ShortArrayTag) sectionTag.getTagWithName("Blocks"));
@@ -105,7 +105,7 @@ public class ChunkAnvil extends Chunk {
 	{
 		if (x > 0)
 		{
-			byte section = (byte)(y/16);
+			int section = y/16;
 			if (this.blockData.containsKey(section))
 			{
 				return blockData.get(section).value[blockOffset-1];
@@ -138,7 +138,7 @@ public class ChunkAnvil extends Chunk {
 	{
 		if (x < 15)
 		{
-			byte section = (byte)(y/16);
+			int section = y/16;
 			if (this.blockData.containsKey(section))
 			{
 				return blockData.get(section).value[blockOffset+1];
@@ -171,7 +171,7 @@ public class ChunkAnvil extends Chunk {
 	{
 		if (z > 0)
 		{
-			byte section = (byte)(y/16);
+			int section = y/16;
 			if (blockData.containsKey(section))
 			{
 				return blockData.get(section).value[blockOffset-16];
@@ -204,7 +204,7 @@ public class ChunkAnvil extends Chunk {
 	{
 		if (z < 15)
 		{
-			byte section = (byte)(y/16);
+			int section = y/16;
 			if (blockData.containsKey(section))
 			{
 				return blockData.get(section).value[blockOffset+16];
@@ -234,12 +234,12 @@ public class ChunkAnvil extends Chunk {
 	 */
 	protected short getAdjUpBlockId(int x, int y, int z, int blockOffset)
 	{
-		byte section = (byte)(y/16);
+		int section = y/16;
 		if ((y % 16) == 15)
 		{
-			if (blockData.containsKey((byte)(section + 1)))
+			if (blockData.containsKey(section + 1))
 			{
-				return blockData.get((byte)(section+1)).value[x + (z*16)];
+				return blockData.get(section+1).value[x + (z*16)];
 			}
 			else
 			{
@@ -258,12 +258,12 @@ public class ChunkAnvil extends Chunk {
 	 */
 	protected short getAdjDownBlockId(int x, int y, int z, int blockOffset)
 	{
-		byte section = (byte)(y/16);
+		int section = y/16;
 		if ((y % 16) == 0)
 		{
-			if (blockData.containsKey((byte)(section - 1)))
+			if (blockData.containsKey(section - 1))
 			{
-				return blockData.get((byte)(section-1)).value[3840 + x + (16*z)];
+				return blockData.get(section-1).value[3840 + x + (16*z)];
 			}
 			else
 			{
@@ -281,7 +281,7 @@ public class ChunkAnvil extends Chunk {
 	 * only really used in the getAdj*BlockId() methods.
 	 */
 	public short getBlock(int x, int y, int z) {
-		byte section = (byte)(y/16);
+		int section = y/16;
 		if (blockData.containsKey(section))
 		{
 			return blockData.get(section).value[((y % 16) * 256) + (z * 16) + x];
@@ -296,7 +296,7 @@ public class ChunkAnvil extends Chunk {
 	 * Gets the block data at the specified coordinates.
 	 */
 	public byte getData(int x, int y, int z) {
-		byte section = (byte)(y/16);
+		int section = y/16;
 		if (mapData.containsKey(section))
 		{
 			int offset = ((y%16)*256) + (z * 16) + x;
@@ -432,7 +432,7 @@ public class ChunkAnvil extends Chunk {
 		if (this.lOffset == 0)
 		{
 			advance_to_next_section = true;
-			for (byte section : this.availableSectionsList)
+			for (int section : this.availableSectionsList)
 			{
 				if (section > this.lSection)
 				{
