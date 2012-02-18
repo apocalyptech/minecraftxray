@@ -1295,4 +1295,16 @@ blocks:
     tex: [7, 10]
     type: DRAGON_EGG
 
+  - id: 123
+    idStr: REDSTONE_LAMP_OFF
+    name: Redstone Lamp (off)
+    mapcolor: [156, 104, 54]
+    tex: [3, 13]
+
+  - id: 124
+    idStr: REDSTONE_LAMP_ON
+    name: Redstone Lamp (on)
+    mapcolor: [208, 152, 70]
+    tex: [4, 13]
+
 ...

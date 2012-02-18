@@ -1,4 +1,6 @@
   * Added jungle tree + sapling texture data from weekly 12w03a and 12w04a
+  * Added Redstone Lamp textures from weekly 12w07a
+  * Support for new map format "Anvil" from weekly 12w07a
   * (internal) update to LWJGL 2.8.3
 
 Minecraft X-Ray 3.5.1 (2012.01.15)
