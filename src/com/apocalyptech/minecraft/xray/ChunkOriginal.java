@@ -58,12 +58,12 @@ public class ChunkOriginal extends Chunk {
 	private ShortArrayTag blockData;
 	private ByteArrayTag mapData;
 	
-	public Chunk(MinecraftLevel level, Tag data) {
+	public ChunkOriginal(MinecraftLevel level, Tag data) {
 
 		super(level, data);
 		
-		blockData = (ShortArrayTag) levelTag.getTagWithName("Blocks");
-		mapData = (ByteArrayTag) levelTag.getTagWithName("Data");
+		blockData = (ShortArrayTag) this.levelTag.getTagWithName("Blocks");
+		mapData = (ByteArrayTag) this.levelTag.getTagWithName("Data");
 
 		// Compute which texture sheets are in-use by this chunk
 		// Much of this is copied from our main render loop, way down below
@@ -88,6 +88,8 @@ public class ChunkOriginal extends Chunk {
 				}
 			}
 		}
+
+		this.finishConstructor();
 	}
 	
 	/**
@@ -96,6 +98,7 @@ public class ChunkOriginal extends Chunk {
 	 */
 	public short[] getMinimapValues(boolean nether)
 	{
+		return new short[0];
 	}
 
 	/**
@@ -103,7 +106,7 @@ public class ChunkOriginal extends Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjWestBlockId(int x, int y, int z, int blockOffset)
+	protected short getAdjWestBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (x > 0)
 		{
@@ -128,7 +131,7 @@ public class ChunkOriginal extends Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjEastBlockId(int x, int y, int z, int blockOffset)
+	protected short getAdjEastBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (x < 15)
 		{
@@ -153,7 +156,7 @@ public class ChunkOriginal extends Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjNorthBlockId(int x, int y, int z, int blockOffset)
+	protected short getAdjNorthBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (z > 0)
 		{
@@ -178,7 +181,7 @@ public class ChunkOriginal extends Chunk {
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	private short getAdjSouthBlockId(int x, int y, int z, int blockOffset)
+	protected short getAdjSouthBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (z < 15)
 		{
@@ -202,7 +205,7 @@ public class ChunkOriginal extends Chunk {
 	 * Gets the Block ID of the block immediately up.
 	 * Will return -1 if we're already at the top
 	 */
-	private short getAdjUpBlockId(int x, int y, int z, int blockOffset)
+	protected short getAdjUpBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (y >= 127)
 		{
@@ -218,7 +221,7 @@ public class ChunkOriginal extends Chunk {
 	 * Gets the Block ID of the block immediately down.
 	 * Will return -1 if we're already at the bottom
 	 */
-	private short getAdjDownBlockId(int x, int y, int z, int blockOffset)
+	protected short getAdjDownBlockId(int x, int y, int z, int blockOffset)
 	{
 		if (y <= 0)
 		{
@@ -328,21 +331,42 @@ public class ChunkOriginal extends Chunk {
 						{
 							continue;
 						}
+						/* TODO: yeah
 						else if (exploredBlocks.containsKey(otherChunk.blockData.value[(tz*128)+(tx*128*16)+y]))
 						{
 							return true;
 						}
+						*/
 					}
 					else
 					{
+						/* TODO: yeah
 						if (exploredBlocks.containsKey(blockData.value[(z*128)+(x*128*16)+y]))
 						{
 							return true;
 						}
+						*/
 					}
 				}
 			}
 		}
 		return false;
 	}
+
+	/**
+	 * Advances our block loop
+	 */
+	protected short nextBlock()
+	{
+		this.lOffset++;
+		if (this.lOffset >= 32768)
+		{
+			return -2;
+		}
+		this.ly = this.lOffset % 128;
+		this.lz = (this.lOffset / 128) % 16;
+		this.lx = this.lOffset / 2048;
+		return this.blockData.value[this.lOffset];
+	}
+
 }
