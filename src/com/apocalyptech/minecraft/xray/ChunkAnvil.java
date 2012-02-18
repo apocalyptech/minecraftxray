@@ -284,7 +284,7 @@ public class ChunkAnvil extends Chunk {
 		}
 		else
 		{
-			return -1;
+			return 0;
 		}
 	}
 
