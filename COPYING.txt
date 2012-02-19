@@ -25,10 +25,18 @@ X-Ray redistributes the following components:
     Also available under the Apache License 2.0.  See COPYING-log4j.txt for
     more details on that.
 
-  * "Faithful 32x32" Minecraft Texture Pack, by Vattic
-    http://www.minecraftforum.net/topic/72747-
-    As mentioned in the first post: "If anyone wants to use anything I've made
-    please give credit and link back to this topic."
+  * Various files from Minecraft's builtin texturepack
+    http://www.minecraft.net/
+    Specifically: terrain.png, particles.png, art/kz.png, and misc/water.png
+    Technically this redistribution is in violation of Mojang's stated 
+    "Do not distribute anything we've made" rule, but I'm pretty sure that
+    this kind of usage would be acceptible regardless, especially given that
+    the bundled texturepack is only used in extreme corner cases where the
+    user's installed minecraft.jar can't be found on the drive.  Plus, many
+    other prominent community tools have been bundling terrain.png for some
+    time now (INVedit, MCEdit, etc).  Ah, the "everyone else was doing it"
+    argument!  Anyway, I will of course readily cease using the official
+    texturepack in here if asked.
 
   * RegionFile.java and RegionFileCache.java, courtesy Jens Bergensten of Mojang
     http://mojang.com/2011/02/16/minecraft-save-file-format-in-beta-1-3/
