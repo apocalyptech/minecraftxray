@@ -1,6 +1,8 @@
   * Added jungle tree + sapling texture data from weekly 12w03a and 12w04a
   * Added Redstone Lamp textures from weekly 12w07a
   * Support for new map format "Anvil" from weekly 12w07a
+  * Support for new door data format from weekly 12w06a (though it will only
+    actually be enabled for levels saved in Anvil format)
   * Added a few further-away lighting level presets
   * Bundle the official Minecraft texturepack for use as a fallback, rather
     than a third-party pack.

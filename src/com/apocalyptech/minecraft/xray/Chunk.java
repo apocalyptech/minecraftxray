@@ -1898,6 +1898,9 @@ public abstract class Chunk {
 	
 	/**
 	 * Renders a door
+	 *
+	 * TODO: need to fix texture orientation, for both Anvil and non-Anvil doors
+	 * TODO: also, actual proper door rendering
 	 * 
 	 * @param textureId
 	 * @param xxx
@@ -1908,41 +1911,89 @@ public abstract class Chunk {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
-		
 		byte data = getData(xxx, yyy, zzz);
-		if ((data & 0x8) == 0x0)
-		{
-			textureId = block.texture_extra_map.get("bottom") + tex_offset;
-		}
-		boolean swung = false;
-		if ((data & 0x4) == 0x4)
-		{
-			swung = true;
-		}
-		int dir = (data & 0x3);
 
-		// TODO: need to fix texture orientation
-		if ((dir == 3 && swung) || (dir == 0 && !swung))
+		// Anvil-formatted levels use a different data structure for doors, so we've got to
+		// split up processing.
+		//
+		// Technically the new door data happened one weekly release before Anvil, but at
+		// the time there was no reasonable way of determining if it was going to be
+		// using the new format or not, so we're just going to go ahead and check for
+		// Anvil maps.  Good enough.  People using 12w06a will just have to cope.  :)
+		if (this.level.world.data_format == WorldInfo.MAP_TYPE.ANVIL)
 		{
-			// West			
-			this.renderWestEast(textureId, x, y, z);
-		}
-		else if ((dir == 0 && swung) || (dir == 1 && !swung))
-		{
-			// North
-			this.renderNorthSouth(textureId, x, y, z);
-		}
-		else if ((dir == 1 && swung) || (dir == 2 && !swung))
-		{
-			// East
-			this.renderWestEast(textureId, x+1, y, z);
+			byte top_data;
+			byte bottom_data;
+			if ((data & 0x8) == 0x0)
+			{
+				bottom_data = data;
+				top_data = getData(xxx, yyy+1, zzz);
+				textureId = block.texture_extra_map.get("bottom") + tex_offset;
+			}
+			else
+			{
+				top_data = data;
+				bottom_data = getData(xxx, yyy-1, zzz);
+			}
+			boolean hinge_on_left = ((top_data & 0x1) == 0x1);
+			boolean open = ((bottom_data & 0x4) == 0x4);
+			int dir = (bottom_data & 0x3);
+
+			if ((dir == 0 && !open) || (open && ((dir == 1 && hinge_on_left) || (dir == 3 && !hinge_on_left))))
+			{
+				// West
+				this.renderWestEast(textureId, x, y, z);
+			}
+			else if ((dir == 1 && !open) || (open && ((dir == 0 && !hinge_on_left) || (dir == 2 && hinge_on_left))))
+			{
+				// North
+				this.renderNorthSouth(textureId, x, y, z);
+			}
+			else if ((dir == 2 && !open) || (open && ((dir == 1 && !hinge_on_left) || (dir == 3 && hinge_on_left))))
+			{
+				// East
+				this.renderWestEast(textureId, x+1, y, z);
+			}
+			else
+			{
+				// South
+				this.renderNorthSouth(textureId, x, y, z+1);
+			}
 		}
 		else
 		{
-			// South
-			this.renderNorthSouth(textureId, x, y, z+1);
+			if ((data & 0x8) == 0x0)
+			{
+				textureId = block.texture_extra_map.get("bottom") + tex_offset;
+			}
+			boolean swung = false;
+			if ((data & 0x4) == 0x4)
+			{
+				swung = true;
+			}
+			int dir = (data & 0x3);
+
+			if ((dir == 3 && swung) || (dir == 0 && !swung))
+			{
+				// West			
+				this.renderWestEast(textureId, x, y, z);
+			}
+			else if ((dir == 0 && swung) || (dir == 1 && !swung))
+			{
+				// North
+				this.renderNorthSouth(textureId, x, y, z);
+			}
+			else if ((dir == 1 && swung) || (dir == 2 && !swung))
+			{
+				// East
+				this.renderWestEast(textureId, x+1, y, z);
+			}
+			else
+			{
+				// South
+				this.renderNorthSouth(textureId, x, y, z+1);
+			}
 		}
-		
 	}
 	
 	/**

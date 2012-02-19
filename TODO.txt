@@ -67,7 +67,7 @@
 
  * Our reported coordinates are apparently not correct
 
- * Doors need to be updated for Anvil
+ * Doors should be rendered "properly"
 
  * Now that there's region data of some sort in the data files, we should
    look into doing some more accurate foliage highlighting.
