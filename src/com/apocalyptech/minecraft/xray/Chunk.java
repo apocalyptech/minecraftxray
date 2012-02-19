@@ -4135,9 +4135,9 @@ public abstract class Chunk {
 					{
 						data = getData(this.lx, this.ly, this.lz);
 
-						if (t == BLOCK_SAPLING.id)
+						if (t == BLOCK_SAPLING.id || t == BLOCK_LEAVES.id)
 						{
-							// Special-case here for Sapling data, since we can't trust the upper two bits
+							// Special-case here for Sapling + Leaf data, since we can't trust the upper two bits
 							data &= 0x3;
 						}
 						else

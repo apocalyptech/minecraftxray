@@ -52,6 +52,7 @@
 #               GRASS (the "grass rendering" toggle uses it)
 #               SILVERFISH (the "silverfish highlighting" toggle uses it)
 #               SAPLING (some special data handling is needed)
+#               LEAVES (some special data handling is needed)
 #               PORTAL (we generate the texture to use for this one)
 #               END_PORTAL (we generate the texture to use for this one)
 #               FIRE (we generate the texture to use for this one)
