@@ -2210,6 +2210,9 @@ public class XRay
 		this.setMinecraftWorld(newworld, cur_camera);
 		this.updateRenderDetails();
 		this.triggerChunkLoads();
+
+		// This actually isn't a camera preset, so we should just pretend we're at the first one.
+		this.currentPosition = level.getPlayerPositionIdx(0);
 	}
 
 	/**

@@ -6,6 +6,8 @@
   * Added a few further-away lighting level presets
   * Fixed the camera position reporting, and some chunk highlighting issues
   * Report world position as floats instead of ints
+  * Fixed a bug where next/prev camera presets could trigger a crash after
+    warping to a different dimension
   * Bundle the official Minecraft texturepack for use as a fallback, rather
     than a third-party pack.
   * (internal) update to LWJGL 2.8.3
