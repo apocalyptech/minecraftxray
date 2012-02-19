@@ -56,9 +56,6 @@ public class MinecraftConstants {
 	public static final float TEX128 = 1.0f/128.0f;
 	public static final float TEX256 = 1.0f/256.0f;
 	public static final float TEX512 = 1.0f/512.0f;
-	
-	public static final int BLOCKSPERROW = 128;
-	public static final int BLOCKSPERCOLUMN = BLOCKSPERROW * 16;
 	    
     // sensitivity and speed mouse configuration
 	public static final float MOUSE_SENSITIVITY 	= 0.05f; // mouse delta is multiplied by this

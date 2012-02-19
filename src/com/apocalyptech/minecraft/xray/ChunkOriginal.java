@@ -52,6 +52,9 @@ import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
  * height limit of 128.
  */
 public class ChunkOriginal extends Chunk {
+	
+	private static final int BLOCKSPERROW = 128;
+	private static final int BLOCKSPERCOLUMN = BLOCKSPERROW * 16;
 
 	private ShortArrayTag blockData;
 	private ByteArrayTag mapData;
