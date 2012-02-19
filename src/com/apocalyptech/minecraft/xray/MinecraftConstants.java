@@ -204,8 +204,8 @@ public class MinecraftConstants {
 		MOVE_LEFT      (ACTION_CAT.MOVEMENT, Keyboard.KEY_A, "Strafe Left"),
 		MOVE_RIGHT     (ACTION_CAT.MOVEMENT, Keyboard.KEY_D, "Strafe Right"),
 		MOVE_UP        (ACTION_CAT.MOVEMENT, Keyboard.KEY_SPACE, "Fly Up"),
-		MOVE_DOWN      (ACTION_CAT.MOVEMENT, Keyboard.KEY_LCONTROL, "Fly Down"),
-		SPEED_INCREASE (ACTION_CAT.MOVEMENT, Keyboard.KEY_LSHIFT, "Move Faster"),
+		MOVE_DOWN      (ACTION_CAT.MOVEMENT, Keyboard.KEY_LSHIFT, "Fly Down"),
+		SPEED_INCREASE (ACTION_CAT.MOVEMENT, Keyboard.KEY_LCONTROL, "Move Faster"),
 		SPEED_DECREASE (ACTION_CAT.MOVEMENT, Keyboard.KEY_RSHIFT, "Move Slower"),
 
 		MOVE_TO_SPAWN       (ACTION_CAT.CAMERA, Keyboard.KEY_HOME, "Jump to Spawnpoint"),

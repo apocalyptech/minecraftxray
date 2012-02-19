@@ -8,6 +8,9 @@
   * Report world position as floats instead of ints
   * Fixed a bug where next/prev camera presets could trigger a crash after
     warping to a different dimension
+  * Default keys for "Move Faster" (previously Left Shift) and "Move Down"
+    (previously Left Control) have been swapped, to better match the default
+    Minecraft up/down keys (while flying in a Creative map)
   * Bundle the official Minecraft texturepack for use as a fallback, rather
     than a third-party pack.
   * (internal) update to LWJGL 2.8.3
