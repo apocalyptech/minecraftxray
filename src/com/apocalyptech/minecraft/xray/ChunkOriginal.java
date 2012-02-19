@@ -78,6 +78,8 @@ public class ChunkOriginal extends Chunk {
 		boolean found_solid;
 		boolean drew_block;
 
+		int blockOffset;
+		short block;
 		for (int zz = 0; zz < 16; zz++)
 		{
 			for (int xx = 0; xx < 16; xx++)
@@ -88,8 +90,8 @@ public class ChunkOriginal extends Chunk {
 				found_solid = false;
 				for (int yy = 127; yy >= 0; yy--)
 				{
-					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
-					short block = blockData.value[blockOffset];
+					blockOffset = yy + (zz * 128) + (xx * 128 * 16);
+					block = blockData.value[blockOffset];
 
 					if (block > 0)
 					{

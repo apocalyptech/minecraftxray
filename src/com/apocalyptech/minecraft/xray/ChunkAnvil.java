@@ -114,7 +114,72 @@ public class ChunkAnvil extends Chunk {
 	 */
 	public short[][] getMinimapValues()
 	{
-		return new short[16][16];
+		short[][] minimap = new short[16][16];
+		boolean in_nether = this.level.world.isDimension(-1);
+		boolean found_air;
+		boolean found_solid;
+		boolean drew_block;
+
+		// We'll want to process our sections in reverse order
+		Collections.reverse(this.availableSectionsList);
+
+		// Do the loop
+		int offset;
+		short block;
+		ShortArrayTag blockDataTag;
+		for (int zz = 0; zz < 16; zz++)
+		{
+			for (int xx = 0; xx < 16; xx++)
+			{
+				// determine the top most visible block
+				found_air = !in_nether;
+				drew_block = false;
+				found_solid = false;
+
+				sectionloop: for (int section : this.availableSectionsList)
+				{
+					blockDataTag = this.blockData.get(section);
+					if (blockDataTag == null)
+					{
+						continue;
+					}
+					for (int yy = 15; yy >= 0; yy--)
+					{
+						offset = xx + (zz * 16) + (yy * 256);
+						block = blockDataTag.value[offset];
+
+						if (block > 0)
+						{
+							if (in_nether && !found_solid)
+							{
+								found_air = false;
+							}
+							found_solid = true;
+							if (found_air)
+							{
+								minimap[xx][zz] = block;
+								drew_block = true;
+								break sectionloop;
+							}
+						}
+						else
+						{
+							found_air = true;
+						}
+					}
+				}
+
+				// Make sure we don't have holes in our Nether minimap
+				if (in_nether && found_solid && !drew_block)
+				{
+					minimap[xx][zz] = MinecraftConstants.BLOCK_BEDROCK.id;
+				}
+			}
+		}
+
+		// re-reverse our section list
+		Collections.reverse(this.availableSectionsList);
+		return minimap;
 	}
 
 	/**
