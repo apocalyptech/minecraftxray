@@ -71,3 +71,15 @@
 
  * Now that there's region data of some sort in the data files, we should
    look into doing some more accurate foliage highlighting.
+
+ * I have never understood why our camera position seems to be the negative
+   of what it should be.  Like where we're storing the player position 'round
+   line 132 in MinecraftLevel.java, or when we're reading out the camera
+   position 'round line 2346 in XRay.java (in render()).  It makes no sense to
+   me, but I've been afraid to rip it apart to force it to make more sense.
+   One of these days...  For that matter, it might be a good idea to convert to
+   using Minecraft's coordinate system, which differs from our own by .5f.  In
+   X-Ray, a block's coordinate (x, z) is found right at the very center of
+   the block, whereas in Minecraft, it's found at one of the corners.  So we're
+   constantly doing some fudging to report the coordinates in a way that's
+   consistent with what you get in Minecraft with F3.

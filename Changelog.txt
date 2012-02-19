@@ -4,6 +4,7 @@
   * Support for new door data format from weekly 12w06a (though it will only
     actually be enabled for levels saved in Anvil format)
   * Added a few further-away lighting level presets
+  * Fixed the camera position reporting, and some chunk highlighting issues
   * Bundle the official Minecraft texturepack for use as a fallback, rather
     than a third-party pack.
   * (internal) update to LWJGL 2.8.3

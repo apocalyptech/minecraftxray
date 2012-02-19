@@ -2345,8 +2345,8 @@ public class XRay
 
 		currentCameraPosX = -camera.getPosition().x;
 		currentCameraPosZ = -camera.getPosition().z;
-		int tempX = (int)(currentCameraPosX-.5f);
-		int tempZ = (int)(currentCameraPosZ-.5f);
+		int tempX = (int)Math.floor(currentCameraPosX+.5f);
+		int tempZ = (int)Math.floor(currentCameraPosZ+.5f);
 
 		// determine if we need to load new map chunks
 		if (tempX != levelBlockX || tempZ != levelBlockZ || needToReloadWorld)
@@ -2612,7 +2612,7 @@ public class XRay
 		g.setColor(Color.BLACK);
 		g.drawString("World Y:", labelX, 22 + 16 + 32 + 16);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString((int) (-camera.getPosition().y-.5f)), valueX, 22 + 16 + 32 + 16);
+		g.drawString(Integer.toString((int) (-camera.getPosition().y+.5f)), valueX, 22 + 16 + 32 + 16);
 
 		long heapSize = Runtime.getRuntime().totalMemory();
 		g.setColor(Color.BLACK);
