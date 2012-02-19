@@ -64,3 +64,10 @@
    I don't need anymore, and vice-versa.  Possibly cut back on memory a bit?
 
  * Camera presets for bed positions
+
+ * Our reported coordinates are apparently not correct
+
+ * Doors need to be updated for Anvil
+
+ * Now that there's region data of some sort in the data files, we should
+   look into doing some more accurate foliage highlighting.

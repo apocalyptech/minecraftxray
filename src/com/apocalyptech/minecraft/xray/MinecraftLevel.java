@@ -65,6 +65,8 @@ public class MinecraftLevel {
 	public Texture paintingTexture;
 
 	public String levelName;
+
+	public LightSourceRegistry lightSources;
 	
 	/**
 	 * Given a WorldInfo object, return its user-defined name.  There's
@@ -232,6 +234,9 @@ public class MinecraftLevel {
 
 		// Pull our random seed
 		this.randomSeed = ((LongTag) levelDataData.getTagWithName("RandomSeed")).value;
+
+		// And finally, initialize our Light Source Registry
+		this.lightSources = new LightSourceRegistry();
 	}
 
 	/**

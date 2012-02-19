@@ -58,8 +58,8 @@ public abstract class Chunk {
 	private HashMap<Integer, Integer> nonstandardListNums;
 	private HashMap<Integer, Integer> glassListNums;
 	private HashMap<Integer, Integer> selectedDisplayListNums;
-	public int x;
-	public int z;
+	public int x, z;
+	public int x_chunkOffset, z_chunkOffset;
 	public HashMap<Integer, Boolean> isDirty;
 	public HashMap<Integer, Boolean> isSelectedDirty;
 	public boolean isOnMinimap;
@@ -127,6 +127,9 @@ public abstract class Chunk {
 		this.x = xPosTag.value;
 		this.z = zPosTag.value;
 
+		this.x_chunkOffset = this.x * 16;
+		this.z_chunkOffset = this.z * 16;
+
 		// Lastly, compute whether or not we'll spawn slimes, based on the randomSeed
 		// Taken from http://www.minecraftforum.net/topic/397835-find-slime-spawning-chunks/
 		// Or, indirectly from http://www.minecraftwiki.net/wiki/Slime#Spawning
@@ -145,15 +148,20 @@ public abstract class Chunk {
 	protected void finishConstructor()
 	{
 		// Compute which texture sheets are in-use by this chunk
-		// Much of this is copied from our main render loop, way down below
+		// Also we'll be populating our light source object in here
+		// highlight will key off of
 		this.usedTextureSheets = new HashMap<Integer, Boolean>();
 		this.rewindLoop();
-		int t = 0;
+		short t = 0;
 		while (t != -2)
 		{
 			t = this.nextBlock();
 			if(t < 1) {
 				continue;
+			}
+			if (exploredBlocks.containsKey(t))
+			{
+				this.level.lightSources.add(this.x_chunkOffset + this.lx, this.ly, this.z_chunkOffset + this.lz);
 			}
 			BlockType block = blockArray[t];
 			if (block == null)
@@ -3827,24 +3835,6 @@ public abstract class Chunk {
 
 		GL11.glPopMatrix();
 	}
-	
-	/**
-	 * Tests if the given source block has a torch nearby.  This is, I'm willing
-	 * to bet, the least efficient way possible of doing this.  It turns out that
-	 * despite that, it doesn't really have a noticeable impact on performance,
-	 * which is why it remains in here, but perhaps one day I'll rewrite this
-	 * stuff to be less stupid.  The one upside to doing it like this is that
-	 * we're not using any extra memory storing data about which block should be
-	 * highlighted...
-	 *
-	 * TODO: should implement this here, instead.
-	 * 
-	 * @param sx
-	 * @param sy
-	 * @param sz
-	 * @return
-	 */
-	public abstract boolean hasAdjacentTorch(int sx, int sy, int sz);
 
 	public void renderWorldSolids(int sheet)
 	{
@@ -3887,7 +3877,6 @@ public abstract class Chunk {
 		boolean west = true;
 		int tex_offset = 0;
 		BlockType block;
-		boolean adj_torch;
 		boolean highlightingOres = (XRay.toggle.highlightOres != XRay.HIGHLIGHT_TYPE.OFF);
 		short t;
 		int xOff, zOff, blockOffset;
@@ -3943,8 +3932,6 @@ public abstract class Chunk {
 				if(t < 1) {
 					continue;
 				}
-
-				adj_torch = false;
 
 				// Get the actual BlockType object
 				block = blockArray[t];
@@ -4175,8 +4162,7 @@ public abstract class Chunk {
 					// torch, flip over to the "highlighted" textures
 					if (XRay.toggle.highlight_explored)
 					{
-						adj_torch = hasAdjacentTorch(this.lx,this.ly,this.lz);
-						if (adj_torch)
+						if (this.level.lightSources.check(this.x_chunkOffset + this.lx, this.ly, this.z_chunkOffset + this.lz))
 						{
 							textureId += 256;
 							tex_offset = 256;
@@ -4677,18 +4663,18 @@ public abstract class Chunk {
 			return;
 		}
 		if(isDirty.get(sheet)) {
-				GL11.glNewList(this.displayListNums.get(sheet), GL11.GL_COMPILE);
-				renderWorldSolids(sheet);
-				GL11.glEndList();
-				GL11.glNewList(this.nonstandardListNums.get(sheet), GL11.GL_COMPILE);
-				//GL11.glDepthMask(false);
-				renderWorldNonstandard(sheet);
-				//GL11.glDepthMask(true);
-				GL11.glEndList();
-				GL11.glNewList(this.glassListNums.get(sheet), GL11.GL_COMPILE);
-				renderWorldGlass(sheet);
-				GL11.glEndList();
-				this.isDirty.put(sheet, false);
+			GL11.glNewList(this.displayListNums.get(sheet), GL11.GL_COMPILE);
+			renderWorldSolids(sheet);
+			GL11.glEndList();
+			GL11.glNewList(this.nonstandardListNums.get(sheet), GL11.GL_COMPILE);
+			//GL11.glDepthMask(false);
+			renderWorldNonstandard(sheet);
+			//GL11.glDepthMask(true);
+			GL11.glEndList();
+			GL11.glNewList(this.glassListNums.get(sheet), GL11.GL_COMPILE);
+			renderWorldGlass(sheet);
+			GL11.glEndList();
+			this.isDirty.put(sheet, false);
 		}
 		GL11.glCallList(this.displayListNums.get(sheet));
 	}
