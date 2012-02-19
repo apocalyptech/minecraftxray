@@ -5,6 +5,7 @@
     actually be enabled for levels saved in Anvil format)
   * Added a few further-away lighting level presets
   * Fixed the camera position reporting, and some chunk highlighting issues
+  * Report world position as floats instead of ints
   * Bundle the official Minecraft texturepack for use as a fallback, rather
     than a third-party pack.
   * (internal) update to LWJGL 2.8.3

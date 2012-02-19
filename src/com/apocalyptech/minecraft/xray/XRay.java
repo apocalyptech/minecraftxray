@@ -184,6 +184,9 @@ public class XRay
 	// the current block (universal coordinate) where the camera is hovering on
 	private int levelBlockX, levelBlockZ;
 
+	// The same, but as a float, to more accurately show what Minecraft itself shows
+	private float reportBlockX, reportBlockZ;
+
 	// the current and previous chunk coordinates where the camera is hovering on
 	private int currentLevelX, currentLevelZ;
 
@@ -2345,8 +2348,10 @@ public class XRay
 
 		currentCameraPosX = -camera.getPosition().x;
 		currentCameraPosZ = -camera.getPosition().z;
-		int tempX = (int)Math.floor(currentCameraPosX+.5f);
-		int tempZ = (int)Math.floor(currentCameraPosZ+.5f);
+		reportBlockX = currentCameraPosX+.5f;
+		reportBlockZ = currentCameraPosZ+.5f;
+		int tempX = (int)Math.floor(reportBlockX);
+		int tempZ = (int)Math.floor(reportBlockZ);
 
 		// determine if we need to load new map chunks
 		if (tempX != levelBlockX || tempZ != levelBlockZ || needToReloadWorld)
@@ -2602,17 +2607,17 @@ public class XRay
 		g.setColor(Color.BLACK);
 		g.drawString("World X:", labelX, 22 + 32);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString(levelBlockX), valueX, 22 + 32);
+		g.drawString(String.format("%.1f", reportBlockX), valueX, 22 + 32);
 
 		g.setColor(Color.BLACK);
 		g.drawString("World Z:", labelX, 22 + 16 + 32);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString(levelBlockZ), valueX, 22 + 16 + 32);
+		g.drawString(String.format("%.1f", reportBlockZ), valueX, 22 + 16 + 32);
 
 		g.setColor(Color.BLACK);
 		g.drawString("World Y:", labelX, 22 + 16 + 32 + 16);
 		g.setColor(Color.RED.darker());
-		g.drawString(Integer.toString((int) (-camera.getPosition().y+.5f)), valueX, 22 + 16 + 32 + 16);
+		g.drawString(String.format("%.1f", (-camera.getPosition().y+.5f)), valueX, 22 + 16 + 32 + 16);
 
 		long heapSize = Runtime.getRuntime().totalMemory();
 		g.setColor(Color.BLACK);
