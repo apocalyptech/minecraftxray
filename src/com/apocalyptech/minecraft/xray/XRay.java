@@ -256,8 +256,8 @@ public class XRay
 	private boolean regenerateOutOfBoundsTexture = false;
 
 	// light level
-	private int[] lightLevelEnd = new int[] { 30, 50, 70, 100, 130 };
-	private int[] lightLevelStart = new int[] { 0, 20, 30, 40, 60 };
+	private int[] lightLevelEnd = new int[] { 30, 50, 70, 100, 130, 160, 190, 220 };
+	private int[] lightLevelStart = new int[] { 0, 20, 30, 40, 60, 80, 100, 120 };
 	private int currentLightLevel = 2;
 
 	// Grass rendering status
@@ -2714,7 +2714,8 @@ public class XRay
 		int slider_top_y = y - line_h + 10;
 		int slider_h = 8;
 		int slider_end_x = renderDetails_w - 8;
-		int marker_x = slider_start_x + (curval * ((slider_end_x - slider_start_x) / (val_length - 1)));
+		// We have a cast to float in there because otherwise rounding errors can pile up
+		int marker_x = slider_start_x + (int)(curval * ((slider_end_x - slider_start_x) / (float)(val_length - 1)));
 
 		// Label
 		g.setColor(labelColor);
