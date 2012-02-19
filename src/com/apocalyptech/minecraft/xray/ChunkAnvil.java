@@ -112,9 +112,9 @@ public class ChunkAnvil extends Chunk {
 	 * Will return an array of values which are suitable for feeding into a
 	 * minimap.
 	 */
-	public short[] getMinimapValues(boolean nether)
+	public short[][] getMinimapValues()
 	{
-		return new short[0];
+		return new short[16][16];
 	}
 
 	/**

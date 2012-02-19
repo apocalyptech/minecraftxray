@@ -212,7 +212,7 @@ public abstract class Chunk {
 	 * Will return an array of values which are suitable for feeding into a
 	 * minimap.
 	 */
-	public abstract short[] getMinimapValues(boolean nether);
+	public abstract short[][] getMinimapValues();
 
 	public CompoundTag getChunkData() {
 		return this.chunkData;

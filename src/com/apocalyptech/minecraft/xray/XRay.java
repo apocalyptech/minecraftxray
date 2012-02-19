@@ -3261,85 +3261,48 @@ public class XRay
 	 */
 	public void drawChunkToMap(int x, int z)
 	{
-		/* TODO: Rewrite to use some kind of getMinimapValues() call instead */
-		/*
+		short[][] minimap_data;
 		Chunk c = level.getChunk(x, z);
-		if (c != null)
+		if (c == null)
 		{
-			c.isOnMinimap = true;
+			return;
 		}
-		short[] chunkData = level.getChunkData(x, z);
+
+		c.isOnMinimap = true;
+		minimap_data = c.getMinimapValues();
 
 		int base_x = getMinimapBaseX(x);
 		int base_y = getMinimapBaseY(z);
 
-		boolean in_nether = world.isDimension(-1);
-		boolean found_air;
-		boolean found_solid;
-		boolean drew_block;
-
 		Color blockColor;
-
 		Graphics2D g = minimapGraphics;
 		for (int zz = 0; zz < 16; zz++)
 		{
 			for (int xx = 0; xx < 16; xx++)
 			{
-				// determine the top most visible block
-				found_air = !in_nether;
-				drew_block = false;
-				found_solid = false;
-				for (int yy = 127; yy >= 0; yy--)
+				if (minimap_data[xx][zz] > 0)
 				{
-					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
-					short blockData = chunkData[blockOffset];
-
-					if (blockData > 0)
+					if (MinecraftConstants.blockArray[minimap_data[xx][zz]] == null)
 					{
-						if (in_nether && !found_solid)
-						{
-							found_air = false;
-						}
-						found_solid = true;
-						if (found_air)
-						{
-							if (MinecraftConstants.blockArray[blockData] == null)
-							{
-								blockColor = BLOCK_UNKNOWN.color;
-							}
-							else
-							{
-								blockColor = MinecraftConstants.blockArray[blockData].color;
-							}
-							if (blockColor != null)
-							{
-								// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
-								// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
-								// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
-								// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
-								// to behave, but c'est la vie!
-								g.setColor(blockColor);
-								g.fillRect(base_x + xx, base_y + zz, 1, 1);
-							}
-							drew_block = true;
-							break;
-						}
+						blockColor = BLOCK_UNKNOWN.color;
 					}
 					else
 					{
-						found_air = true;
+						blockColor = MinecraftConstants.blockArray[minimap_data[xx][zz]].color;
 					}
-				}
-
-				// Make sure we don't have holes in our Nether minimap
-				if (in_nether && found_solid && !drew_block)
-				{
-					g.setColor(MinecraftConstants.BLOCK_BEDROCK.color);
-					g.fillRect(base_x + xx, base_y + xx, 1, 1);
+					if (blockColor != null)
+					{
+						// Previously we were using g.drawLine() here, but a minute-or-so's worth of investigating
+						// didn't uncover a way to force that to be pixel-precise (the color would often bleed over
+						// into adjoining pixels), so we're using g.fillRect() instead, which actually looks like it
+						// is probably a faster operation anyway. I'm sure there'd have been a way to get drawLine
+						// to behave, but c'est la vie!
+						g.setColor(blockColor);
+						g.fillRect(base_x + xx, base_y + zz, 1, 1);
+					}
 				}
 			}
 		}
-		*/
 	}
 
 	/***

@@ -46,12 +46,10 @@ import com.apocalyptech.minecraft.xray.dtf.Tag;
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 /**
- * Chunk functions, including the meat of our rendering stuffs
- *
- * TODO: There are a lot of functions that do very similar things in here, it would be
- * good to consolidate some of those.  I don't know why it took me so long to come
- * up with the current implementation of renderVertical and renderHorizontal - I suspect
- * that much of the rendering code would be improved by moving to those if possible.
+ * The original style chunk, basically from Alpha on upwards, until the
+ * weekly release 12w07a (and, eventually, Minecraft 1.2).  All data
+ * for the chunk is stored directly in the main tags, with an effective
+ * height limit of 128.
  */
 public class ChunkOriginal extends Chunk {
 
@@ -72,9 +70,56 @@ public class ChunkOriginal extends Chunk {
 	 * Will return an array of values which are suitable for feeding into a
 	 * minimap.
 	 */
-	public short[] getMinimapValues(boolean nether)
+	public short[][] getMinimapValues()
 	{
-		return new short[0];
+		short[][] minimap = new short[16][16];
+		boolean in_nether = this.level.world.isDimension(-1);
+		boolean found_air;
+		boolean found_solid;
+		boolean drew_block;
+
+		for (int zz = 0; zz < 16; zz++)
+		{
+			for (int xx = 0; xx < 16; xx++)
+			{
+				// determine the top most visible block
+				found_air = !in_nether;
+				drew_block = false;
+				found_solid = false;
+				for (int yy = 127; yy >= 0; yy--)
+				{
+					int blockOffset = yy + (zz * 128) + (xx * 128 * 16);
+					short block = blockData.value[blockOffset];
+
+					if (block > 0)
+					{
+						if (in_nether && !found_solid)
+						{
+							found_air = false;
+						}
+						found_solid = true;
+						if (found_air)
+						{
+							minimap[xx][zz] = block;
+							drew_block = true;
+							break;
+						}
+					}
+					else
+					{
+						found_air = true;
+					}
+				}
+
+				// Make sure we don't have holes in our Nether minimap
+				if (in_nether && found_solid && !drew_block)
+				{
+					minimap[xx][zz] = MinecraftConstants.BLOCK_BEDROCK.id;
+				}
+			}
+		}
+
+		return minimap;
 	}
 
 	/**
