@@ -62,6 +62,8 @@ public class ChunkOriginal extends Chunk {
 	public ChunkOriginal(MinecraftLevel level, Tag data) {
 
 		super(level, data);
+
+		this.maxHeight = 127;
 		
 		blockData = (ShortArrayTag) this.levelTag.getTagWithName("Blocks");
 		mapData = (ByteArrayTag) this.levelTag.getTagWithName("Data");
@@ -91,7 +93,7 @@ public class ChunkOriginal extends Chunk {
 				found_air = !in_nether;
 				drew_block = false;
 				found_solid = false;
-				for (int yy = 127; yy >= 0; yy--)
+				for (int yy = this.maxHeight; yy >= 0; yy--)
 				{
 					blockOffset = yy + (zz * 128) + (xx * 128 * 16);
 					block = blockData.value[blockOffset];
@@ -233,7 +235,7 @@ public class ChunkOriginal extends Chunk {
 	 */
 	protected short getAdjUpBlockId(int x, int y, int z, int blockOffset)
 	{
-		if (y >= 127)
+		if (y >= this.maxHeight)
 		{
 			return -1;
 		}
@@ -307,7 +309,7 @@ public class ChunkOriginal extends Chunk {
 		int min_z = sz-distance;
 		int max_z = sz+distance;
 		int min_y = Math.max(0, sy-distance);
-		int max_y = Math.min(127, sy+distance);
+		int max_y = Math.min(this.maxHeight, sy+distance);
 		Chunk otherChunk;
 		int cx, cz;
 		int tx, tz;

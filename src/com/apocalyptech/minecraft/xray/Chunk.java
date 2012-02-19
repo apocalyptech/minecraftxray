@@ -71,6 +71,9 @@ public abstract class Chunk {
 	// These are vars used while looping over our set of blocks
 	protected int lx, ly, lz;
 	protected int lOffset;
+
+	// Maximum height of this chunk
+	protected int maxHeight;
 	
 	protected MinecraftLevel level;
 	public boolean willSpawnSlimes;
@@ -2247,7 +2250,7 @@ public abstract class Chunk {
 		this.renderVertical(textureId, x+fence_postsize, z-fence_postsize, x-fence_postsize, z-fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
 		this.renderVertical(textureId, x-fence_postsize, z-fence_postsize, x-fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
 		this.renderVertical(textureId, x-fence_postsize, z+fence_postsize, x+fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
-		if (y == 127 || !isSolid(this.getAdjUpBlockId(xxx, yyy, zzz, blockOffset)))
+		if (y == this.maxHeight || !isSolid(this.getAdjUpBlockId(xxx, yyy, zzz, blockOffset)))
 		{
 			this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize, x-fence_postsize, z-fence_postsize, y+0.5f, 4, 4, 6, 6, false);
 		}
@@ -3561,7 +3564,7 @@ public abstract class Chunk {
 
 		// Top
 		boolean render_top = true;
-		if (y < 127)
+		if (y < this.maxHeight)
 		{
 			render_top = this.getAdjUpBlockId(xxx, yyy, zzz, blockOffset) != blockId;
 		}
@@ -4728,7 +4731,7 @@ public abstract class Chunk {
 	{
 		float x = this.x*16-.49f;
 		float z = this.z*16-.49f;
-		float top = 128.5f;
+		float top = this.maxHeight + 1.5f;
 		float bottom = .5f;
 		float width = 15.98f;
 		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z, x+width, bottom, z);

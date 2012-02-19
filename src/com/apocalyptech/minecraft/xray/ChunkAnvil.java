@@ -105,6 +105,9 @@ public class ChunkAnvil extends Chunk {
 		// Make sure our list of available sections is ordered
 		Collections.sort(availableSectionsList);
 
+		// And set our max height for the chunk
+		this.maxHeight = (availableSectionsList.get(availableSectionsList.size()-1)*16)-1;
+
 		this.finishConstructor();
 	}
 	
@@ -426,7 +429,7 @@ public class ChunkAnvil extends Chunk {
 		int min_z = sz-distance;
 		int max_z = sz+distance;
 		int min_y = Math.max(0, sy-distance);
-		int max_y = Math.min(127, sy+distance);
+		int max_y = Math.min(this.maxHeight, sy+distance);
 		Chunk otherChunk;
 		int cx, cz;
 		int tx, tz;
