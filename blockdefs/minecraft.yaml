@@ -1301,11 +1301,13 @@ blocks:
     name: Redstone Lamp (off)
     mapcolor: [156, 104, 54]
     tex: [3, 13]
+    explored: true
 
   - id: 124
     idStr: REDSTONE_LAMP_ON
     name: Redstone Lamp (on)
     mapcolor: [208, 152, 70]
     tex: [4, 13]
+    explored: true
 
 ...
