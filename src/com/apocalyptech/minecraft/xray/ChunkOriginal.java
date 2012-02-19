@@ -64,6 +64,7 @@ public class ChunkOriginal extends Chunk {
 		super(level, data);
 
 		this.maxHeight = 127;
+		this.ceilingHeight = 127;
 		
 		blockData = (ShortArrayTag) this.levelTag.getTagWithName("Blocks");
 		mapData = (ByteArrayTag) this.levelTag.getTagWithName("Data");

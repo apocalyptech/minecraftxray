@@ -72,8 +72,14 @@ public abstract class Chunk {
 	protected int lx, ly, lz;
 	protected int lOffset;
 
-	// Maximum height of this chunk
+	// Maximum height of this chunk (will vary per Chunk for Anvil maps)
 	protected int maxHeight;
+
+	// The, er, "ceiling" that we should consider - used currently just by the
+	// the chunk-border highlighting on Anvil maps.  maxHeight will fluctuate
+	// depending on the chunk, but our borders should always be drawn at the
+	// maximum height.
+	protected int ceilingHeight;
 	
 	protected MinecraftLevel level;
 	public boolean willSpawnSlimes;
@@ -4768,8 +4774,8 @@ public abstract class Chunk {
 	{
 		float x = this.x*16-.49f;
 		float z = this.z*16-.49f;
-		float top = this.maxHeight + 1.5f;
-		float bottom = .5f;
+		float top = this.ceilingHeight + 1f;
+		float bottom = -1f;
 		float width = 15.98f;
 		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z, x+width, bottom, z);
 		this.renderNonstandardVertical(0, 0, 1, 1, x, top, z+width, x+width, bottom, z+width);
