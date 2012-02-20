@@ -1,4 +1,6 @@
-  * Added jungle tree + sapling texture data from weekly 12w03a and 12w04a
+Minecraft X-Ray 3.6.0 (2012.02.20)
+
+  * Added jungle tree/leaf/sapling texture data from weekly 12w03a and 12w04a
   * Added Redstone Lamp textures from weekly 12w07a
   * Support for new map format "Anvil" from weekly 12w07a
   * Support for new door data format from weekly 12w06a (though it will only
