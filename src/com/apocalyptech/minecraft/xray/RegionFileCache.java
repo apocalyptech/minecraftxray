@@ -56,13 +56,14 @@ public class RegionFileCache {
 	 * Returns the integer chunk coordinates of the nearest chunk for which we have data,
 	 * from (x, z).  
 	 *
-	 * @param basePath the base path we're looking at
+	 * @param world the world path we're looking at
 	 * @param chunkX The current chunk X coordinate of the camera
 	 * @param chunkZ The current chunk Z coordinate of the camera
 	 * @return an IntegerPair describing the chunk coordinates
 	 */
-	public static synchronized IntegerPair getClosestRegion(String basePath, WorldInfo.MAP_TYPE data_format, int chunkX, int chunkZ)
+	public static synchronized IntegerPair getClosestRegion(WorldInfo world, int chunkX, int chunkZ)
 	{
+		String basePath = world.getBasePath();
 		ArrayList<IntegerPair> available;
 		if (availableCache.containsKey(basePath))
 		{
@@ -74,7 +75,7 @@ public class RegionFileCache {
 			availableCache.put(basePath, available);
 
 			File base = new File(basePath, "region");
-			File[] regions = base.listFiles(new RegionFileFilter());
+			File[] regions = base.listFiles(new RegionFileFilter(world));
 			Pattern pattern = Pattern.compile(RegionFileFilter.match_regex);
 
 			for (File region : regions)
@@ -163,7 +164,7 @@ public class RegionFileCache {
 			// This bit would fit better inside RegionFile itself, but the RegionFile
 			// class doesn't actually know anything about its absolute positioning,
 			// so we'll just do it here anyway.
-			RegionFile rf = getRegionFileByRegion(new File(basePath), data_format, closestPair.getValueOne(), closestPair.getValueTwo());
+			RegionFile rf = getRegionFileByRegion(world, closestPair.getValueOne(), closestPair.getValueTwo());
 			if (rf != null)
 			{
 				int adjustedChunkX = chunkX - (closestPair.getValueOne()*32);
@@ -217,15 +218,15 @@ public class RegionFileCache {
 		return null;
 	}
 
-	public static synchronized RegionFile getRegionFileByRegion(File basePath, WorldInfo.MAP_TYPE data_format, int regionX, int regionZ)
+	public static synchronized RegionFile getRegionFileByRegion(WorldInfo world, int regionX, int regionZ)
 	{
-		return getRegionFile(basePath, data_format, (regionX << 5), (regionZ << 5));
+		return getRegionFile(world, (regionX << 5), (regionZ << 5));
 	}
 
-    public static synchronized RegionFile getRegionFile(File basePath, WorldInfo.MAP_TYPE data_format, int chunkX, int chunkZ) {
-        File regionDir = new File(basePath, "region");
+    public static synchronized RegionFile getRegionFile(WorldInfo world, int chunkX, int chunkZ) {
+        File regionDir = new File(new File(world.getBasePath()), "region");
 		String extension;
-		switch(data_format)
+		switch(world.data_format)
 		{
 			case ANVIL:
 				extension = ".mca";
@@ -278,16 +279,4 @@ public class RegionFileCache {
         }
         cache.clear();
     }
-
-    public static DataInputStream getChunkDataInputStream(File basePath, WorldInfo.MAP_TYPE data_format, int chunkX, int chunkZ) {
-        RegionFile r = getRegionFile(basePath, data_format, chunkX, chunkZ);
-        return r.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
-    }
-    
-    /* Commented for X-Ray since we won't be writing anything
-    public static DataOutputStream getChunkDataOutputStream(File basePath, int chunkX, int chunkZ) {
-        RegionFile r = getRegionFile(basePath, chunkX, chunkZ);
-        return r.getChunkDataOutputStream(chunkX & 31, chunkZ & 31);
-    }
-    */
 }

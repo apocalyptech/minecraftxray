@@ -35,10 +35,20 @@ import java.io.FilenameFilter;
  */
 public class RegionFileFilter implements FilenameFilter
 {
-	public static String match_regex = "^r\\.(-?\\d+)\\.(-?\\d+)\\.mcr$";
+	public static String match_regex;
 
-	public RegionFileFilter() {
-		// Nothing, really
+	public RegionFileFilter(WorldInfo world) {
+		switch (world.data_format)
+		{
+			case ANVIL:
+				RegionFileFilter.match_regex = "^r\\.(-?\\d+)\\.(-?\\d+)\\.mca$";
+				break;
+
+			case ORIGINAL:
+			default:
+				RegionFileFilter.match_regex = "^r\\.(-?\\d+)\\.(-?\\d+)\\.mcr$";
+				break;
+		}
 	}
 
 	public boolean accept(File directory, String filename) {
