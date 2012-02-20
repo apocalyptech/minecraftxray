@@ -59,8 +59,8 @@ overridden, though.  The default keybindings are as follows:
     Movement
         Movement:       WASD
         Fly Upward:     SPACE
-        Fly Downward:   LEFT CONTROL
-        Move Faster:    Left Shift / Left Mouse Button (hold)
+        Fly Downward:   LEFT SHIFT
+        Move Faster:    Left Control / Left Mouse Button (hold)
         Move Slower:    Right Shift / Right Mouse Button (hold)
 
     Camera
