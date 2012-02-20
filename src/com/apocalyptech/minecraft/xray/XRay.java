@@ -835,6 +835,10 @@ public class XRay
 
 	public void setLightLevel(int diff)
 	{
+		if (this.currentLightLevel > (this.lightLevelStart.length-1))
+		{
+			this.currentLightLevel = this.lightLevelStart.length-1;
+		}
 		int min = this.lightLevelStart[this.currentLightLevel];
 		int max = this.lightLevelEnd[this.currentLightLevel];
 
