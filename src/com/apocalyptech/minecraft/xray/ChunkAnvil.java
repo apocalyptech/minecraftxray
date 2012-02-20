@@ -352,6 +352,10 @@ public class ChunkAnvil extends Chunk {
 	 */
 	protected short getAdjDownBlockId(int x, int y, int z, int blockOffset)
 	{
+		if (y <= 0)
+		{
+			return -1;
+		}
 		int section = y/16;
 		if ((y % 16) == 0)
 		{
