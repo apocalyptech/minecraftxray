@@ -536,16 +536,19 @@ public class XRay
 		{
 			prefs_highlight_key = "HIGHLIGHT_" + (i + 1);
 			prefs_highlight = xray_properties.getProperty(prefs_highlight_key);
-			try
+			if (prefs_highlight != null)
 			{
-				HIGHLIGHT_ORES[i] = blockCollection.getByName(prefs_highlight).id;
-			}
-			catch (Exception e)
-			{
-				// no worries, just populate with our default
-				error = "Block type '" + prefs_highlight + "', for HIGHLIGHT_" + (i+1) + " is an unknown block.  Reverting to default: " + blockArray[HIGHLIGHT_ORES[i]].idStr;
-				logger.warn(error);
-				errors.add(error);
+				try
+				{
+					HIGHLIGHT_ORES[i] = blockCollection.getByName(prefs_highlight).id;
+				}
+				catch (Exception e)
+				{
+					// no worries, just populate with our default
+					error = "Block type '" + prefs_highlight + "', for HIGHLIGHT_" + (i+1) + " is an unknown block.  Reverting to default: " + blockArray[HIGHLIGHT_ORES[i]].idStr;
+					logger.warn(error);
+					errors.add(error);
+				}
 			}
 			xray_properties.put(prefs_highlight_key, blockArray[HIGHLIGHT_ORES[i]].idStr);
 		}
@@ -2381,9 +2384,9 @@ public class XRay
 		// Get a list of chunks that we'll iterate over, on our various passes
 		ArrayList<Chunk> chunkList = new ArrayList<Chunk>();
 		Chunk curChunk = null;
-		for (int lx = currentLevelX - visible_chunk_range; lx < currentLevelX + visible_chunk_range; lx++)
+		for (int lx = currentLevelX - visible_chunk_range; lx <= currentLevelX + visible_chunk_range; lx++)
 		{
-			for (int lz = currentLevelZ - visible_chunk_range; lz < currentLevelZ + visible_chunk_range; lz++)
+			for (int lz = currentLevelZ - visible_chunk_range; lz <= currentLevelZ + visible_chunk_range; lz++)
 			{
 				Chunk k = level.getChunk(lx, lz);
 				if (k != null)
@@ -2528,9 +2531,9 @@ public class XRay
 				for (Chunk k : chunkList)
 				{
 					if (k.x >= currentLevelX - highlight_chunk_range &&
-						k.x < currentLevelX + highlight_chunk_range &&
+						k.x <= currentLevelX + highlight_chunk_range &&
 						k.z >= currentLevelZ - highlight_chunk_range &&
-						k.z < currentLevelZ + highlight_chunk_range)
+						k.z <= currentLevelZ + highlight_chunk_range)
 					{
 						if (k.usesSheet(i))
 						{
