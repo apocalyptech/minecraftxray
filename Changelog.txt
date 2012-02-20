@@ -11,6 +11,8 @@
   * Default keys for "Move Faster" (previously Left Shift) and "Move Down"
     (previously Left Control) have been swapped, to better match the default
     Minecraft up/down keys (while flying in a Creative map)
+  * The Ore Highlight Distance slider hasn't actually worked correctly since
+    X-Ray 3.4.0.  That's been fixed.
   * Bundle the official Minecraft texturepack for use as a fallback, rather
     than a third-party pack.
   * (internal) update to LWJGL 2.8.3

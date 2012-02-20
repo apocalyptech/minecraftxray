@@ -2428,10 +2428,7 @@ public class XRay
 						last_tex = i;
 					}
 					k.renderSolid(i);
-					if (toggle.highlightOres == HIGHLIGHT_TYPE.OFF)
-					{
-						k.renderSelected(i, this.mineralToggle);
-					}
+					k.renderSelected(i, this.mineralToggle);
 				}
 			}
 		}
@@ -2522,19 +2519,24 @@ public class XRay
 			}
 			setLightLevel(20);
 			GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+
 			// TODO: could check for specific textures here, rather than looping over all
 			for (i=0; i<this.minecraftTextures.size(); i++)
 			{
 				for (Chunk k : chunkList)
 				{
-					if (k.usesSheet(i))
+					if (k.x >= currentLevelX - chunk_range && k.x < currentLevelX + chunk_range &&
+							k.z >= currentLevelZ - chunk_range && k.z < currentLevelZ + chunk_range)
 					{
-						if (last_tex != i)
+						if (k.usesSheet(i))
 						{
-							minecraftTextures.get(i).bind();
-							last_tex = i;
+							if (last_tex != i)
+							{
+								minecraftTextures.get(i).bind();
+								last_tex = i;
+							}
+							k.renderSelected(i, this.mineralToggle);
 						}
-						k.renderSelected(i, this.mineralToggle);
 					}
 				}
 			}
