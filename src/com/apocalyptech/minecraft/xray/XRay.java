@@ -556,6 +556,9 @@ public class XRay
 		// Save the file immediately, in case we picked up new defaults which weren't present previously
 		this.savePreferences();
 
+		// Force our chunk-rendering distance to our selected value
+		this.setChunkRange(this.currentChunkRange);
+
 		// Return
 		return errors;
 	}
@@ -1298,13 +1301,12 @@ public class XRay
 			n = CHUNK_RANGES.length - 1;
 		if (n <= 0)
 			n = 0;
-		if (n == currentChunkRange)
+		if (n != currentChunkRange)
 		{
-			return;
+			this.needToReloadWorld = true;
 		}
 		this.currentChunkRange = n;
 		this.visible_chunk_range = CHUNK_RANGES[n];
-		this.needToReloadWorld = true;
 	}
 
 	private void setHighlightRange(int n)
@@ -2369,11 +2371,11 @@ public class XRay
 			currentLevelZ = level.getChunkZ(levelBlockZ);
 		}
 
-		// draw the visible world
-		int chunk_range = visible_chunk_range;
-		if (HIGHLIGHT_RANGES[currentHighlightDistance] < chunk_range)
+		// Set our range for chunks to highlight
+		int highlight_chunk_range = visible_chunk_range;
+		if (HIGHLIGHT_RANGES[currentHighlightDistance] < highlight_chunk_range)
 		{
-			chunk_range = HIGHLIGHT_RANGES[currentHighlightDistance];
+			highlight_chunk_range = HIGHLIGHT_RANGES[currentHighlightDistance];
 		}
 
 		// Get a list of chunks that we'll iterate over, on our various passes
@@ -2525,8 +2527,10 @@ public class XRay
 			{
 				for (Chunk k : chunkList)
 				{
-					if (k.x >= currentLevelX - chunk_range && k.x < currentLevelX + chunk_range &&
-							k.z >= currentLevelZ - chunk_range && k.z < currentLevelZ + chunk_range)
+					if (k.x >= currentLevelX - highlight_chunk_range &&
+						k.x < currentLevelX + highlight_chunk_range &&
+						k.z >= currentLevelZ - highlight_chunk_range &&
+						k.z < currentLevelZ + highlight_chunk_range)
 					{
 						if (k.usesSheet(i))
 						{

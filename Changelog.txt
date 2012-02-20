@@ -13,6 +13,8 @@
     Minecraft up/down keys (while flying in a Creative map)
   * The Ore Highlight Distance slider hasn't actually worked correctly since
     X-Ray 3.4.0.  That's been fixed.
+  * The render distance wasn't being loaded properly from the saved state
+    from the last run.  That's fixed now too.
   * Bundle the official Minecraft texturepack for use as a fallback, rather
     than a third-party pack.
   * (internal) update to LWJGL 2.8.3
