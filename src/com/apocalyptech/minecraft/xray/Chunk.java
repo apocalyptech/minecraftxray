@@ -46,7 +46,16 @@ import com.apocalyptech.minecraft.xray.dtf.Tag;
 import static com.apocalyptech.minecraft.xray.MinecraftConstants.*;
 
 /**
- * Chunk functions, including the meat of our rendering stuffs
+ * Chunk functions, including the meat of our rendering stuffs.
+ *
+ * Note that this class is now abstract, and requires an implementing class to be fully-
+ * functional.  This is to support Anvil chunks in addition to the original chunk
+ * specification.  These are implemented in ChunkAnvil.java and ChunkOriginal.java.
+ * The chunk-specific code in each is fairly minimal.  I could actually move the rest
+ * of the "getAdj*" functions back into this main class with a bit of rewriting - at the
+ * time it seemed like I might see marginal performance improvements by letting the
+ * implementing classes deal with them instead, and I'm lazy, so for now that's where
+ * they're staying.
  *
  * TODO: There are a lot of functions that do very similar things in here, it would be
  * good to consolidate some of those.  I don't know why it took me so long to come
