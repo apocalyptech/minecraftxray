@@ -65,8 +65,6 @@
 
  * Camera presets for bed positions
 
- * Our reported coordinates are apparently not correct
-
  * Doors should be rendered "properly"
 
  * Now that there's region data of some sort in the data files, we should
@@ -83,3 +81,7 @@
    the block, whereas in Minecraft, it's found at one of the corners.  So we're
    constantly doing some fudging to report the coordinates in a way that's
    consistent with what you get in Minecraft with F3.
+
+ * Now that mobs are much more permanent than they used to be, it might make
+   sense to have them in X-Ray.  Would be nice to be able to highlight Ocelots
+   hiding around in the jungle, for instance...
