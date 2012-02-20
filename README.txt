@@ -294,5 +294,4 @@ the ".minecraft" directory that Minecraft itself uses:
 
 As of X-Ray 3.5.0, all settings in this file can be set using the GUI, so there
 shouldn't be any reason to edit it by hand.  If you do want to edit it by hand,
-though, feel free - it's just a text file.  For some more information on the
-various constants used, see: http://apocalyptech.com/minecraft/xray/config.php
+though, feel free - it's just a text file.
