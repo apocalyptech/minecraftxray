@@ -1,7 +1,7 @@
   * Added "tex_data_bits" to YAML files, so blocks can specify how many
     bits of their data field contribute to the texture selection.
   * Added support for upside-down slabs and stairs, from weekly 12w08a
-  * Cleaned up stair rendering
+  * Cleaned up stair and slab rendering
 
 Minecraft X-Ray 3.6.0 (2012.02.20)
 

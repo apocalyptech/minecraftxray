@@ -3681,10 +3681,12 @@ public abstract class Chunk {
 
 		byte data = getData(xxx, yyy, zzz);
 		boolean top = ((data & 0x8) == 0x8);
-		float offset = 0f;
+		float offset = -.5f;
+		int tex_start = 8;
 		if (top)
 		{
-			offset = .5f;
+			offset = 0f;
+			tex_start = 0;
 		}
 
 		// Sides
@@ -3692,25 +3694,25 @@ public abstract class Chunk {
 					getAdjNorthBlockId(xxx, yyy, zzz, blockOffset),
 					getAdjNorthBlockData(xxx, yyy, zzz)))
 		{
-			this.renderNorthSouth(textureId, x, y+offset, z, 0f, .5f);
+			this.renderVertical(textureId, x-.5f, z-.5f, x+.5f, z-.5f, y+offset, .5f, 16, 8, 0, tex_start);
 		}
 		if (shouldRenderHalfHeightAdj(top,
 				getAdjSouthBlockId(xxx, yyy, zzz, blockOffset),
 				getAdjSouthBlockData(xxx, yyy, zzz)))
 		{
-			this.renderNorthSouth(textureId, x, y+offset, z+1, 0f, .5f);
+			this.renderVertical(textureId, x-.5f, z+.5f, x+.5f, z+.5f, y+offset, .5f, 16, 8, 0, tex_start);
 		}
 		if (shouldRenderHalfHeightAdj(top,
 					getAdjWestBlockId(xxx, yyy, zzz, blockOffset),
 					getAdjWestBlockData(xxx, yyy, zzz)))
 		{
-			this.renderWestEast(textureId, x, y+offset, z, 0f, .5f);
+			this.renderVertical(textureId, x-.5f, z-.5f, x-.5f, z+.5f, y+offset, .5f, 16, 8, 0, tex_start);
 		}
 		if (shouldRenderHalfHeightAdj(top,
 					getAdjEastBlockId(xxx, yyy, zzz, blockOffset),
 					getAdjEastBlockData(xxx, yyy, zzz)))
 		{
-			this.renderWestEast(textureId, x+1, y+offset, z, 0f, .5f);
+			this.renderVertical(textureId, x+.5f, z-.5f, x+.5f, z+.5f, y+offset, .5f, 16, 8, 0, tex_start);
 		}
 		
 		// Top and bottom
@@ -3738,11 +3740,11 @@ public abstract class Chunk {
 		// And now the actual top and bottom rendering
 		if (render_bottom)
 		{
-			this.renderTopDown(textureId, x, y+offset, z);
+			this.renderTopDown(textureId, x, y+.5f+offset, z);
 		}
 		if (render_top)
 		{
-			this.renderTopDown(textureId, x, y+0.5f+offset, z);	
+			this.renderTopDown(textureId, x, y+1f+offset, z);	
 		}
 	}
 	
