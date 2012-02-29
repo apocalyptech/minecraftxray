@@ -1,3 +1,5 @@
+Minecraft X-Ray 3.6.1 (2012.02.29)
+
   * Added "tex_data_bits" to YAML files, so blocks can specify how many
     bits of their data field contribute to the texture selection.
   * Added support for upside-down stairs from weekly 12w08a, and upside-
