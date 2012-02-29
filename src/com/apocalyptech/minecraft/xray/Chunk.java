@@ -1936,6 +1936,7 @@ public abstract class Chunk {
 					}
 
 				case SEMISOLID:
+				case WATER:
 				case GLASS:
 					return STAIR_RENDER.OFFSET;
 
@@ -1979,6 +1980,7 @@ public abstract class Chunk {
 					}
 
 				case SEMISOLID:
+				case WATER:
 				case GLASS:
 					return STAIR_RENDER.OFFSET;
 					
@@ -2009,6 +2011,7 @@ public abstract class Chunk {
 		switch (blockArray[adj_id].getType())
 		{
 			case SEMISOLID:
+			case WATER:
 			case GLASS:
 				return STAIR_RENDER.OFFSET;
 
@@ -2067,6 +2070,7 @@ public abstract class Chunk {
 					}
 
 				case SEMISOLID:
+				case WATER:
 				case GLASS:
 					return STAIR_RENDER.OFFSET;
 
@@ -2126,6 +2130,7 @@ public abstract class Chunk {
 					}
 
 				case SEMISOLID:
+				case WATER:
 				case GLASS:
 					return STAIR_RENDER.OFFSET;
 
@@ -2269,7 +2274,7 @@ public abstract class Chunk {
 		}
 		if (render_front != STAIR_RENDER.NO)
 		{
-			if (render_back == STAIR_RENDER.OFFSET)
+			if (render_front == STAIR_RENDER.OFFSET)
 			{
 				temp = .48f;
 			}
@@ -2281,7 +2286,7 @@ public abstract class Chunk {
 		}
 		if (render_top != STAIR_RENDER.NO)
 		{
-			if (render_back == STAIR_RENDER.OFFSET)
+			if (render_top == STAIR_RENDER.OFFSET)
 			{
 				temp = .48f;
 			}
@@ -2293,7 +2298,7 @@ public abstract class Chunk {
 		}
 		if (render_bottom != STAIR_RENDER.NO)
 		{
-			if (render_back == STAIR_RENDER.OFFSET)
+			if (render_bottom == STAIR_RENDER.OFFSET)
 			{
 				temp = -.48f;
 			}
