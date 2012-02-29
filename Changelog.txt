@@ -1,6 +1,7 @@
   * Added "tex_data_bits" to YAML files, so blocks can specify how many
     bits of their data field contribute to the texture selection.
-  * Added support for upside-down slabs and stairs, from weekly 12w08a
+  * Added support for upside-down stairs from weekly 12w08a, and upside-
+    down slabs from 1.2-preview
   * Cleaned up stair and slab rendering
   * Added "circular" Stone Brick texture from Minecraft 1.2-preview
 
