@@ -3483,7 +3483,7 @@ public abstract class Chunk {
 	 * Helper function for renderHalfHeight - given an adjacent block ID, it
 	 * will return true if we should render that "side"
 	 */
-	public boolean shouldRenderHalfHeightAdj(short adj_block)
+	public boolean shouldRenderHalfHeightAdj(boolean top, short adj_block, byte adj_data)
 	{
 		if (adj_block < 0)
 		{
@@ -3493,8 +3493,18 @@ public abstract class Chunk {
 		{
 			return true;
 		}
-		return (!blockArray[adj_block].isSolid() &&
-				blockArray[adj_block].type != BLOCK_TYPE.HALFHEIGHT);
+		if (blockArray[adj_block].isSolid())
+		{
+			return false;
+		}
+		if (blockArray[adj_block].type == BLOCK_TYPE.HALFHEIGHT)
+		{
+			return (top != ((adj_data & 0x8) == 0x8));
+		}
+		else
+		{
+			return true;
+		}
 	}
 	
 	/**
@@ -3510,38 +3520,71 @@ public abstract class Chunk {
 		float z = zzz + this.z*16;
 		float y = yyy;
 
-		// Sides
-		if (shouldRenderHalfHeightAdj(getAdjNorthBlockId(xxx, yyy, zzz, blockOffset)))
+		byte data = getData(xxx, yyy, zzz);
+		boolean top = ((data & 0x8) == 0x8);
+		float offset = 0f;
+		if (top)
 		{
-			this.renderNorthSouth(textureId, x, y, z, 0f, .5f);
-		}
-		if (shouldRenderHalfHeightAdj(getAdjSouthBlockId(xxx, yyy, zzz, blockOffset)))
-		{
-			this.renderNorthSouth(textureId, x, y, z+1, 0f, .5f);
-		}
-		if (shouldRenderHalfHeightAdj(getAdjWestBlockId(xxx, yyy, zzz, blockOffset)))
-		{
-			this.renderWestEast(textureId, x, y, z, 0f, .5f);
-		}
-		if (shouldRenderHalfHeightAdj(getAdjEastBlockId(xxx, yyy, zzz, blockOffset)))
-		{
-			this.renderWestEast(textureId, x+1, y, z, 0f, .5f);
-		}
-		
-		// Bottom
-		boolean render_bottom = true;
-		if (y > 0)
-		{
-			short bottom = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
-			render_bottom = (bottom == 0 || (bottom > 0 && blockArray[bottom] != null && !blockArray[bottom].isSolid()));
-		}
-		if (render_bottom)
-		{
-			this.renderTopDown(textureId, x, y, z);
+			offset = .5f;
 		}
 
-		// Always render the top
-		this.renderTopDown(textureId, x, y+0.5f, z);	
+		// Sides
+		if (shouldRenderHalfHeightAdj(top,
+					getAdjNorthBlockId(xxx, yyy, zzz, blockOffset),
+					getAdjNorthBlockData(xxx, yyy, zzz)))
+		{
+			this.renderNorthSouth(textureId, x, y+offset, z, 0f, .5f);
+		}
+		if (shouldRenderHalfHeightAdj(top,
+				getAdjSouthBlockId(xxx, yyy, zzz, blockOffset),
+				getAdjSouthBlockData(xxx, yyy, zzz)))
+		{
+			this.renderNorthSouth(textureId, x, y+offset, z+1, 0f, .5f);
+		}
+		if (shouldRenderHalfHeightAdj(top,
+					getAdjWestBlockId(xxx, yyy, zzz, blockOffset),
+					getAdjWestBlockData(xxx, yyy, zzz)))
+		{
+			this.renderWestEast(textureId, x, y+offset, z, 0f, .5f);
+		}
+		if (shouldRenderHalfHeightAdj(top,
+					getAdjEastBlockId(xxx, yyy, zzz, blockOffset),
+					getAdjEastBlockData(xxx, yyy, zzz)))
+		{
+			this.renderWestEast(textureId, x+1, y+offset, z, 0f, .5f);
+		}
+		
+		// Top and bottom
+		boolean render_bottom = true;
+		boolean render_top = true;
+		if (top)
+		{
+			if (y < this.maxHeight)
+			{
+				short top_block = getAdjUpBlockId(xxx, yyy, zzz, blockOffset);
+				render_top = (top_block == 0 ||
+						(top_block > 0 && blockArray[top_block] != null &&
+						 !blockArray[top_block].isSolid()));
+			}
+		}
+		else
+		{
+			if (y > 0)
+			{
+				short bottom = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
+				render_bottom = (bottom == 0 || (bottom > 0 && blockArray[bottom] != null && !blockArray[bottom].isSolid()));
+			}
+		}
+
+		// And now the actual top and bottom rendering
+		if (render_bottom)
+		{
+			this.renderTopDown(textureId, x, y+offset, z);
+		}
+		if (render_top)
+		{
+			this.renderTopDown(textureId, x, y+0.5f+offset, z);	
+		}
 	}
 	
 	/**
