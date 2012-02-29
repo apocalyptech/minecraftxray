@@ -51,8 +51,6 @@
 #               BEDROCK (the "bedrock" toggle uses it)
 #               GRASS (the "grass rendering" toggle uses it)
 #               SILVERFISH (the "silverfish highlighting" toggle uses it)
-#               SAPLING (some special data handling is needed)
-#               LEAVES (some special data handling is needed)
 #               PORTAL (we generate the texture to use for this one)
 #               END_PORTAL (we generate the texture to use for this one)
 #               FIRE (we generate the texture to use for this one)
@@ -83,6 +81,11 @@
 #   tex_data: Sometimes blocks will change their texture based on
 #        its data value; this will let you specify that.  For
 #        examples, see Wood or Saplings.
+#
+#   tex_data_bits: How many bits of our data field are used to define
+#        the texture.  This is useful when half the data field is used
+#        for texture, and the other half for other things (such as for
+#        Saplings, Leaves, and Half-steps)
 #
 #   tex_direction: Sometimes blocks have different textures on
 #         different faces.  If some faces aren't specified, the
@@ -284,6 +287,7 @@ blocks:
       2: [15, 4]  # Birch
       3: [14, 1]  # Jungle
     type: DECORATION_CROSS
+    tex_data_bits: 2
   
   - id: 7
     idStr: BEDROCK
@@ -380,6 +384,7 @@ blocks:
       1: [5, 3]   # Spruce
       2: [5, 3]   # Birch
       3: [5, 12]  # Swamp Tree
+    tex_data_bits: 2
 
   - id: 19
     idStr: SPONGE
@@ -623,8 +628,8 @@ blocks:
       3: [0, 1]   # Cobblestone
       4: [7, 0]   # Brick
       5: [6, 3]   # Stone Brick
-      6: [5, 0]   # Smooth stone again, apparently
     type: HALFHEIGHT
+    tex_data_bits: 3
   
   - id: 45
     idStr: BRICK

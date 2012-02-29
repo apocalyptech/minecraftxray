@@ -4200,17 +4200,7 @@ public abstract class Chunk {
 					if (block.texture_data_map != null)
 					{
 						data = getData(this.lx, this.ly, this.lz);
-
-						if (t == BLOCK_SAPLING.id || t == BLOCK_LEAVES.id)
-						{
-							// Special-case here for Sapling + Leaf data, since we can't trust the upper two bits
-							data &= 0x3;
-						}
-						else
-						{
-							// ... otherwise, just make sure we're dealing with the bottom four
-							data &= 0xF;
-						}
+						data &= block.tex_data_mask;
 
 						// Now try to get the new texture
 						try

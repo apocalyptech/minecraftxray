@@ -101,6 +101,7 @@ public class BlockType
 	private ArrayList<Integer> mapcolor;
 	private String texpath;
 	private HashMap<Integer, String> tex_direction_data;
+	private int tex_data_bits;
 	private boolean override; // This is not at all tested yet
 	private boolean explored;
 
@@ -116,6 +117,7 @@ public class BlockType
 	public String texfile;
 	public int texSheet;
 	private String searchMatch;
+	public int tex_data_mask;
 
 	public BlockType()
 	{
@@ -124,6 +126,7 @@ public class BlockType
 		this.id = -1;
 		this.tex_idx = -1;
 		this.texSheet = 0;
+		this.setTex_data_bits(4);
 	}
 
 	public void setId(short id)
@@ -184,6 +187,17 @@ public class BlockType
 	public String getTexfile()
 	{
 		return this.texfile;
+	}
+
+	public void setTex_data_bits(int tex_data_bits)
+	{
+		this.tex_data_bits = tex_data_bits;
+		this.tex_data_mask = (int)(Math.pow(2, tex_data_bits)-1);
+	}
+
+	public int getTex_data_bits()
+	{
+		return this.tex_data_bits;
 	}
 
 	public void setTexSheet(int texSheet)

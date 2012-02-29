@@ -152,8 +152,6 @@ public class MinecraftConstants {
 	public static BlockType BLOCK_GRASS;
 	public static BlockType BLOCK_PORTAL;
 	public static BlockType BLOCK_END_PORTAL;
-	public static BlockType BLOCK_SAPLING;
-	public static BlockType BLOCK_LEAVES;
 	public static BlockType BLOCK_FIRE;
 	public static BlockType BLOCK_WATER;
 	public static BlockType BLOCK_STATIONARY_WATER;
@@ -379,16 +377,6 @@ public class MinecraftConstants {
 		if (BLOCK_END_PORTAL == null)
 		{
 			throw new BlockTypeLoadException("END_PORTAL block definition not found");
-		}
-		BLOCK_SAPLING = blockCollection.getByName("SAPLING");
-		if (BLOCK_SAPLING == null)
-		{
-			throw new BlockTypeLoadException("SAPLING block definition not found");
-		}
-		BLOCK_LEAVES = blockCollection.getByName("LEAVES");
-		if (BLOCK_LEAVES == null)
-		{
-			throw new BlockTypeLoadException("LEAVES block definition not found");
 		}
 		BLOCK_FIRE = blockCollection.getByName("FIRE");
 		if (BLOCK_FIRE == null)

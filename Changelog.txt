@@ -1,3 +1,6 @@
+  * Added "tex_data_bits" to YAML files, so blocks can specify how many
+    bits of their data field contribute to the texture selection.
+
 Minecraft X-Ray 3.6.0 (2012.02.20)
 
   * Added jungle tree/leaf/sapling texture data from weekly 12w03a and 12w04a
