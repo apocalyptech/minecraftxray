@@ -1091,6 +1091,7 @@ blocks:
       0: [6, 3]  # Regular
       1: [4, 6]  # Mossy
       2: [5, 6]  # Cracked
+      3: [5, 13] # Circular
 
   - id: 99
     idStr: HUGE_BROWN_MUSHROOM
