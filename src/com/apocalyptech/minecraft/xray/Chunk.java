@@ -114,6 +114,12 @@ public abstract class Chunk {
 		EASTWEST,
 		NORTHSOUTH
 	}
+
+	private static enum STAIR_RENDER {
+		NO,
+		YES,
+		OFFSET
+	}
 	
 	public Chunk(MinecraftLevel level, Tag data) {
 		
@@ -898,7 +904,7 @@ public abstract class Chunk {
 	 * 
 	 * @param t
 	 */
-	public void renderStairSide(int t, boolean right) {
+	public void renderStairSide(int t, boolean right, STAIR_RENDER rendertype) {
 		
 		float bx = precalcSpriteSheetToTextureX[t];
 		float by = precalcSpriteSheetToTextureY[t];
@@ -906,9 +912,13 @@ public abstract class Chunk {
 		float x=0f;
 		float y=0f;
 		float z=0f;
+		if (rendertype == STAIR_RENDER.OFFSET)
+		{
+			z += .02f;
+		}
 		if (right)
 		{
-			z = 1f;
+			z = 1f-z;
 		}
 		
 		float xoff=0.5f;
@@ -1901,25 +1911,36 @@ public abstract class Chunk {
 	 * @param adj_id The block ID of the adjacent block
 	 * @param adj_data The data value of the adjacent block
 	 */
-	private boolean shouldRenderStairSide(byte our_data, short adj_id, byte adj_data)
+	private STAIR_RENDER shouldRenderStairSide(byte our_data, short adj_id, byte adj_data)
 	{
 		if (adj_id < 0 || blockArray[adj_id] == null)
 		{
-			return true;
+			return STAIR_RENDER.YES;
 		}
 		if (blockArray[adj_id].isSolid())
 		{
-			return false;
+			return STAIR_RENDER.NO;
 		}
 		else
 		{
-			if (blockArray[adj_id].getType() == BLOCK_TYPE.STAIRS)
+			switch (blockArray[adj_id].getType())
 			{
-				return (our_data != adj_data);
-			}
-			else
-			{
-				return true;
+				case STAIRS:
+					if (our_data == adj_data)
+					{
+						return STAIR_RENDER.NO;
+					}
+					else
+					{
+						return STAIR_RENDER.YES;
+					}
+
+				case SEMISOLID:
+				case GLASS:
+					return STAIR_RENDER.OFFSET;
+
+				default:
+					return STAIR_RENDER.YES;
 			}
 		}
 	}
@@ -1933,25 +1954,36 @@ public abstract class Chunk {
 	 * @param adj_id The block ID of the adjacent block
 	 * @param adj_data The data value of the adjacent block
 	 */
-	private boolean shouldRenderStairFront(short adj_id, byte adj_data)
+	private STAIR_RENDER shouldRenderStairFront(short adj_id, byte adj_data)
 	{
 		if (adj_id < 0 || blockArray[adj_id] == null)
 		{
-			return true;
+			return STAIR_RENDER.YES;
 		}
 		if (blockArray[adj_id].isSolid())
 		{
-			return false;
+			return STAIR_RENDER.NO;
 		}
 		else
 		{
-			if (blockArray[adj_id].getType() == BLOCK_TYPE.HALFHEIGHT)
+			switch (blockArray[adj_id].getType())
 			{
-				return ((adj_data & 0x8) == 0x8);
-			}
-			else
-			{
-				return true;
+				case HALFHEIGHT:
+					if ((adj_data & 0x8) == 0x8)
+					{
+						return STAIR_RENDER.YES;
+					}
+					else
+					{
+						return STAIR_RENDER.NO;
+					}
+
+				case SEMISOLID:
+				case GLASS:
+					return STAIR_RENDER.OFFSET;
+					
+				default:
+					return STAIR_RENDER.YES;
 			}
 		}
 	}
@@ -1964,13 +1996,25 @@ public abstract class Chunk {
 	 *
 	 * @param adj_id The block ID of the adjacent block
 	 */
-	private boolean shouldRenderStairBack(short adj_id)
+	private STAIR_RENDER shouldRenderStairBack(short adj_id)
 	{
 		if (adj_id < 0 || blockArray[adj_id] == null)
 		{
-			return true;
+			return STAIR_RENDER.YES;
 		}
-		return !blockArray[adj_id].isSolid();
+		if (blockArray[adj_id].isSolid())
+		{
+			return STAIR_RENDER.NO;
+		}
+		switch (blockArray[adj_id].getType())
+		{
+			case SEMISOLID:
+			case GLASS:
+				return STAIR_RENDER.OFFSET;
+
+			default:
+				return STAIR_RENDER.YES;
+		}
 	}
 
 	/**
@@ -1984,32 +2028,50 @@ public abstract class Chunk {
 	 * @param adj_id The block ID for the adjacent block
 	 * @param adj_data The data value of the adjacent block
 	 */
-	private boolean shouldRenderStairTop(boolean top, short adj_id, byte adj_data)
+	private STAIR_RENDER shouldRenderStairTop(boolean top, short adj_id, byte adj_data)
 	{
 		if (adj_id < 0 || blockArray[adj_id] == null)
 		{
-			return true;
+			return STAIR_RENDER.YES;
 		}
 		if (blockArray[adj_id].isSolid())
 		{
-			return false;
+			return STAIR_RENDER.NO;
 		}
 		else
 		{
-			if (blockArray[adj_id].getType() == BLOCK_TYPE.HALFHEIGHT)
+			switch (blockArray[adj_id].getType())
 			{
-				if (top)
-				{
-					return ((adj_data & 0x8) == 0);
-				}
-				else
-				{
-					return ((adj_data & 0x8) == 0x8);
-				}
-			}
-			else
-			{
-				return true;
+				case HALFHEIGHT:
+					if (top)
+					{
+						if ((adj_data & 0x8) == 0)
+						{
+							return STAIR_RENDER.YES;
+						}
+						else
+						{
+							return STAIR_RENDER.NO;
+						}
+					}
+					else
+					{
+						if ((adj_data & 0x8) == 0x8)
+						{
+							return STAIR_RENDER.YES;
+						}
+						else
+						{
+							return STAIR_RENDER.NO;
+						}
+					}
+
+				case SEMISOLID:
+				case GLASS:
+					return STAIR_RENDER.OFFSET;
+
+				default:
+					return STAIR_RENDER.YES;
 			}
 		}
 	}
@@ -2025,32 +2087,50 @@ public abstract class Chunk {
 	 * @param adj_id The block ID for the adjacent block
 	 * @param adj_data The data value of the adjacent block
 	 */
-	private boolean shouldRenderStairBottom(boolean top, short adj_id, byte adj_data)
+	private STAIR_RENDER shouldRenderStairBottom(boolean top, short adj_id, byte adj_data)
 	{
 		if (adj_id < 0 || blockArray[adj_id] == null)
 		{
-			return true;
+			return STAIR_RENDER.YES;
 		}
 		if (blockArray[adj_id].isSolid())
 		{
-			return false;
+			return STAIR_RENDER.NO;
 		}
 		else
 		{
-			if (blockArray[adj_id].getType() == BLOCK_TYPE.HALFHEIGHT)
+			switch (blockArray[adj_id].getType())
 			{
-				if (top)
-				{
-					return ((adj_data & 0x8) == 0x8);
-				}
-				else
-				{
-					return ((adj_data & 0x8) == 0);
-				}
-			}
-			else
-			{
-				return true;
+				case HALFHEIGHT:
+					if (top)
+					{
+						if ((adj_data & 0x8) == 0x8)
+						{
+							return STAIR_RENDER.YES;
+						}
+						else
+						{
+							return STAIR_RENDER.NO;
+						}
+					}
+					else
+					{
+						if ((adj_data & 0x8) == 0)
+						{
+							return STAIR_RENDER.YES;
+						}
+						else
+						{
+							return STAIR_RENDER.NO;
+						}
+					}
+
+				case SEMISOLID:
+				case GLASS:
+					return STAIR_RENDER.OFFSET;
+
+				default:
+					return STAIR_RENDER.YES;
 			}
 		}
 	}
@@ -2079,12 +2159,12 @@ public abstract class Chunk {
 		boolean top = ((data & 0x4) == 0x4);
 		byte direction = (byte)(data & 0x3);
 
-		boolean render_left;
-		boolean render_right;
-		boolean render_front;
-		boolean render_back;
-		boolean render_top;
-		boolean render_bottom;
+		STAIR_RENDER render_left;
+		STAIR_RENDER render_right;
+		STAIR_RENDER render_front;
+		STAIR_RENDER render_back;
+		STAIR_RENDER render_top;
+		STAIR_RENDER render_bottom;
 
 		short left_id, right_id, front_id, back_id, top_id, bottom_id;
 		byte left_data, right_data, front_data, top_data, bottom_data;
@@ -2166,29 +2246,62 @@ public abstract class Chunk {
 		render_top = shouldRenderStairTop(top, top_id, top_data);
 		render_bottom = shouldRenderStairBottom(top, bottom_id, bottom_data);
 
-		if (render_left)
+		float temp;
+		if (render_left != STAIR_RENDER.NO)
 		{
-			this.renderStairSide(textureId, false);
+			this.renderStairSide(textureId, false, render_left);
 		}
-		if (render_right)
+		if (render_right != STAIR_RENDER.NO)
 		{
-			this.renderStairSide(textureId, true);
+			this.renderStairSide(textureId, true, render_right);
 		}
-		if (render_back)
+		if (render_back != STAIR_RENDER.NO)
 		{
-			this.renderVertical(textureId, -.5f, .5f, -.5f, -.5f, -.5f, 1f);
+			if (render_back == STAIR_RENDER.OFFSET)
+			{
+				temp = -.48f;
+			}
+			else
+			{
+				temp = -.5f;
+			}
+			this.renderVertical(textureId, temp, .5f, temp, -.5f, -.5f, 1f);
 		}
-		if (render_front)
+		if (render_front != STAIR_RENDER.NO)
 		{
-			this.renderVertical(textureId, .5f, .5f, .5f, -.5f, -.5f, .5f, 16, 8, 0, 8);
+			if (render_back == STAIR_RENDER.OFFSET)
+			{
+				temp = .48f;
+			}
+			else
+			{
+				temp = .5f;
+			}
+			this.renderVertical(textureId, temp, .5f, temp, -.5f, -.5f, .5f, 16, 8, 0, 8);
 		}
-		if (render_top)
+		if (render_top != STAIR_RENDER.NO)
 		{
-			this.renderHorizontal(textureId, -.5f, .5f, 0f, -.5f, .5f, 16, 8, 0, 8, false);
+			if (render_back == STAIR_RENDER.OFFSET)
+			{
+				temp = .48f;
+			}
+			else
+			{
+				temp = .5f;
+			}
+			this.renderHorizontal(textureId, -.5f, .5f, 0f, -.5f, temp, 16, 8, 0, 8, false);
 		}
-		if (render_bottom)
+		if (render_bottom != STAIR_RENDER.NO)
 		{
-			this.renderHorizontal(textureId, -.5f, .5f, .5f, -.5f, -.5f);
+			if (render_back == STAIR_RENDER.OFFSET)
+			{
+				temp = -.48f;
+			}
+			else
+			{
+				temp = -.5f;
+			}
+			this.renderHorizontal(textureId, -.5f, .5f, .5f, -.5f, temp);
 		}
 
 		// Always render the stair surface itself.
