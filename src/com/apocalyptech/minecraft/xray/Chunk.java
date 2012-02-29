@@ -379,10 +379,26 @@ public abstract class Chunk {
 	protected abstract short getAdjUpBlockId(int x, int y, int z, int blockOffset);
 
 	/**
+	 * Gets the data value of the block immediately up.
+	 */
+	private byte getAdjUpBlockData(int x, int y, int z)
+	{
+		return getData(x, y+1, z);
+	}
+
+	/**
 	 * Gets the Block ID of the block immediately down.
 	 * Will return -1 if we're already at the bottom
 	 */
 	protected abstract short getAdjDownBlockId(int x, int y, int z, int blockOffset);
+
+	/**
+	 * Gets the data value of the block immediately down.
+	 */
+	private byte getAdjDownBlockData(int x, int y, int z)
+	{
+		return getData(x, y-1, z);
+	}
 	
 	/**
 	 * Render something which is a West/East face.
@@ -868,140 +884,7 @@ public abstract class Chunk {
 	}
 	
 	/**
-	 * Renders the side of a stair piece that runs North/South.  Verticies are in the following order:
-	 * <pre>
-	 *         6---5
-	 *         |   |
-	 *     2---4   |
-	 *     |       |
-	 *     1-------3
-	 * </pre>
-	 * 
-	 * Note that the function is "NorthSouth" which corresponds to the stair direction;
-	 * this will actually draw the face on the west or east sides.
-	 * 
-	 * @param t
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public void renderStairSideNorthSouth(int t, float x, float y, float z, boolean swapZ) {
-		
-		float bx = precalcSpriteSheetToTextureX[t];
-		float by = precalcSpriteSheetToTextureY[t];
-		
-		float zoff=0.5f;
-		if (swapZ)
-		{
-			zoff = -0.5f;
-		}
-		
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-		
-			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z+zoff);
-	
-			GL11.glTexCoord2f(bx, by+TEX64);
-			GL11.glVertex3f(x-0.5f, y, z+zoff);
-			
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z-zoff);
-	
-			GL11.glTexCoord2f(bx+TEX32, by+TEX64);
-			GL11.glVertex3f(x-0.5f, y, z);
-	
-			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z-zoff);
-			
-			GL11.glTexCoord2f(bx+TEX32, by);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z);
-
-		GL11.glEnd();
-	}	
-
-	/**
-	 * Renders the stair surface, for a stair running North/South
-	 * 
-	 * @param t Texture to draw
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param swapX
-	 */
-	public void renderStairSurfaceNorthSouth(int t, float x, float y, float z, boolean swapZ) {
-		
-		float bx = precalcSpriteSheetToTextureX[t];
-		float by = precalcSpriteSheetToTextureY[t];
-		
-		float zoff = 0.5f;
-		if (swapZ)
-		{
-			zoff = -0.5f;
-		}
-		
-		// Lower Step surface
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x+0.5f, y, z+zoff);
-	
-			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x-0.5f, y, z+zoff);
-	
-			GL11.glTexCoord2f(bx, by+TEX64);
-			GL11.glVertex3f(x+0.5f, y, z);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
-			GL11.glVertex3f(x-0.5f, y, z);
-		GL11.glEnd();
-
-		// Lower Step Side
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by+TEX64);
-			GL11.glVertex3f(x+0.5f, y, z+zoff);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
-			GL11.glVertex3f(x-0.5f, y, z+zoff);
-	
-			GL11.glTexCoord2f(bx,by+TEX32);
-			GL11.glVertex3f(x+0.5f, y-0.5f, z+zoff);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z+zoff);
-		GL11.glEnd();
-
-		// Higher Step surface
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by+TEX64);
-			GL11.glVertex3f(x+0.5f, y+0.5f, z);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z);
-	
-			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x+0.5f, y+0.5f, z-zoff);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z-zoff);
-		GL11.glEnd();
-
-		// Higher Step Side
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x+0.5f, y+0.5f, z);
-	
-			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z);
-	
-			GL11.glTexCoord2f(bx,by+TEX64);
-			GL11.glVertex3f(x+0.5f, y, z);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
-			GL11.glVertex3f(x-0.5f, y, z);
-		GL11.glEnd();
-	}
-	
-	/**
-	 * Renders the side of a stair piece that runs West/East.  Verticies are in the following order:
+	 * Renders the side of a stair piece.  Verticies are in the following order:
 	 * <pre>
 	 *         6---5
 	 *         |   |
@@ -1014,20 +897,21 @@ public abstract class Chunk {
 	 * this will actually draw the face on the north or south sides.
 	 * 
 	 * @param t
-	 * @param x
-	 * @param y
-	 * @param z
 	 */
-	public void renderStairSideWestEast(int t, float x, float y, float z, boolean swapX) {
+	public void renderStairSide(int t, boolean right) {
 		
 		float bx = precalcSpriteSheetToTextureX[t];
 		float by = precalcSpriteSheetToTextureY[t];
+
+		float x=0f;
+		float y=0f;
+		float z=0f;
+		if (right)
+		{
+			z = 1f;
+		}
 		
 		float xoff=0.5f;
-		if (swapX)
-		{
-			xoff = -0.5f;
-		}
 		
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		
@@ -1051,88 +935,6 @@ public abstract class Chunk {
 
 		GL11.glEnd();
 	}	
-
-	/**
-	 * Renders the stair surface, for a stair running West/East
-	 * 
-	 * @param t Texture to draw
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param swapX
-	 */
-	public void renderStairSurfaceWestEast(int t, float x, float y, float z, boolean swapX) {
-		
-		float bx = precalcSpriteSheetToTextureX[t];
-		float by = precalcSpriteSheetToTextureY[t];
-		
-		float xoff = 0.5f;
-		if (swapX)
-		{
-			xoff = -0.5f;
-		}
-		
-		// Lower Step surface
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x+xoff, y, z+0.5f);
-	
-			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x+xoff, y, z-0.5f);
-	
-			GL11.glTexCoord2f(bx, by+TEX64);
-			GL11.glVertex3f(x, y, z+0.5f);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
-			GL11.glVertex3f(x, y, z-0.5f);
-		GL11.glEnd();
-
-		// Lower Step Side
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by+TEX64);
-			GL11.glVertex3f(x+xoff, y, z+0.5f);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
-			GL11.glVertex3f(x+xoff, y, z-0.5f);
-	
-			GL11.glTexCoord2f(bx,by+TEX32);
-			GL11.glVertex3f(x+xoff, y-0.5f, z+0.5f);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x+xoff, y-0.5f, z-0.5f);
-		GL11.glEnd();
-
-		// Higher Step surface
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by+TEX64);
-			GL11.glVertex3f(x, y+0.5f, z+0.5f);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
-			GL11.glVertex3f(x, y+0.5f, z-0.5f);
-	
-			GL11.glTexCoord2f(bx, by+TEX32);
-			GL11.glVertex3f(x-xoff, y+0.5f, z+0.5f);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX32);
-			GL11.glVertex3f(x-xoff, y+0.5f, z-0.5f);
-		GL11.glEnd();
-
-
-		// Higher Step Side
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(bx, by);
-			GL11.glVertex3f(x, y+0.5f, z+0.5f);
-	
-			GL11.glTexCoord2f(bx+TEX16, by);
-			GL11.glVertex3f(x, y+0.5f, z-0.5f);
-	
-			GL11.glTexCoord2f(bx,by+TEX64);
-			GL11.glVertex3f(x, y, z+0.5f);
-	
-			GL11.glTexCoord2f(bx+TEX16, by+TEX64);
-			GL11.glVertex3f(x, y, z-0.5f);
-		GL11.glEnd();
-	}
 	
 	/**
 	 * Gets the block ID at the specified coordinate in the chunk.  This is
@@ -2087,75 +1889,314 @@ public abstract class Chunk {
 
 		GL11.glPopMatrix();
 	}
+
+	/**
+	 * Determines whether or not to render the side of our stairs.  Just does
+	 * some basic checks, and will end up leading to some z-fighting when
+	 * single slabs are adjacent.  Since the z-fighting will only be visible
+	 * while "inside" either the stairs or the slabs, I'm willing to just cope
+	 * with it for the time being.
+	 *
+	 * @param our_data The data value of our current stair
+	 * @param adj_id The block ID of the adjacent block
+	 * @param adj_data The data value of the adjacent block
+	 */
+	private boolean shouldRenderStairSide(byte our_data, short adj_id, byte adj_data)
+	{
+		if (adj_id < 0 || blockArray[adj_id] == null)
+		{
+			return true;
+		}
+		if (blockArray[adj_id].isSolid())
+		{
+			return false;
+		}
+		else
+		{
+			if (blockArray[adj_id].getType() == BLOCK_TYPE.STAIRS)
+			{
+				return (our_data != adj_data);
+			}
+			else
+			{
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Determines whether or not to render the front of our stairs.  Just does
+	 * some basic checks, and could end up leading to some z-fighting when two
+	 * stairs are adjacent.  Since the z-fighting will only be visible while
+	 * "inside" the stairs, I'm willing to just cope with it for now.
+	 *
+	 * @param adj_id The block ID of the adjacent block
+	 * @param adj_data The data value of the adjacent block
+	 */
+	private boolean shouldRenderStairFront(short adj_id, byte adj_data)
+	{
+		if (adj_id < 0 || blockArray[adj_id] == null)
+		{
+			return true;
+		}
+		if (blockArray[adj_id].isSolid())
+		{
+			return false;
+		}
+		else
+		{
+			if (blockArray[adj_id].getType() == BLOCK_TYPE.HALFHEIGHT)
+			{
+				return ((adj_data & 0x8) == 0x8);
+			}
+			else
+			{
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Determines whether or not to render the back of our stairs.  Just does
+	 * some basic checks, and could end up leading to some z-fighting when stairs
+	 * or slabs are adjacent.  Since the z-fighting will only be visible while
+	 * "inside" the stairs or slabs, I'm willing to just cope with it for now.
+	 *
+	 * @param adj_id The block ID of the adjacent block
+	 */
+	private boolean shouldRenderStairBack(short adj_id)
+	{
+		if (adj_id < 0 || blockArray[adj_id] == null)
+		{
+			return true;
+		}
+		return !blockArray[adj_id].isSolid();
+	}
+
+	/**
+	 * Determines whether or not to render the top of our stairs.  Just does
+	 * some basic checks, and could end up leading to some z-fighting when stairs
+	 * are adjacent.  Since the z-fighting will only be visible while "inside"
+	 * the stairs, I'm willing to just cope with it for now.
+	 *
+	 * @param top Whether or not the stair is anchored to the top (in which case the
+	 *            block we're looking at is actually below us)
+	 * @param adj_id The block ID for the adjacent block
+	 * @param adj_data The data value of the adjacent block
+	 */
+	private boolean shouldRenderStairTop(boolean top, short adj_id, byte adj_data)
+	{
+		if (adj_id < 0 || blockArray[adj_id] == null)
+		{
+			return true;
+		}
+		if (blockArray[adj_id].isSolid())
+		{
+			return false;
+		}
+		else
+		{
+			if (blockArray[adj_id].getType() == BLOCK_TYPE.HALFHEIGHT)
+			{
+				if (top)
+				{
+					return ((adj_data & 0x8) == 0);
+				}
+				else
+				{
+					return ((adj_data & 0x8) == 0x8);
+				}
+			}
+			else
+			{
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Determines whether or not to render the bottom of our stairs.  Just does
+	 * some basic checks, and could end up leading to some z-fighting when stairs
+	 * are adjacent.  Since the z-fighting will only be visible while "inside"
+	 * the stairs, I'm willing to just cope with it for now.
+	 *
+	 * @param top Whether or not the stair is anchored to the top (in which case the
+	 *            block we're looking at is actually above us)
+	 * @param adj_id The block ID for the adjacent block
+	 * @param adj_data The data value of the adjacent block
+	 */
+	private boolean shouldRenderStairBottom(boolean top, short adj_id, byte adj_data)
+	{
+		if (adj_id < 0 || blockArray[adj_id] == null)
+		{
+			return true;
+		}
+		if (blockArray[adj_id].isSolid())
+		{
+			return false;
+		}
+		else
+		{
+			if (blockArray[adj_id].getType() == BLOCK_TYPE.HALFHEIGHT)
+			{
+				if (top)
+				{
+					return ((adj_data & 0x8) == 0x8);
+				}
+				else
+				{
+					return ((adj_data & 0x8) == 0);
+				}
+			}
+			else
+			{
+				return true;
+			}
+		}
+	}
 	
 	/**
-	 * Renders stair graphics
+	 * Renders stair graphics.  Internally here, I consider the "front" to
+	 * be the descending face which would only render half-height.  "back"
+	 * is the full-size face.  "left" and "right" are therefore assuming that
+	 * you're facing "front"
 	 * 
 	 * @param textureId
 	 * @param xxx
 	 * @param yyy
 	 * @param zzz
 	 */
-	public void renderStairs(int textureId, int xxx, int yyy, int zzz) {
+	public void renderStairs(int textureId, int xxx, int yyy, int zzz, int blockOffset) {
 		float x = xxx + this.x*16;
 		float z = zzz + this.z*16;
 		float y = yyy;
+
+		// GL stuff; only draw one way
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
 		
 		byte data = getData(xxx, yyy, zzz);
-		boolean swap = false;
-		if (data == 0 || data == 2)
+		boolean top = ((data & 0x4) == 0x4);
+		byte direction = (byte)(data & 0x3);
+
+		boolean render_left;
+		boolean render_right;
+		boolean render_front;
+		boolean render_back;
+		boolean render_top;
+		boolean render_bottom;
+
+		short left_id, right_id, front_id, back_id, top_id, bottom_id;
+		byte left_data, right_data, front_data, top_data, bottom_data;
+
+		top_id = getAdjUpBlockId(xxx, yyy, zzz, blockOffset);
+		bottom_id = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
+
+		switch (direction)
 		{
-			swap = true;
+			case 0:
+				// Ascending to the east, descending to the west
+				GL11.glRotatef(180f, 0f, 1f, 0f);
+				left_id = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+				left_data = getAdjSouthBlockData(xxx, yyy, zzz);
+				right_id = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+				right_data = getAdjNorthBlockData(xxx, yyy, zzz);
+				front_id = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+				front_data = getAdjWestBlockData(xxx, yyy, zzz);
+				back_id = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+				break;
+
+			case 1:
+				// Ascending to the west, descending to the east
+				left_id = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+				left_data = getAdjNorthBlockData(xxx, yyy, zzz);
+				right_id = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+				right_data = getAdjSouthBlockData(xxx, yyy, zzz);
+				front_id = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+				front_data = getAdjEastBlockData(xxx, yyy, zzz);
+				back_id = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+				break;
+
+			case 2:
+				// Ascending to the south, descending to the north
+				GL11.glRotatef(90f, 0f, 1f, 0f);
+				left_id = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+				left_data = getAdjWestBlockData(xxx, yyy, zzz);
+				right_id = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+				right_data = getAdjEastBlockData(xxx, yyy, zzz);
+				front_id = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+				front_data = getAdjNorthBlockData(xxx, yyy, zzz);
+				back_id = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+				break;
+
+			case 3:
+			default:
+				// Ascending to the north, descending to the south
+				GL11.glRotatef(270f, 0f, 1f, 0f);
+				left_id = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+				left_data = getAdjEastBlockData(xxx, yyy, zzz);
+				right_id = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+				right_data = getAdjWestBlockData(xxx, yyy, zzz);
+				front_id = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+				front_data = getAdjSouthBlockData(xxx, yyy, zzz);
+				back_id = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+				break;
 		}
 
-		if (data == 0 || data == 1)
+		if (top)
 		{
-			// 0 is ascending-east, 1 is ascending-west
-			
-			// Sides
-			this.renderStairSideWestEast(textureId, x, y, z+.05f, swap);
-			this.renderStairSideWestEast(textureId, x, y, z+.95f, swap);
-			
-			// Back
-			if (swap)
-			{
-				this.renderWestEast(textureId, x+0.94f, y, z, 0.5f, 0.45f);
-			}
-			else
-			{
-				this.renderWestEast(textureId, x+0.06f, y, z, 0.5f, 0.45f);
-			}
-			
-			// Bottom
-			this.renderTopDown(textureId, x, y, z, 0.45f);
-			
-			// Stair Surface
-			this.renderStairSurfaceWestEast(textureId, x, y, z, swap);
+			GL11.glScalef(1f, -1f, 1f);
+			top_id = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
+			top_data = getAdjDownBlockData(xxx, yyy, zzz);
+			bottom_id = getAdjUpBlockId(xxx, yyy, zzz, blockOffset);
+			bottom_data = getAdjUpBlockData(xxx, yyy, zzz);
 		}
 		else
 		{
-			// 2 is ascending-south, 3 is ascending-north
-			
-			// Sides
-			this.renderStairSideNorthSouth(textureId, x+.05f, y, z, swap);
-			this.renderStairSideNorthSouth(textureId, x+.95f, y, z, swap);
-			
-			// Back
-			if (swap)
-			{
-				this.renderNorthSouth(textureId, x, y, z+0.94f, 0.5f, 0.45f);
-			}
-			else
-			{
-				this.renderNorthSouth(textureId, x, y, z+0.06f, 0.5f, 0.45f);
-			}
-			
-			// Bottom
-			this.renderTopDown(textureId, x, y, z, 0.45f);
-			
-			// Stair Surface
-			this.renderStairSurfaceNorthSouth(textureId, x, y, z, swap);		
+			top_id = getAdjUpBlockId(xxx, yyy, zzz, blockOffset);
+			top_data = getAdjUpBlockData(xxx, yyy, zzz);
+			bottom_id = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
+			bottom_data = getAdjDownBlockData(xxx, yyy, zzz);
 		}
+
+		render_left = shouldRenderStairSide(data, left_id, left_data);
+		render_right = shouldRenderStairSide(data, right_id, right_data);
+		render_front = shouldRenderStairFront(front_id, front_data);
+		render_back = shouldRenderStairBack(back_id);
+		render_top = shouldRenderStairTop(top, top_id, top_data);
+		render_bottom = shouldRenderStairBottom(top, bottom_id, bottom_data);
+
+		if (render_left)
+		{
+			this.renderStairSide(textureId, false);
+		}
+		if (render_right)
+		{
+			this.renderStairSide(textureId, true);
+		}
+		if (render_back)
+		{
+			this.renderVertical(textureId, -.5f, .5f, -.5f, -.5f, -.5f, 1f);
+		}
+		if (render_front)
+		{
+			this.renderVertical(textureId, .5f, .5f, .5f, -.5f, -.5f, .5f, 16, 8, 0, 8);
+		}
+		if (render_top)
+		{
+			this.renderHorizontal(textureId, -.5f, .5f, 0f, -.5f, .5f, 16, 8, 0, 8, false);
+		}
+		if (render_bottom)
+		{
+			this.renderHorizontal(textureId, -.5f, .5f, .5f, -.5f, -.5f);
+		}
+
+		// Always render the stair surface itself.
+		this.renderHorizontal(textureId, 0f, .5f, .5f, -.5f, 0f, 16, 8, 0, 0, false);
+		this.renderVertical(textureId, 0f, .5f, 0f, -.5f, 0f, .5f, 16, 8, 0, 0);
+
+		// aaand pop our GL matrix
+		GL11.glPopMatrix();
 		
 	}
 	
@@ -4307,7 +4348,7 @@ public abstract class Chunk {
 							renderDoor(textureId,this.lx,this.ly,this.lz,block,tex_offset);
 							break;
 						case STAIRS:
-							renderStairs(textureId,this.lx,this.ly,this.lz);
+							renderStairs(textureId,this.lx,this.ly,this.lz,this.lOffset);
 							break;
 						case SIGNPOST:
 							renderSignpost(textureId,this.lx,this.ly,this.lz);
