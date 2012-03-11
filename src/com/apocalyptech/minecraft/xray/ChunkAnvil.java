@@ -106,7 +106,14 @@ public class ChunkAnvil extends Chunk {
 		Collections.sort(availableSectionsList);
 
 		// And set our max height for the chunk
-		this.maxHeight = ((availableSectionsList.get(availableSectionsList.size()-1)+1)*16)-1;
+		if (availableSectionsList.size() > 0)
+		{
+			this.maxHeight = ((availableSectionsList.get(availableSectionsList.size()-1)+1)*16)-1;
+		}
+		else
+		{
+			this.maxHeight = 0;
+		}
 		this.ceilingHeight = 255;
 		if (this.maxHeight > this.ceilingHeight)
 		{
