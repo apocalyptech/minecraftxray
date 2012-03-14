@@ -67,6 +67,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.glu.Sphere;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -274,6 +275,17 @@ public class XRay
 
 	// Slime chunk rendering status
 	private boolean renderSlimeChunks = false;
+
+	// Sphere vars
+	private boolean draw_sphere = false;
+	private boolean set_sphere_center = false;
+	private int draw_sphere_radius_min = 8;
+	private int draw_sphere_radius_max = 128;
+	private int draw_sphere_radius_inc = 8;
+	private int draw_sphere_radius = draw_sphere_radius_min + (draw_sphere_radius_inc*2);
+	private float sphere_x = 0f;
+	private float sphere_y = 0f;
+	private float sphere_z = 0f;
 
 	// vars to keep track of our current chunk coordinates
 	private int cur_chunk_x = 0;
@@ -1979,6 +1991,26 @@ public class XRay
 					renderSlimeChunks = !renderSlimeChunks;
 					updateRenderDetails();
 				}
+				else if (key == key_mapping.get(KEY_ACTION.TOGGLE_SPHERE))
+				{
+					toggleSphere();
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTION.SPHERE_SIZE_UP))
+				{
+					changeSphereSize(this.draw_sphere_radius_inc);
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTION.SPHERE_SIZE_DOWN))
+				{
+					changeSphereSize(-this.draw_sphere_radius_inc);
+					updateRenderDetails();
+				}
+				else if (key == key_mapping.get(KEY_ACTION.SPHERE_SET))
+				{
+					setSphereCenter();
+					updateRenderDetails();
+				}
 				else if (key == key_mapping.get(KEY_ACTION.DIMENSION_NEXT))
 				{
 					// Toggle between dimenaions
@@ -2132,6 +2164,49 @@ public class XRay
 			{
 				this.open_dialog_trigger += 1;
 			}
+		}
+	}
+
+	/**
+	 * Toggles rendering of our sphere
+	 */
+	private void toggleSphere()
+	{
+		this.draw_sphere = !this.draw_sphere;
+		if (!this.set_sphere_center)
+		{
+			this.setSphereCenter();
+		}
+	}
+
+	/**
+	 * Sets the center of our sphere
+	 */
+	private void setSphereCenter()
+	{
+		this.sphere_x = -camera.getPosition().x;
+		this.sphere_y = -camera.getPosition().y;
+		this.sphere_z = -camera.getPosition().z;
+		this.set_sphere_center = true;
+		if (!this.draw_sphere)
+		{
+			this.toggleSphere();
+		}
+	}
+
+	/**
+	 * Changes the radius of our sphere by the given increment
+	 */
+	private void changeSphereSize(int increment)
+	{
+		this.draw_sphere_radius += increment;
+		if (this.draw_sphere_radius < this.draw_sphere_radius_min)
+		{
+			this.draw_sphere_radius = this.draw_sphere_radius_min;
+		}
+		else if (this.draw_sphere_radius > this.draw_sphere_radius_max)
+		{
+			this.draw_sphere_radius = this.draw_sphere_radius_max;
 		}
 	}
 
@@ -2494,6 +2569,21 @@ public class XRay
 			last_tex = -1;
 		}
 
+		// Now... A SPHERE?
+		if (this.draw_sphere)
+		{
+			GL11.glPushMatrix();
+			GL11.glTranslatef(this.sphere_x, this.sphere_y, this.sphere_z);
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			Sphere mysphere = new Sphere();
+			GL11.glColor4f(.8f, .3f, .3f, .9f); 
+			mysphere.draw(.4f, 10, 10);
+			GL11.glColor4f(.4f, .4f, .8f, .6f); 
+			mysphere.draw((float)this.draw_sphere_radius, 20, 20);
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glPopMatrix();
+		}
+
 		// And now, if we're highlighting ores, highlight them.
 		if (toggle.highlightOres != HIGHLIGHT_TYPE.OFF)
 		{
@@ -2800,6 +2890,11 @@ public class XRay
 		{
 			line_count++;
 			infoboxTextLabel(g, x_off, line_count * line_h, "Grass: ", Color.BLACK, DETAILFONT, "Inaccurate", Color.RED.darker(), DETAILVALUEFONT);
+		}
+		if (draw_sphere)
+		{
+			line_count++;
+			infoboxTextLabel(g, x_off, line_count * line_h, "Sphere Radius: ", Color.BLACK, DETAILFONT, Integer.toString(this.draw_sphere_radius), Color.GREEN.darker(), DETAILVALUEFONT);
 		}
 		if (camera_lock)
 		{

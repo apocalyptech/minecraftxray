@@ -1,3 +1,9 @@
+  * Added a "sphere" function where users can set a sphere with mostly-
+    arbitrary radius centered at a specific point.  Useful, perhaps,
+    for planning mob grinders or the like.  Default keys for manipulation
+    are: Forward-slash to toggle on/off, Semicolon to set the center,
+    and Comma and Period to shrink an enlarge, respectively.
+
 Minecraft X-Ray 3.6.2 (2012.03.11)
 
   * Fix an Exception when an Anvil chunk has no actual level data in it

@@ -251,6 +251,10 @@ public class MinecraftConstants {
 		TOGGLE_SILVERFISH         (ACTION_CAT.RENDERING, Keyboard.KEY_V, "Toggle Silverfish Highlighting"),
 		TOGGLE_CHUNK_BORDERS      (ACTION_CAT.RENDERING, Keyboard.KEY_U, "Toggle Chunk Borders"),
 		TOGGLE_SLIME_CHUNKS       (ACTION_CAT.RENDERING, Keyboard.KEY_M, "Toggle Slime Chunk Highlighting"),
+		TOGGLE_SPHERE			  (ACTION_CAT.RENDERING, Keyboard.KEY_SLASH, "Toggle Distance Sphere"),
+		SPHERE_SIZE_UP			  (ACTION_CAT.RENDERING, Keyboard.KEY_PERIOD, "Enlarge Distance Sphere"),
+		SPHERE_SIZE_DOWN		  (ACTION_CAT.RENDERING, Keyboard.KEY_COMMA, "Shrink Distance Sphere"),
+		SPHERE_SET				  (ACTION_CAT.RENDERING, Keyboard.KEY_SEMICOLON, "Set Sphere Center"),
 
 		TOGGLE_FULLSCREEN     (ACTION_CAT.OTHER, Keyboard.KEY_BACK, "Toggle Fullscreen"),
 		TOGGLE_POSITION_INFO  (ACTION_CAT.OTHER, Keyboard.KEY_GRAVE, "Toggle Level Info"),

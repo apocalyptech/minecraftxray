@@ -90,6 +90,10 @@ overridden, though.  The default keybindings are as follows:
         Toggle Silverfish highlight: V
         Toggle chunk borders:        U
         Toggle slime chunks:         M
+        Toggle Distance Sphere:      / (forward slash)
+        Set Distance Sphere Center:  ; (semicolon)
+        Enlarge Distance Sphere:     . (period)
+        Shrink Distance Sphere:      , (comma)
 
     Other
         Toggle Fullscreen:       BACKSPACE
@@ -206,6 +210,16 @@ this highlighting is "M".  Note that in Minecraft versions prior to
 Beta 1.9-pre5, slimes would spawn only under y=16, whereas from that point
 on, slimes will spawn under y=40.  X-Ray will highlight up to y=40 for
 all maps.
+
+A sphere with mostly-arbitrary radius can be drawn on the map, which might
+be helpful for planning out mob grinders or the like.  To toggle the sphere
+on or off, use the forward slash key - it will default to centering around
+the current camera position the first time, but remain at that point until
+overridden.  To set a new sphere center, use the semicolon key.  The sphere
+will start out with a radius of 24.  You can increase or decrease the radius
+in 8-block increments using "comma" and "period," within the bounds of 8
+blocks and 128 blocks.  The sphere itself will be a bluish tone, and the
+center will be marked with a small reddish sphere.
 
 The rendering information popup can be toggled with "R" and is on by
 default.  This will let you know what these various settings are set to.
