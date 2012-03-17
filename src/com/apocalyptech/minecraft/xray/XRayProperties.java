@@ -119,4 +119,28 @@ public class XRayProperties extends Properties
 	{
 		this.setProperty(propName, Integer.toString(propVal));
 	}
+
+	/**
+	 * Gets a float property, with a default value if it's not found.
+	 */
+	public float getFloatProperty(String propName, float defaultValue)
+	{
+		String val = this.getProperty(propName);
+		if (val == null)
+		{
+			return defaultValue;
+		}
+		else
+		{
+			return Float.valueOf(val);
+		}
+	}
+
+	/**
+	 * Sets a float property (basically just wraps Float.toString()
+	 */
+	public void setFloatProperty(String propName, float propVal)
+	{
+		this.setProperty(propName, Float.toString(propVal));
+	}
 }

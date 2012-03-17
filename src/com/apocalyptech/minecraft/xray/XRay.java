@@ -1379,6 +1379,36 @@ public class XRay
 		updateExploredBlocks();
 
 		moveCameraToPlayerPos();
+
+		// Find out if we're supposed to be rendering our sphere or not
+		String sphereWorld = this.xray_properties.getProperty("LAST_SPHERE_WORLD");
+		if (sphereWorld != null && sphereWorld.equals(this.world.getBasePath()))
+		{
+			// We have sphere data in our props file which applies to the world we're loading.
+			// So, do our stuff.
+			this.set_sphere_center = true;
+			this.draw_sphere = this.xray_properties.getBooleanProperty("STATE_SPHERE", true);
+			this.sphere_x = this.xray_properties.getFloatProperty("STATE_SPHERE_X", 0f);
+			this.sphere_y = this.xray_properties.getFloatProperty("STATE_SPHERE_Y", 0f);
+			this.sphere_z = this.xray_properties.getFloatProperty("STATE_SPHERE_Z", 0f);
+			this.draw_sphere_radius = this.xray_properties.getIntProperty("STATE_SPHERE_RADIUS",
+					this.draw_sphere_radius_min + (this.draw_sphere_radius_inc*2));
+
+			// Bounds checking on radius
+			if ((this.draw_sphere_radius % this.draw_sphere_radius_inc) != 0)
+			{
+				this.draw_sphere_radius = (this.draw_sphere_radius / this.draw_sphere_radius_inc) * this.draw_sphere_radius_inc;
+			}
+			this.changeSphereSize(0);
+		}
+		else
+		{
+			// Either we have no last-known data for sphere stuff, or this world doesn't
+			// apply.  Either way, reset our vars so we're not rendering a sphere.
+			this.set_sphere_center = false;
+			this.draw_sphere = false;
+			this.draw_sphere_radius = this.draw_sphere_radius_min + (this.draw_sphere_radius_inc*2);
+		}
 	}
 
 	/**
@@ -2173,7 +2203,8 @@ public class XRay
 	private void toggleSphere()
 	{
 		this.draw_sphere = !this.draw_sphere;
-		if (!this.set_sphere_center)
+		this.xray_properties.setBooleanProperty("STATE_SPHERE", this.draw_sphere);
+		if (this.draw_sphere && !this.set_sphere_center)
 		{
 			this.setSphereCenter();
 		}
@@ -2192,6 +2223,10 @@ public class XRay
 		{
 			this.toggleSphere();
 		}
+		this.xray_properties.setProperty("LAST_SPHERE_WORLD", this.world.getBasePath());
+		this.xray_properties.setFloatProperty("STATE_SPHERE_X", this.sphere_x);
+		this.xray_properties.setFloatProperty("STATE_SPHERE_Y", this.sphere_y);
+		this.xray_properties.setFloatProperty("STATE_SPHERE_Z", this.sphere_z);
 	}
 
 	/**
@@ -2208,6 +2243,7 @@ public class XRay
 		{
 			this.draw_sphere_radius = this.draw_sphere_radius_max;
 		}
+		this.xray_properties.setIntProperty("STATE_SPHERE_RADIUS", this.draw_sphere_radius);
 	}
 
 	/**
@@ -3448,7 +3484,9 @@ public class XRay
 	}
 
 	/**
-	 * Saves our current option states to our properties file.
+	 * Saves our current option states to our properties file.  Note that our
+	 * sphere variables are actually set in the sphere-toggling functions, rather
+	 * than here, because they only actually apply on a per-world basis.
 	 */
 	private void saveOptionStates()
 	{
@@ -3476,7 +3514,9 @@ public class XRay
 	}
 
 	/**
-	 * Loads our option states from the properties object.
+	 * Loads our option states from the properties object.  Note that we do NOT load in
+	 * our sphere state in here, because we need to process those every time a new world
+	 * is loaded, not when the application starts up.
 	 */
 	private void loadOptionStates()
 	{

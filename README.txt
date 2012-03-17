@@ -219,7 +219,8 @@ overridden.  To set a new sphere center, use the semicolon key.  The sphere
 will start out with a radius of 24.  You can increase or decrease the radius
 in 8-block increments using "comma" and "period," within the bounds of 8
 blocks and 128 blocks.  The sphere itself will be a bluish tone, and the
-center will be marked with a small reddish sphere.
+center will be marked with a small reddish sphere.  X-Ray will remember your
+sphere settings for the last world in which you've enabled the sphere.
 
 The rendering information popup can be toggled with "R" and is on by
 default.  This will let you know what these various settings are set to.
