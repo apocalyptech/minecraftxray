@@ -4793,36 +4793,14 @@ public abstract class Chunk {
 							}
 
 							// Finally, we're to the point of actually rendering the solid
-							switch (facingPass)
+							if(pass != RENDER_PASS.SELECTED || highlightingOres)
 							{
-								case WEST:
-								case EAST:
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || facingPass == FACING.WEST || facingPass == FACING.EAST)
-									{
-										if(!east) this.renderWestEast(east_t, worldX+this.lx+1, this.ly, worldZ+this.lz);
-										if(!west) this.renderWestEast(west_t, worldX+this.lx, this.ly, worldZ+this.lz);
-									}
-									break;
-								case BOTTOM:
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || facingPass == FACING.BOTTOM)
-									{
-										if(!below) this.renderTopDown(bottom_t, worldX+this.lx, this.ly, worldZ+this.lz);
-									}
-									break;
-								case TOP:
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || facingPass == FACING.TOP)
-									{
-										if(!above) this.renderTopDown(top_t, worldX+this.lx, this.ly+1, worldZ+this.lz);	
-									}
-									break;
-								case NORTH:
-								case SOUTH:
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || facingPass == FACING.NORTH || facingPass == FACING.SOUTH)
-									{
-										if(!north) this.renderNorthSouth(north_t, worldX+this.lx, this.ly, worldZ+this.lz);
-										if(!south) this.renderNorthSouth(south_t, worldX+this.lx, this.ly, worldZ+this.lz+1);
-									}
-									break;
+								if(!above) this.renderTopDown(top_t, worldX+this.lx, this.ly+1, worldZ+this.lz);
+								if(!below) this.renderTopDown(bottom_t, worldX+this.lx, this.ly, worldZ+this.lz);
+								if(!north) this.renderNorthSouth(north_t, worldX+this.lx, this.ly, worldZ+this.lz);
+								if(!south) this.renderNorthSouth(south_t, worldX+this.lx, this.ly, worldZ+this.lz+1);
+								if(!east) this.renderWestEast(east_t, worldX+this.lx+1, this.ly, worldZ+this.lz);
+								if(!west) this.renderWestEast(west_t, worldX+this.lx, this.ly, worldZ+this.lz);
 							}
 							break;
 					}
