@@ -108,11 +108,13 @@ public abstract class Chunk {
 		SELECTED
 	}
 
-	private static enum SOLID_PASS {
+	private static enum FACING {
 		TOP,
 		BOTTOM,
-		EASTWEST,
-		NORTHSOUTH
+		NORTH,
+		SOUTH,
+		WEST,
+		EAST
 	}
 
 	private static enum STAIR_RENDER {
@@ -4163,23 +4165,23 @@ public abstract class Chunk {
 		// basis, so instead we're going to loop through each face.  (Meaning that for solid
 		// blocks, we're looping through the whole chunk four times, in addition to all
 		// the other passes that the other functions use.  Alas!)
-		SOLID_PASS[] loopPasses;
+		FACING[] facingPasses;
 		if (pass == RENDER_PASS.SOLIDS || pass == RENDER_PASS.SELECTED)
 		{
-			loopPasses = new SOLID_PASS[] { SOLID_PASS.TOP, SOLID_PASS.BOTTOM, SOLID_PASS.EASTWEST, SOLID_PASS.NORTHSOUTH };
+			facingPasses = new FACING[] { FACING.TOP, FACING.BOTTOM, FACING.NORTH, FACING.SOUTH, FACING.WEST, FACING.EAST };
 		}
 		else
 		{
-			loopPasses = new SOLID_PASS[] { SOLID_PASS.TOP };
+			facingPasses = new FACING[] { FACING.TOP };
 		}
 
-		for (SOLID_PASS loopPass :  loopPasses)
+		for (FACING facingPass :  facingPasses)
 		{
 			// If we're rendering "selected" stuff, we want the main XRay
 			// loop to be determining our color
 			if (pass != RENDER_PASS.SELECTED || !highlightingOres)
 			{
-				switch (loopPass)
+				switch (facingPass)
 				{
 					case TOP:
 						GL11.glColor3f(1f, 1f, 1f);
@@ -4187,10 +4189,12 @@ public abstract class Chunk {
 					case BOTTOM:
 						GL11.glColor3f(.5f, .5f, .5f);
 						break;
-					case EASTWEST:
+					case WEST:
+					case EAST:
 						GL11.glColor3f(.83f, .83f, .83f);
 						break;
-					case NORTHSOUTH:
+					case NORTH:
+					case SOUTH:
 						GL11.glColor3f(.66f, .66f, .66f);
 						break;
 				}
@@ -4265,7 +4269,7 @@ public abstract class Chunk {
 							// below - should see if there's a way we can abstract this instead.  Also, I suspect
 							// that this is where we'd fix water rendering...
 							
-							switch (loopPass)
+							switch (facingPass)
 							{
 								case TOP:
 									// check above
@@ -4283,7 +4287,8 @@ public abstract class Chunk {
 									}
 									break;
 
-								case NORTHSOUTH:
+								case NORTH:
+								case SOUTH:
 									// check north;
 									if (this.getAdjNorthBlockId(this.lx, this.ly, this.lz, this.lOffset) != BLOCK_BEDROCK.id) {
 										draw = true;
@@ -4297,7 +4302,8 @@ public abstract class Chunk {
 									}
 									break;
 
-								case EASTWEST:
+								case WEST:
+								case EAST:
 									// check east
 									if (this.getAdjEastBlockId(this.lx, this.ly, this.lz, this.lOffset) != BLOCK_BEDROCK.id) {
 										draw = true;
@@ -4314,7 +4320,7 @@ public abstract class Chunk {
 						}
 						else
 						{
-							switch (loopPass)
+							switch (facingPass)
 							{
 								case TOP:
 									// check above
@@ -4332,7 +4338,8 @@ public abstract class Chunk {
 									}
 									break;
 							
-								case NORTHSOUTH:
+								case NORTH:
+								case SOUTH:
 									// check north;
 									if (checkSolid(this.getAdjNorthBlockId(this.lx, this.ly, this.lz, this.lOffset))) {
 										draw = true;
@@ -4346,7 +4353,8 @@ public abstract class Chunk {
 									}
 									break;
 							
-								case EASTWEST:
+								case WEST:
+								case EAST:
 									// check east
 									if (checkSolid(this.getAdjEastBlockId(this.lx, this.ly, this.lz, this.lOffset))) {
 										draw = true;
@@ -4667,9 +4675,10 @@ public abstract class Chunk {
 								switch (dir)
 								{
 									case NORTH:
-										switch (loopPass)
+										switch (facingPass)
 										{
-											case NORTHSOUTH:
+											case NORTH:
+											case SOUTH:
 												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 												{
 													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
@@ -4679,7 +4688,8 @@ public abstract class Chunk {
 													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
 												}
 												break;
-											case EASTWEST:
+											case WEST:
+											case EAST:
 												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 												{
 													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
@@ -4689,9 +4699,10 @@ public abstract class Chunk {
 										}
 										break;
 									case SOUTH:
-										switch (loopPass)
+										switch (facingPass)
 										{
-											case NORTHSOUTH:
+											case NORTH:
+											case SOUTH:
 												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 												{
 													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
@@ -4701,7 +4712,8 @@ public abstract class Chunk {
 													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
 												}
 												break;
-											case EASTWEST:
+											case WEST:
+											case EAST:
 												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 												{
 													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
@@ -4711,16 +4723,18 @@ public abstract class Chunk {
 										}
 										break;
 									case WEST:
-										switch (loopPass)
+										switch (facingPass)
 										{
-											case NORTHSOUTH:
+											case NORTH:
+											case SOUTH:
 												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 												{
 													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 												}
 												break;
-											case EASTWEST:
+											case WEST:
+											case EAST:
 												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.FORWARD))
 												{
 													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.FORWARD) + tex_offset;
@@ -4733,16 +4747,18 @@ public abstract class Chunk {
 										}
 										break;
 									case EAST:
-										switch (loopPass)
+										switch (facingPass)
 										{
-											case NORTHSOUTH:
+											case NORTH:
+											case SOUTH:
 												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.SIDES))
 												{
 													north_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 													south_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.SIDES) + tex_offset;
 												}
 												break;
-											case EASTWEST:
+											case WEST:
+											case EAST:
 												if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.BACKWARD))
 												{
 													west_t = block.texture_dir_map.get(BlockType.DIRECTION_REL.BACKWARD) + tex_offset;
@@ -4759,7 +4775,7 @@ public abstract class Chunk {
 								// Top/Bottom doesn't depend on orientation, at least for anything currently in Minecraft.
 								// If Minecraft starts adding blocks that can be oriented Up or Down, we'll have to move
 								// this back into the case statement above
-								switch (loopPass)
+								switch (facingPass)
 								{
 									case TOP:
 										if (block.texture_dir_map.containsKey(BlockType.DIRECTION_REL.TOP))
@@ -4777,29 +4793,31 @@ public abstract class Chunk {
 							}
 
 							// Finally, we're to the point of actually rendering the solid
-							switch (loopPass)
+							switch (facingPass)
 							{
-								case EASTWEST:
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.EASTWEST)
+								case WEST:
+								case EAST:
+									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || facingPass == FACING.WEST || facingPass == FACING.EAST)
 									{
 										if(!east) this.renderWestEast(east_t, worldX+this.lx+1, this.ly, worldZ+this.lz);
 										if(!west) this.renderWestEast(west_t, worldX+this.lx, this.ly, worldZ+this.lz);
 									}
 									break;
 								case BOTTOM:
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.BOTTOM)
+									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || facingPass == FACING.BOTTOM)
 									{
 										if(!below) this.renderTopDown(bottom_t, worldX+this.lx, this.ly, worldZ+this.lz);
 									}
 									break;
 								case TOP:
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.TOP)
+									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || facingPass == FACING.TOP)
 									{
 										if(!above) this.renderTopDown(top_t, worldX+this.lx, this.ly+1, worldZ+this.lz);	
 									}
 									break;
-								case NORTHSOUTH:
-									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || loopPass == SOLID_PASS.NORTHSOUTH)
+								case NORTH:
+								case SOUTH:
+									if ((pass == RENDER_PASS.SELECTED && highlightingOres) || facingPass == FACING.NORTH || facingPass == FACING.SOUTH)
 									{
 										if(!north) this.renderNorthSouth(north_t, worldX+this.lx, this.ly, worldZ+this.lz);
 										if(!south) this.renderNorthSouth(south_t, worldX+this.lx, this.ly, worldZ+this.lz+1);
