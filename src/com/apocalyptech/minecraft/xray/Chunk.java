@@ -412,26 +412,44 @@ public abstract class Chunk {
 	}
 	
 	/**
-	 * Render something which is a West/East face.
+	 * Renders a block sized face with the given facing.
 	 * 
-	 * @param t Texture to render
+	 * @param t Texture to draw
 	 * @param x
 	 * @param y
 	 * @param z
+	 * @param facing The face that should be drawn
 	 */
-	public void renderWestEast(int t, float x, float y, float z) {
+	public void renderBlockFace(int t, float x, float y, float z, FACING facing) {
+		final float blockFaces[][][] = {
+			// TOP
+			{ { -0.5f, +0.5f, +0.5f }, { -0.5f, +0.5f, -0.5f }, { +0.5f, +0.5f, +0.5f }, { +0.5f, +0.5f, -0.5f } },
+			// BOTTOM
+			{ { -0.5f, -0.5f, +0.5f }, { -0.5f, -0.5f, -0.5f }, { +0.5f, -0.5f, +0.5f }, { +0.5f, -0.5f, -0.5f } },
+			// NORTH
+			{ { -0.5f, +0.5f, -0.5f }, { +0.5f, +0.5f, -0.5f }, { -0.5f, -0.5f, -0.5f }, { +0.5f, -0.5f, -0.5f } },
+			// SOUTH
+			{ { -0.5f, +0.5f, +0.5f }, { +0.5f, +0.5f, +0.5f }, { -0.5f, -0.5f, +0.5f }, { +0.5f, -0.5f, +0.5f } },
+			// WEST
+			{ { -0.5f, +0.5f, +0.5f }, { -0.5f, +0.5f, -0.5f }, { -0.5f, -0.5f, +0.5f }, { -0.5f, -0.5f, -0.5f } },
+			// EAST
+			{ { +0.5f, +0.5f, +0.5f }, { +0.5f, +0.5f, -0.5f }, { +0.5f, -0.5f, +0.5f }, { +0.5f, -0.5f, -0.5f } }
+		};
+
+		float curFace[][] = blockFaces[facing.ordinal()];
+
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z+0.5f);
+			GL11.glVertex3f(x+curFace[0][0], y+curFace[0][1], z+curFace[0][2]);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z-0.5f);
+			GL11.glVertex3f(x+curFace[1][0], y+curFace[1][1], z+curFace[1][2]);
 	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t],precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z+0.5f);
+			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX32);
+			GL11.glVertex3f(x+curFace[2][0], y+curFace[2][1], z+curFace[2][2]);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z-0.5f);
+			GL11.glVertex3f(x+curFace[3][0], y+curFace[3][1], z+curFace[3][2]);
 		GL11.glEnd();
 	}
 
@@ -498,55 +516,6 @@ public abstract class Chunk {
 		GL11.glEnd();
 		
 	}
-	
-	/**
-	 * Render the top or bottom of a block, depending on how we're looking at it.
-	 * 
-	 * @param t The texture ID to draw
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public void renderTopDown(int t, float x, float y, float z) {
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z+0.5f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z-0.5f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x+0.5f, y-0.5f, z+0.5f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x+0.5f, y-0.5f, z-0.5f);
-		GL11.glEnd();
-	}
-
-	/**
-	 * Renders something which is a North/South face.
-	 * 
-	 * @param t Texture to draw
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public void renderNorthSouth(int t, float x, float y, float z) {
-		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-0.5f, y+0.5f, z-0.5f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x+0.5f, y+0.5f, z-0.5f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x-0.5f, y-0.5f, z-0.5f);
-	
-			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x+0.5f, y-0.5f, z-0.5f);
-		GL11.glEnd();
-	}
-
 
 	/**
 	 * Renders a vertical texture with a full square texture.
@@ -1306,20 +1275,20 @@ public abstract class Chunk {
 		 {
 		 	case 2:
 		 		// South
-		 		this.renderNorthSouth(textureId, x, y, z+1.0f-TEX64);
+		 		this.renderBlockFace(textureId, x, y, z-TEX64, FACING.SOUTH);
 		 		break;
 		 	case 3:
 		 		// North
-		 		this.renderNorthSouth(textureId, x, y, z+TEX64);
+		 		this.renderBlockFace(textureId, x, y, z+TEX64, FACING.NORTH);
 		 		break;
 		 	case 4:
 		 		// East
-		 		this.renderWestEast(textureId, x+1.0f-TEX64, y, z);
+		 		this.renderBlockFace(textureId, x-TEX64, y, z, FACING.EAST);
 		 		break;
 		 	case 5:
 	 		default:
 	 			// West
-				this.renderWestEast(textureId, x+TEX64, y, z);
+				this.renderBlockFace(textureId, x+TEX64, y, z, FACING.WEST);
 	 			break;
 		 }
 	}
@@ -1343,25 +1312,25 @@ public abstract class Chunk {
 		 if ((data & 1) == 1)
 		 {
 			// South
-			this.renderNorthSouth(textureId, x, y, z+1.0f-TEX64);
+			this.renderBlockFace(textureId, x, y, z-TEX64, FACING.SOUTH);
 			rendered = true;
 		 }
 		 if ((data & 2) == 2)
 		 {
 			// West
-			this.renderWestEast(textureId, x+TEX64, y, z);
+			this.renderBlockFace(textureId, x+TEX64, y, z, FACING.WEST);
 			rendered = true;
 		 }
 		 if ((data & 4) == 4)
 		 {
 			// North
-			this.renderNorthSouth(textureId, x, y, z+TEX64);
+			this.renderBlockFace(textureId, x, y, z+TEX64, FACING.NORTH);
 			rendered = true;
 		 }
 		 if ((data & 8) == 8)
 		 {
 			// East
-			this.renderWestEast(textureId, x+1.0f-TEX64, y, z);
+			this.renderBlockFace(textureId, x-TEX64, y, z, FACING.EAST);
 			rendered = true;
 		 }
 		 if (data == 0 || (rendered && isSolid(this.getAdjUpBlockId(xxx, yyy, zzz, blockOffset))))
@@ -1385,7 +1354,7 @@ public abstract class Chunk {
 		 float z = zzz + this.z*16;
 		 float y = yyy;
 		 
-		this.renderTopDown(textureId, x, y+TEX64, z);
+		this.renderBlockFace(textureId, x, y+TEX64, z, FACING.BOTTOM);
 	}
 
 	/**
@@ -1413,7 +1382,7 @@ public abstract class Chunk {
 				this.renderTopDownRotate(textureId, x, y+TEX64, z, 1);
 				break;
 			case 0x1:
-				this.renderTopDown(textureId, x, y+TEX64, z);
+				this.renderBlockFace(textureId, x, y+TEX64, z, FACING.BOTTOM);
 				break;
 			case 0x2:
 				this.renderArbitraryRect(textureId,
@@ -1461,7 +1430,7 @@ public abstract class Chunk {
 				break;
 			default:
 				// Just do the usual for now
-				this.renderTopDown(textureId, x, y+TEX64, z);
+				this.renderBlockFace(textureId, x, y+TEX64, z, FACING.BOTTOM);
 				break;
 		}
 	}
@@ -1496,7 +1465,7 @@ public abstract class Chunk {
 				this.renderTopDownRotate(textureId, x, y+TEX64, z, 1);
 				break;
 			case 0x1:
-				this.renderTopDown(textureId, x, y+TEX64, z);
+				this.renderBlockFace(textureId, x, y+TEX64, z, FACING.BOTTOM);
 				break;
 			case 0x2:
 				this.renderArbitraryRect(textureId,
@@ -1532,7 +1501,7 @@ public abstract class Chunk {
 				break;
 			default:
 				// Just do the usual for now
-				this.renderTopDown(textureId, x, y+TEX64, z);
+				this.renderBlockFace(textureId, x, y+TEX64, z, FACING.BOTTOM);
 				break;
 		}
 	}
@@ -1747,22 +1716,22 @@ public abstract class Chunk {
 			if ((dir == 0 && !open) || (open && ((dir == 1 && hinge_on_left) || (dir == 3 && !hinge_on_left))))
 			{
 				// West
-				this.renderWestEast(textureId, x, y, z);
+				this.renderBlockFace(textureId, x, y, z, FACING.WEST);
 			}
 			else if ((dir == 1 && !open) || (open && ((dir == 0 && !hinge_on_left) || (dir == 2 && hinge_on_left))))
 			{
 				// North
-				this.renderNorthSouth(textureId, x, y, z);
+				this.renderBlockFace(textureId, x, y, z, FACING.NORTH);
 			}
 			else if ((dir == 2 && !open) || (open && ((dir == 1 && !hinge_on_left) || (dir == 3 && hinge_on_left))))
 			{
 				// East
-				this.renderWestEast(textureId, x+1, y, z);
+				this.renderBlockFace(textureId, x, y, z, FACING.EAST);
 			}
 			else
 			{
 				// South
-				this.renderNorthSouth(textureId, x, y, z+1);
+				this.renderBlockFace(textureId, x, y, z, FACING.SOUTH);
 			}
 		}
 		else
@@ -1781,22 +1750,22 @@ public abstract class Chunk {
 			if ((dir == 3 && swung) || (dir == 0 && !swung))
 			{
 				// West			
-				this.renderWestEast(textureId, x, y, z);
+				this.renderBlockFace(textureId, x, y, z, FACING.WEST);
 			}
 			else if ((dir == 0 && swung) || (dir == 1 && !swung))
 			{
 				// North
-				this.renderNorthSouth(textureId, x, y, z);
+				this.renderBlockFace(textureId, x, y, z, FACING.NORTH);
 			}
 			else if ((dir == 1 && swung) || (dir == 2 && !swung))
 			{
 				// East
-				this.renderWestEast(textureId, x+1, y, z);
+				this.renderBlockFace(textureId, x, y, z, FACING.EAST);
 			}
 			else
 			{
 				// South
-				this.renderNorthSouth(textureId, x, y, z+1);
+				this.renderBlockFace(textureId, x, y, z, FACING.SOUTH);
 			}
 		}
 	}
@@ -3718,11 +3687,11 @@ public abstract class Chunk {
 		// And now the actual top and bottom rendering
 		if (render_bottom)
 		{
-			this.renderTopDown(textureId, x, y+.5f+offset, z);
+			this.renderBlockFace(textureId, x, y+.5f+offset, z, FACING.BOTTOM);
 		}
 		if (render_top)
 		{
-			this.renderTopDown(textureId, x, y+1f+offset, z);	
+			this.renderBlockFace(textureId, x, y+offset, z, FACING.TOP);	
 		}
 	}
 	
@@ -3815,7 +3784,7 @@ public abstract class Chunk {
 		}
 		if (render_bottom)
 		{
-			this.renderTopDown(textureId, x, y, z);
+			this.renderBlockFace(textureId, x, y, z, FACING.BOTTOM);
 		}
 
 		// Top
@@ -3826,7 +3795,7 @@ public abstract class Chunk {
 		}
 		if (render_top)
 		{
-			this.renderTopDown(textureId, x, y+1f, z);
+			this.renderBlockFace(textureId, x, y, z, FACING.TOP);
 		}
 	}
 
@@ -4768,12 +4737,12 @@ public abstract class Chunk {
 							// Finally, we're to the point of actually rendering the solid
 							if(pass != RENDER_PASS.SELECTED || highlightingOres)
 							{
-								if(!above) this.renderTopDown(top_t, worldX+this.lx, this.ly+1, worldZ+this.lz);
-								if(!below) this.renderTopDown(bottom_t, worldX+this.lx, this.ly, worldZ+this.lz);
-								if(!north) this.renderNorthSouth(north_t, worldX+this.lx, this.ly, worldZ+this.lz);
-								if(!south) this.renderNorthSouth(south_t, worldX+this.lx, this.ly, worldZ+this.lz+1);
-								if(!east) this.renderWestEast(east_t, worldX+this.lx+1, this.ly, worldZ+this.lz);
-								if(!west) this.renderWestEast(west_t, worldX+this.lx, this.ly, worldZ+this.lz);
+								if(!above) this.renderBlockFace(top_t,    worldX+this.lx, this.ly, worldZ+this.lz, FACING.TOP);
+								if(!below) this.renderBlockFace(bottom_t, worldX+this.lx, this.ly, worldZ+this.lz, FACING.BOTTOM);
+								if(!north) this.renderBlockFace(north_t,  worldX+this.lx, this.ly, worldZ+this.lz, FACING.NORTH);
+								if(!south) this.renderBlockFace(south_t,  worldX+this.lx, this.ly, worldZ+this.lz, FACING.SOUTH);
+								if(!east)  this.renderBlockFace(east_t,   worldX+this.lx, this.ly, worldZ+this.lz, FACING.EAST);
+								if(!west)  this.renderBlockFace(west_t,   worldX+this.lx, this.ly, worldZ+this.lz, FACING.WEST);
 							}
 							break;
 					}
