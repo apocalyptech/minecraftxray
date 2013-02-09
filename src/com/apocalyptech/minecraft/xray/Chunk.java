@@ -108,7 +108,7 @@ public abstract class Chunk {
 		SELECTED
 	}
 
-	private static enum FACING {
+	protected static enum FACING {
 		TOP,
 		BOTTOM,
 		NORTH,
@@ -256,11 +256,11 @@ public abstract class Chunk {
 	}
 
 	/**
-	 * Gets the Block ID of the block immediately to the west.  This might
+	 * Gets the Block ID of the block immediately to the given facing. This might
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
 	 */
-	protected abstract short getAdjWestBlockId(int x, int y, int z, int blockOffset);
+	protected abstract short getAdjBlockId(int x, int y, int z, FACING facing, int blockOffset);
 
 	/**
 	 * Gets the data value of the block immediately to the west.  This might
@@ -288,13 +288,6 @@ public abstract class Chunk {
 	}
 
 	/**
-	 * Gets the Block ID of the block immediately to the east.  This might
-	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
-	 * chunk can't be found.
-	 */
-	protected abstract short getAdjEastBlockId(int x, int y, int z, int blockOffset);
-
-	/**
 	 * Gets the data value of the block immediately to the east.  This might
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
@@ -318,13 +311,6 @@ public abstract class Chunk {
 			}
 		}
 	}
-
-	/**
-	 * Gets the Block ID of the block immediately to the south.  This might
-	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
-	 * chunk can't be found.
-	 */
-	protected abstract short getAdjNorthBlockId(int x, int y, int z, int blockOffset);
 
 	/**
 	 * Gets the data value of the block immediately to the south.  This might
@@ -352,13 +338,6 @@ public abstract class Chunk {
 	}
 
 	/**
-	 * Gets the Block ID of the block immediately to the north.  This might
-	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
-	 * chunk can't be found.
-	 */
-	protected abstract short getAdjSouthBlockId(int x, int y, int z, int blockOffset);
-
-	/**
 	 * Gets the data value of the block immediately to the north.  This might
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
@@ -384,24 +363,12 @@ public abstract class Chunk {
 	}
 
 	/**
-	 * Gets the Block ID of the block immediately up.
-	 * Will return -1 if we're already at the top
-	 */
-	protected abstract short getAdjUpBlockId(int x, int y, int z, int blockOffset);
-
-	/**
 	 * Gets the data value of the block immediately up.
 	 */
 	private byte getAdjUpBlockData(int x, int y, int z)
 	{
 		return getData(x, y+1, z);
 	}
-
-	/**
-	 * Gets the Block ID of the block immediately down.
-	 * Will return -1 if we're already at the bottom
-	 */
-	protected abstract short getAdjDownBlockId(int x, int y, int z, int blockOffset);
 
 	/**
 	 * Gets the data value of the block immediately down.
@@ -1333,7 +1300,7 @@ public abstract class Chunk {
 			this.renderBlockFace(textureId, x-TEX64, y, z, FACING.EAST);
 			rendered = true;
 		 }
-		 if (data == 0 || (rendered && isSolid(this.getAdjUpBlockId(xxx, yyy, zzz, blockOffset))))
+		 if (data == 0 || (rendered && isSolid(this.getAdjBlockId(xxx, yyy, zzz, FACING.TOP, blockOffset))))
 		 {
 			// Top
 			this.renderHorizontal(textureId, x-.5f, z-.5f, x+.5f, z+.5f, y+.45f);
@@ -1555,28 +1522,28 @@ public abstract class Chunk {
 		this.renderHorizontal(textureId, x+edge, z+edge, x-edge, z-edge, y+top);
 		
 		// East
-		adj = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 		if (adj != blockId && !isSolid(adj))
 		{
 			this.renderVertical(textureId, x+edge, z+edge, x+edge, z-edge, y-.5f, height, 16, 2, 0, 14);
 		}
 
 		// West
-		adj = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 		if (adj != blockId && !isSolid(adj))
 		{
 			this.renderVertical(textureId, x-edge, z+edge, x-edge, z-edge, y-.5f, height, 16, 2, 0, 14);
 		}
 
 		// South
-		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 		if (adj != blockId && !isSolid(adj))
 		{
 			this.renderVertical(textureId, x+edge, z+edge, x-edge, z+edge, y-.5f, height, 16, 2, 0, 14);
 		}
 
 		// North
-		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 		if (adj != blockId && !isSolid(adj))
 		{
 			this.renderVertical(textureId, x+edge, z-edge, x-edge, z-edge, y-.5f, height, 16, 2, 0, 14);
@@ -2121,73 +2088,73 @@ public abstract class Chunk {
 		short left_id, right_id, front_id, back_id, top_id, bottom_id;
 		byte left_data, right_data, front_data, top_data, bottom_data;
 
-		top_id = getAdjUpBlockId(xxx, yyy, zzz, blockOffset);
-		bottom_id = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
+		top_id = getAdjBlockId(xxx, yyy, zzz, FACING.TOP, blockOffset);
+		bottom_id = getAdjBlockId(xxx, yyy, zzz, FACING.BOTTOM, blockOffset);
 
 		switch (direction)
 		{
 			case 0:
 				// Ascending to the east, descending to the west
 				GL11.glRotatef(180f, 0f, 1f, 0f);
-				left_id = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+				left_id = getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 				left_data = getAdjSouthBlockData(xxx, yyy, zzz);
-				right_id = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+				right_id = getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 				right_data = getAdjNorthBlockData(xxx, yyy, zzz);
-				front_id = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+				front_id = getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 				front_data = getAdjWestBlockData(xxx, yyy, zzz);
-				back_id = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+				back_id = getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 				break;
 
 			case 1:
 				// Ascending to the west, descending to the east
-				left_id = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+				left_id = getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 				left_data = getAdjNorthBlockData(xxx, yyy, zzz);
-				right_id = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+				right_id = getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 				right_data = getAdjSouthBlockData(xxx, yyy, zzz);
-				front_id = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+				front_id = getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 				front_data = getAdjEastBlockData(xxx, yyy, zzz);
-				back_id = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+				back_id = getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 				break;
 
 			case 2:
 				// Ascending to the south, descending to the north
 				GL11.glRotatef(90f, 0f, 1f, 0f);
-				left_id = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+				left_id = getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 				left_data = getAdjWestBlockData(xxx, yyy, zzz);
-				right_id = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+				right_id = getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 				right_data = getAdjEastBlockData(xxx, yyy, zzz);
-				front_id = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+				front_id = getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 				front_data = getAdjNorthBlockData(xxx, yyy, zzz);
-				back_id = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+				back_id = getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 				break;
 
 			case 3:
 			default:
 				// Ascending to the north, descending to the south
 				GL11.glRotatef(270f, 0f, 1f, 0f);
-				left_id = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+				left_id = getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 				left_data = getAdjEastBlockData(xxx, yyy, zzz);
-				right_id = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+				right_id = getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 				right_data = getAdjWestBlockData(xxx, yyy, zzz);
-				front_id = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+				front_id = getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 				front_data = getAdjSouthBlockData(xxx, yyy, zzz);
-				back_id = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+				back_id = getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 				break;
 		}
 
 		if (top)
 		{
 			GL11.glScalef(1f, -1f, 1f);
-			top_id = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
+			top_id = getAdjBlockId(xxx, yyy, zzz, FACING.BOTTOM, blockOffset);
 			top_data = getAdjDownBlockData(xxx, yyy, zzz);
-			bottom_id = getAdjUpBlockId(xxx, yyy, zzz, blockOffset);
+			bottom_id = getAdjBlockId(xxx, yyy, zzz, FACING.TOP, blockOffset);
 			bottom_data = getAdjUpBlockData(xxx, yyy, zzz);
 		}
 		else
 		{
-			top_id = getAdjUpBlockId(xxx, yyy, zzz, blockOffset);
+			top_id = getAdjBlockId(xxx, yyy, zzz, FACING.TOP, blockOffset);
 			top_data = getAdjUpBlockData(xxx, yyy, zzz);
-			bottom_id = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
+			bottom_id = getAdjBlockId(xxx, yyy, zzz, FACING.BOTTOM, blockOffset);
 			bottom_data = getAdjDownBlockData(xxx, yyy, zzz);
 		}
 
@@ -2430,7 +2397,7 @@ public abstract class Chunk {
 		this.renderVertical(textureId, x+fence_postsize, z-fence_postsize, x-fence_postsize, z-fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
 		this.renderVertical(textureId, x-fence_postsize, z-fence_postsize, x-fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
 		this.renderVertical(textureId, x-fence_postsize, z+fence_postsize, x+fence_postsize, z+fence_postsize, y-0.5f, 1f, 4, 16, 6, 0);
-		if (y == this.maxHeight || !isSolid(this.getAdjUpBlockId(xxx, yyy, zzz, blockOffset)))
+		if (y == this.maxHeight || !isSolid(this.getAdjBlockId(xxx, yyy, zzz, FACING.TOP, blockOffset)))
 		{
 			this.renderHorizontal(textureId, x+fence_postsize, z+fence_postsize, x-fence_postsize, z-fence_postsize, y+0.5f, 4, 4, 6, 6, false);
 		}
@@ -2439,7 +2406,7 @@ public abstract class Chunk {
 		byte adj_data;
 
 		// Check for adjacent fences / fence gates in the -x direction
-		adj_id = this.getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		adj_id = this.getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 		if (adj_id == blockId)
 		{
 			// Fence to the West
@@ -2497,7 +2464,7 @@ public abstract class Chunk {
 		}
 
 		// Check for adjacent fence gates in the +x direction
-		adj_id = this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		adj_id = this.getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 		if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
 		{
 			// Fence Gate to the East
@@ -2539,7 +2506,7 @@ public abstract class Chunk {
 		}
 		
 		// Check for adjacent fences / fence gates in the -z direction
-		adj_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		adj_id = this.getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 		if (adj_id == blockId)
 		{
 			// Bottom slat
@@ -2595,7 +2562,7 @@ public abstract class Chunk {
 		}
 
 		// Check for adjacent fence gates in the +z direction
-		adj_id = this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		adj_id = this.getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 		if (adj_id > -1 && blockArray[adj_id] != null && blockArray[adj_id].type == BLOCK_TYPE.FENCE_GATE)
 		{
 			// Fence Gate to the South
@@ -2854,8 +2821,8 @@ public abstract class Chunk {
 		// Check to see where adjoining Portal spaces are, so we know which
 		// faces to draw
 		boolean drawWestEast = false;
-		if (this.getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == blockId ||
-				this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == blockId)
+		if (this.getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset) == blockId ||
+				this.getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset) == blockId)
 		{
 			drawWestEast = true;
 		}
@@ -3199,22 +3166,22 @@ public abstract class Chunk {
 		}
 
 		short temp_id;
-		temp_id = this.getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		temp_id = this.getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_west = true;
 		}
-		temp_id = this.getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		temp_id = this.getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_east = true;
 		}
-		temp_id = this.getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		temp_id = this.getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_south = true;
 		}
-		temp_id = this.getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		temp_id = this.getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 		if (temp_id == blockId || this.isSolid(temp_id))
 		{
 			has_north = true;
@@ -3320,28 +3287,28 @@ public abstract class Chunk {
 		{
 			case 4:
 				// Facing West
-				have_right = (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
-				have_left = (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
+				have_right = (getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset) == block.id);
+				have_left = (getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset) == block.id);
 				GL11.glRotatef(270f, 0f, 1f, 0f);
 				break;
 			case 5:
 				// Facing East
-				have_right = (getAdjNorthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
-				have_left = (getAdjSouthBlockId(xxx, yyy, zzz, blockOffset) == block.id);
+				have_right = (getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset) == block.id);
+				have_left = (getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset) == block.id);
 				GL11.glRotatef(90f, 0f, 1f, 0f);
 				break;
 			case 2:
 				// Facing North
-				have_right = (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == block.id);
-				have_left = (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == block.id);
+				have_right = (getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset) == block.id);
+				have_left = (getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset) == block.id);
 				GL11.glRotatef(180f, 0f, 1f, 0f);
 				break;
 			case 3:
 			default:
 				// Facing South (this is what chests with a data of "0" will show up as,
 				// weirdly, in Minecraft itself)
-				have_right = (getAdjEastBlockId(xxx, yyy, zzz, blockOffset) == block.id);
-				have_left = (getAdjWestBlockId(xxx, yyy, zzz, blockOffset) == block.id);
+				have_right = (getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset) == block.id);
+				have_left = (getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset) == block.id);
 				break;
 		}
 
@@ -3411,7 +3378,7 @@ public abstract class Chunk {
 			{
 				short adjblock;
 				// Stems will prefer: West, East, North, South
-				adjblock = getAdjWestBlockId(xxx,yyy,zzz,blockOffset);
+				adjblock = getAdjBlockId(xxx,yyy,zzz,FACING.WEST,blockOffset);
 				if (adjblock > 0 && blockArray[adjblock] != null &&
 						blockArray[adjblock].idStr.equals(nameparts[0]))
 				{
@@ -3419,7 +3386,7 @@ public abstract class Chunk {
 				}
 				if (!connected)
 				{
-					adjblock = getAdjEastBlockId(xxx,yyy,zzz,blockOffset);
+					adjblock = getAdjBlockId(xxx,yyy,zzz,FACING.EAST,blockOffset);
 					if (adjblock > 0 && blockArray[adjblock] != null &&
 							blockArray[adjblock].idStr.equals(nameparts[0]))
 					{
@@ -3429,7 +3396,7 @@ public abstract class Chunk {
 				}
 				if (!connected)
 				{
-					adjblock = getAdjNorthBlockId(xxx,yyy,zzz,blockOffset);
+					adjblock = getAdjBlockId(xxx,yyy,zzz,FACING.NORTH,blockOffset);
 					if (adjblock > 0 && blockArray[adjblock] != null &&
 							blockArray[adjblock].idStr.equals(nameparts[0]))
 					{
@@ -3439,7 +3406,7 @@ public abstract class Chunk {
 				}
 				if (!connected)
 				{
-					adjblock = getAdjSouthBlockId(xxx,yyy,zzz,blockOffset);
+					adjblock = getAdjBlockId(xxx,yyy,zzz,FACING.SOUTH,blockOffset);
 					if (adjblock > 0 && blockArray[adjblock] != null &&
 							blockArray[adjblock].idStr.equals(nameparts[0]))
 					{
@@ -3571,7 +3538,7 @@ public abstract class Chunk {
 		renderHorizontal(textureId, edge, edge, -edge, -edge, height+bottom);
 
 		// Bottom
-		if (y == 0 || !isSolid(getAdjDownBlockId(xxx, yyy, zzz, blockOffset)))
+		if (y == 0 || !isSolid(getAdjBlockId(xxx, yyy, zzz, FACING.BOTTOM, blockOffset)))
 		{
 			renderHorizontal(block.texture_extra_map.get("bottom")+tex_offset, edge, edge, -edge, -edge, bottom);
 		}
@@ -3638,25 +3605,25 @@ public abstract class Chunk {
 
 		// Sides
 		if (shouldRenderHalfHeightAdj(top,
-					getAdjNorthBlockId(xxx, yyy, zzz, blockOffset),
+					getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset),
 					getAdjNorthBlockData(xxx, yyy, zzz)))
 		{
 			this.renderVertical(textureId, x-.5f, z-.5f, x+.5f, z-.5f, y+offset, .5f, 16, 8, 0, tex_start);
 		}
 		if (shouldRenderHalfHeightAdj(top,
-				getAdjSouthBlockId(xxx, yyy, zzz, blockOffset),
+				getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset),
 				getAdjSouthBlockData(xxx, yyy, zzz)))
 		{
 			this.renderVertical(textureId, x-.5f, z+.5f, x+.5f, z+.5f, y+offset, .5f, 16, 8, 0, tex_start);
 		}
 		if (shouldRenderHalfHeightAdj(top,
-					getAdjWestBlockId(xxx, yyy, zzz, blockOffset),
+					getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset),
 					getAdjWestBlockData(xxx, yyy, zzz)))
 		{
 			this.renderVertical(textureId, x-.5f, z-.5f, x-.5f, z+.5f, y+offset, .5f, 16, 8, 0, tex_start);
 		}
 		if (shouldRenderHalfHeightAdj(top,
-					getAdjEastBlockId(xxx, yyy, zzz, blockOffset),
+					getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset),
 					getAdjEastBlockData(xxx, yyy, zzz)))
 		{
 			this.renderVertical(textureId, x+.5f, z-.5f, x+.5f, z+.5f, y+offset, .5f, 16, 8, 0, tex_start);
@@ -3669,7 +3636,7 @@ public abstract class Chunk {
 		{
 			if (y < this.maxHeight)
 			{
-				short top_block = getAdjUpBlockId(xxx, yyy, zzz, blockOffset);
+				short top_block = getAdjBlockId(xxx, yyy, zzz, FACING.TOP, blockOffset);
 				render_top = (top_block == 0 ||
 						(top_block > 0 && blockArray[top_block] != null &&
 						 !blockArray[top_block].isSolid()));
@@ -3679,7 +3646,7 @@ public abstract class Chunk {
 		{
 			if (y > 0)
 			{
-				short bottom = getAdjDownBlockId(xxx, yyy, zzz, blockOffset);
+				short bottom = getAdjBlockId(xxx, yyy, zzz, FACING.BOTTOM, blockOffset);
 				render_bottom = (bottom == 0 || (bottom > 0 && blockArray[bottom] != null && !blockArray[bottom].isSolid()));
 			}
 		}
@@ -3723,7 +3690,7 @@ public abstract class Chunk {
 		short adj;
 
 		// Sides
-		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 		if (adj != blockId)
 		{
 			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
@@ -3736,7 +3703,7 @@ public abstract class Chunk {
 				this.renderVertical(textureId, x-.5f, z-.5f, x+.5f, z-.5f, y-.5f, 1f);
 			}
 		}
-		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 		if (adj != blockId)
 		{
 			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
@@ -3749,7 +3716,7 @@ public abstract class Chunk {
 				this.renderVertical(textureId, x-.5f, z+.5f, x+.5f, z+.5f, y-.5f, 1f);
 			}
 		}
-		adj = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 		if (adj != blockId)
 		{
 			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
@@ -3762,7 +3729,7 @@ public abstract class Chunk {
 				this.renderVertical(textureId, x-.5f, z+.5f, x-.5f, z-.5f, y-.5f, 1f);
 			}
 		}
-		adj = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 		if (adj != blockId)
 		{
 			if (adj > 0 && blockArray[adj] != null && blockArray[adj].type == BLOCK_TYPE.HALFHEIGHT)
@@ -3780,7 +3747,7 @@ public abstract class Chunk {
 		boolean render_bottom = true;
 		if (y > 0)
 		{
-			render_bottom = this.getAdjDownBlockId(xxx, yyy, zzz, blockOffset) != blockId;
+			render_bottom = this.getAdjBlockId(xxx, yyy, zzz, FACING.BOTTOM, blockOffset) != blockId;
 		}
 		if (render_bottom)
 		{
@@ -3791,7 +3758,7 @@ public abstract class Chunk {
 		boolean render_top = true;
 		if (y < this.maxHeight)
 		{
-			render_top = this.getAdjUpBlockId(xxx, yyy, zzz, blockOffset) != blockId;
+			render_top = this.getAdjBlockId(xxx, yyy, zzz, FACING.TOP, blockOffset) != blockId;
 		}
 		if (render_top)
 		{
@@ -3848,22 +3815,22 @@ public abstract class Chunk {
 		GL11.glTranslatef(x, y, z);
 
 		// First draw the base, regardless of eye state
-		adj = getAdjWestBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.WEST, blockOffset);
 		if (adj != block.id && !isSolid(adj))
 		{
 			renderVertical(tex_side, -side, -side, -side, side, -side, side_height, 16, 13, 0, 3);
 		}
-		adj = getAdjEastBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.EAST, blockOffset);
 		if (adj != block.id && !isSolid(adj))
 		{
 			renderVertical(tex_side, side, -side, side, side, -side, side_height, 16, 13, 0, 3);
 		}
-		adj = getAdjSouthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.SOUTH, blockOffset);
 		if (adj != block.id && !isSolid(adj))
 		{
 			renderVertical(tex_side, side, side, -side, side, -side, side_height, 16, 13, 0, 3);
 		}
-		adj = getAdjNorthBlockId(xxx, yyy, zzz, blockOffset);
+		adj = getAdjBlockId(xxx, yyy, zzz, FACING.NORTH, blockOffset);
 		if (adj != block.id && !isSolid(adj))
 		{
 			renderVertical(tex_side, side, -side, -side, -side, -side, side_height, 16, 13, 0, 3);
@@ -4215,7 +4182,7 @@ public abstract class Chunk {
 							{
 								case TOP:
 									// check above
-									if(this.getAdjUpBlockId(this.lx, this.ly, this.lz, this.lOffset) != BLOCK_BEDROCK.id) {
+									if(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.TOP, this.lOffset) != BLOCK_BEDROCK.id) {
 										draw = true;
 										above = false;
 									}
@@ -4223,7 +4190,7 @@ public abstract class Chunk {
 
 								case BOTTOM:
 									// check below
-									if(this.getAdjDownBlockId(this.lx, this.ly, this.lz, this.lOffset) != BLOCK_BEDROCK.id) {
+									if(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.BOTTOM, this.lOffset) != BLOCK_BEDROCK.id) {
 										draw = true;
 										below = false;
 									}
@@ -4232,13 +4199,13 @@ public abstract class Chunk {
 								case NORTH:
 								case SOUTH:
 									// check north;
-									if (this.getAdjNorthBlockId(this.lx, this.ly, this.lz, this.lOffset) != BLOCK_BEDROCK.id) {
+									if (this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.NORTH, this.lOffset) != BLOCK_BEDROCK.id) {
 										draw = true;
 										north = false;
 									}
 								
 									// check south
-									if (this.getAdjSouthBlockId(this.lx, this.ly, this.lz, this.lOffset) != BLOCK_BEDROCK.id) {
+									if (this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.SOUTH, this.lOffset) != BLOCK_BEDROCK.id) {
 										draw = true;
 										south = false;
 									}
@@ -4247,13 +4214,13 @@ public abstract class Chunk {
 								case WEST:
 								case EAST:
 									// check east
-									if (this.getAdjEastBlockId(this.lx, this.ly, this.lz, this.lOffset) != BLOCK_BEDROCK.id) {
+									if (this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.EAST, this.lOffset) != BLOCK_BEDROCK.id) {
 										draw = true;
 										east = false;
 									}
 									
 									// check west
-									if (this.getAdjWestBlockId(this.lx, this.ly, this.lz, this.lOffset) != BLOCK_BEDROCK.id) {
+									if (this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.WEST, this.lOffset) != BLOCK_BEDROCK.id) {
 										draw = true;
 										west = false;
 									}
@@ -4266,7 +4233,7 @@ public abstract class Chunk {
 							{
 								case TOP:
 									// check above
-									if(checkSolid(this.getAdjUpBlockId(this.lx, this.ly, this.lz, this.lOffset))) {
+									if(checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.TOP, this.lOffset))) {
 										draw = true;
 										above = false;
 									}
@@ -4274,7 +4241,7 @@ public abstract class Chunk {
 
 								case BOTTOM:
 									// check below
-									if(checkSolid(this.getAdjDownBlockId(this.lx, this.ly, this.lz, this.lOffset))) {
+									if(checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.BOTTOM, this.lOffset))) {
 										draw = true;
 										below = false;
 									}
@@ -4283,13 +4250,13 @@ public abstract class Chunk {
 								case NORTH:
 								case SOUTH:
 									// check north;
-									if (checkSolid(this.getAdjNorthBlockId(this.lx, this.ly, this.lz, this.lOffset))) {
+									if (checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.NORTH, this.lOffset))) {
 										draw = true;
 										north = false;
 									}
 								
 									// check south
-									if (checkSolid(this.getAdjSouthBlockId(this.lx, this.ly, this.lz, this.lOffset))) {
+									if (checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.SOUTH, this.lOffset))) {
 										draw = true;
 										south = false;
 									}
@@ -4298,13 +4265,13 @@ public abstract class Chunk {
 								case WEST:
 								case EAST:
 									// check east
-									if (checkSolid(this.getAdjEastBlockId(this.lx, this.ly, this.lz, this.lOffset))) {
+									if (checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.EAST, this.lOffset))) {
 										draw = true;
 										east = false;
 									}
 									
 									// check west
-									if (checkSolid(this.getAdjWestBlockId(this.lx, this.ly, this.lz, this.lOffset))) {
+									if (checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.WEST, this.lOffset))) {
 										draw = true;
 										west = false;
 									}

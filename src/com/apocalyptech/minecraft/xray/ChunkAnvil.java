@@ -202,6 +202,30 @@ public class ChunkAnvil extends Chunk {
 	}
 
 	/**
+	 * Gets the Block ID of the block immediately to the given facing. This might
+	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
+	 * chunk can't be found.
+	 */
+	protected short getAdjBlockId(int x, int y, int z, FACING facing, int blockOffset) {
+		switch(facing) {
+			case TOP:
+				return getAdjUpBlockId(x, y, z, blockOffset);
+			case BOTTOM:
+				return getAdjDownBlockId(x, y, z, blockOffset);
+			case NORTH:
+				return getAdjNorthBlockId(x, y, z, blockOffset);
+			case SOUTH:
+				return getAdjSouthBlockId(x, y, z, blockOffset);
+			case WEST:
+				return getAdjWestBlockId(x, y, z, blockOffset);
+			case EAST:
+				return getAdjEastBlockId(x, y, z, blockOffset);
+		}
+
+		return -1;
+	}
+
+	/**
 	 * Gets the Block ID of the block immediately to the west.  This might
 	 * load in the adjacent chunk, if needed.  Will return -1 if that adjacent
 	 * chunk can't be found.
