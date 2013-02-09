@@ -4053,12 +4053,6 @@ public abstract class Chunk {
 		float worldZ = this.z*16;
 		
 		boolean draw = false;
-		boolean above = true;
-		boolean below = true;
-		boolean north = true;
-		boolean south = true;
-		boolean east = true;
-		boolean west = true;
 		int tex_offset = 0;
 		BlockType block;
 		boolean highlightingOres = (XRay.toggle.highlightOres != XRay.HIGHLIGHT_TYPE.OFF);
@@ -4164,120 +4158,13 @@ public abstract class Chunk {
 							continue;
 						}
 						draw = false;
-						above = true;
-						below = true;
-						north = true;
-						south = true;
-						east = true;
-						west = true;
 
 						// Check for adjacent blocks
-						if (XRay.toggle.render_bedrock && t == BLOCK_BEDROCK.id)
-						{
-							// This block of code was more or less copied/modified directly from the "else" block
-							// below - should see if there's a way we can abstract this instead.  Also, I suspect
-							// that this is where we'd fix water rendering...
-							
-							switch (facingPass)
-							{
-								case TOP:
-									// check above
-									if(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.TOP, this.lOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										above = false;
-									}
-									break;
-
-								case BOTTOM:
-									// check below
-									if(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.BOTTOM, this.lOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										below = false;
-									}
-									break;
-
-								case NORTH:
-								case SOUTH:
-									// check north;
-									if (this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.NORTH, this.lOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										north = false;
-									}
-								
-									// check south
-									if (this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.SOUTH, this.lOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										south = false;
-									}
-									break;
-
-								case WEST:
-								case EAST:
-									// check east
-									if (this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.EAST, this.lOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										east = false;
-									}
-									
-									// check west
-									if (this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.WEST, this.lOffset) != BLOCK_BEDROCK.id) {
-										draw = true;
-										west = false;
-									}
-									break;
-							}
-						}
-						else
-						{
-							switch (facingPass)
-							{
-								case TOP:
-									// check above
-									if(checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.TOP, this.lOffset))) {
-										draw = true;
-										above = false;
-									}
-									break;
-
-								case BOTTOM:
-									// check below
-									if(checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.BOTTOM, this.lOffset))) {
-										draw = true;
-										below = false;
-									}
-									break;
-							
-								case NORTH:
-								case SOUTH:
-									// check north;
-									if (checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.NORTH, this.lOffset))) {
-										draw = true;
-										north = false;
-									}
-								
-									// check south
-									if (checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.SOUTH, this.lOffset))) {
-										draw = true;
-										south = false;
-									}
-									break;
-							
-								case WEST:
-								case EAST:
-									// check east
-									if (checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.EAST, this.lOffset))) {
-										draw = true;
-										east = false;
-									}
-									
-									// check west
-									if (checkSolid(this.getAdjBlockId(this.lx, this.ly, this.lz, FACING.WEST, this.lOffset))) {
-										draw = true;
-										west = false;
-									}
-									break;
-							}
-						}
+						draw = checkSolid(getAdjBlockId(this.lx, this.ly, this.lz, facingPass, this.lOffset))
+							|| (
+								XRay.toggle.render_bedrock
+								&& t == BLOCK_BEDROCK.id
+								&& getAdjBlockId(this.lx, this.ly, this.lz, facingPass, this.lOffset) != BLOCK_BEDROCK.id);
 						break;
 
 					case NONSTANDARD:
@@ -4300,12 +4187,6 @@ public abstract class Chunk {
 							if(selectedMap[i] && level.HIGHLIGHT_ORES[i] == t) {
 								// TODO: should maybe check our boundaries for similar ores, like we do for regular blocks
 								draw = true;
-								above = false;
-								below = false;
-								north = false;
-								south = false;
-								east = false;
-								west = false;
 								break;
 							}
 						}
@@ -4701,15 +4582,21 @@ public abstract class Chunk {
 								}
 							}
 
+							int curTexture = 0;
+							switch(facingPass)
+							{
+							case TOP: curTexture = top_t; break;
+							case BOTTOM: curTexture = bottom_t; break;
+							case NORTH: curTexture = north_t; break;
+							case SOUTH: curTexture = south_t; break;
+							case EAST: curTexture = east_t; break;
+							case WEST: curTexture = west_t; break;
+							}
+
 							// Finally, we're to the point of actually rendering the solid
 							if(pass != RENDER_PASS.SELECTED || highlightingOres)
 							{
-								if(!above) this.renderBlockFace(top_t,    worldX+this.lx, this.ly, worldZ+this.lz, FACING.TOP);
-								if(!below) this.renderBlockFace(bottom_t, worldX+this.lx, this.ly, worldZ+this.lz, FACING.BOTTOM);
-								if(!north) this.renderBlockFace(north_t,  worldX+this.lx, this.ly, worldZ+this.lz, FACING.NORTH);
-								if(!south) this.renderBlockFace(south_t,  worldX+this.lx, this.ly, worldZ+this.lz, FACING.SOUTH);
-								if(!east)  this.renderBlockFace(east_t,   worldX+this.lx, this.ly, worldZ+this.lz, FACING.EAST);
-								if(!west)  this.renderBlockFace(west_t,   worldX+this.lx, this.ly, worldZ+this.lz, FACING.WEST);
+								this.renderBlockFace(curTexture, worldX+this.lx, this.ly, worldZ+this.lz, facingPass);
 							}
 							break;
 					}
