@@ -413,37 +413,28 @@ public abstract class Chunk {
 	
 	/**
 	 * Render something which is a West/East face.
-	 */
-	public void renderWestEast(int t, float x, float y, float z) {
-		this.renderWestEast(t, x, y, z, 0.5f, 0.5f);
-	}
-	
-	/**
-	 * Render something which is a West/East face.
 	 * 
 	 * @param t Texture to render
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @param yHeightOffset How tall this block is.  0.5f is the usual, specify 0 for half-height
-	 * @param xzScale How large the rest of the block is.  0.5f is full-size, 0.1 would be tiny.
 	 */
-	public void renderWestEast(int t, float x, float y, float z, float yHeightOffset, float xzScale) {
+	public void renderWestEast(int t, float x, float y, float z) {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-xzScale, y+yHeightOffset, z+xzScale);
+			GL11.glVertex3f(x-0.5f, y+0.5f, z+0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-xzScale, y+yHeightOffset, z-xzScale);
+			GL11.glVertex3f(x-0.5f, y+0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t],precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x-xzScale, y-xzScale, z+xzScale);
+			GL11.glVertex3f(x-0.5f, y-0.5f, z+0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x-xzScale, y-xzScale, z-xzScale);
+			GL11.glVertex3f(x-0.5f, y-0.5f, z-0.5f);
 		GL11.glEnd();
 	}
-	
+
 	/**
 	 * Renders a floor tile which is also rotated
 	 * 
@@ -510,44 +501,28 @@ public abstract class Chunk {
 	
 	/**
 	 * Render the top or bottom of a block, depending on how we're looking at it.
-	 */
-	public void renderTopDown(int t, float x, float y, float z) {
-		this.renderTopDown(t, x, y, z, 0.5f);
-	}
-	
-	/**
-	 * Render the top or bottom of a block, depending on how we're looking at it.
 	 * 
 	 * @param t The texture ID to draw
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @param scale ".5" is a full-sized block, ".1" would be tiny.
 	 */
-	public void renderTopDown(int t, float x, float y, float z, float scale) {
+	public void renderTopDown(int t, float x, float y, float z) {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-scale, y-scale, z+scale);
+			GL11.glVertex3f(x-0.5f, y-0.5f, z+0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-scale, y-scale, z-scale);
+			GL11.glVertex3f(x-0.5f, y-0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x+scale, y-scale, z+scale);
+			GL11.glVertex3f(x+0.5f, y-0.5f, z+0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x+scale, y-scale, z-scale);
+			GL11.glVertex3f(x+0.5f, y-0.5f, z-0.5f);
 		GL11.glEnd();
 	}
-	
 
-	/**
-	 * Renders something which is a North/South face.
-	 */
-	public void renderNorthSouth(int t, float x, float y, float z) {
-		this.renderNorthSouth(t, x, y, z, 0.5f, 0.5f);
-	}
-	
 	/**
 	 * Renders something which is a North/South face.
 	 * 
@@ -555,22 +530,20 @@ public abstract class Chunk {
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @param yHeightOffset How tall this block is.  0.5f is the usual, specify 0 for half-height
-	 * @param xzScale How large the rest of the block is.  0.5f is full-size, 0.1 would be tiny.
 	 */
-	public void renderNorthSouth(int t, float x, float y, float z, float yHeightOffset, float xzScale) {
+	public void renderNorthSouth(int t, float x, float y, float z) {
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x-xzScale, y+yHeightOffset, z-xzScale);
+			GL11.glVertex3f(x-0.5f, y+0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]);
-			GL11.glVertex3f(x+xzScale, y+yHeightOffset, z-xzScale);
+			GL11.glVertex3f(x+0.5f, y+0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t], precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x-xzScale, y-xzScale, z-xzScale);
+			GL11.glVertex3f(x-0.5f, y-0.5f, z-0.5f);
 	
 			GL11.glTexCoord2f(precalcSpriteSheetToTextureX[t]+TEX16, precalcSpriteSheetToTextureY[t]+TEX32);
-			GL11.glVertex3f(x+xzScale, y-xzScale, z-xzScale);
+			GL11.glVertex3f(x+0.5f, y-0.5f, z-0.5f);
 		GL11.glEnd();
 	}
 
