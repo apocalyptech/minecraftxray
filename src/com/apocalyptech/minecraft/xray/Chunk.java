@@ -127,7 +127,10 @@ public abstract class Chunk {
 		this.chunkData = (CompoundTag) data;
 		this.isOnMinimap = false;
 
-		this.levelTag = (CompoundTag) chunkData.value.get(0); // first tag
+		//this.levelTag = (CompoundTag) chunkData.value.get(0); // first tag
+		//Thaumcraft's new way store its aura data in region file cause exeption, so we use name now
+		this.levelTag = (CompoundTag) chunkData.getTagWithName("Level");
+		
 		IntTag xPosTag = (IntTag) levelTag.getTagWithName("xPos");
 		IntTag zPosTag = (IntTag) levelTag.getTagWithName("zPos");
 		
