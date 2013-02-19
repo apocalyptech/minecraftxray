@@ -81,10 +81,14 @@ public class ChunkAnvil extends Chunk {
 			mapData.put(section, (ByteArrayTag) sectionTag.getTagWithName("Data"));
 
 			// Merge in the AddBlocks tag, if present
-			ByteArrayTag addBlocksTag = (ByteArrayTag) sectionTag.getTagWithName("AddBlocks");
+			//ByteArrayTag addBlocksTag = (ByteArrayTag) sectionTag.getTagWithName("AddBlocks");
+			//real section name is just "Add"
+			ByteArrayTag addBlocksTag = (ByteArrayTag) sectionTag.getTagWithName("Add");
 			if (addBlocksTag != null)
 			{
-				ByteArrayTag dataTag = mapData.get(section);
+				//ByteArrayTag dataTag = mapData.get(section);
+				//Now we can read real Block with ID higher then 256
+				ShortArrayTag dataTag = blockData.get(section);
 				int data_add;
 				for (int offset = 0; offset < 4096; offset++)
 				{
