@@ -101,7 +101,9 @@ public class BlockTypeCollection
 		this.blocks_composite = new ArrayList<BlockType>();
 		this.blocksByName = new HashMap<String, BlockType>();
 		this.loadedCollections = new ArrayList<BlockTypeCollection>();
-		this.blockArray = new BlockType[256];
+		//this.blockArray = new BlockType[256];
+		//Now we can collect block with ID below 4096 for price memory
+		this.blockArray = new BlockType[4096];
 		this.usedTextures = new ArrayList<Boolean[]>();
 		this.textures = new ArrayList<BufferedImage>();
 		this.cur_texture_page = -1;
