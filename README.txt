@@ -30,7 +30,7 @@ implement, and BUILDING.txt if you wanted some info on building the project
 yourself.
 
 The official website for Minecraft X-Ray is currently:
-    http://apocalyptech.com/minecraft/xray/
+    http://apocalyptech.com/minecraft-xray/
 	
 The official forum link is currently:
     http://www.minecraftforum.net/viewtopic.php?f=1022&t=119356
@@ -127,7 +127,7 @@ contained inside the global "minecraft.yaml" file (you can find this
 in X-Ray's own "blockdefs" directory, where you unpacked it).  Examples
 (and a copy of the global minecraft.yaml file) can be found here:
 
-    http://apocalyptech.com/minecraft/xray/modsupport.php
+    http://apocalyptech.com/minecraft-xray/modsupport.php
 
 As mentioned above, X-Ray will automatically attempt to load any YAML
 file it finds in the blockdefs directory, and it will display which ones
